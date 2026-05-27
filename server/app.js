@@ -7,7 +7,7 @@ import config from './src/config/env.js';
 import errorMiddleware from './src/middleware/error.middleware.js';
 import { errorResponse } from './src/utils/apiResponse.js';
 
-// Import Route Stubs
+// Theralign — Express Application Setup
 import authRoutes from './src/routes/auth.routes.js';
 import doctorRoutes from './src/routes/doctor.routes.js';
 import bookingRoutes from './src/routes/booking.routes.js';
@@ -60,7 +60,7 @@ app.use(morgan(morganFormat));
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'PhysioConnect API is running smoothly',
+    message: 'Theralign API is running smoothly',
     timestamp: new Date().toISOString(),
     env: config.nodeEnv
   });

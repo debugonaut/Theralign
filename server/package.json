@@ -1,7 +1,7 @@
 {
-  "name": "physioconnect-server",
+  "name": "theralign-server",
   "version": "0.1.0",
-  "description": "Backend API server for PhysioConnect platform",
+  "description": "Backend API server for Theralign platform",
   "type": "module",
   "main": "server.js",
   "scripts": {

@@ -11,7 +11,7 @@ const startServer = async () => {
 
     // 2. Start Express HTTP Listener
     const server = app.listen(config.port, () => {
-      logger.info(`PhysioConnect Express Server running in [${config.nodeEnv}] on port ${config.port}`);
+      logger.info(`Theralign Express Server running in [${config.nodeEnv}] on port ${config.port}`);
     });
 
     // 3. Gracefully manage unhandled promise rejections
