@@ -41,6 +41,7 @@ import AdminBookings from '../pages/admin/AdminBookings';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminRevenue from '../pages/admin/AdminRevenue';
 import AdminReviews from '../pages/admin/AdminReviews';
+import AdminAITools from '../pages/admin/AdminAITools';
 
 const DASHBOARD_ROUTES = {
   patient: '/patient/dashboard',
@@ -132,6 +133,7 @@ const AppRoutes = () => {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/revenue" element={<AdminRevenue />} />
         <Route path="/admin/reviews" element={<AdminReviews />} />
+        <Route path="/admin/ai-tools" element={<AdminAITools />} />
       </Route>
 
       {/* ─── Catch-All 404 ──────────────────────────────────────────────── */}

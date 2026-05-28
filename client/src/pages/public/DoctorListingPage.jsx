@@ -14,6 +14,7 @@ import DoctorCard from '../../components/doctor/DoctorCard';
 import SkeletonCard from '../../components/common/SkeletonCard';
 import Pagination from '../../components/common/Pagination';
 import Button from '../../components/common/Button';
+import SymptomSearchBox from '../../components/ai/SymptomSearchBox';
 
 const DoctorListingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -227,6 +228,16 @@ const DoctorListingPage = () => {
         <p className="text-sm text-slate-500 font-medium text-left">
           Discover verified clinic practitioners, filter by session fees, and check direct geospatial distances.
         </p>
+      </div>
+
+      {/* AI Symptom Triage Box */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-md text-slate-200">
+        <SymptomSearchBox
+          onSpecializationFound={(specialization) => {
+            updateFilter('specialization', specialization);
+            window.scrollTo({ top: 400, behavior: 'smooth' });
+          }}
+        />
       </div>
 
       {/* ─── Search & Proximity Interactive Banner ─────────────────────────────── */}

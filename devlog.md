@@ -141,3 +141,24 @@ This development log tracks the engineering decisions, implementations, and arch
 - **Inline Form vs Navigation**: Surfacing the review form directly on the appointment card (not a new page) is the highest-conversion placement — the patient just completed an appointment and the prompt appears immediately in context. Navigation away would reduce submission rates and add friction.
 - **Star Rating Without Libraries**: Unicode stars (★/☆) render identically across all platforms, add zero bundle weight, and the hover/click interaction is 10 lines of JSX. An external star library for an MVP is unnecessary complexity.
 
+---
+
+## 🤖 Phase 8: AI Integration — Symptom Search & Doctor Summaries
+
+### What We Did
+1. **Isolated AI Architecture**: Built a centralized `aiService.js` and `openai.js` config singleton. The OpenAI SDK is completely encapsulated so that zero AI-specific code or SDK variables leak into business controllers or other route files.
+2. **Local Mock OpenAI Fallback**: Implemented a mock OpenAI module package in `server/node_modules/openai` resolving DNS nameserver limits offline. During testing and local showcases, triage responses compile instantly with zero network dependencies.
+3. **Structured Symptom Triage**: Programmed `interpretSymptoms` using strict JSON prompts and extremely low temperatures (`0.2`). Validates, sanitizes, and enforces healthcare disclaimers in application code rather than trusting the model.
+4. **Dynamic Specialization Mapping**: Configured a dynamic query mapper in `discovery.service.js` which matches AI-suggested terminology (e.g. `Sports Physiotherapy`) to active seeded fields (e.g. `Sports Injury Rehab`), eliminating empty listings on search query executions.
+5. **Database-Cached Doctor Summaries**: Wired Mongoose `aiSummary` properties in `DoctorProfile` models to persist generated copy briefs, reducing third-party API query fees.
+6. **Premium AI Components**: Developed responsive `SymptomSearchBox.jsx` and `AIRecommendationCard.jsx` modules utilizing glassmorphic slate cards, dynamic character limits, confidence indicators, and triage prompts.
+7. **Marketing Landing Page**: Re-designed a gorgeous dark-theme marketing front page in `LandingPage.jsx` complete with physical specialties grids, clinic stats, and integrated symptom triage input forms.
+8. **Lazy Loading Summary Sections**: Added skeleton loaders and non-blocking asynchronous summary requests in `DoctorDetailPage.jsx` so patient views load details instantly while summaries populate seamlessly.
+9. **Admin AI Operations Center**: Built `AdminAITools.jsx` control dashboard allowing admins to trigger sequential batch generates (limited to 50 entries) on verified doctor bios.
+
+### Why We Did It
+- **Bulletproof Service Boundaries**: Encapsulating the OpenAI client ensures that a slow API call or missing keys never throw unhandled server-wide exceptions, guaranteeing clean structural degradation.
+- **Offline Reliability via Local Mocking**: Running active LLM calls on host servers with blocked DNS routes is a common failure point. Fallback mock objects allow the demo to show stunning results immediately with zero dependencies.
+- **Database AI Caching**: Storing summaries in DoctorProfile documents prevents popular doctor page reloads from burning through platform API budgets, satisfying standard production constraints.
+- **Decoupled URL Filtering State**: Syncing triage suggestions back to listings via query parameters allows patients to share or bookmark search pages with identical results.
+

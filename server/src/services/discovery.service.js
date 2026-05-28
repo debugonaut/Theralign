@@ -25,7 +25,15 @@ export const buildDiscoveryQuery = (filters = {}) => {
   } = filters;
 
   if (specialization) {
-    query.specialization = specialization;
+    // Map AI-suggested specializations to seeded database values
+    const specMapping = {
+      'Sports Physiotherapy': 'Sports Injury Rehab',
+      'Neurological Physiotherapy': 'Neurological Rehabilitation',
+      'Geriatric Physiotherapy': 'Geriatric Care',
+      'Cardiopulmonary Physiotherapy': 'Cardiopulmonary Rehab'
+    };
+    const mapped = specMapping[specialization] || specialization;
+    query.specialization = mapped;
   }
 
   if (minFee !== undefined || maxFee !== undefined) {

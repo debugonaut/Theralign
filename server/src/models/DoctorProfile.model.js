@@ -136,6 +136,10 @@ const doctorProfileSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    aiSummary: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

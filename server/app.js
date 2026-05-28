@@ -17,6 +17,7 @@ import paymentRoutes from './src/routes/payment.routes.js';
 import reviewRoutes from './src/routes/review.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
 import discoveryRoutes from './src/routes/discovery.routes.js';
+import aiRoutes from './src/routes/ai.routes.js';
 
 const app = express();
 
@@ -83,6 +84,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/discover', discoveryRoutes);
+app.use('/api/ai', aiRoutes);
 
 // ==========================================
 // 4. FALLBACK & ERROR HANDLERS

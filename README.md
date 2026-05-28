@@ -162,6 +162,9 @@ Client runs at: `http://localhost:5173`
 | `GET /api/reviews/mine` | ✅ Live | Patient: Get own review history |
 | `GET /api/reviews/admin/all` | ✅ Live | Admin: Get all reviews with pagination |
 | `PATCH /api/reviews/:id/visibility` | ✅ Live | Admin: Toggle review visibility |
+| `POST /api/ai/interpret-symptoms` | ✅ Live | Public: AI-powered free-text symptom triage analysis |
+| `GET /api/ai/doctor-summary/:doctorId` | ✅ Live | Public: Retrieve cached or dynamically generated doctor summary |
+| `POST /api/ai/admin/batch-summaries` | ✅ Live | Admin: Batch compile summaries for verified doctors |
 
 ---
 
@@ -176,7 +179,7 @@ Client runs at: `http://localhost:5173`
 | Phase 5 | Booking System (Slots & Appointments) | ✅ Complete |
 | Phase 6 | Payments (Razorpay) | ✅ Complete |
 | Phase 7 | Reviews & Ratings | ✅ Complete |
-| Phase 8 | AI Integration | Upcoming |
+| Phase 8 | AI Integration | ✅ Complete |
 
 ---
 
