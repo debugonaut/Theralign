@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, LogIn, HeartPulse } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { loginAPI } from '../../api/auth.api';
@@ -13,6 +13,7 @@ const DASHBOARD_ROUTES = {
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setCredentials } = useAuthStore();
 
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -33,7 +34,8 @@ const LoginPage = () => {
       const result = await loginAPI(formData);
       setCredentials(result.data.user, result.data.token);
       toast.success(`Welcome back, ${result.data.user.name.split(' ')[0]}!`);
-      navigate(DASHBOARD_ROUTES[result.data.user.role] || '/');
+      const from = location.state?.from || DASHBOARD_ROUTES[result.data.user.role] || '/';
+      navigate(from, { replace: true });
     } catch (err) {
       // Do NOT clear email on error — users shouldn't have to retype it
       setError(err.response?.data?.message || 'Login failed. Please try again.');

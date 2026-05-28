@@ -30,3 +30,14 @@ export const rejectDoctorAPI = async (profileId, rejectionReason) => {
   });
   return response.data;
 };
+
+/**
+ * Admin: Retrieve paginated list of all system appointments.
+ * @param {number} page
+ * @param {number} limit
+ */
+export const getAllAppointments = async (page = 1, limit = 10) => {
+  const response = await axiosInstance.get(`/appointments/admin/all?page=${page}&limit=${limit}`);
+  return response.data;
+};
+

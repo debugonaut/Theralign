@@ -11,9 +11,12 @@ import { errorResponse } from './src/utils/apiResponse.js';
 import authRoutes from './src/routes/auth.routes.js';
 import doctorRoutes from './src/routes/doctor.routes.js';
 import bookingRoutes from './src/routes/booking.routes.js';
+import availabilityRoutes from './src/routes/availability.routes.js';
+import appointmentRoutes from './src/routes/appointment.routes.js';
 import paymentRoutes from './src/routes/payment.routes.js';
 import reviewRoutes from './src/routes/review.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
+import discoveryRoutes from './src/routes/discovery.routes.js';
 
 const app = express();
 
@@ -74,9 +77,12 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/availability', availabilityRoutes);
+app.use('/api/appointments', appointmentRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/discover', discoveryRoutes);
 
 // ==========================================
 // 4. FALLBACK & ERROR HANDLERS

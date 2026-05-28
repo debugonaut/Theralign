@@ -61,3 +61,39 @@ This development log tracks the engineering decisions, implementations, and arch
 - **Ephemeral Upload Pipelines**: Because modern cloud hosts use transient filesystems that discard files on boot, storing files off-site in Cloudinary is a mandatory production requirement.
 - **diskStorage Staging & Unlinks**: Multer buffers files to local disk temporarily to avoid loading large binary streams into server RAM. Unlinking files in a guaranteed `finally` block prevents server crashes caused by memory or disk leaks.
 - **Actionable Rejection loops**: Enforcing a strict textual comment requirement on admin profile rejections guarantees doctors receive clear instructions on how to rectify discrepancies, establishing a self-healing onboarding loop.
+
+---
+
+## 🔍 Phase 4: Doctor Discovery, Search & Proximity Recommendations
+
+### What We Did
+1. **Discovery Service Layer**: Built `discovery.service.js` combining MongoDB `$near` queries, specialization filters, rating-based sorts, and paginated searches into a unified query builder.
+2. **Haversine Distance Calculator**: Programmed the Haversine formula to return real-time distances (e.g. `"2.3 km away"`) for proximity searches.
+3. **Two-Phase Name Search**: Integrated cross-collection search matching doctor names in the `User` schema before filtering profiles.
+4. **Discovery API Endpoints**: Configured controllers and routes for standard listings, location-based searches, text search, featured lists, and specializations with active counts.
+5. **Premium Patient Search UI**: Created a state-of-the-art search sidebar, geolocation proximity selectors, and infinite skeleton cards.
+6. **Dynamic Routing Filter State**: Bound filter states to URL search parameters (`useSearchParams`), enabling persistence, bookmarking, and native back/forward browser controls.
+
+### Why We Did It
+- **Geospatial Processing at Database Layer**: Distance filtering via MongoDB `$near` scales significantly better than loading and calculating distance arrays inside NodeJS.
+- **Haversine UX Enhancements**: Computing distance metrics natively bridges search metrics directly into a patient's proximity-driven discovery process.
+- **Fully Public Search Listings**: Shielding discoverability behind authentication locks would kill marketplace conversion rates.
+- **URL State Management**: Utilizing query parameters for filtering decouples listing state from React render loops, yielding shareable and persistent search outcomes.
+
+---
+
+## 📅 Phase 5: Availability Slots & Appointment Booking
+
+### What We Did
+1. **Scheduled Availability Slots Model**: Created the Mongoose `AvailabilitySlot` collection with local date/time strings (`"YYYY-MM-DD"`, `"HH:mm"`) avoiding timezone distortions, unique indices, and soft deactivation states (`isActive`).
+2. **Transaction-Safe Appointments Model**: Implemented `Appointment` locking schemas snapshotting doctor fees, platform commissions, and doctor earnings at scheduling time.
+3. **Atomic Slot Locking**: Built Mongoose `findOneAndUpdate` logic (`isBooked: false` filter) ensuring concurrent patient schedules are handled transactionally without double bookings.
+4. **Optimistic Scheduling Pipelines**: Configured doctor dashboard slot managers, smooth-scrolling `SlotPicker` calendars, patient notes overlays, and tabs-based history boards with immediate optimistic state updates.
+5. **Auditing Tables & Seeding**: Formed paginated admin metrics dashboards and on-demand database seed scripts.
+
+### Why We Did It
+- **UTC/IST Decoupling**: String-based dates block UTC offset bugs when coordinating India-focused medical clinic hours.
+- **Agreed Pricing Snapshots**: Snapshotting financial earnings guarantees price integrity even if physiotherapists adjust fees afterwards.
+- **No Real-time Locking Overhead**: MongoDB-native document atomicity avoids complex distributed locks or database transaction overhead.
+- **Optimistic State Updates**: Updating local React state instantly after completions/cancellations provides a zero-latency UX.
+

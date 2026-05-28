@@ -129,17 +129,30 @@ Client runs at: `http://localhost:5173`
 
 ---
 
-## API Endpoints (Phase 1 Stubs)
+## API Endpoints (Phase 1-5 Live Endpoints)
 
-| Route | Status |
-|-------|--------|
-| `GET /api/health` | ✅ Live |
-| `GET /api/auth/test` | ✅ Stub |
-| `GET /api/doctors/test` | ✅ Stub |
-| `GET /api/bookings/test` | ✅ Stub |
-| `GET /api/payments/test` | ✅ Stub |
-| `GET /api/reviews/test` | ✅ Stub |
-| `GET /api/admin/test` | ✅ Stub |
+| Route | Status | Description |
+|-------|--------|-------------|
+| `GET /api/health` | ✅ Live | Server Health Check |
+| `POST /api/auth/register` | ✅ Live | Register new User |
+| `POST /api/auth/login` | ✅ Live | Login User |
+| `PUT /api/doctors/profile/onboard` | ✅ Live | Doctor Onboarding & Documents Upload |
+| `GET /api/doctors/profile/me` | ✅ Live | Get Auth Doctor Profile |
+| `GET /api/discover` | ✅ Live | Paginated Discovery Listing |
+| `GET /api/discover/nearby` | ✅ Live | Geospatial Proximity Recommendations |
+| `GET /api/discover/search` | ✅ Live | Full-Text Doctor Search |
+| `GET /api/discover/:id` | ✅ Live | Doctor Public Profile |
+| `POST /api/availability/slots` | ✅ Live | Doctor: Create Availability Slot |
+| `GET /api/availability/slots/mine` | ✅ Live | Doctor: Get Own Slots |
+| `PUT /api/availability/slots/:slotId` | ✅ Live | Doctor: Update Slot |
+| `DELETE /api/availability/slots/:slotId` | ✅ Live | Doctor: Delete Slot |
+| `GET /api/availability/:doctorId/available` | ✅ Live | Public: Get Doctor Free Slots |
+| `POST /api/appointments/book` | ✅ Live | Patient: Book Appointment Slot |
+| `GET /api/appointments/mine` | ✅ Live | Patient: Get Own Bookings |
+| `GET /api/appointments/doctor/mine` | ✅ Live | Doctor: Get Patient Bookings |
+| `PATCH /api/appointments/:id/cancel` | ✅ Live | Patient/Doctor/Admin: Cancel Booking |
+| `PATCH /api/appointments/:id/complete` | ✅ Live | Doctor: Mark Booking Completed |
+| `GET /api/appointments/admin/all` | ✅ Live | Admin: Get All Bookings & Earnings |
 
 ---
 
@@ -148,12 +161,12 @@ Client runs at: `http://localhost:5173`
 | Phase | Scope | Status |
 |-------|-------|--------|
 | Phase 1 | Foundation & Scaffolding | ✅ Complete |
-| Phase 2 | Authentication & Authorization | 🔜 Next |
-| Phase 3 | Doctor Onboarding & Profiles | Upcoming |
-| Phase 4 | Doctor Discovery & Search | Upcoming |
-| Phase 5 | Booking System | Upcoming |
-| Phase 6 | Payments (Razorpay) | Upcoming |
-| Phase 7 | Admin Dashboard | Upcoming |
+| Phase 2 | Authentication & Authorization | ✅ Complete |
+| Phase 3 | Doctor Onboarding & Profiles | ✅ Complete |
+| Phase 4 | Doctor Discovery & Search | ✅ Complete |
+| Phase 5 | Booking System (Slots & Appointments) | ✅ Complete |
+| Phase 6 | Payments (Razorpay) | 🔜 Next |
+| Phase 7 | Reviews & Admin Dashboard Panels | Upcoming |
 | Phase 8 | AI Integration | Upcoming |
 
 ---

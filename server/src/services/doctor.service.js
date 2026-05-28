@@ -124,3 +124,18 @@ export const onboardDoctor = async (userId, profileData, files) => {
 export const getDoctorProfileByUserId = async (userId) => {
   return DoctorProfile.findOne({ user: userId }).populate('user');
 };
+
+/**
+ * Fetch the profile of a specific doctor by DoctorProfile ID.
+ * Throws a 404 error if not found.
+ *
+ * @param {string} id - ID of the DoctorProfile
+ * @returns {Promise<object>} DoctorProfile populated with user details
+ */
+export const getDoctorProfileById = async (id) => {
+  const profile = await DoctorProfile.findById(id).populate('user', 'name profileImage email phone');
+  if (!profile) {
+    throw new AppError('Doctor profile not found', 404);
+  }
+  return profile;
+};

@@ -121,6 +121,21 @@ const doctorProfileSchema = new Schema(
       default: 0,
       min: [0, 'Total reviews cannot be negative'],
     },
+
+    qualifications: {
+      type: [String],
+      default: [],
+    },
+
+    languages: {
+      type: [String],
+      default: [],
+    },
+
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
