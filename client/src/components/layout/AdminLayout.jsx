@@ -1,50 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, Menu, X, ShieldAlert, Users, 
   Calendar, DollarSign, Award, LogOut, ChevronRight
 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import useAuthStore from '../../store/authStore';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('theralign_user');
-    const token = localStorage.getItem('theralign_token');
-    if (storedUser && token) {
-      try {
-        const parsed = JSON.parse(storedUser);
-        if (parsed.role !== 'admin') {
-          // Reject non-admins
-          navigate('/login');
-        } else {
-          setUser(parsed);
-        }
-      } catch (e) {
-        navigate('/login');
-      }
-    } else {
-      navigate('/login');
-    }
-  }, [navigate]);
+  // Read user from Zustand — RoleRoute guarantees this is a non-null admin
+  const user = useAuthStore((state) => state.user);
+  const clearCredentials = useAuthStore((state) => state.clearCredentials);
 
   const handleLogout = () => {
-    localStorage.removeItem('theralign_token');
-    localStorage.removeItem('theralign_user');
-    window.dispatchEvent(new Event('storage'));
+    clearCredentials();
+    toast.success('Logged out successfully');
     navigate('/login');
   };
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   const adminNavigation = [
     { name: 'System Overview', href: '/admin/dashboard', icon: ShieldAlert },
@@ -89,10 +65,10 @@ const AdminLayout = () => {
         {/* Admin Card */}
         <div className="p-4 border-b border-slate-800 bg-slate-900/30 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center font-bold text-primary text-base border border-slate-700">
-            A
+            {user?.name?.[0]?.toUpperCase() || 'A'}
           </div>
           <div className="overflow-hidden">
-            <h4 className="text-sm font-semibold truncate text-slate-200">System Admin</h4>
+            <h4 className="text-sm font-semibold truncate text-slate-200">{user?.name || 'Admin'}</h4>
             <span className="text-xs text-primary font-medium">Control Center</span>
           </div>
         </div>
@@ -157,10 +133,10 @@ const AdminLayout = () => {
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-xs text-slate-500">Security Profile</p>
-              <p className="text-sm font-semibold text-slate-300">{user.email}</p>
+              <p className="text-sm font-semibold text-slate-300">{user?.email}</p>
             </div>
             <div className="w-8 h-8 rounded-full bg-slate-800 text-primary flex items-center justify-center font-bold text-sm border border-slate-700">
-              A
+              {user?.name?.[0]?.toUpperCase() || 'A'}
             </div>
           </div>
         </header>

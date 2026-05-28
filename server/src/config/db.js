@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import config from './env.js';
+import seedAdmin from './seedAdmin.js';
 
 // Setup connection event listeners
 mongoose.connection.on('connected', () => {
@@ -19,6 +20,9 @@ export const connectDB = async () => {
     console.log(`[INFO] Attempting to connect to MongoDB...`);
     const conn = await mongoose.connect(config.mongoUri);
     console.log(`[INFO] MongoDB Connected: ${conn.connection.host}`);
+
+    // Run idempotent seed — safe on every startup
+    await seedAdmin();
   } catch (error) {
     console.error(`[FATAL ERROR] MongoDB connection failed on initial startup:`, error);
     process.exit(1);
@@ -26,3 +30,4 @@ export const connectDB = async () => {
 };
 
 export default connectDB;
+

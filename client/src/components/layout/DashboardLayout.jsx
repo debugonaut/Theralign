@@ -1,44 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, Menu, X, LayoutDashboard, Calendar, 
   CreditCard, UserCircle, Clock, DollarSign, LogOut, ChevronRight
 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import useAuthStore from '../../store/authStore';
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('theralign_user');
-    const token = localStorage.getItem('theralign_token');
-    if (storedUser && token) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        navigate('/login');
-      }
-    } else {
-      navigate('/login');
-    }
-  }, [navigate]);
+  // Read user from Zustand — ProtectedRoute guarantees this is non-null
+  const user = useAuthStore((state) => state.user);
+  const clearCredentials = useAuthStore((state) => state.clearCredentials);
 
   const handleLogout = () => {
-    localStorage.removeItem('theralign_token');
-    localStorage.removeItem('theralign_user');
-    window.dispatchEvent(new Event('storage'));
+    clearCredentials();
+    toast.success('Logged out successfully');
     navigate('/login');
   };
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   // Navigation config based on role
   const patientNavigation = [

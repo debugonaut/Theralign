@@ -1,5 +1,10 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
+
+// Guards
+import ProtectedRoute from './ProtectedRoute';
+import RoleRoute from './RoleRoute';
 
 // Layouts
 import PublicLayout from '../components/layout/PublicLayout';
@@ -34,28 +39,71 @@ import AdminBookings from '../pages/admin/AdminBookings';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminRevenue from '../pages/admin/AdminRevenue';
 
+const DASHBOARD_ROUTES = {
+  patient: '/patient/dashboard',
+  doctor: '/doctor/dashboard',
+  admin: '/admin/dashboard',
+};
+
+/**
+ * AuthRedirect — Redirects already-authenticated users away from /login and /register.
+ * Prevents logged-in users from seeing the auth pages.
+ */
+const AuthRedirect = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+  if (isAuthenticated && user) {
+    return <Navigate to={DASHBOARD_ROUTES[user.role] || '/'} replace />;
+  }
+  return children;
+};
+
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Pages */}
+      {/* ─── Public Routes ──────────────────────────────────────────────── */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Redirect authenticated users away from auth pages */}
+        <Route
+          path="/login"
+          element={<AuthRedirect><LoginPage /></AuthRedirect>}
+        />
+        <Route
+          path="/register"
+          element={<AuthRedirect><RegisterPage /></AuthRedirect>}
+        />
+
         <Route path="/doctors" element={<DoctorListingPage />} />
         <Route path="/doctors/:id" element={<DoctorDetailPage />} />
       </Route>
 
-      {/* Patient Dashboard Pages (Role specific layout) */}
-      <Route element={<DashboardLayout />}>
+      {/* ─── Patient Routes ─────────────────────────────────────────────── */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={['patient']}>
+              <DashboardLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/patient/appointments" element={<PatientAppointments />} />
         <Route path="/patient/payments" element={<PatientPayments />} />
         <Route path="/patient/profile" element={<PatientProfile />} />
       </Route>
 
-      {/* Doctor Dashboard Pages (Role specific layout) */}
-      <Route element={<DashboardLayout />}>
+      {/* ─── Doctor Routes ──────────────────────────────────────────────── */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={['doctor']}>
+              <DashboardLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
         <Route path="/doctor/appointments" element={<DoctorAppointments />} />
         <Route path="/doctor/availability" element={<DoctorAvailability />} />
@@ -63,8 +111,16 @@ const AppRoutes = () => {
         <Route path="/doctor/earnings" element={<DoctorEarnings />} />
       </Route>
 
-      {/* Admin Panel Pages (Distinct administrative layout) */}
-      <Route element={<AdminLayout />}>
+      {/* ─── Admin Routes ───────────────────────────────────────────────── */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={['admin']}>
+              <AdminLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      >
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/doctors" element={<AdminDoctorVerification />} />
         <Route path="/admin/bookings" element={<AdminBookings />} />
@@ -72,7 +128,7 @@ const AppRoutes = () => {
         <Route path="/admin/revenue" element={<AdminRevenue />} />
       </Route>
 
-      {/* Catch-all 404 Route */}
+      {/* ─── Catch-All 404 ──────────────────────────────────────────────── */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
