@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, Menu, X, ShieldAlert, Users, 
-  Calendar, DollarSign, Award, LogOut, ChevronRight
+  Calendar, DollarSign, Award, LogOut, ChevronRight, Star
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
@@ -28,6 +28,7 @@ const AdminLayout = () => {
     { name: 'All Bookings', href: '/admin/bookings', icon: Calendar },
     { name: 'User Directory', href: '/admin/users', icon: Users },
     { name: 'Revenue Reports', href: '/admin/revenue', icon: DollarSign },
+    { name: 'Reviews Moderation', href: '/admin/reviews', icon: Star },
   ];
 
   return (

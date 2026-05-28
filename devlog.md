@@ -116,3 +116,28 @@ This development log tracks the engineering decisions, implementations, and arch
 - **Dual Console Diagnoses**: Splitting operational metrics from financial streams gives administrators precise visibility into the business performance and payout splits.
 - **Optimized Payout Visibility**: Exposing doctor earnings directly establishes strong marketplace trust and transparent financial coordination.
 
+---
+
+## ⭐ Phase 7: Reviews & Ratings System
+
+### What We Did
+1. **`Review` Mongoose Model**: Implemented a dedicated `Review` collection with schema-level `unique: true` on the `appointment` field (one review per appointment), enforced `rating` min/max (1–5), `comment` minlength (10 chars), and an `isVisible` soft-hide flag for moderation without data loss.
+2. **Post-Save Hook — Denormalized Rating**: Wired a `post('save')` hook that triggers after every review is created, aggregating visible reviews via `$group` to recalculate and push `averageRating` and `totalReviews` directly onto the `DoctorProfile` document. This keeps the discovery and listing APIs fast — no aggregation join on read.
+3. **Four-Gate Eligibility System**: The `POST /api/reviews` endpoint enforces four sequential gates before accepting a review: (1) ownership check, (2) appointment must be `completed`, (3) `paymentStatus` must be `paid`, (4) `reviewSubmitted` flag must be `false`. The flag is set to `true` atomically after creation to prevent race conditions; the database unique constraint is the safety net.
+4. **Review CRUD Endpoints**: Built `GET /api/reviews/doctor/:doctorId` (public, visible-only), `GET /api/reviews/mine` (patient history with doctor + appointment populations), and `GET /api/reviews/admin/all` (paginated, all reviews including hidden).
+5. **Admin Visibility Toggle**: Implemented `PATCH /api/reviews/:id/visibility` for soft-hiding reviews. The post-save hook cannot reliably handle the toggle direction, so the controller explicitly re-runs the aggregation pipeline after the save and resets `averageRating` to `0` when all reviews are hidden — edge case handled.
+6. **`DoctorReviewsSection` Component**: Built a public reviews section for the doctor profile page. Uses the pre-computed `averageRating` and `totalReviews` from the denormalized `DoctorProfile` object (no re-computation). Shows max 5 reviews by default with an expand button.
+7. **Inline `ReviewForm` Component**: Built an inline review submission form directly on the `PatientAppointmentCard`. The form uses interactive hover-preview star selectors (using Unicode stars, no external library), character-counted textarea, client-side validation, and calls `onSuccess()` on completion to update card state in-place — no full-list refetch.
+8. **Three-State Appointment Card**: Extended `PatientAppointmentCard` with a review state machine: State 1 shows the "Leave a Review" prompt (eligibility-gated), State 2 expands the inline `ReviewForm`, State 3 shows a "✓ Review submitted" confirmation. Local state only — no network refetch.
+9. **Patient & Doctor Review Pages**: Created `/patient/reviews` (review history with 200-char truncate + "read more" toggle) and `/doctor/reviews` (read-only reviews with rating summary card and platform guidelines note).
+10. **Admin Reviews Moderation Page**: Created `/admin/reviews` with a full-table view (patient, doctor, rating, comment truncated to 80 chars, visibility badge, date, toggle action). Toggle updates the specific row in local state without reloading the table.
+11. **Rating on Doctor Cards**: Fixed `DoctorCard` and `DoctorDetailPage` to use the correct `DoctorProfile` field names `averageRating` and `totalReviews` (not stale `rating`/`reviewCount` references from earlier phases).
+12. **Navigation Integration**: Added "⭐ My Reviews" to patient and doctor sidebar navigation (`DashboardLayout`), and "⭐ Reviews Moderation" to the admin sidebar (`AdminLayout`).
+
+### Why We Did It
+- **Denormalized Rating is the Right Tradeoff**: The marketplace has far more reads (listing page loads) than writes (new reviews). Storing `averageRating` on `DoctorProfile` eliminates a MongoDB aggregation join on every search query — writes are slightly more expensive but reads (the dominant operation) are just a `find`. This is the textbook read-heavy denormalization pattern.
+- **Defense in Depth on Duplicate Reviews**: The `reviewSubmitted` flag on the `Appointment` document gives a clean, user-readable error. The database `unique` constraint on `appointment` in the `Review` collection is the silent safety net if the flag is somehow bypassed (race condition, direct API call). Both layers must exist.
+- **Soft-Hide vs Hard Delete**: The `isVisible` flag preserves audit trails. Deleted reviews cannot be disputed, recovered, or investigated. Hidden reviews exist in the database with `isVisible: false`, visible to admins for review, excluded from public views and rating calculations.
+- **Inline Form vs Navigation**: Surfacing the review form directly on the appointment card (not a new page) is the highest-conversion placement — the patient just completed an appointment and the prompt appears immediately in context. Navigation away would reduce submission rates and add friction.
+- **Star Rating Without Libraries**: Unicode stars (★/☆) render identically across all platforms, add zero bundle weight, and the hover/click interaction is 10 lines of JSX. An external star library for an MVP is unnecessary complexity.
+

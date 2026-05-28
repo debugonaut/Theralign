@@ -1,10 +1,26 @@
-import React from 'react';
-import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck, Star } from 'lucide-react';
+import ReviewForm from '../reviews/ReviewForm';
 
 const PatientAppointmentCard = ({ appointment, onCancel }) => {
   const doctorName = appointment.doctor?.user?.name || 'Physiotherapist';
   const specialization = appointment.doctor?.specialization?.join(', ') || 'General Physiotherapy';
   const profileImage = appointment.doctor?.user?.profileImage || 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+
+  // ─── Review state ────────────────────────────────────────────────────────
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewDone, setReviewDone] = useState(appointment.reviewSubmitted);
+
+  const handleReviewSuccess = () => {
+    setShowReviewForm(false);
+    setReviewDone(true);
+  };
+
+  // Eligibility for review prompt
+  const canReview =
+    appointment.status === 'completed' &&
+    appointment.paymentStatus === 'paid' &&
+    !reviewDone;
 
   const formatHumanDate = (dateStr) => {
     try {
@@ -118,7 +134,7 @@ const PatientAppointmentCard = ({ appointment, onCancel }) => {
         </div>
       )}
 
-      {/* Action button */}
+      {/* Action button — Cancel */}
       {canCancel && (
         <button
           type="button"
@@ -127,6 +143,39 @@ const PatientAppointmentCard = ({ appointment, onCancel }) => {
         >
           Cancel Appointment
         </button>
+      )}
+
+      {/* ─── Review Section ────────────────────────────────────────────── */}
+
+      {/* State 3: Review already submitted */}
+      {reviewDone && (
+        <div className="flex items-center gap-2 p-2.5 bg-emerald-50/70 border border-emerald-100 rounded-xl">
+          <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
+          <p className="text-[11px] text-emerald-700 font-bold">
+            ✓ Review submitted. Thank you!
+          </p>
+        </div>
+      )}
+
+      {/* State 1: Eligible but no review yet */}
+      {canReview && !showReviewForm && (
+        <button
+          type="button"
+          onClick={() => setShowReviewForm(true)}
+          className="w-full bg-white hover:bg-amber-50 border border-amber-200 hover:border-amber-300 text-amber-600 rounded-xl py-2 text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
+        >
+          <Star size={13} />
+          Leave a Review
+        </button>
+      )}
+
+      {/* State 2: Review form open */}
+      {canReview && showReviewForm && (
+        <ReviewForm
+          appointmentId={appointment._id}
+          doctorName={doctorName}
+          onSuccess={handleReviewSuccess}
+        />
       )}
     </div>
   );

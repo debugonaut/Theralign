@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, Menu, X, LayoutDashboard, Calendar, 
-  CreditCard, UserCircle, Clock, DollarSign, LogOut, ChevronRight
+  CreditCard, UserCircle, Clock, DollarSign, LogOut, ChevronRight, Star
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
@@ -27,6 +27,7 @@ const DashboardLayout = () => {
     { name: 'Dashboard', href: '/patient/dashboard', icon: LayoutDashboard },
     { name: 'Appointments', href: '/patient/appointments', icon: Calendar },
     { name: 'Payments', href: '/patient/payments', icon: CreditCard },
+    { name: 'My Reviews', href: '/patient/reviews', icon: Star },
     { name: 'My Profile', href: '/patient/profile', icon: UserCircle },
   ];
 
@@ -34,6 +35,7 @@ const DashboardLayout = () => {
     { name: 'Overview', href: '/doctor/dashboard', icon: LayoutDashboard },
     { name: 'Appointments', href: '/doctor/appointments', icon: Calendar },
     { name: 'My Availability', href: '/doctor/availability', icon: Clock },
+    { name: 'My Reviews', href: '/doctor/reviews', icon: Star },
     { name: 'Earnings', href: '/doctor/earnings', icon: DollarSign },
     { name: 'Edit Profile', href: '/doctor/profile', icon: UserCircle },
   ];

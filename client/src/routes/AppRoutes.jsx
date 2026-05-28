@@ -24,6 +24,7 @@ import PatientDashboard from '../pages/patient/PatientDashboard';
 import PatientAppointments from '../pages/patient/PatientAppointments';
 import PatientPayments from '../pages/patient/PatientPayments';
 import PatientProfile from '../pages/patient/PatientProfile';
+import PatientMyReviews from '../pages/patient/MyReviews';
 
 // Doctor Pages
 import DoctorDashboard from '../pages/doctor/DoctorDashboard';
@@ -31,6 +32,7 @@ import DoctorAppointments from '../pages/doctor/DoctorAppointments';
 import DoctorAvailability from '../pages/doctor/DoctorAvailability';
 import DoctorProfileEditor from '../pages/doctor/DoctorProfileEditor';
 import DoctorEarnings from '../pages/doctor/DoctorEarnings';
+import DoctorMyReviews from '../pages/doctor/MyReviews';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -38,6 +40,7 @@ import AdminDoctorVerification from '../pages/admin/AdminDoctorVerification';
 import AdminBookings from '../pages/admin/AdminBookings';
 import AdminUsers from '../pages/admin/AdminUsers';
 import AdminRevenue from '../pages/admin/AdminRevenue';
+import AdminReviews from '../pages/admin/AdminReviews';
 
 const DASHBOARD_ROUTES = {
   patient: '/patient/dashboard',
@@ -92,6 +95,7 @@ const AppRoutes = () => {
         <Route path="/patient/appointments" element={<PatientAppointments />} />
         <Route path="/patient/payments" element={<PatientPayments />} />
         <Route path="/patient/profile" element={<PatientProfile />} />
+        <Route path="/patient/reviews" element={<PatientMyReviews />} />
       </Route>
 
       {/* ─── Doctor Routes ──────────────────────────────────────────────── */}
@@ -109,6 +113,7 @@ const AppRoutes = () => {
         <Route path="/doctor/availability" element={<DoctorAvailability />} />
         <Route path="/doctor/profile" element={<DoctorProfileEditor />} />
         <Route path="/doctor/earnings" element={<DoctorEarnings />} />
+        <Route path="/doctor/reviews" element={<DoctorMyReviews />} />
       </Route>
 
       {/* ─── Admin Routes ───────────────────────────────────────────────── */}
@@ -126,6 +131,7 @@ const AppRoutes = () => {
         <Route path="/admin/bookings" element={<AdminBookings />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/revenue" element={<AdminRevenue />} />
+        <Route path="/admin/reviews" element={<AdminReviews />} />
       </Route>
 
       {/* ─── Catch-All 404 ──────────────────────────────────────────────── */}

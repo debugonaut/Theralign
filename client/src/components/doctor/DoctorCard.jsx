@@ -50,7 +50,7 @@ const DoctorCard = ({ doctor }) => {
           </div>
           
           <div className="mt-1">
-            <StarRating rating={doctor.rating} count={doctor.reviewCount} />
+            <StarRating rating={doctor.averageRating || 0} count={doctor.totalReviews || 0} />
           </div>
 
           <p className="text-xs text-primary font-bold mt-1.5 uppercase tracking-wide">

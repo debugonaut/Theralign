@@ -24,6 +24,7 @@ import StarRating from '../../components/common/StarRating';
 import VerifiedBadge from '../../components/common/VerifiedBadge';
 import Button from '../../components/common/Button';
 import SlotPicker from '../../components/booking/SlotPicker';
+import DoctorReviewsSection from '../../components/reviews/DoctorReviewsSection';
 
 const DoctorDetailPage = () => {
   const { id } = useParams();
@@ -164,7 +165,7 @@ const DoctorDetailPage = () => {
 
           {/* Star Rating details */}
           <div className="flex justify-center md:justify-start">
-            <StarRating rating={profile.rating} count={profile.reviewCount} size="md" />
+            <StarRating rating={profile.averageRating || 0} count={profile.totalReviews || 0} size="md" />
           </div>
 
           {/* Specialization List */}
@@ -195,7 +196,7 @@ const DoctorDetailPage = () => {
 
             <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-slate-50 text-slate-600 border border-slate-200/50 px-3 py-1.5 rounded-xl">
               <MessageSquare size={14} className="text-slate-400" />
-              {profile.reviewCount} Total Reviews
+              {profile.totalReviews || 0} Total Reviews
             </span>
           </div>
         </div>
@@ -307,26 +308,12 @@ const DoctorDetailPage = () => {
             </div>
           )}
 
-          {/* Patient Reviews section (Phase 7 placeholder) */}
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm text-left">
-            <h2 className="text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-50 flex items-center gap-2">
-              <MessageSquare size={20} className="text-primary" />
-              Patient Experiences
-            </h2>
-            {profile.reviewCount === 0 ? (
-              <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-8 text-center flex flex-col items-center gap-2">
-                <span className="text-3xl">⭐</span>
-                <p className="text-sm font-bold text-slate-700">No Patient Reviews Yet</p>
-                <p className="text-xs text-slate-400 max-w-sm">
-                  Treatments are starting soon. Be the first to share your experience once appointments complete!
-                </p>
-              </div>
-            ) : (
-              <div className="text-xs text-slate-500 bg-slate-50/50 p-6 rounded-2xl text-center border border-dashed border-slate-200 font-medium">
-                Reviews will appear dynamically here after clinical bookings are completed.
-              </div>
-            )}
-          </div>
+          {/* Patient Reviews Section */}
+          <DoctorReviewsSection
+            doctorId={profile._id}
+            averageRating={profile.averageRating || 0}
+            totalReviews={profile.totalReviews || 0}
+          />
 
         </div>
 

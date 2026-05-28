@@ -129,7 +129,7 @@ Client runs at: `http://localhost:5173`
 
 ---
 
-## API Endpoints (Phase 1-6 Live Endpoints)
+## API Endpoints (Phases 1–7 Live Endpoints)
 
 | Route | Status | Description |
 |-------|--------|-------------|
@@ -157,6 +157,11 @@ Client runs at: `http://localhost:5173`
 | `POST /api/payments/verify` | ✅ Live | Patient: Cryptographically verify signature |
 | `GET /api/payments/mine` | ✅ Live | Patient: Get payment history receipts |
 | `GET /api/payments/admin/all` | ✅ Live | Admin: Get all paid payments & revenue metrics |
+| `POST /api/reviews` | ✅ Live | Patient: Submit a review for a completed appointment |
+| `GET /api/reviews/doctor/:doctorId` | ✅ Live | Public: Get visible reviews for a doctor |
+| `GET /api/reviews/mine` | ✅ Live | Patient: Get own review history |
+| `GET /api/reviews/admin/all` | ✅ Live | Admin: Get all reviews with pagination |
+| `PATCH /api/reviews/:id/visibility` | ✅ Live | Admin: Toggle review visibility |
 
 ---
 
@@ -170,7 +175,7 @@ Client runs at: `http://localhost:5173`
 | Phase 4 | Doctor Discovery & Search | ✅ Complete |
 | Phase 5 | Booking System (Slots & Appointments) | ✅ Complete |
 | Phase 6 | Payments (Razorpay) | ✅ Complete |
-| Phase 7 | Reviews & Admin Dashboard Panels | 🔜 Next |
+| Phase 7 | Reviews & Ratings | ✅ Complete |
 | Phase 8 | AI Integration | Upcoming |
 
 ---
