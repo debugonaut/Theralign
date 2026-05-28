@@ -77,6 +77,19 @@ const PatientAppointmentCard = ({ appointment, onCancel }) => {
               <IndianRupee size={13} className="text-slate-400" />
               ₹{appointment.consultationFee}
             </p>
+            {appointment.status === 'cancelled' && appointment.paymentStatus === 'paid' ? (
+              <span className="text-blue-500 text-[10px] font-extrabold flex items-center gap-1 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full w-max uppercase tracking-wider">
+                ↩ Refund eligible
+              </span>
+            ) : appointment.paymentStatus === 'paid' ? (
+              <span className="text-emerald-600 text-[10px] font-extrabold flex items-center gap-1 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full w-max uppercase tracking-wider">
+                ✓ Payment confirmed
+              </span>
+            ) : (
+              <span className="text-amber-600 text-[10px] font-extrabold flex items-center gap-1 bg-amber-50 border border-amber-100 px-2.5 py-0.5 rounded-full w-max uppercase tracking-wider">
+                ⏳ Payment pending
+              </span>
+            )}
           </div>
         </div>
       </div>

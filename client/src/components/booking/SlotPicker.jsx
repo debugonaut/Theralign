@@ -5,10 +5,12 @@ import { Calendar, Clock, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { getDoctorAvailability, bookAppointment } from '../../api/appointment.api';
 import useAuthStore from '../../store/authStore';
 import BookingConfirmationModal from './BookingConfirmationModal';
+import { useRazorpay } from '../../hooks/useRazorpay';
 
 const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
+  const { initiatePayment } = useRazorpay();
 
   const [availabilityByDate, setAvailabilityByDate] = useState([]); // [{ date, slots: [] }]
   const [selectedDate, setSelectedDate] = useState(null);
@@ -85,13 +87,25 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
         patientNotes,
       });
 
-      if (res.success) {
-        setShowModal(false);
-        toast.success('Appointment booked successfully!');
-        // Deliberate 1.5s delay so the toast is clearly visible to the patient
-        setTimeout(() => {
-          navigate('/patient/appointments');
-        }, 1500);
+      if (res.success && res.data) {
+        const appointmentId = res.data._id;
+
+        // Immediately trigger the secure online payment flow
+        await initiatePayment({
+          appointmentId,
+          onSuccess: () => {
+            setShowModal(false);
+            setTimeout(() => {
+              navigate('/patient/appointments');
+            }, 1500);
+          },
+          onFailure: () => {
+            setShowModal(false);
+            setTimeout(() => {
+              navigate('/patient/appointments');
+            }, 1500);
+          },
+        });
       }
     } catch (err) {
       console.error(err);
@@ -99,7 +113,6 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       
       if (err.response?.status === 409) {
         toast.error('This slot was just booked by another patient. Please select another slot.');
-        // Refresh availability list to sync fresh DB states
         await fetchAvailability();
       } else {
         toast.error(err.response?.data?.message || 'Booking transaction failed. Please try again.');

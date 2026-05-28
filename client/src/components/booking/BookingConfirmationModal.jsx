@@ -111,7 +111,7 @@ const BookingConfirmationModal = ({
           <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-xl flex items-start gap-2">
             <AlertCircle className="text-primary mt-0.5 shrink-0" size={14} />
             <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
-              Payment will be collected at the time of your clinic visit. You can reschedule or cancel this booking without any penalty up to 24 hours prior.
+              Secure online payment via Razorpay. You will be redirected to complete payment. You can reschedule or cancel this booking without any penalty up to 24 hours prior.
             </p>
           </div>
         </div>
@@ -133,10 +133,10 @@ const BookingConfirmationModal = ({
             {loading ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Booking Slot...
+                Processing Payment...
               </>
             ) : (
-              'Confirm Booking'
+              'Confirm & Pay'
             )}
           </button>
         </div>

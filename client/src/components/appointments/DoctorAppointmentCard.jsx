@@ -79,14 +79,23 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel }) => {
               <Clock size={13} className="text-slate-400" />
               {appointment.startTime} – {appointment.endTime}
             </p>
-            <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-2">
               <span className="flex items-center gap-1.5">
                 <IndianRupee size={13} className="text-slate-400" />
                 ₹{appointment.consultationFee}
               </span>
-              <span className="text-[10px] text-slate-400 font-bold bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
-                Earnings: ₹{appointment.doctorEarnings} (Comm: ₹{appointment.platformCommission})
-              </span>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className={`text-[9px] px-2 py-0.5 font-extrabold uppercase rounded-full border ${
+                  appointment.paymentStatus === 'paid'
+                    ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                    : 'bg-amber-50 text-amber-600 border-amber-100'
+                }`}>
+                  {appointment.paymentStatus === 'paid' ? 'Paid' : 'Unpaid'}
+                </span>
+                <span className="text-[10px] text-slate-400 font-bold bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
+                  Earnings: ₹{appointment.doctorEarnings}
+                </span>
+              </div>
             </div>
           </div>
         </div>

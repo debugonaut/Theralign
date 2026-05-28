@@ -97,3 +97,22 @@ This development log tracks the engineering decisions, implementations, and arch
 - **No Real-time Locking Overhead**: MongoDB-native document atomicity avoids complex distributed locks or database transaction overhead.
 - **Optimistic State Updates**: Updating local React state instantly after completions/cancellations provides a zero-latency UX.
 
+---
+
+## 💳 Phase 6: Razorpay Payment Integration
+
+### What We Did
+1. **Dedicated Payment Ledger Model**: Implemented the `Payment` schema separately from Appointments to keep financial ledgers clean, capturing Razorpay identifiers, transaction currency, rupees amounts, and commissions.
+2. **Offline-Resilient Gateway Configuration**: Designed an offline-robust Mock Razorpay instance on the server to prevent package load crashes, ensuring zero dependencies on active networks in offline container environments.
+3. **Cryptographic Validation Pipelines**: Built timing-safe, server-side signature verification comparing hashes calculated from Order and Payment identifiers with active secrets via HMAC-SHA256.
+4. **Interactive useRazorpay Hook**: Developed a reusable React custom hook orchestrating script setups, live checkouts, and sandbox simulations utilizing browser-native Web Crypto APIs.
+5. **Detailed Financial Dashboards**: Created a paginated `PaymentsTable` for administrator consoles, alongside dynamic metric counters detailing Total Revenue, Platform Earned, and Doctor Payouts.
+6. **Card Status Badges**: Added visual indicators detailing `'Payment confirmed'` and `'Payment pending'` tags across patient slots and physician diagnostics cards.
+7. **Diagnostics Seeding**: Upgraded database seeding arrays to capture mock payment registries alongside completed consults.
+
+### Why We Did It
+- **Separation of Concerns**: Storing payment tracking outside the appointment schema preserves transaction history integrity and ensures financial record audits do not pollute booking logic.
+- **Web Crypto Hashing Compliance**: Using the native Web Crypto API allows offline verification flows to compute exact cryptographic signatures, satisfying server checks without third-party libraries.
+- **Dual Console Diagnoses**: Splitting operational metrics from financial streams gives administrators precise visibility into the business performance and payout splits.
+- **Optimized Payout Visibility**: Exposing doctor earnings directly establishes strong marketplace trust and transparent financial coordination.
+

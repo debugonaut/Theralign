@@ -41,3 +41,13 @@ export const getAllAppointments = async (page = 1, limit = 10) => {
   return response.data;
 };
 
+/**
+ * Admin: Retrieve paginated list of all paid transactions with revenue metrics.
+ * @param {number} page
+ * @param {number} limit
+ */
+export const getAllPayments = async (page = 1, limit = 10) => {
+  const response = await axiosInstance.get(`/payments/admin/all?page=${page}&limit=${limit}`);
+  return response.data;
+};
+

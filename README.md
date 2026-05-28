@@ -129,7 +129,7 @@ Client runs at: `http://localhost:5173`
 
 ---
 
-## API Endpoints (Phase 1-5 Live Endpoints)
+## API Endpoints (Phase 1-6 Live Endpoints)
 
 | Route | Status | Description |
 |-------|--------|-------------|
@@ -153,6 +153,10 @@ Client runs at: `http://localhost:5173`
 | `PATCH /api/appointments/:id/cancel` | ✅ Live | Patient/Doctor/Admin: Cancel Booking |
 | `PATCH /api/appointments/:id/complete` | ✅ Live | Doctor: Mark Booking Completed |
 | `GET /api/appointments/admin/all` | ✅ Live | Admin: Get All Bookings & Earnings |
+| `POST /api/payments/create-order` | ✅ Live | Patient: Initiate payment & create Razorpay order |
+| `POST /api/payments/verify` | ✅ Live | Patient: Cryptographically verify signature |
+| `GET /api/payments/mine` | ✅ Live | Patient: Get payment history receipts |
+| `GET /api/payments/admin/all` | ✅ Live | Admin: Get all paid payments & revenue metrics |
 
 ---
 
@@ -165,8 +169,8 @@ Client runs at: `http://localhost:5173`
 | Phase 3 | Doctor Onboarding & Profiles | ✅ Complete |
 | Phase 4 | Doctor Discovery & Search | ✅ Complete |
 | Phase 5 | Booking System (Slots & Appointments) | ✅ Complete |
-| Phase 6 | Payments (Razorpay) | 🔜 Next |
-| Phase 7 | Reviews & Admin Dashboard Panels | Upcoming |
+| Phase 6 | Payments (Razorpay) | ✅ Complete |
+| Phase 7 | Reviews & Admin Dashboard Panels | 🔜 Next |
 | Phase 8 | AI Integration | Upcoming |
 
 ---
