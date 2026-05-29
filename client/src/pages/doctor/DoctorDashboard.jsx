@@ -18,6 +18,7 @@ const DoctorDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    document.title = 'Doctor Dashboard — PhysioConnect';
     const fetchData = async () => {
       try {
         const [profileRes, apptRes, slotsRes] = await Promise.all([

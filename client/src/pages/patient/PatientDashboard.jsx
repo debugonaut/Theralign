@@ -11,6 +11,7 @@ const PatientDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = 'My Dashboard — PhysioConnect';
     const fetchData = async () => {
       try {
         const res = await getMyAppointments();

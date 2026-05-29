@@ -55,6 +55,7 @@ const DoctorProfileEditor = () => {
 
   // Fetch existing profile if any
   useEffect(() => {
+    document.title = 'Complete Profile — PhysioConnect';
     const fetchProfile = async () => {
       try {
         const res = await getDoctorProfileAPI();

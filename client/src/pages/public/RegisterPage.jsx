@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, UserPlus, HeartPulse, Stethoscope, User } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -28,6 +28,10 @@ const getPasswordStrength = (password) => {
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { setCredentials } = useAuthStore();
+
+  useEffect(() => {
+    document.title = 'Create Account — PhysioConnect';
+  }, []);
 
   const [formData, setFormData] = useState({
     name: '',

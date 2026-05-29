@@ -1,41 +1,209 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
+/* ============================================================
+   SWISS MINIMALIST DESIGN SYSTEM — GLOBAL STYLESHEET
+   D1.2: Pattern utilities, body defaults, micro-interactions
+   ============================================================ */
 
-  html {
-    font-family: 'Inter', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    @apply bg-surface text-secondary;
-    margin: 0;
-    padding: 0;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bold text-secondary;
-  }
-
-  a {
-    @apply transition-colors duration-200;
-  }
-
-  input, textarea, select {
-    @apply font-sans;
-  }
+/* ─── Box Model Reset ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@layer utilities {
-  .border-3 {
-    border-width: 3px;
-  }
+/* ─── HTML & Body Defaults ────────────────────────────────── */
+html {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: #0F0F0F;
+  background-color: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  /* Noise texture overlay — applied via body::before, near-invisible.
+     This transforms cold digital white into warm, paper-like surfaces.
+     The secret ingredient that prevents the design from feeling clinical. */
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Paper Grain Noise Texture — MANDATORY
+   - Fixed position so it covers the entire viewport at all times
+   - z-index 9999 ensures it sits above all content
+   - pointer-events: none is CRITICAL — without it, clicks are intercepted
+   - opacity 0.015 — any higher becomes distracting
+   DO NOT apply this pattern to black or red surfaces */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* ─── Texture Pattern Utilities ───────────────────────────── */
+/* STACKING RULE: These patterns are NEVER applied to:
+   - Black backgrounds (#0F0F0F)
+   - Red accent backgrounds (#FF3000)
+   - Teal accent elements (#0D7377)
+   - The same surface as another pattern
+   If two patterns appear on the same element, remove one. */
+
+/* Grid Pattern — hero background, how-it-works section */
+.swiss-grid-pattern {
+  background-image:
+    linear-gradient(rgba(15, 15, 15, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 15, 15, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Dot Matrix — section sidebars, specialization card backgrounds */
+.swiss-dot-matrix {
+  background-image: radial-gradient(
+    circle,
+    rgba(15, 15, 15, 0.04) 1.5px,
+    transparent 1.5px
+  );
+  background-size: 16px 16px;
+}
+
+/* Diagonal Lines — accent areas, onboarding card */
+.swiss-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(15, 15, 15, 0.02) 0px,
+    rgba(15, 15, 15, 0.02) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+
+/* ─── Navigation Slide Micro-Interaction ──────────────────── */
+/* Swiss nav link: text slides up, red replacement slides in.
+   All at exactly 150ms — snappy, mechanical, not a fade. */
+.swiss-nav-link {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.swiss-nav-link .nav-text-default {
+  display: block;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.swiss-nav-link .nav-text-hover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: #FF3000;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.swiss-nav-link:hover .nav-text-default {
+  transform: translateY(-100%);
+}
+
+.swiss-nav-link:hover .nav-text-hover {
+  transform: translateY(-100%);
+}
+
+/* ─── Focus Ring System ───────────────────────────────────── */
+/* Global focus ring — red, consistent across all interactive elements.
+   Red on white exceeds WCAG AA contrast requirements and is already
+   in the system as a functional signal color. */
+:focus-visible {
+  outline: 2px solid #FF3000;
+  outline-offset: 2px;
+}
+
+/* Remove default focus for form elements with custom focus states */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+/* ─── Section Header Pattern ──────────────────────────────── */
+/* Applied to the SectionHeader component — the inviolable page section pattern.
+   This class is a fallback; prefer the <SectionHeader> React component. */
+.swiss-section-header {
+  border-bottom: 4px solid #0F0F0F;
+  padding-bottom: 16px;
+  margin-bottom: 48px;
+}
+
+/* ─── Typography Utility Classes ──────────────────────────── */
+/* Uppercase label pattern — labels, section prefixes, nav items, table headers */
+.swiss-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Section number prefix — red, small, uppercase (01. 02. 03.) */
+.swiss-section-number {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #FF3000;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Monospace number rendering for financial and tabular data */
+.swiss-numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* ─── Table Reset ─────────────────────────────────────────── */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* ─── Scrollbar Styling ───────────────────────────────────── */
+/* Minimal scrollbar — consistent with the clean aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F2F2F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #A3A3A3;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
+/* ─── Text Selection Color ────────────────────────────────── */
+::selection {
+  background-color: #0F0F0F;
+  color: #FFFFFF;
+}
+
+/* ─── Root Layout Reset ───────────────────────────────────── */
+#root {
+  width: 100%;
+  min-height: 100vh;
 }

@@ -87,6 +87,12 @@ const DoctorDetailPage = () => {
     fetchProfile();
   }, [id]);
 
+  useEffect(() => {
+    if (profile) {
+      document.title = `Dr. ${profile.user?.name || 'Physiotherapist'} — PhysioConnect`;
+    }
+  }, [profile]);
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 animate-pulse space-y-8 select-none">

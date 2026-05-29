@@ -50,6 +50,7 @@ const AdminDashboard = () => {
   }, [revenuePeriod, topDoctorMetric]);
 
   useEffect(() => {
+    document.title = 'Admin Panel — PhysioConnect';
     loadDashboard();
   }, []);
 

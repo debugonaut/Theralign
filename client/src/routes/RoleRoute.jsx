@@ -33,9 +33,7 @@ const RoleRoute = ({ children, allowedRoles }) => {
   }
 
   if (!allowedRoles.includes(user?.role)) {
-    // Redirect to the user's correct dashboard rather than showing an error
-    const fallback = DASHBOARD_ROUTES[user?.role] || '/login';
-    return <Navigate to={fallback} replace />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return children;

@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
@@ -14,6 +14,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
  */
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuthStore();
+  const location = useLocation();
 
   // Prevent redirect flash while auth is being initialized from localStorage
   if (isLoading) {
@@ -21,9 +22,8 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // 'replace' prevents the protected page from staying in browser history —
-    // the back button will not return to it after redirect.
-    return <Navigate to="/login" replace />;
+    // Save the intended destination so user lands back there after login
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
   return children;

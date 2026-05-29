@@ -6,6 +6,21 @@ Theralign connects patients with verified physiotherapy professionals. Patients 
 
 ---
 
+## Live Demo
+- **Frontend URL**: [https://physioconnect.vercel.app](https://physioconnect.vercel.app)
+- **API URL (Health)**: [https://physioconnect-api.onrender.com/health](https://physioconnect-api.onrender.com/health)
+
+## Demo Accounts
+To test different journeys end-to-end, use these pre-configured accounts:
+
+| Role | Email | Password |
+|------|-------|----------|
+| **Patient** | `patient@demo.com` | `Demo@1234` |
+| **Doctor** | `doctor@demo.com` | `Demo@1234` |
+| **Admin** | `admin@demo.com` | `Demo@1234` |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -196,6 +211,7 @@ Client runs at: `http://localhost:5173`
 | Phase 7 | Reviews & Ratings | ✅ Complete |
 | Phase 8 | AI Integration | ✅ Complete |
 | Phase 9 | Admin Dashboard, Analytics & Platform Operations | ✅ Complete |
+| Phase 10 | Polish, Landing Page & Deployment | ✅ Complete |
 
 ---
 

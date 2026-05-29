@@ -125,6 +125,11 @@ const DoctorListingPage = () => {
     }
   };
 
+  // Set browser title on mount
+  useEffect(() => {
+    document.title = 'Find Doctors — PhysioConnect';
+  }, []);
+
   // Re-fetch whenever the URL parameters or user coordinates change
   useEffect(() => {
     fetchDoctors();

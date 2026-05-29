@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 
 import config from './src/config/env.js';
 import errorMiddleware from './src/middleware/error.middleware.js';
@@ -26,27 +27,25 @@ import waitlistRoutes from './src/routes/waitlist.routes.js';
 
 const app = express();
 
-
 // ==========================================
-// 1. GLOBAL MIDDLEWARES
+// 1. GLOBAL MIDDLEWARES & SECURITY
 // ==========================================
 
 // Layer 1: Security Headers
 app.use(helmet());
 
-// Layer 2: CORS Setup
-const allowedOrigins = [
-  'http://localhost:5173', // Local Vite Dev
-  config.clientUrl
-].filter(Boolean); // Filter out empty values
+// Layer 2: CORS Setup (Environment-Aware & Strict)
+const allowedOrigins = config.nodeEnv === 'production'
+  ? [config.clientUrl].filter(Boolean)
+  : ['http://localhost:5173', 'http://localhost:3000', config.clientUrl].filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, curl, postman)
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Blocked by CORS policy'));
+      callback(new Error(`Blocked by CORS policy: ${origin || 'no origin'}`));
     }
   },
   credentials: true,
@@ -63,10 +62,46 @@ const morganFormat = config.nodeEnv === 'production' ? 'combined' : 'dev';
 app.use(morgan(morganFormat));
 
 // ==========================================
-// 2. SYSTEM CHANNELS & HEALTH CHECKS
+// 2. RATE LIMITING (Production Hardening)
 // ==========================================
 
-// Layer 5: Health Check
+// General API Rate Limiter
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests. Please try again later.' },
+});
+
+// Stricter Rate Limiter for Auth Routes (brute-force protection)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 15, // 15 login/register attempts per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many login attempts. Please try again later.' },
+});
+
+// Apply rate limiting to appropriate namespaces
+app.use('/api', apiLimiter);
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+
+// ==========================================
+// 3. SYSTEM HEALTH CHECKS
+// ==========================================
+
+// Root health check for Render monitoring
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    environment: config.nodeEnv || 'development',
+  });
+});
+
+// API health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -77,10 +112,9 @@ app.get('/api/health', (req, res) => {
 });
 
 // ==========================================
-// 3. API BUSINESS ROUTE GROUPS
+// 4. API BUSINESS ROUTE GROUPS
 // ==========================================
 
-// Layer 6: Route mountings
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/bookings', bookingRoutes);
@@ -98,7 +132,7 @@ app.use('/api/search', searchRoutes);
 app.use('/api/waitlist', waitlistRoutes);
 
 // ==========================================
-// 4. FALLBACK & ERROR HANDLERS
+// 5. FALLBACK & ERROR HANDLERS
 // ==========================================
 
 // Layer 7: Catch-All 404 Handler

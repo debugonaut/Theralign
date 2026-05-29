@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 // Guards
 import ProtectedRoute from './ProtectedRoute';
@@ -11,37 +12,38 @@ import PublicLayout from '../components/layout/PublicLayout';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 
-// Public Pages
-import LandingPage from '../pages/public/LandingPage';
-import LoginPage from '../pages/public/LoginPage';
-import RegisterPage from '../pages/public/RegisterPage';
-import DoctorListingPage from '../pages/public/DoctorListingPage';
-import DoctorDetailPage from '../pages/public/DoctorDetailPage';
-import NotFoundPage from '../pages/public/NotFoundPage';
+// Public Pages (Lazy Loaded)
+const LandingPage = lazy(() => import('../pages/public/LandingPage'));
+const LoginPage = lazy(() => import('../pages/public/LoginPage'));
+const RegisterPage = lazy(() => import('../pages/public/RegisterPage'));
+const DoctorListingPage = lazy(() => import('../pages/public/DoctorListingPage'));
+const DoctorDetailPage = lazy(() => import('../pages/public/DoctorDetailPage'));
+const NotFoundPage = lazy(() => import('../pages/public/NotFoundPage'));
+const UnauthorizedPage = lazy(() => import('../pages/public/UnauthorizedPage'));
 
-// Patient Pages
-import PatientDashboard from '../pages/patient/PatientDashboard';
-import PatientAppointments from '../pages/patient/PatientAppointments';
-import PatientPayments from '../pages/patient/PatientPayments';
-import PatientProfile from '../pages/patient/PatientProfile';
-import PatientMyReviews from '../pages/patient/MyReviews';
+// Patient Pages (Lazy Loaded)
+const PatientDashboard = lazy(() => import('../pages/patient/PatientDashboard'));
+const PatientAppointments = lazy(() => import('../pages/patient/PatientAppointments'));
+const PatientPayments = lazy(() => import('../pages/patient/PatientPayments'));
+const PatientProfile = lazy(() => import('../pages/patient/PatientProfile'));
+const PatientMyReviews = lazy(() => import('../pages/patient/MyReviews'));
 
-// Doctor Pages
-import DoctorDashboard from '../pages/doctor/DoctorDashboard';
-import DoctorAppointments from '../pages/doctor/DoctorAppointments';
-import DoctorAvailability from '../pages/doctor/DoctorAvailability';
-import DoctorProfileEditor from '../pages/doctor/DoctorProfileEditor';
-import DoctorEarnings from '../pages/doctor/DoctorEarnings';
-import DoctorMyReviews from '../pages/doctor/MyReviews';
+// Doctor Pages (Lazy Loaded)
+const DoctorDashboard = lazy(() => import('../pages/doctor/DoctorDashboard'));
+const DoctorAppointments = lazy(() => import('../pages/doctor/DoctorAppointments'));
+const DoctorAvailability = lazy(() => import('../pages/doctor/DoctorAvailability'));
+const DoctorProfileEditor = lazy(() => import('../pages/doctor/DoctorProfileEditor'));
+const DoctorEarnings = lazy(() => import('../pages/doctor/DoctorEarnings'));
+const DoctorMyReviews = lazy(() => import('../pages/doctor/MyReviews'));
 
-// Admin Pages
-import AdminDashboard from '../pages/admin/AdminDashboard';
-import AdminDoctorVerification from '../pages/admin/AdminDoctorVerification';
-import AdminBookings from '../pages/admin/AdminBookings';
-import AdminUsers from '../pages/admin/AdminUsers';
-import AdminRevenue from '../pages/admin/AdminRevenue';
-import AdminReviews from '../pages/admin/AdminReviews';
-import AdminAITools from '../pages/admin/AdminAITools';
+// Admin Pages (Lazy Loaded)
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const AdminDoctorVerification = lazy(() => import('../pages/admin/AdminDoctorVerification'));
+const AdminBookings = lazy(() => import('../pages/admin/AdminBookings'));
+const AdminUsers = lazy(() => import('../pages/admin/AdminUsers'));
+const AdminRevenue = lazy(() => import('../pages/admin/AdminRevenue'));
+const AdminReviews = lazy(() => import('../pages/admin/AdminReviews'));
+const AdminAITools = lazy(() => import('../pages/admin/AdminAITools'));
 
 const DASHBOARD_ROUTES = {
   patient: '/patient/dashboard',
@@ -63,82 +65,85 @@ const AuthRedirect = ({ children }) => {
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      {/* ─── Public Routes ──────────────────────────────────────────────── */}
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<LandingPage />} />
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        {/* ─── Public Routes ──────────────────────────────────────────────── */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<LandingPage />} />
 
-        {/* Redirect authenticated users away from auth pages */}
+          {/* Redirect authenticated users away from auth pages */}
+          <Route
+            path="/login"
+            element={<AuthRedirect><LoginPage /></AuthRedirect>}
+          />
+          <Route
+            path="/register"
+            element={<AuthRedirect><RegisterPage /></AuthRedirect>}
+          />
+
+          <Route path="/doctors" element={<DoctorListingPage />} />
+          <Route path="/doctors/:id" element={<DoctorDetailPage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        </Route>
+
+        {/* ─── Patient Routes ─────────────────────────────────────────────── */}
         <Route
-          path="/login"
-          element={<AuthRedirect><LoginPage /></AuthRedirect>}
-        />
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={['patient']}>
+                <DashboardLayout />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/patient/dashboard" element={<PatientDashboard />} />
+          <Route path="/patient/appointments" element={<PatientAppointments />} />
+          <Route path="/patient/payments" element={<PatientPayments />} />
+          <Route path="/patient/profile" element={<PatientProfile />} />
+          <Route path="/patient/reviews" element={<PatientMyReviews />} />
+        </Route>
+
+        {/* ─── Doctor Routes ──────────────────────────────────────────────── */}
         <Route
-          path="/register"
-          element={<AuthRedirect><RegisterPage /></AuthRedirect>}
-        />
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={['doctor']}>
+                <DashboardLayout />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+          <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+          <Route path="/doctor/availability" element={<DoctorAvailability />} />
+          <Route path="/doctor/profile" element={<DoctorProfileEditor />} />
+          <Route path="/doctor/earnings" element={<DoctorEarnings />} />
+          <Route path="/doctor/reviews" element={<DoctorMyReviews />} />
+        </Route>
 
-        <Route path="/doctors" element={<DoctorListingPage />} />
-        <Route path="/doctors/:id" element={<DoctorDetailPage />} />
-      </Route>
+        {/* ─── Admin Routes ───────────────────────────────────────────────── */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={['admin']}>
+                <AdminLayout />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/doctors" element={<AdminDoctorVerification />} />
+          <Route path="/admin/bookings" element={<AdminBookings />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/revenue" element={<AdminRevenue />} />
+          <Route path="/admin/reviews" element={<AdminReviews />} />
+          <Route path="/admin/ai-tools" element={<AdminAITools />} />
+        </Route>
 
-      {/* ─── Patient Routes ─────────────────────────────────────────────── */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowedRoles={['patient']}>
-              <DashboardLayout />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/patient/dashboard" element={<PatientDashboard />} />
-        <Route path="/patient/appointments" element={<PatientAppointments />} />
-        <Route path="/patient/payments" element={<PatientPayments />} />
-        <Route path="/patient/profile" element={<PatientProfile />} />
-        <Route path="/patient/reviews" element={<PatientMyReviews />} />
-      </Route>
-
-      {/* ─── Doctor Routes ──────────────────────────────────────────────── */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowedRoles={['doctor']}>
-              <DashboardLayout />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-        <Route path="/doctor/appointments" element={<DoctorAppointments />} />
-        <Route path="/doctor/availability" element={<DoctorAvailability />} />
-        <Route path="/doctor/profile" element={<DoctorProfileEditor />} />
-        <Route path="/doctor/earnings" element={<DoctorEarnings />} />
-        <Route path="/doctor/reviews" element={<DoctorMyReviews />} />
-      </Route>
-
-      {/* ─── Admin Routes ───────────────────────────────────────────────── */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowedRoles={['admin']}>
-              <AdminLayout />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/doctors" element={<AdminDoctorVerification />} />
-        <Route path="/admin/bookings" element={<AdminBookings />} />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/revenue" element={<AdminRevenue />} />
-        <Route path="/admin/reviews" element={<AdminReviews />} />
-        <Route path="/admin/ai-tools" element={<AdminAITools />} />
-      </Route>
-
-      {/* ─── Catch-All 404 ──────────────────────────────────────────────── */}
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        {/* ─── Catch-All 404 ──────────────────────────────────────────────── */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   );
 };
 

@@ -30,6 +30,7 @@ const DoctorCard = ({ doctor }) => {
           <img
             src={avatarUrl}
             alt={doctorName}
+            loading="lazy"
             className="w-14 h-14 rounded-full object-cover border-2 border-slate-100 group-hover:border-primary/20 transition-colors duration-300"
             onError={(e) => {
               e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
@@ -118,4 +119,4 @@ const DoctorCard = ({ doctor }) => {
   );
 };
 
-export default DoctorCard;
+export default React.memo(DoctorCard);

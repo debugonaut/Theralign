@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, LogIn, HeartPulse } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -15,6 +15,10 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setCredentials } = useAuthStore();
+
+  useEffect(() => {
+    document.title = 'Login — PhysioConnect';
+  }, []);
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
