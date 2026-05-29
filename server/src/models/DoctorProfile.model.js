@@ -109,6 +109,16 @@ const doctorProfileSchema = new Schema(
       default: null,
     },
 
+    verificationNote: {
+      type: String,
+      default: null,
+    },
+
+    totalEarnings: {
+      type: Number,
+      default: 0,
+    },
+
     averageRating: {
       type: Number,
       default: 0,

@@ -129,7 +129,7 @@ Client runs at: `http://localhost:5173`
 
 ---
 
-## API Endpoints (Phases 1–7 Live Endpoints)
+## API Endpoints (Phases 1–9 Live Endpoints)
 
 | Route | Status | Description |
 |-------|--------|-------------|
@@ -165,6 +165,21 @@ Client runs at: `http://localhost:5173`
 | `POST /api/ai/interpret-symptoms` | ✅ Live | Public: AI-powered free-text symptom triage analysis |
 | `GET /api/ai/doctor-summary/:doctorId` | ✅ Live | Public: Retrieve cached or dynamically generated doctor summary |
 | `POST /api/ai/admin/batch-summaries` | ✅ Live | Admin: Batch compile summaries for verified doctors |
+| `GET /api/admin/doctors/pending` | ✅ Live | Admin: Fetch all doctor profiles awaiting verification |
+| `GET /api/admin/doctors/all` | ✅ Live | Admin: Fetch all doctors with optional status filter |
+| `PATCH /api/admin/doctors/:profileId/verify` | ✅ Live | Admin: Approve doctor profile |
+| `PATCH /api/admin/doctors/:profileId/reject` | ✅ Live | Admin: Reject doctor profile with feedback |
+| `PATCH /api/admin/doctors/:profileId/suspend` | ✅ Live | Admin: Suspend a verified doctor |
+| `PATCH /api/admin/doctors/:profileId/reconsider` | ✅ Live | Admin: Move rejected doctor back to pending |
+| `GET /api/admin/users` | ✅ Live | Admin: Get all users with filters and pagination |
+| `PATCH /api/admin/users/:id/status` | ✅ Live | Admin: Toggle user active status |
+| `GET /api/admin/analytics/overview` | ✅ Live | Admin: Platform Overview Metrics (Revenue, Commission, counts) |
+| `GET /api/admin/analytics/revenue` | ✅ Live | Admin: Revenue time-series analytics (30-day split) |
+| `GET /api/admin/analytics/appointments` | ✅ Live | Admin: Appointment Status breakdown ratios |
+| `GET /api/admin/analytics/top-doctors` | ✅ Live | Admin: Top performing doctor stats and total earnings |
+| `GET /api/admin/analytics/specializations` | ✅ Live | Admin: Aggregated clinic specialization distribution |
+| `GET /api/admin/analytics/user-growth` | ✅ Live | Admin: User registrations growth time-series data |
+| `GET /api/admin/analytics/recent-activity` | ✅ Live | Admin: System-wide recent audit activity feed |
 
 ---
 
@@ -180,6 +195,7 @@ Client runs at: `http://localhost:5173`
 | Phase 6 | Payments (Razorpay) | ✅ Complete |
 | Phase 7 | Reviews & Ratings | ✅ Complete |
 | Phase 8 | AI Integration | ✅ Complete |
+| Phase 9 | Admin Dashboard, Analytics & Platform Operations | ✅ Complete |
 
 ---
 

@@ -15,7 +15,8 @@ const appointmentSchema = new mongoose.Schema(
     slot: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'AvailabilitySlot',
-      required: [true, 'Availability slot reference is required'],
+      default: null,
+      // Required via booking-flow validation, not schema-level
     },
 
     // Denormalized for display and cancellation logic without extra joins

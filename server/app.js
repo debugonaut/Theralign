@@ -16,6 +16,7 @@ import appointmentRoutes from './src/routes/appointment.routes.js';
 import paymentRoutes from './src/routes/payment.routes.js';
 import reviewRoutes from './src/routes/review.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
+import analyticsRoutes from './src/routes/analytics.routes.js';
 import discoveryRoutes from './src/routes/discovery.routes.js';
 import aiRoutes from './src/routes/ai.routes.js';
 
@@ -83,6 +84,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/analytics', analyticsRoutes);
 app.use('/api/discover', discoveryRoutes);
 app.use('/api/ai', aiRoutes);
 

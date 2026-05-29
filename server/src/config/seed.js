@@ -220,6 +220,85 @@ const runSeed = async () => {
       logger.info(`[Seed] Created cancelled past booking: ${apptC._id} on ${apptC.date}`);
     }
 
+    // ─── 5. Seed 30-Day Historical Data for Analytics Charts ─────────────────
+    logger.info('[Seed] Seeding 30-day historical data for analytics...');
+
+    // Build the list of past dates (30 days ago → yesterday)
+    const pastDates = [];
+    for (let i = 30; i >= 1; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      pastDates.push(`${year}-${month}-${day}`);
+    }
+
+    let historicalCount = 0;
+
+    for (const dateStr of pastDates) {
+      // Check if historical appointments already exist for this date to ensure idempotency
+      const existingCount = await Appointment.countDocuments({
+        date: dateStr,
+        patientNotes: { $regex: /\[Historical\]/ },
+      });
+      if (existingCount > 0) continue;
+
+      const appointmentsForDay = Math.floor(Math.random() * 3) + 2; // 2-4 per day
+      for (let i = 0; i < appointmentsForDay; i++) {
+        const doctor = doctors[i % doctors.length];
+        const fee = doctor.consultationFee || 600;
+        const commission = parseFloat((fee * 0.10).toFixed(2));
+        const earnings = parseFloat((fee * 0.90).toFixed(2));
+
+        const seedTimestamp = new Date(dateStr);
+
+        try {
+          const appt = await Appointment.create({
+            patient: patient._id,
+            doctor: doctor._id,
+            slot: null,
+            date: dateStr,
+            startTime: '10:00',
+            endTime: '10:30',
+            status: 'completed',
+            consultationFee: fee,
+            platformCommission: commission,
+            doctorEarnings: earnings,
+            paymentStatus: 'paid',
+            reviewSubmitted: true,
+            patientNotes: `[Historical] Demo session ${i + 1}`,
+            createdAt: seedTimestamp,
+            updatedAt: seedTimestamp,
+          });
+
+          await Payment.create({
+            appointment: appt._id,
+            patient: patient._id,
+            doctor: doctor._id,
+            razorpayOrderId: `order_hist_${dateStr}_${i}_${Date.now()}`,
+            razorpayPaymentId: `pay_hist_${dateStr}_${i}`,
+            razorpaySignature: 'historical_seed_sig',
+            amount: fee,
+            currency: 'INR',
+            status: 'paid',
+            platformCommission: commission,
+            doctorEarnings: earnings,
+            createdAt: seedTimestamp,
+            updatedAt: seedTimestamp,
+          });
+
+          historicalCount++;
+        } catch (seedErr) {
+          if (seedErr.code !== 11000) {
+            logger.warn(`[Seed] Historical seed error on ${dateStr}: ${seedErr.message}`);
+          }
+        }
+      }
+    }
+
+    logger.info(`[Seed] Historical seeding complete. Created ${historicalCount} historical records.`);
+
     logger.info('[Seed] Database seeding run finished successfully.');
   } catch (err) {
     logger.error('[Seed] Database seeding run failed:', err);

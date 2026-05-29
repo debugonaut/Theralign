@@ -1,5 +1,14 @@
 import { Router } from 'express';
-import { getPendingDoctors, verifyDoctor, rejectDoctor } from '../controllers/admin.controller.js';
+import {
+  getPendingDoctors,
+  verifyDoctor,
+  rejectDoctor,
+  suspendDoctor,
+  reconsiderDoctor,
+  getAllDoctors,
+  getAllUsersAdmin,
+  toggleUserStatus,
+} from '../controllers/admin.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 
@@ -9,22 +18,30 @@ const router = Router();
 router.use(requireAuth);
 router.use(requireRole('admin'));
 
-/**
- * GET /api/admin/doctors/pending
- * Protected (Admin) — Fetch all doctor profiles awaiting verification review.
- */
+// ─── Doctor Verification Routes ───────────────────────────────────────────────
+/** GET /api/admin/doctors/pending — Fetch all doctor profiles awaiting verification */
 router.get('/doctors/pending', getPendingDoctors);
 
-/**
- * PATCH /api/admin/doctors/:profileId/verify
- * Protected (Admin) — Approve doctor profile verification.
- */
+/** GET /api/admin/doctors/all — Fetch all doctors with optional status filter */
+router.get('/doctors/all', getAllDoctors);
+
+/** PATCH /api/admin/doctors/:profileId/verify — Approve doctor profile */
 router.patch('/doctors/:profileId/verify', verifyDoctor);
 
-/**
- * PATCH /api/admin/doctors/:profileId/reject
- * Protected (Admin) — Reject doctor profile verification with explanation.
- */
+/** PATCH /api/admin/doctors/:profileId/reject — Reject doctor profile with feedback */
 router.patch('/doctors/:profileId/reject', rejectDoctor);
+
+/** PATCH /api/admin/doctors/:profileId/suspend — Suspend a verified doctor */
+router.patch('/doctors/:profileId/suspend', suspendDoctor);
+
+/** PATCH /api/admin/doctors/:profileId/reconsider — Move rejected doctor back to pending */
+router.patch('/doctors/:profileId/reconsider', reconsiderDoctor);
+
+// ─── User Management Routes ───────────────────────────────────────────────────
+/** GET /api/admin/users — Get all users with filters and pagination */
+router.get('/users', getAllUsersAdmin);
+
+/** PATCH /api/admin/users/:id/status — Toggle user isActive */
+router.patch('/users/:id/status', toggleUserStatus);
 
 export default router;

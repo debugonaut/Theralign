@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, Menu, X, ShieldAlert, Users, 
@@ -6,15 +6,30 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
+import { getPendingDoctorsAPI } from '../../api/admin.api';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
 
   // Read user from Zustand — RoleRoute guarantees this is a non-null admin
   const user = useAuthStore((state) => state.user);
   const clearCredentials = useAuthStore((state) => state.clearCredentials);
+
+  useEffect(() => {
+    const fetchPending = async () => {
+      try {
+        const res = await getPendingDoctorsAPI();
+        // response.data.data.total OR response.data.data.profiles.length
+        const d = res.data?.data || res.data;
+        const count = d?.total ?? (d?.profiles?.length ?? 0);
+        setPendingCount(count);
+      } catch { /* fail silently */ }
+    };
+    fetchPending();
+  }, []);
 
   const handleLogout = () => {
     clearCredentials();
@@ -97,7 +112,14 @@ const AdminLayout = () => {
                   <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-slate-400'}`} />
                   <span>{item.name}</span>
                 </div>
-                {isActive && <ChevronRight className="w-4 h-4 text-primary" />}
+                <div className="flex items-center gap-1">
+                  {item.href === '/admin/doctors' && pendingCount > 0 && (
+                    <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none">
+                      {pendingCount}
+                    </span>
+                  )}
+                  {isActive && <ChevronRight className="w-4 h-4 text-primary" />}
+                </div>
               </NavLink>
             );
           })}
