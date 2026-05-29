@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SymptomSearchBox from '../ai/SymptomSearchBox';
 import Button from '../common/Button';
+import DoctorCardDeck from './DoctorCardDeck';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -11,38 +12,29 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative w-full bg-swiss-white min-h-[90vh] flex items-center pt-24 pb-24 overflow-hidden border-b-2 border-swiss-black">
+    <section className="relative w-full bg-swiss-white min-h-[70vh] flex items-center pt-8 pb-10 overflow-hidden border-b-2 border-swiss-black">
       {/* Background Grid Pattern */}
       <div className="absolute inset-0 swiss-grid-pattern opacity-30 pointer-events-none" />
 
-      <div className="max-w-[1440px] mx-auto w-full px-6 sm:px-16 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start relative z-10">
+      <div className="max-w-[1440px] mx-auto w-full px-6 sm:px-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
         
         {/* Left Column - 7/12 width */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left gap-8">
-          <h1 className="text-[48px] sm:text-[64px] lg:text-[80px] leading-[1.05] font-black uppercase tracking-[-0.05em] text-swiss-black font-swiss">
+        <div className="lg:col-span-7 flex flex-col items-start text-left gap-4">
+          <h1 className="text-[48px] sm:text-[64px] lg:text-[72px] leading-[1.05] font-black uppercase tracking-[-0.05em] text-swiss-black font-swiss">
             FIND THE RIGHT<br />
             <span className="text-swiss-red">PHYSIOTHERAPIST</span>,<br />
             NEAR YOU.
           </h1>
 
-          <p className="text-[16px] lg:text-[18px] text-swiss-gray-600 max-w-[600px] font-medium leading-[1.6]">
+          <p className="text-[15px] lg:text-[16px] text-swiss-gray-600 max-w-[600px] font-medium leading-[1.5]">
             Connect with verified clinical specialists for orthopedic, neurological, and post-surgical care.
           </p>
 
-          <div className="w-full mt-4 max-w-[600px]">
-            <label className="block text-[12px] font-bold text-swiss-red uppercase tracking-[0.06em] mb-2 font-swiss">
-              DESCRIBE YOUR SYMPTOMS →
-            </label>
-            {/* The SymptomSearchBox needs to integrate well visually. Assuming it has standard styles. */}
-            <div className="w-full border-2 border-swiss-black p-1 bg-swiss-white flex focus-within:border-4 transition-all duration-fast">
-              <SymptomSearchBox 
-                onSpecializationFound={handleSpecializationFound} 
-                className="w-full border-none outline-none ring-0 shadow-none focus:ring-0 focus:outline-none"
-              />
-            </div>
+          <div className="w-full mt-2 max-w-[600px]">
+            <SymptomSearchBox onSpecializationFound={handleSpecializationFound} />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mt-6 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
             <Link to="/doctors" className="w-full sm:w-auto">
               <Button variant="secondary" size="lg" className="w-full">
                 BROWSE DOCTORS →
@@ -69,23 +61,9 @@ const HeroSection = () => {
             {/* Geometric Element: Grid Pattern Block */}
             <div className="absolute top-24 left-0 w-56 h-56 border-2 border-swiss-black bg-swiss-white swiss-dot-matrix z-10"></div>
 
-            {/* Geometric Element: Doctor Card Mockup */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 bg-swiss-white border-2 border-swiss-black p-6 z-20 shadow-none hover:-translate-y-1 hover:border-4 transition-all duration-fast">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full border-2 border-swiss-black bg-swiss-gray-100 flex items-center justify-center font-bold text-swiss-black">
-                  JD
-                </div>
-                <div>
-                  <div className="font-bold uppercase tracking-wide text-swiss-black text-[14px]">DR. JANE DOE</div>
-                  <div className="font-bold uppercase tracking-[0.08em] text-[11px] text-swiss-red mt-1">SPORTS PHYSIOTHERAPY</div>
-                </div>
-              </div>
-              <div className="border-t-2 border-swiss-black pt-4 flex justify-between items-center">
-                <div className="font-bold text-[18px] font-swiss tracking-tight">4.9/5 ★</div>
-                <div className="border-2 border-swiss-teal text-swiss-teal px-2 py-1 text-[11px] font-bold uppercase tracking-widest bg-swiss-white">
-                  VERIFIED
-                </div>
-              </div>
+            {/* Geometric Element: Doctor Card Mockup replaced by DoctorCardDeck */}
+            <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[360px] z-20">
+              <DoctorCardDeck />
             </div>
           </div>
 

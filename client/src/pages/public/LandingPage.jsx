@@ -1,6 +1,4 @@
 import React from 'react';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
 import HeroSection from '../../components/landing/HeroSection';
 import TrustBar from '../../components/landing/TrustBar';
 import SpecializationsSection from '../../components/landing/SpecializationsSection';
@@ -13,23 +11,17 @@ import CTABannerSection from '../../components/landing/CTABannerSection';
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-swiss-white">
-      <Navbar />
-      
-      <main className="flex-1">
-        <HeroSection />
-        <TrustBar />
-        <SpecializationsSection />
-        <HowItWorksSection />
-        <FeaturedDoctorsSection />
-        <StatsBar />
-        <PatientReviewsSection />
-        <VerificationExplanationSection />
-        <CTABannerSection />
-      </main>
-
-      <Footer />
-    </div>
+    <main className="flex-1 bg-swiss-white">
+      <HeroSection />
+      <TrustBar />
+      <SpecializationsSection />
+      <HowItWorksSection />
+      <FeaturedDoctorsSection />
+      <StatsBar />
+      <PatientReviewsSection />
+      <VerificationExplanationSection />
+      <CTABannerSection />
+    </main>
   );
 };
 

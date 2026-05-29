@@ -66,20 +66,29 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
-        {/* Glow Effects */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
-
-        <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 bg-primary/15 rounded-xl border border-primary/25">
-            <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-          </div>
-          <div className="text-left">
-            <h3 className="text-base font-extrabold text-white tracking-tight">AI-Powered Clinician Triage</h3>
-            <p className="text-xs text-slate-400 font-medium">Describe how you feel to discover the ideal physiotherapy focus area.</p>
-          </div>
-        </div>
+      <div
+        className="relative"
+        style={{
+          background: '#FFF8F5',
+          border: '2px solid #000000',
+          boxShadow: '4px 4px 0px 0px #000000',
+          padding: '20px 24px',
+        }}
+      >
+        {/* Section label */}
+        <p
+          style={{
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: '#C0392B',
+            marginBottom: '10px',
+            textAlign: 'left',
+          }}
+        >
+          Describe Your Symptoms →
+        </p>
 
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="relative">
@@ -87,20 +96,40 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
               rows={3}
               value={symptoms}
               onChange={handleInputChange}
-              placeholder="e.g. Sharp pain in the outer knee when running or going down stairs, stiffness in joint..."
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-2xl pl-5 pr-5 py-4 text-sm font-medium text-slate-200 placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-4 focus:ring-blue-500/10 transition-all resize-none"
+              placeholder="e.g. sharp lower back pain when bending, started 3 weeks ago..."
+              style={{
+                width: '100%',
+                height: '80px',
+                resize: 'none',
+                border: '2px solid #000000',
+                borderRadius: 0,
+                padding: '10px 12px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                outline: 'none',
+                background: '#FFFFFF',
+                lineHeight: 1.5,
+                color: '#000000',
+              }}
               disabled={loading}
+              onFocus={e => {
+                e.target.style.borderWidth = '3px';
+                e.target.style.padding = '9px 11px';
+              }}
+              onBlur={e => {
+                e.target.style.borderWidth = '2px';
+                e.target.style.padding = '10px 12px';
+              }}
             />
             {/* Length counter */}
-            <span className={`absolute bottom-3 right-4 text-[10px] font-bold ${remainingChars < 50 ? 'text-amber-500' : 'text-slate-500'}`}>
-              {remainingChars} / {charLimit}
+            <span className={`absolute bottom-3 right-4 text-[10px] font-bold ${remainingChars < 50 ? 'text-swiss-red' : 'text-swiss-gray-400'}`}>
+              {remainingChars}
             </span>
           </div>
 
-          {/* Quick tips list */}
+          {/* Quick tips list / Suggestion chips */}
           <div className="flex flex-wrap gap-2 py-1 justify-start">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider self-center">Try typing:</span>
-            {['Lower back pain while sitting', 'Knee stiffness post-workout', 'Neck ache from screen work'].map((tip) => (
+            {['Back pain', 'Knee injury', 'Shoulder tension', 'Post-surgery rehab'].map((tip) => (
               <button
                 key={tip}
                 type="button"
@@ -110,18 +139,36 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
                     setError(null);
                   }
                 }}
-                className="text-xs bg-slate-800/40 hover:bg-slate-800 text-slate-300 font-semibold px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 transition-all select-none cursor-pointer"
+                className="text-xs transition-all duration-fast select-none cursor-pointer"
+                style={{
+                  fontSize: '12px',
+                  padding: '4px 10px',
+                  border: '1.5px solid #000000',
+                  borderRadius: 0,
+                  background: '#FFFFFF',
+                  color: '#000000',
+                  cursor: 'pointer',
+                  fontWeight: 500,
+                }}
+                onMouseEnter={e => {
+                  e.target.style.background = '#000000';
+                  e.target.style.color = '#FFFFFF';
+                }}
+                onMouseLeave={e => {
+                  e.target.style.background = '#FFFFFF';
+                  e.target.style.color = '#000000';
+                }}
               >
                 {tip}
               </button>
             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="flex pt-2">
             <button
               type="submit"
               disabled={loading || symptoms.trim().length < 5}
-              className="flex-1 bg-primary hover:bg-primary-dark disabled:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 px-6 rounded-xl font-extrabold text-sm shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all inline-flex items-center justify-center gap-2 select-none cursor-pointer border border-transparent"
+              className="flex-1 bg-swiss-black hover:bg-swiss-red disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 px-6 rounded-none font-bold uppercase tracking-widest text-[12px] transition-all duration-fast inline-flex items-center justify-center gap-2 select-none cursor-pointer border border-transparent"
             >
               {loading ? (
                 <>
@@ -139,17 +186,17 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
         </form>
 
         {error && (
-          <div className="mt-4 p-4 bg-red-500/5 border border-red-500/10 rounded-xl flex gap-3 text-left">
-            <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+          <div className="mt-4 p-4 bg-swiss-red/5 border border-swiss-red flex gap-3 text-left">
+            <AlertCircle className="w-5 h-5 text-swiss-red shrink-0 mt-0.5" />
             <div>
-              <h5 className="text-xs font-bold text-rose-400 uppercase tracking-wider">Triage Query Warning</h5>
-              <p className="text-xs text-rose-300 font-medium mt-0.5">{error}</p>
+              <h5 className="text-[11px] font-black text-swiss-red uppercase tracking-wider">Triage Query Warning</h5>
+              <p className="text-[12px] text-swiss-red font-medium mt-0.5">{error}</p>
             </div>
           </div>
         )}
 
         {/* Small Legal Disclaimer */}
-        <p className="text-[10px] text-slate-500 mt-4 text-center leading-relaxed">
+        <p className="text-[10px] text-swiss-gray-400 mt-4 text-center leading-relaxed font-swiss">
           AI triage analysis is provided for educational advice only and is not a formal medical diagnosis.
         </p>
       </div>
