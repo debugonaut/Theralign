@@ -4,38 +4,31 @@ import Button from '../common/Button';
 
 const CTABannerSection = () => {
   return (
-    <section className="py-16 px-6 max-w-7xl mx-auto">
-      <div className="bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-card shadow-xl text-white overflow-hidden relative">
-        {/* Glow detail */}
-        <div className="absolute -bottom-10 -right-10 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+    <section className="w-full bg-swiss-black py-24 border-y-2 border-swiss-black">
+      <div className="max-w-[1440px] mx-auto px-6 w-full text-center flex flex-col items-center">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10 relative z-10">
-          {/* Patient CTA */}
-          <div className="p-8 md:p-12 flex flex-col items-start gap-4">
-            <span className="text-2xl font-bold tracking-tight">Ready to Feel Better?</span>
-            <p className="text-blue-100 text-sm font-medium leading-relaxed max-w-md">
-              Connect with verified experts, describe symptoms for custom matches, and book slots instantly with secure payments.
-            </p>
-            <Link to="/doctors" className="mt-2">
-              <Button variant="secondary" size="md" className="bg-white text-primary border-none hover:bg-slate-50">
-                Find a Doctor →
-              </Button>
-            </Link>
-          </div>
-
-          {/* Doctor CTA */}
-          <div className="p-8 md:p-12 flex flex-col items-start gap-4">
-            <span className="text-2xl font-bold tracking-tight">Are You a Physiotherapist?</span>
-            <p className="text-blue-100 text-sm font-medium leading-relaxed max-w-md">
-              Join India&apos;s premier physiotherapy platform to expand your clinical practice, manage availability, and securely handle earnings.
-            </p>
-            <Link to="/register" className="mt-2">
-              <Button variant="secondary" size="md" className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                Register as a Doctor →
-              </Button>
-            </Link>
-          </div>
+        <h2 className="text-[48px] sm:text-[64px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-swiss-white font-swiss mb-6 max-w-[800px]">
+          READY TO FEEL BETTER?
+        </h2>
+        
+        <p className="text-[16px] lg:text-[18px] text-swiss-gray-400 font-medium leading-[1.6] max-w-[600px] mb-12">
+          Connect with verified experts, describe symptoms for custom matches, and book slots instantly with secure payments.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
+          <Link to="/register" className="w-full sm:w-auto">
+            <Button variant="accent" size="lg" className="w-full border-swiss-red">
+              GET STARTED
+            </Button>
+          </Link>
+          <Link to="/doctors" className="w-full sm:w-auto">
+            {/* White border ghost button */}
+            <Button variant="ghost" size="lg" className="w-full !text-swiss-white !border-swiss-white hover:!bg-swiss-white hover:!text-swiss-black">
+              FIND A DOCTOR
+            </Button>
+          </Link>
         </div>
+
       </div>
     </section>
   );

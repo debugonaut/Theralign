@@ -1,101 +1,86 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Activity, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  const footerLinks = [
+    {
+      title: 'PLATFORM',
+      links: [
+        { label: 'FIND DOCTORS', to: '/doctors' },
+        { label: 'HOW IT WORKS', to: '/#how-it-works' },
+        { label: 'SPECIALIZATIONS', to: '/#specializations' },
+        { label: 'PRICING', to: '/pricing' },
+      ],
+    },
+    {
+      title: 'FOR CLINICIANS',
+      links: [
+        { label: 'JOIN NETWORK', to: '/register' },
+        { label: 'CLINICAL STANDARDS', to: '/standards' },
+        { label: 'PRACTICE MANAGEMENT', to: '/management' },
+        { label: 'HELP CENTER', to: '/help' },
+      ],
+    },
+    {
+      title: 'LEGAL',
+      links: [
+        { label: 'PRIVACY POLICY', to: '/privacy' },
+        { label: 'TERMS OF SERVICE', to: '/terms' },
+        { label: 'MEDICAL DISCLAIMER', to: '/disclaimer' },
+      ],
+    },
+  ];
+
+  const SwissNavLink = ({ to, label }) => (
+    <Link to={to} className="swiss-nav-link swiss-label !text-[12px] !font-medium">
+      <span className="nav-text-default text-swiss-gray-600">{label}</span>
+      <span className="nav-text-hover">{label}</span>
+    </Link>
+  );
+
   return (
-    <footer className="bg-slate-900 text-slate-300 border-t border-slate-800">
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        
-        {/* Footer Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
+    <footer className="w-full bg-swiss-gray-100 border-t-2 border-swiss-black pt-16 pb-8">
+      <div className="max-w-[1440px] mx-auto px-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           
-          {/* Column 1: Brand Info (5/12 width on desktop) */}
-          <div className="lg:col-span-5 space-y-4 text-left">
-            <Link to="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-              <Activity className="h-6 w-6 text-primary" />
-              <span className="font-extrabold text-xl tracking-tight">Theralign</span>
-            </Link>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm font-medium">
-              Connecting patients with verified physiotherapy specialists across India. Book online, pay securely, and accelerate your recovery.
+          {/* Brand Column */}
+          <div className="col-span-1 flex flex-col items-start gap-4">
+            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-swiss-black">
+              THERALIGN
+            </span>
+            <p className="text-[12px] text-swiss-gray-600 font-medium">
+              India's premier verified physiotherapy marketplace. Connect with clinical specialists.
             </p>
-            <div className="flex gap-4 pt-2">
-              <a href="#" className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all shadow-sm">
-                <Facebook size={18} />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all shadow-sm">
-                <Twitter size={18} />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all shadow-sm">
-                <Instagram size={18} />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all shadow-sm">
-                <Linkedin size={18} />
-              </a>
+          </div>
+
+          {/* Link Columns */}
+          {footerLinks.map((section, index) => (
+            <div key={index} className="col-span-1 flex flex-col gap-4">
+              <h4 className="font-bold text-[12px] text-swiss-black uppercase tracking-[0.08em] mb-2 font-swiss">
+                {section.title}
+              </h4>
+              <ul className="flex flex-col gap-3">
+                {section.links.map((link, idx) => (
+                  <li key={idx}>
+                    <SwissNavLink to={link.to} label={link.label} />
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          {/* Column 2: Platform Links (2/12 width on desktop) */}
-          <div className="lg:col-span-2 text-left space-y-4">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Platform</h4>
-            <ul className="space-y-2.5 text-sm font-semibold">
-              <li>
-                <Link to="/doctors" className="hover:text-primary transition-colors">Find Doctors</Link>
-              </li>
-              <li>
-                <Link to="/" className="hover:text-primary transition-colors">How It Works</Link>
-              </li>
-              <li>
-                <Link to="/doctors" className="hover:text-primary transition-colors">All Specialities</Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: For Doctors (2/12 width on desktop) */}
-          <div className="lg:col-span-2 text-left space-y-4">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">For Doctors</h4>
-            <ul className="space-y-2.5 text-sm font-semibold">
-              <li>
-                <Link to="/register" className="hover:text-primary transition-colors">Register</Link>
-              </li>
-              <li>
-                <Link to="/login" className="hover:text-primary transition-colors">Doctor Login</Link>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">Pricing</a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Support (3/12 width on desktop) */}
-          <div className="lg:col-span-3 text-left space-y-4">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Support</h4>
-            <ul className="space-y-2.5 text-sm font-semibold">
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">About Us</a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">Contact</a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">Frequently Asked Questions</a>
-              </li>
-            </ul>
-          </div>
-
+          ))}
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs font-semibold text-slate-500">
-            © {new Date().getFullYear()} Theralign. All rights reserved.
+        {/* Copyright */}
+        <div className="border-t-2 border-swiss-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[12px] text-swiss-gray-400 font-medium">
+            &copy; {currentYear} Theralign Inc. All rights reserved.
           </p>
-          <div className="flex gap-6 text-xs font-bold text-slate-500">
-            <a href="#" className="hover:text-slate-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-slate-400 transition-colors">Terms of Service</a>
-          </div>
+          <p className="text-[12px] text-swiss-gray-400 font-medium uppercase tracking-[0.08em]">
+            SYSTEM D1.2
+          </p>
         </div>
-
       </div>
     </footer>
   );
