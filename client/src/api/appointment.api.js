@@ -52,3 +52,13 @@ export const completeAppointment = async (id) => {
   const response = await axiosInstance.patch(`/appointments/${id}/complete`);
   return response.data;
 };
+
+/**
+ * Patient: Reschedules a confirmed future appointment to a new slot.
+ * @param {string} id - Appointment ID
+ * @param {string} newSlotId - New availability slot ID
+ */
+export const rescheduleAppointment = async (id, newSlotId) => {
+  const response = await axiosInstance.patch(`/appointments/${id}/reschedule`, { newSlotId });
+  return response.data;
+};

@@ -15,6 +15,7 @@ import SkeletonCard from '../../components/common/SkeletonCard';
 import Pagination from '../../components/common/Pagination';
 import Button from '../../components/common/Button';
 import SymptomSearchBox from '../../components/ai/SymptomSearchBox';
+import SearchSuggestions from '../../components/search/SearchSuggestions';
 
 const DoctorListingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,6 +37,28 @@ const DoctorListingPage = () => {
 
   // Temporary local search state to avoid query trigger on every character keystroke
   const [localSearch, setLocalSearch] = useState(searchParams.get('q') || '');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const handleSuggestionSelect = (suggestion) => {
+    setShowSuggestions(false);
+    setLocalSearch(suggestion.value);
+
+    const params = new URLSearchParams(searchParams);
+    
+    if (suggestion.type === 'specialization') {
+      params.set('specialization', suggestion.value);
+      params.delete('q'); // Clear text query to rely on strict filter
+    } else if (suggestion.type === 'city') {
+      params.set('city', suggestion.value);
+      params.delete('q');
+    } else if (suggestion.type === 'doctor') {
+      params.set('q', suggestion.value);
+      params.delete('nearby');
+    }
+
+    params.set('page', '1');
+    setSearchParams(params);
+  };
 
   // Sync localSearch if query param changes externally
   useEffect(() => {
@@ -249,8 +272,14 @@ const DoctorListingPage = () => {
               type="text"
               placeholder="Search physiotherapists, specializations, clinic names..."
               value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
+              onChange={(e) => {
+                setLocalSearch(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setShowSuggestions(false)}
               className="w-full pl-11 pr-24 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all font-medium text-slate-700 text-sm"
+              autoComplete="off"
             />
             <Search className="absolute left-4 top-3.5 text-slate-400" size={18} />
             <button
@@ -259,6 +288,12 @@ const DoctorListingPage = () => {
             >
               Search
             </button>
+            
+            <SearchSuggestions
+              query={localSearch}
+              onSelect={handleSuggestionSelect}
+              visible={showSuggestions}
+            />
           </form>
 
           {/* Location / Geolocation Switch */}

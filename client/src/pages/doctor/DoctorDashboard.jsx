@@ -6,25 +6,38 @@ import {
 } from 'lucide-react';
 import { getDoctorProfileAPI } from '../../api/doctor.api';
 import { getDoctorAppointments } from '../../api/appointment.api';
+import { getMySlots } from '../../api/availability.api';
 import useAuthStore from '../../store/authStore';
+import ProfileCompletionCard from '../../components/doctor/ProfileCompletionCard';
 
 const DoctorDashboard = () => {
   const { user } = useAuthStore();
   const [profile, setProfile] = useState(null);
   const [appointments, setAppointments] = useState([]);
+  const [slotCount, setSlotCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, apptRes] = await Promise.all([
+        const [profileRes, apptRes, slotsRes] = await Promise.all([
           getDoctorProfileAPI(),
           getDoctorAppointments().catch(() => ({ data: { appointments: [] } })),
+          getMySlots().catch(() => ({ success: true, data: [] })),
         ]);
+        
         if (profileRes.success && profileRes.data.profile) {
           setProfile(profileRes.data.profile);
         }
         setAppointments(apptRes.data?.appointments || apptRes.appointments || []);
+        
+        let slots = [];
+        if (slotsRes) {
+          if (Array.isArray(slotsRes.data)) slots = slotsRes.data;
+          else if (Array.isArray(slotsRes)) slots = slotsRes;
+          else if (slotsRes.success && Array.isArray(slotsRes.data?.slots)) slots = slotsRes.data.slots;
+        }
+        setSlotCount(slots.length);
       } catch (err) {
         console.error('Failed to load doctor dashboard:', err);
       } finally {
@@ -166,6 +179,13 @@ const DoctorDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Profile Completion Score Card */}
+      <ProfileCompletionCard
+        doctorProfile={profile}
+        user={user}
+        slotCount={slotCount}
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

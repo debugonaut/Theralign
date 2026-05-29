@@ -6,6 +6,7 @@ import {
   cancelAppointment,
   completeAppointment,
   getAllAppointmentsAdmin,
+  rescheduleAppointment,
 } from '../controllers/appointment.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
@@ -21,5 +22,6 @@ router.get('/admin/all', requireAuth, requireRole('admin'), getAllAppointmentsAd
 // Parameterized lifecycles
 router.patch('/:id/cancel', requireAuth, cancelAppointment);
 router.patch('/:id/complete', requireAuth, requireRole('doctor'), completeAppointment);
+router.patch('/:id/reschedule', requireAuth, requireRole('patient'), rescheduleAppointment);
 
 export default router;

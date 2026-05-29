@@ -3,9 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Calendar, Clock, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { getDoctorAvailability, bookAppointment } from '../../api/appointment.api';
+import { joinWaitlist, leaveWaitlist, checkWaitlistStatus } from '../../api/waitlist.api';
 import useAuthStore from '../../store/authStore';
 import BookingConfirmationModal from './BookingConfirmationModal';
 import { useRazorpay } from '../../hooks/useRazorpay';
+import AvailabilityHeatmap from './AvailabilityHeatmap';
+import { Bell, Check, AlertCircle } from 'lucide-react';
 
 const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const navigate = useNavigate();
@@ -18,6 +21,9 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
+
+  const [onWaitlist, setOnWaitlist] = useState(false);
+  const [waitlistLoading, setWaitlistLoading] = useState(false);
 
   // Fetch available slots for this doctor
   const fetchAvailability = async () => {
@@ -46,6 +52,51 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   useEffect(() => {
     fetchAvailability();
   }, [doctorId]);
+
+  // Check waitlist subscription status on mount/availability fetch
+  useEffect(() => {
+    const fetchWaitlistStatus = async () => {
+      if (availabilityByDate.length === 0 && isAuthenticated && user?.role === 'patient') {
+        try {
+          const res = await checkWaitlistStatus(doctorId);
+          if (res.data?.success && res.data.data) {
+            setOnWaitlist(res.data.data.onWaitlist);
+          } else if (res.success && res.data) {
+            setOnWaitlist(res.data.onWaitlist);
+          }
+        } catch (err) {
+          console.warn('Silent waitlist status fetch warning:', err.message);
+        }
+      }
+    };
+    fetchWaitlistStatus();
+  }, [availabilityByDate, doctorId, isAuthenticated, user]);
+
+  const handleJoinWaitlist = async () => {
+    setWaitlistLoading(true);
+    try {
+      const res = await joinWaitlist(doctorId);
+      setOnWaitlist(true);
+      toast.success(res.message || res.data?.message || 'Joined waitlist! We will notify you when slots open.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to join waitlist.');
+    } finally {
+      setWaitlistLoading(false);
+    }
+  };
+
+  const handleLeaveWaitlist = async () => {
+    setWaitlistLoading(true);
+    try {
+      const res = await leaveWaitlist(doctorId);
+      setOnWaitlist(false);
+      toast.success(res.message || res.data?.message || 'Removed from waitlist.');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to leave waitlist.');
+    } finally {
+      setWaitlistLoading(false);
+    }
+  };
 
   // Derived state: slots for the selected date
   const slotsForSelectedDate = availabilityByDate.find(d => d.date === selectedDate)?.slots || [];
@@ -195,47 +246,55 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       {!loading && isAuthenticated && user?.role === 'patient' && (
         <>
           {availabilityByDate.length === 0 ? (
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-8 text-center flex flex-col items-center gap-2">
-              <span className="text-3xl">📅</span>
-              <p className="text-xs font-bold text-slate-700">No Clinic Slots Available</p>
-              <p className="text-[10px] text-slate-400 max-w-xs">
-                This doctor hasn't posted availability slots yet. Please check back later or contact customer care.
-              </p>
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-8 text-center flex flex-col items-center gap-3">
+              <div className="p-3 bg-white rounded-full border border-slate-100 shadow-sm flex items-center justify-center">
+                <Bell className="h-6 w-6 text-slate-400" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-700">No Clinic Slots Available</p>
+                <p className="text-[10px] text-slate-400 max-w-xs mt-1">
+                  This doctor hasn't posted availability slots yet. Join the waitlist to receive immediate alerts when slots open up!
+                </p>
+              </div>
+
+              {onWaitlist ? (
+                <div className="w-full flex flex-col items-center mt-2 p-3 bg-emerald-50/50 border border-emerald-100 rounded-xl animate-fadeIn">
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold">
+                    <Check className="h-4 w-4 bg-emerald-100 rounded-full p-0.5" />
+                    You are on the waitlist
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    We will notify you immediately once slot dates are scheduled.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleLeaveWaitlist}
+                    disabled={waitlistLoading}
+                    className="text-[10px] text-slate-400 hover:text-red-500 font-bold transition-colors mt-3 border-t border-slate-100 w-full pt-2"
+                  >
+                    {waitlistLoading ? 'Processing...' : 'Leave waitlist'}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleJoinWaitlist}
+                  disabled={waitlistLoading}
+                  className="inline-flex items-center gap-1.5 bg-primary hover:bg-primary-dark text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow transition-all cursor-pointer mt-2 w-full justify-center"
+                >
+                  <Bell className="h-3.5 w-3.5" />
+                  {waitlistLoading ? 'Joining...' : 'Join Waitlist'}
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Date Pills */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Select a Consultation Date
-                </label>
-                <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-thin">
-                  {availabilityByDate.map((group) => {
-                    const { weekday, dayNum, month } = formatDatePill(group.date);
-                    const isSelected = selectedDate === group.date;
-                    return (
-                      <button
-                        key={group.date}
-                        type="button"
-                        onClick={() => handleDateSelect(group.date)}
-                        className={`flex flex-col items-center justify-center w-16 py-3 rounded-2xl border transition-all cursor-pointer shrink-0 select-none ${
-                          isSelected
-                            ? 'bg-primary border-primary text-white shadow-md'
-                            : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300'
-                        }`}
-                      >
-                        <span className={`text-[9px] uppercase font-bold tracking-wider ${isSelected ? 'text-white/80' : 'text-slate-400'}`}>
-                          {weekday}
-                        </span>
-                        <span className="text-base font-extrabold leading-none mt-1">{dayNum}</span>
-                        <span className={`text-[9px] font-bold mt-1 ${isSelected ? 'text-white/90' : 'text-slate-500'}`}>
-                          {month}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              {/* Availability Heatmap (Feature F6) */}
+              <AvailabilityHeatmap
+                availabilityByDate={availabilityByDate}
+                selectedDate={selectedDate}
+                onDateSelect={handleDateSelect}
+              />
 
               {/* Time Chips */}
               {selectedDate && (

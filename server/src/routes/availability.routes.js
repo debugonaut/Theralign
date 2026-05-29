@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createSlot,
+  createRecurringSlots,
   getMySlots,
   updateSlot,
   deleteSlot,
@@ -13,6 +14,7 @@ const router = Router();
 
 // Doctor routes
 router.post('/slots', requireAuth, requireRole('doctor'), createSlot);
+router.post('/slots/recurring', requireAuth, requireRole('doctor'), createRecurringSlots);
 router.get('/slots/mine', requireAuth, requireRole('doctor'), getMySlots);
 router.put('/slots/:slotId', requireAuth, requireRole('doctor'), updateSlot);
 router.delete('/slots/:slotId', requireAuth, requireRole('doctor'), deleteSlot);

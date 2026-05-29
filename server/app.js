@@ -19,8 +19,13 @@ import adminRoutes from './src/routes/admin.routes.js';
 import analyticsRoutes from './src/routes/analytics.routes.js';
 import discoveryRoutes from './src/routes/discovery.routes.js';
 import aiRoutes from './src/routes/ai.routes.js';
+import documentRoutes from './src/routes/document.routes.js';
+import notificationRoutes from './src/routes/notification.routes.js';
+import searchRoutes from './src/routes/search.routes.js';
+import waitlistRoutes from './src/routes/waitlist.routes.js';
 
 const app = express();
+
 
 // ==========================================
 // 1. GLOBAL MIDDLEWARES
@@ -87,6 +92,10 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/admin/analytics', analyticsRoutes);
 app.use('/api/discover', discoveryRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/waitlist', waitlistRoutes);
 
 // ==========================================
 // 4. FALLBACK & ERROR HANDLERS

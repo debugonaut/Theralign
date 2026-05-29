@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck, Mail, Phone } from 'lucide-react';
+import axiosInstance from '../../api/axiosInstance';
+import { toast } from 'react-hot-toast';
 
-const DoctorAppointmentCard = ({ appointment, onComplete, onCancel }) => {
+const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) => {
   const patientName = appointment.patient?.name || 'Patient';
   const patientEmail = appointment.patient?.email || 'N/A';
   const patientPhone = appointment.patient?.phone || 'N/A';
   const patientImage = appointment.patient?.profileImage || 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+
+  const [actionLoading, setActionLoading] = useState(false);
 
   const formatHumanDate = (dateStr) => {
     try {
@@ -121,6 +125,114 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel }) => {
             <p className="text-[10px] text-rose-600 font-medium italic leading-relaxed">
               Reason: "{appointment.cancellationReason}"
             </p>
+          )}
+        </div>
+      )}
+
+      {/* Clinical Notes/Prescription Upload (Feature F3) */}
+      {appointment.status === 'completed' && (
+        <div className="p-4 bg-slate-50/70 border border-slate-200/50 rounded-2xl space-y-3">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+            📄 Clinical Session Notes
+          </p>
+
+          {appointment.sessionDocument?.url ? (
+            <div className="flex items-center justify-between gap-3 bg-white border border-slate-200/60 rounded-xl p-2.5 shadow-sm">
+              <a
+                href={appointment.sessionDocument.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-bold text-primary hover:text-primary-dark truncate flex items-center gap-1.5"
+              >
+                <span>📄</span>
+                <span className="truncate">{appointment.sessionDocument.fileName || 'View Notes PDF'}</span>
+              </a>
+              <button
+                type="button"
+                onClick={async () => {
+                  const confirmDelete = window.confirm('Are you sure you want to remove this session document?');
+                  if (!confirmDelete) return;
+
+                  setActionLoading(true);
+                  try {
+                    const res = await axiosInstance.delete(`/documents/${appointment._id}`);
+                    if (res.data?.success && res.data?.data) {
+                      toast.success('Clinical document removed.');
+                      if (onUpdate) onUpdate(res.data.data);
+                    }
+                  } catch (err) {
+                    console.error(err);
+                    toast.error(err.response?.data?.message || 'Failed to delete session notes.');
+                  } finally {
+                    setActionLoading(false);
+                  }
+                }}
+                disabled={actionLoading}
+                className="text-[10px] font-bold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 px-2.5 py-1 rounded-lg transition-all cursor-pointer disabled:opacity-50 shrink-0"
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-xl p-4 bg-white/60">
+              <label className="flex flex-col items-center justify-center gap-1 cursor-pointer w-full text-center">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    if (file.type !== 'application/pdf') {
+                      toast.error('Only PDF documents are accepted.');
+                      return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      toast.error('PDF file size must not exceed 5MB.');
+                      return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('document', file);
+
+                    setActionLoading(true);
+                    try {
+                      const res = await axiosInstance.post(`/documents/upload/${appointment._id}`, formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                      });
+                      if (res.data?.success && res.data?.data) {
+                        toast.success('Clinical document attached successfully!');
+                        if (onUpdate) onUpdate(res.data.data);
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      toast.error(err.response?.data?.message || 'Failed to upload session notes.');
+                    } finally {
+                      setActionLoading(false);
+                    }
+                  }}
+                  disabled={actionLoading}
+                  className="hidden"
+                />
+                {actionLoading ? (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-bold">
+                    <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                    Uploading PDF...
+                  </div>
+                ) : (
+                  <>
+                    <span className="text-base">📎</span>
+                    <span className="text-xs text-primary hover:text-primary-dark font-bold">
+                      Upload Session PDF
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-semibold mt-0.5">
+                      Max 5MB (PDF only)
+                    </span>
+                  </>
+                )}
+              </label>
+            </div>
           )}
         </div>
       )}

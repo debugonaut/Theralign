@@ -4,6 +4,7 @@ import AppError from '../utils/AppError.js';
 import * as adminService from '../services/admin.service.js';
 import User from '../models/User.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import { createNotification } from '../services/notificationService.js';
 
 /**
  * GET /api/admin/doctors/pending
@@ -25,6 +26,18 @@ export const getPendingDoctors = asyncHandler(async (req, res) => {
 export const verifyDoctor = asyncHandler(async (req, res) => {
   const { profileId } = req.params;
   const profile = await adminService.verifyDoctorProfile(profileId);
+
+  // Trigger in-app notification to the doctor
+  if (profile) {
+    createNotification({
+      recipientId: profile.user,
+      type: 'verification_approved',
+      title: 'Profile Verified ✓',
+      message: 'Your profile has been verified. You can now receive bookings.',
+      link: '/doctor/dashboard',
+    });
+  }
+
   return successResponse(res, 200, 'Doctor profile approved and verified successfully', { profile });
 });
 
@@ -36,6 +49,18 @@ export const rejectDoctor = asyncHandler(async (req, res) => {
   const { profileId } = req.params;
   const { rejectionReason } = req.body;
   const profile = await adminService.rejectDoctorProfile(profileId, rejectionReason);
+
+  // Trigger in-app notification to the doctor
+  if (profile) {
+    createNotification({
+      recipientId: profile.user,
+      type: 'verification_rejected',
+      title: 'Verification Update',
+      message: 'Your verification requires additional review. Check your profile.',
+      link: '/doctor/dashboard',
+    });
+  }
+
   return successResponse(res, 200, 'Doctor profile application rejected successfully', { profile });
 });
 

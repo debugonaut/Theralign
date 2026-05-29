@@ -84,6 +84,14 @@ const appointmentSchema = new mongoose.Schema(
       type: Boolean, 
       default: false 
     },
+
+    // Feature F3: Session Documents (prescriptions, clinical notes)
+    sessionDocument: {
+      url: { type: String, default: null },
+      publicId: { type: String, default: null }, // For deletion in Cloudinary
+      uploadedAt: { type: Date, default: null },
+      fileName: { type: String, default: null }, // Display name
+    },
   },
   { timestamps: true }
 );

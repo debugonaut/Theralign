@@ -3,6 +3,36 @@ import { successResponse } from '../utils/apiResponse.js';
 import AppError from '../utils/AppError.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import Waitlist from '../models/Waitlist.model.js';
+import { createNotification } from '../services/notificationService.js';
+
+/**
+ * Helper to notify patients on the waitlist when the doctor adds slot availability.
+ */
+const notifyWaitlist = async (doctorProfileId, doctorName) => {
+  try {
+    const waitlistEntries = await Waitlist.find({
+      doctor: doctorProfileId,
+      notified: false,
+    });
+
+    for (const entry of waitlistEntries) {
+      createNotification({
+        recipientId: entry.patient,
+        type: 'appointment_booked', // Reuse closest category
+        title: 'New Slots Available',
+        message: `Dr. ${doctorName} has added new availability slots. Book now before they fill up!`,
+        link: `/doctors/${doctorProfileId}`,
+      });
+
+      entry.notified = true;
+      entry.notifiedAt = new Date();
+      await entry.save();
+    }
+  } catch (err) {
+    console.error('[ERROR] Waitlist notify task failed:', err);
+  }
+};
 
 /**
  * POST /api/availability/slots
@@ -37,6 +67,9 @@ export const createSlot = asyncHandler(async (req, res) => {
       endTime,
     });
 
+    // Notify waitlisted patients (fire and forget)
+    notifyWaitlist(doctorProfile._id, req.user.name);
+
     return successResponse(res, 201, 'Availability slot created successfully', slot);
   } catch (error) {
     // Handle MongoDB unique duplicate key error (code 11000)
@@ -45,6 +78,80 @@ export const createSlot = asyncHandler(async (req, res) => {
     }
     throw error;
   }
+});
+
+/**
+ * POST /api/availability/slots/recurring
+ * Doctor creates weekly recurring availability slots.
+ * Protect: requireAuth, requireRole('doctor')
+ */
+export const createRecurringSlots = asyncHandler(async (req, res) => {
+  const { date, startTime, endTime, repeatWeeks } = req.body;
+
+  // Step 1: Validate fields are present
+  if (!date || !startTime || !endTime || !repeatWeeks) {
+    throw new AppError('Please provide date, startTime, endTime, and repeatWeeks.', 400);
+  }
+
+  const repeatWeeksNum = Number(repeatWeeks);
+  if (isNaN(repeatWeeksNum) || repeatWeeksNum < 1 || repeatWeeksNum > 12) {
+    throw new AppError('repeatWeeks must be a number between 1 and 12.', 400);
+  }
+
+  // Step 2: Validate startTime < endTime
+  if (startTime >= endTime) {
+    throw new AppError('Start time must be strictly before end time.', 400);
+  }
+
+  // Step 3: Find DoctorProfile where user === req.user.id
+  const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
+  if (!doctorProfile) {
+    throw new AppError('Doctor profile not found. Please complete your onboarding first.', 404);
+  }
+
+  // Step 4: Generate weekly dates without timezone shift
+  const targetDates = [];
+  const baseDate = new Date(date + 'T00:00:00');
+
+  for (let week = 0; week < repeatWeeksNum; week++) {
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() + week * 7);
+    targetDates.push(d.toISOString().split('T')[0]); // YYYY-MM-DD
+  }
+
+  // Step 5: Attempt to create all slots individually, skipping duplicates (index collisions)
+  const results = { created: 0, skipped: 0, dates: [] };
+
+  for (const slotDate of targetDates) {
+    try {
+      const slot = await AvailabilitySlot.create({
+        doctor: doctorProfile._id,
+        date: slotDate,
+        startTime,
+        endTime,
+      });
+      results.created++;
+      results.dates.push(slotDate);
+    } catch (err) {
+      if (err.code === 11000) {
+        results.skipped++; // Already exists, skip silently
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  // Notify waitlisted patients if any slot was successfully created
+  if (results.created > 0) {
+    notifyWaitlist(doctorProfile._id, req.user.name);
+  }
+
+  return successResponse(
+    res,
+    201,
+    `Created ${results.created} slots. Skipped ${results.skipped} duplicates.`,
+    results
+  );
 });
 
 /**

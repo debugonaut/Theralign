@@ -74,6 +74,13 @@ const DoctorAppointments = () => {
     }
   };
 
+  // Callback to update a single appointment card state in place (e.g. on document upload/delete)
+  const handleUpdateAppointment = (updatedAppt) => {
+    setAppointments(
+      appointments.map((a) => (a._id === updatedAppt._id ? updatedAppt : a))
+    );
+  };
+
   // Trigger Cancel Flow
   const handleOpenCancelModal = (appointmentId) => {
     setCancelModal({ open: true, appointmentId, reason: '' });
@@ -188,6 +195,7 @@ const DoctorAppointments = () => {
               appointment={appointment}
               onComplete={handleMarkComplete}
               onCancel={handleOpenCancelModal}
+              onUpdate={handleUpdateAppointment}
             />
           ))}
         </div>

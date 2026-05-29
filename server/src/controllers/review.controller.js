@@ -3,6 +3,7 @@ import { successResponse, errorResponse } from '../utils/apiResponse.js';
 import Review from '../models/Review.model.js';
 import Appointment from '../models/Appointment.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import { createNotification } from '../services/notificationService.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/reviews  →  Patient submits a review
@@ -60,6 +61,19 @@ export const submitReview = asyncHandler(async (req, res) => {
 
   // 8. Mark appointment as reviewed
   await Appointment.findByIdAndUpdate(appointmentId, { reviewSubmitted: true });
+
+  // 9. Trigger in-app notification to the doctor
+  const doctorProfile = await DoctorProfile.findById(appointment.doctor);
+  if (doctorProfile) {
+    createNotification({
+      recipientId: doctorProfile.user,
+      type: 'review_received',
+      title: 'New Patient Review',
+      message: `A patient left you a ${rating}-star review.`,
+      link: '/doctor/reviews',
+      relatedId: review._id,
+    });
+  }
 
   return successResponse(res, 201, 'Review submitted successfully.', { review });
 });

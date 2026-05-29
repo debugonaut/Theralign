@@ -10,6 +10,15 @@ export const createSlot = async (data) => {
 };
 
 /**
+ * Doctor creates weekly recurring availability slots.
+ * @param {object} data - { date: "YYYY-MM-DD", startTime: "HH:mm", endTime: "HH:mm", repeatWeeks: 4 }
+ */
+export const createRecurringSlots = async (data) => {
+  const response = await axiosInstance.post('/availability/slots/recurring', data);
+  return response.data;
+};
+
+/**
  * Doctor retrieves their own scheduled availability slots.
  */
 export const getMySlots = async () => {

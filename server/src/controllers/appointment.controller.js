@@ -4,6 +4,8 @@ import AppError from '../utils/AppError.js';
 import Appointment from '../models/Appointment.model.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import { sendBookingConfirmation, sendCancellationNotice } from '../services/emailService.js';
+import { createNotification } from '../services/notificationService.js';
 
 /**
  * POST /api/appointments/book
@@ -68,6 +70,37 @@ export const bookAppointment = asyncHandler(async (req, res) => {
     { path: 'doctor', populate: { path: 'user', select: 'name specialization' } },
     { path: 'slot', select: 'date startTime endTime' }
   ]);
+
+  // Step 6: Dispatch Booking Confirmation Email (Fire and forget)
+  sendBookingConfirmation({
+    patientEmail: req.user.email,
+    patientName: req.user.name,
+    doctorName: appointment.doctor?.user?.name || 'Physiotherapist',
+    date: appointment.date,
+    startTime: appointment.startTime,
+    endTime: appointment.endTime,
+    consultationFee: appointment.consultationFee,
+    appointmentId: appointment._id,
+  });
+
+  // Step 7: Create in-app notifications (Fire and forget)
+  createNotification({
+    recipientId: req.user.id,
+    type: 'appointment_booked',
+    title: 'Appointment Confirmed',
+    message: `Your appointment with Dr. ${appointment.doctor?.user?.name || 'Physiotherapist'} on ${slot.date} at ${slot.startTime} is confirmed.`,
+    link: '/patient/appointments',
+    relatedId: appointment._id,
+  });
+
+  createNotification({
+    recipientId: doctorProfile.user,
+    type: 'appointment_booked',
+    title: 'New Appointment Booked',
+    message: `${req.user.name} has booked an appointment for ${slot.date} at ${slot.startTime}.`,
+    link: '/doctor/appointments',
+    relatedId: appointment._id,
+  });
 
   return successResponse(res, 201, 'Appointment booked successfully!', appointment);
 });
@@ -169,6 +202,40 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
   // Step 6: Unlock slot to be re-booked
   await AvailabilitySlot.findByIdAndUpdate(appointment.slot, { $set: { isBooked: false } });
 
+  // Step 7: Send Cancellation Email (Fire and forget)
+  // Populate patient and doctor user information for the template
+  const populatedAppt = await appointment.populate([
+    { path: 'patient', select: 'name email' },
+    { path: 'doctor', populate: { path: 'user', select: 'name' } }
+  ]);
+
+  if (populatedAppt.patient?.email) {
+    sendCancellationNotice({
+      patientEmail: populatedAppt.patient.email,
+      patientName: populatedAppt.patient.name,
+      doctorName: populatedAppt.doctor?.user?.name || 'Physiotherapist',
+      date: populatedAppt.date,
+      startTime: populatedAppt.startTime,
+      cancelledBy: role,
+    });
+  }
+
+  // Notify the other party (not the one who cancelled)
+  const notifyUserId = role === 'patient'
+    ? (populatedAppt.doctor?.user?._id || populatedAppt.doctor?.user)
+    : populatedAppt.patient?._id;
+
+  if (notifyUserId) {
+    createNotification({
+      recipientId: notifyUserId,
+      type: 'appointment_cancelled',
+      title: 'Appointment Cancelled',
+      message: `Your appointment on ${populatedAppt.date} at ${populatedAppt.startTime} has been cancelled.`,
+      link: role === 'patient' ? '/doctor/appointments' : '/patient/appointments',
+      relatedId: populatedAppt._id,
+    });
+  }
+
   return successResponse(res, 200, 'Appointment cancelled successfully.', appointment);
 });
 
@@ -205,6 +272,16 @@ export const completeAppointment = asyncHandler(async (req, res) => {
   // Step 5: Complete appointment
   appointment.status = 'completed';
   await appointment.save();
+
+  // Step 6: Trigger in-app notification
+  createNotification({
+    recipientId: appointment.patient,
+    type: 'appointment_completed',
+    title: 'Appointment Completed',
+    message: `Your appointment with Dr. ${req.user.name} on ${appointment.date} has been marked as completed.`,
+    link: '/patient/appointments',
+    relatedId: appointment._id,
+  });
 
   return successResponse(res, 200, 'Appointment marked as completed.', appointment);
 });
@@ -247,3 +324,99 @@ export const getAllAppointmentsAdmin = asyncHandler(async (req, res) => {
     totalPlatformCommission,
   });
 });
+
+/**
+ * PATCH /api/appointments/:id/reschedule
+ * Patient reschedules confirmed future appointment to a new slot with same doctor.
+ * Protect: requireAuth, requireRole('patient')
+ */
+export const rescheduleAppointment = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { newSlotId } = req.body;
+
+  if (!newSlotId) {
+    throw new AppError('New availability slot ID is required.', 400);
+  }
+
+  // Step 1: Find the existing appointment
+  const appointment = await Appointment.findById(id);
+  if (!appointment) {
+    throw new AppError('Appointment not found.', 404);
+  }
+
+  // Step 2: Verification checks
+  if (appointment.patient.toString() !== req.user.id.toString()) {
+    throw new AppError('Access denied. You do not own this appointment.', 403);
+  }
+
+  if (appointment.status !== 'confirmed') {
+    throw new AppError('Only confirmed appointments can be rescheduled.', 400);
+  }
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const todayString = `${year}-${month}-${day}`;
+
+  if (appointment.date <= todayString) {
+    throw new AppError('Cannot reschedule past or today\'s appointments.', 400);
+  }
+
+  // Step 3: Verify new slot exists and belongs to the SAME doctor
+  const newSlot = await AvailabilitySlot.findOne({
+    _id: newSlotId,
+    doctor: appointment.doctor,
+    isActive: true,
+  });
+
+  if (!newSlot) {
+    throw new AppError('The requested time slot is invalid or belongs to a different doctor.', 400);
+  }
+
+  if (newSlot._id.toString() === appointment.slot?.toString()) {
+    throw new AppError('You are already scheduled in this time slot.', 400);
+  }
+
+  // Step 4: Secure the new slot atomically (secured first to avoid losing current booking if slot was taken)
+  const lockedNewSlot = await AvailabilitySlot.findOneAndUpdate(
+    { _id: newSlotId, isBooked: false, isActive: true },
+    { $set: { isBooked: true } },
+    { new: true }
+  );
+
+  if (!lockedNewSlot) {
+    throw new AppError('The requested time slot is no longer available.', 409);
+  }
+
+  // Step 5: Release the old slot and update the appointment
+  const oldSlotId = appointment.slot;
+
+  try {
+    // Release old slot
+    if (oldSlotId) {
+      await AvailabilitySlot.findByIdAndUpdate(oldSlotId, { $set: { isBooked: false } });
+    }
+
+    // Update appointment
+    appointment.slot = lockedNewSlot._id;
+    appointment.date = lockedNewSlot.date;
+    appointment.startTime = lockedNewSlot.startTime;
+    appointment.endTime = lockedNewSlot.endTime;
+
+    await appointment.save();
+  } catch (err) {
+    // Rollback atomic lock on new slot if database save fails
+    await AvailabilitySlot.findByIdAndUpdate(newSlotId, { $set: { isBooked: false } });
+    throw new AppError('Failed to complete rescheduling operation. Slot rolled back.', 500);
+  }
+
+  // Step 6: Populate and return updated details
+  await appointment.populate([
+    { path: 'doctor', populate: { path: 'user', select: 'name specialization' } },
+    { path: 'slot', select: 'date startTime endTime' }
+  ]);
+
+  return successResponse(res, 200, 'Appointment rescheduled successfully!', appointment);
+});
+

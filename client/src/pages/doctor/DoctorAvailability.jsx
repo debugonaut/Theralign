@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast';
 import { 
   Calendar, Clock, Plus, Trash2, ShieldAlert, Sparkles, CheckCircle2, AlertCircle 
 } from 'lucide-react';
-import { createSlot, getMySlots, deleteSlot } from '../../api/availability.api';
+import { createSlot, createRecurringSlots, getMySlots, deleteSlot } from '../../api/availability.api';
 
 const DoctorAvailability = () => {
   const [slots, setSlots] = useState([]);
@@ -11,6 +11,10 @@ const DoctorAvailability = () => {
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({ date: '', startTime: '', endTime: '' });
   const [formError, setFormError] = useState('');
+  
+  // Recurring slots state
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [repeatWeeks, setRepeatWeeks] = useState(4);
 
   // Get today's local date string formatted as YYYY-MM-DD for the date input's minimum attribute
   const today = new Date();
@@ -73,12 +77,28 @@ const DoctorAvailability = () => {
     setSubmitting(true);
     setFormError('');
     try {
-      const res = await createSlot(formData);
-      if (res.success) {
-        toast.success('Availability slot added successfully!');
-        // Reset form times but keep the selected date to make adding multiple slots for the same day easy
-        setFormData({ date, startTime: '', endTime: '' });
-        await fetchSlots();
+      if (isRecurring) {
+        const res = await createRecurringSlots({
+          date,
+          startTime,
+          endTime,
+          repeatWeeks,
+        });
+        if (res.success) {
+          toast.success(res.message || 'Weekly slots created successfully!');
+          // Reset form times but keep the date
+          setFormData({ date, startTime: '', endTime: '' });
+          setIsRecurring(false);
+          await fetchSlots();
+        }
+      } else {
+        const res = await createSlot(formData);
+        if (res.success) {
+          toast.success('Availability slot added successfully!');
+          // Reset form times but keep the selected date to make adding multiple slots for the same day easy
+          setFormData({ date, startTime: '', endTime: '' });
+          await fetchSlots();
+        }
       }
     } catch (err) {
       console.error(err);
@@ -194,6 +214,34 @@ const DoctorAvailability = () => {
                   className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5 text-slate-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
               </div>
+            </div>
+
+            {/* Recurring toggle */}
+            <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-3">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={isRecurring}
+                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  className="w-4 h-4 accent-primary rounded text-primary focus:ring-primary/20 cursor-pointer"
+                />
+                <span className="text-sm font-semibold text-slate-700">Repeat slot weekly</span>
+              </label>
+
+              {isRecurring && (
+                <div className="flex items-center gap-2 transition-all duration-300">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">For:</span>
+                  <select
+                    value={repeatWeeks}
+                    onChange={(e) => setRepeatWeeks(Number(e.target.value))}
+                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.2 text-slate-700 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  >
+                    {[2, 3, 4, 6, 8, 12].map((w) => (
+                      <option key={w} value={w}>{w} weeks</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             {formError && (

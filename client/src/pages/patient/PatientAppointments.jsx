@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { Calendar, ChevronRight, AlertTriangle, ArrowRight, MessageSquare, Clock, X } from 'lucide-react';
 import { getMyAppointments, cancelAppointment } from '../../api/appointment.api';
 import PatientAppointmentCard from '../../components/appointments/PatientAppointmentCard';
+import RescheduleModal from '../../components/booking/RescheduleModal';
 
 const PatientAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -11,6 +12,23 @@ const PatientAppointments = () => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null, reason: '' });
   const [cancelling, setCancelling] = useState(false);
+
+  // Rescheduling states
+  const [rescheduleModal, setRescheduleModal] = useState({ open: false, appointment: null });
+
+  const handleOpenRescheduleModal = (appointment) => {
+    setRescheduleModal({ open: true, appointment });
+  };
+
+  const handleCloseRescheduleModal = () => {
+    setRescheduleModal({ open: false, appointment: null });
+  };
+
+  const handleRescheduleSuccess = (updatedAppt) => {
+    setAppointments(
+      appointments.map((a) => (a._id === updatedAppt._id ? updatedAppt : a))
+    );
+  };
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -158,6 +176,7 @@ const PatientAppointments = () => {
               key={appointment._id}
               appointment={appointment}
               onCancel={handleOpenCancelModal}
+              onReschedule={handleOpenRescheduleModal}
             />
           ))}
         </div>
@@ -225,6 +244,16 @@ const PatientAppointments = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Reschedule Modal Overlay */}
+      {rescheduleModal.open && (
+        <RescheduleModal
+          isOpen={rescheduleModal.open}
+          onClose={handleCloseRescheduleModal}
+          appointment={rescheduleModal.appointment}
+          onSuccess={handleRescheduleSuccess}
+        />
       )}
     </div>
   );

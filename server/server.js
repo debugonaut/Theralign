@@ -2,6 +2,7 @@ import app from './app.js';
 import config from './src/config/env.js';
 import { connectDB } from './src/config/db.js';
 import logger from './src/utils/logger.js';
+import { initReminderJob } from './src/jobs/reminderJob.js';
 
 // Define immediate startup routine
 const startServer = async () => {
@@ -9,7 +10,10 @@ const startServer = async () => {
     // 1. Establish database connection first
     await connectDB();
 
-    // 2. Start Express HTTP Listener
+    // 2. Initialize scheduled background jobs
+    initReminderJob();
+
+    // 3. Start Express HTTP Listener
     const server = app.listen(config.port, () => {
       logger.info(`Theralign Express Server running in [${config.nodeEnv}] on port ${config.port}`);
     });

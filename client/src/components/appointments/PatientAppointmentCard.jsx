@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck, Star } from 'lucide-react';
 import ReviewForm from '../reviews/ReviewForm';
 
-const PatientAppointmentCard = ({ appointment, onCancel }) => {
+const PatientAppointmentCard = ({ appointment, onCancel, onReschedule }) => {
   const doctorName = appointment.doctor?.user?.name || 'Physiotherapist';
   const specialization = appointment.doctor?.specialization?.join(', ') || 'General Physiotherapy';
   const profileImage = appointment.doctor?.user?.profileImage || 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
@@ -134,15 +134,46 @@ const PatientAppointmentCard = ({ appointment, onCancel }) => {
         </div>
       )}
 
-      {/* Action button — Cancel */}
+      {/* Session document download (Feature F3) */}
+      {appointment.status === 'completed' && appointment.sessionDocument?.url && (
+        <div className="p-3.5 bg-blue-50/50 border border-blue-100/60 rounded-2xl flex items-center justify-between gap-3 animate-fadeIn">
+          <div className="min-w-0">
+            <p className="text-[9px] font-bold text-blue-700 uppercase tracking-wide">
+              📄 Clinical Session Notes
+            </p>
+            <p className="text-[10px] text-slate-500 font-medium truncate mt-0.5">
+              {appointment.sessionDocument.fileName || 'prescription.pdf'}
+            </p>
+          </div>
+          <a
+            href={appointment.sessionDocument.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary hover:bg-primary-dark text-white rounded-lg px-3 py-1.5 font-bold text-[10px] shadow-sm transition-all shrink-0 cursor-pointer text-center"
+          >
+            Download Notes
+          </a>
+        </div>
+      )}
+
+      {/* Action button — Cancel & Reschedule */}
       {canCancel && (
-        <button
-          type="button"
-          onClick={() => onCancel(appointment._id)}
-          className="w-full bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 text-rose-600 rounded-xl py-2 text-xs font-bold transition-all shadow-sm cursor-pointer mt-2"
-        >
-          Cancel Appointment
-        </button>
+        <div className="grid grid-cols-2 gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() => onCancel(appointment._id)}
+            className="bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 text-rose-600 rounded-xl py-2 text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => onReschedule(appointment)}
+            className="bg-white hover:bg-primary/5 border border-primary hover:border-primary-dark text-primary rounded-xl py-2 text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1"
+          >
+            Reschedule
+          </button>
+        </div>
       )}
 
       {/* ─── Review Section ────────────────────────────────────────────── */}
