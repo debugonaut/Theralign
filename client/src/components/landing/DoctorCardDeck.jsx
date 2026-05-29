@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { getNearbyDoctorsAPI } from '../../api/discovery.api';
 import VerifiedBadge from '../common/VerifiedBadge';
 
@@ -64,24 +63,16 @@ function DoctorCard({ doctor, stackIndex, isTop, onClick }) {
   const initial = docName.replace('Dr. ', '').charAt(0).toUpperCase();
 
   return (
-    <motion.div
+    <div
       onClick={isTop ? onClick : undefined}
+      className={`absolute top-0 left-0 w-full transition-all duration-[250ms] ease-swiss ${
+        isTop ? 'cursor-pointer hover:-translate-x-1.5 hover:-translate-y-1.5' : 'cursor-default pointer-events-none'
+      }`}
       style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
         zIndex: config.zIndex,
-        cursor: isTop ? 'pointer' : 'default',
-        width: '100%',
-      }}
-      animate={{
-        x: config.x,
-        y: config.y,
-        scale: config.scale,
+        transform: `translate(${config.x}px, ${config.y}px) scale(${config.scale})`,
         opacity: config.opacity,
       }}
-      whileHover={isTop ? { x: -6, y: -6 } : {}}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
     >
       <div
         className="bg-swiss-white border-2 border-swiss-black p-5 rounded-none text-left select-none relative"
@@ -128,7 +119,7 @@ function DoctorCard({ doctor, stackIndex, isTop, onClick }) {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -205,7 +196,6 @@ export default function DoctorCardDeck() {
     );
   };
 
-  // Safe bounds check in case API returns fewer than 3 docs
   const stackSize = Math.min(doctors.length, 3);
   const visibleDoctors = Array.from({ length: stackSize }).map((_, i) => {
     return doctors[(topIndex + i) % doctors.length];
@@ -238,70 +228,61 @@ export default function DoctorCardDeck() {
       {/* 3D Staggered Cards container */}
       <div className="relative w-full h-[210px] select-none">
         
-        {/* Animate exit fly-off for front-most card */}
-        <AnimatePresence>
-          {exitingCard && (
-            <motion.div
-              key={exitingCard.id}
-              initial={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-              animate={{ x: -280, rotate: -8, opacity: 0 }}
-              exit={{}}
-              transition={{ duration: 0.25, ease: 'easeIn' }}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                zIndex: 40,
-              }}
+        {/* Render the exiting card using vanilla CSS transition */}
+        {exitingCard && (
+          <div
+            className="absolute top-0 left-0 w-full transition-all duration-[250ms] ease-in-out"
+            style={{
+              zIndex: 40,
+              transform: 'translate(-280px, 40px) rotate(-8deg)',
+              opacity: 0,
+            }}
+          >
+            <div
+              className="bg-swiss-white border-2 border-swiss-black p-5 rounded-none text-left relative"
+              style={{ minHeight: '170px' }}
             >
-              <div
-                className="bg-swiss-white border-2 border-swiss-black p-5 rounded-none text-left relative"
-                style={{ minHeight: '170px' }}
-              >
-                {exitingCard.verificationStatus === 'verified' && (
-                  <div className="absolute top-4 right-4 z-10">
-                    <VerifiedBadge size="xs" />
-                  </div>
+              {exitingCard.verificationStatus === 'verified' && (
+                <div className="absolute top-4 right-4 z-10">
+                  <VerifiedBadge size="xs" />
+                </div>
+              )}
+              <div className="flex gap-4 items-start pr-12">
+                {exitingCard.avatar ? (
+                  <img
+                    src={exitingCard.avatar}
+                    alt={exitingCard.name}
+                    className="w-14 h-14 object-cover border-2 border-swiss-black rounded-none shrink-0"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-none bg-swiss-black text-swiss-white flex items-center justify-center font-black text-lg select-none shrink-0 border-2 border-swiss-black" />
                 )}
-                <div className="flex gap-4 items-start pr-12">
-                  {exitingCard.avatar ? (
-                    <img
-                      src={exitingCard.avatar}
-                      alt={exitingCard.name}
-                      className="w-14 h-14 object-cover border-2 border-swiss-black rounded-none shrink-0"
-                    />
-                  ) : (
-                    <div className="w-14 h-14 rounded-none bg-swiss-black text-swiss-white flex items-center justify-center font-black text-lg select-none shrink-0 border-2 border-swiss-black" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-swiss-black text-ui-md uppercase tracking-tight truncate leading-none mb-1">
+                    {exitingCard.name.startsWith('Dr. ') ? exitingCard.name : `DR. ${exitingCard.name}`}
+                  </p>
+                  <p className="text-[10px] text-swiss-red font-black uppercase tracking-widest truncate mb-2">
+                    {Array.isArray(exitingCard.specialty) ? exitingCard.specialty[0] : exitingCard.specialty}
+                  </p>
+                  <p className="text-ui-xs font-bold text-swiss-gray-600 uppercase tracking-wider mb-2">
+                    ★ {Number(exitingCard.rating || 0).toFixed(1)} <span className="text-swiss-gray-400">({exitingCard.reviewCount || 0} reviews)</span>
+                  </p>
+                  {exitingCard.distance && (
+                    <span className="inline-block text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-swiss-black text-swiss-white">
+                      {exitingCard.distance} KM AWAY
+                    </span>
                   )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-swiss-black text-ui-md uppercase tracking-tight truncate leading-none mb-1">
-                      {exitingCard.name.startsWith('Dr. ') ? exitingCard.name : `DR. ${exitingCard.name}`}
-                    </p>
-                    <p className="text-[10px] text-swiss-red font-black uppercase tracking-widest truncate mb-2">
-                      {Array.isArray(exitingCard.specialty) ? exitingCard.specialty[0] : exitingCard.specialty}
-                    </p>
-                    <p className="text-ui-xs font-bold text-swiss-gray-600 uppercase tracking-wider mb-2">
-                      ★ {Number(exitingCard.rating || 0).toFixed(1)} <span className="text-swiss-gray-400">({exitingCard.reviewCount || 0} reviews)</span>
-                    </p>
-                    {exitingCard.distance && (
-                      <span className="inline-block text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-swiss-black text-swiss-white">
-                        {exitingCard.distance} KM AWAY
-                      </span>
-                    )}
-                  </div>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+        )}
 
-        {/* Back-to-front rendering of remaining cards so front sits on top in DOM order */}
+        {/* Back-to-front rendering of remaining cards */}
         {visibleDoctors.map((doc, idx) => {
           const stackIdx = visibleDoctors.length - 1 - idx;
           const currentDoc = visibleDoctors[stackIdx];
           
-          // Do not render the card in deck if it is currently executing exit animation
           if (exitingCard && currentDoc.id === exitingCard.id) return null;
 
           return (

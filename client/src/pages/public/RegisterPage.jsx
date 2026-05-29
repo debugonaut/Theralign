@@ -97,7 +97,6 @@ const RegisterPage = () => {
   const strength = getPasswordStrength(formData.password);
 
   return (
-  return (
     <div className="min-h-[85vh] bg-swiss-white flex items-center justify-center p-6 py-12">
       <div className="w-full max-w-md">
         {/* Brand */}
