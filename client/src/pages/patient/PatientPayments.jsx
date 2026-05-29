@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Calendar, Clock, IndianRupee, ShieldCheck, CreditCard, Inbox } from 'lucide-react';
 import { getMyPayments } from '../../api/payment.api';
+import SectionHeader from '../../components/common/SectionHeader';
+import Table, { ActionLink } from '../../components/common/Table';
+import Badge from '../../components/common/Badge';
 
 const PatientPayments = () => {
+  const navigate = useNavigate();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,142 +20,177 @@ const PatientPayments = () => {
       }
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load transaction history.');
+      toast.error('FAILED TO FETCH PAYMENT TRANSACTIONS LEDGER.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    document.title = 'PAYMENT HISTORY — KINETIQ';
     fetchPayments();
   }, []);
 
-  const formatHumanDate = (dateStr) => {
-    try {
-      return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (e) {
-      return dateStr;
-    }
-  };
+  // Compute metrics
+  const totalSpent = payments.reduce((acc, p) => acc + (p.amount || 0), 0);
+  const sessionsPaid = payments.length;
 
-  const formatPaidOn = (dateStr) => {
-    try {
-      return new Date(dateStr).toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch (e) {
-      return dateStr;
+  const downloadReceipt = (payment) => {
+    // If appointment has a clinical document F3, we can download that
+    if (payment.appointment?.sessionDocument) {
+      window.open(payment.appointment.sessionDocument, '_blank');
+      return;
     }
+
+    // Generate lightweight browser-native text receipt
+    const docName = payment.doctor?.user?.name || 'Physiotherapist';
+    const apptDate = payment.appointment?.date || 'N/A';
+    const apptTime = payment.appointment?.startTime || 'N/A';
+    const paymentId = payment.razorpayPaymentId || 'OFFLINE_TXN';
+
+    const content = `
+==================================================
+              KINETIQ CLINICAL RECEIPT
+==================================================
+RECEIPT DATE:      ${new Date(payment.createdAt).toLocaleDateString('en-IN')}
+TRANSACTION ID:    ${paymentId}
+APPOINTMENT DATE:  ${apptDate}
+APPOINTMENT TIME:  ${apptTime}
+CLINICIAN:         DR. ${docName.toUpperCase()}
+FEE CHARGED:       ₹${payment.amount}
+COMMISSION (10%):  ₹${(payment.amount * 0.1).toFixed(0)}
+PAYMENT SYSTEM:    SECURED BY RAZORPAY GATEWAY
+STATUS:            CONFIRMED / PAID
+
+Thank you for choosing Kinetiq clinical networks.
+==================================================
+`;
+    const element = document.createElement("a");
+    const file = new Blob([content], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = `KINETIQ-RECEIPT-${paymentId.slice(-8)}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    toast.success('RECEIPT GENERATED.');
   };
 
   return (
-    <div className="p-8 space-y-8 select-none text-left">
+    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+      
       {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <CreditCard className="text-primary" size={24} />
-          Payment History
-        </h1>
-        <p className="text-slate-400 text-sm mt-1">
-          Review and audit your clinic consultation receipts and paid transaction records.
-        </p>
+      <SectionHeader
+        title="PAYMENT HISTORY"
+        size="lg"
+        ruled={true}
+        className="mb-0"
+      />
+
+      {/* Metric Cards Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[
+          { label: 'TOTAL SPENT', val: `₹${totalSpent}` },
+          { label: 'SESSIONS PAID', val: sessionsPaid },
+        ].map((m) => (
+          <div
+            key={m.label}
+            className="group bg-swiss-white border-2 border-swiss-black hover:border-4 p-6 transition-all duration-fast select-none rounded-none text-left"
+          >
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-2">
+              {m.label}
+            </span>
+            <h2 className="text-display-sm font-black text-swiss-black uppercase tracking-tighter leading-none">
+              {loading ? '—' : m.val}
+            </h2>
+          </div>
+        ))}
       </div>
 
-      {/* Skeletons Loading State */}
+      {/* Payments Ledger Table */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-4 animate-pulse">
-              <div className="flex justify-between items-center">
-                <div className="h-4 bg-slate-100 rounded w-1/2" />
-                <div className="h-6 bg-slate-100 rounded w-1/4" />
-              </div>
-              <div className="h-3 bg-slate-100 rounded w-3/4" />
-              <div className="space-y-2 pt-2 border-t border-slate-50">
-                <div className="h-3 bg-slate-100 rounded w-1/2" />
-                <div className="h-3 bg-slate-100 rounded w-2/3" />
-                <div className="h-3 bg-slate-100 rounded w-1/3" />
-              </div>
-            </div>
-          ))}
+        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+          LOADING TRANSACTIONS LEDGER...
         </div>
       ) : payments.length === 0 ? (
-        /* Empty State */
-        <div className="bg-slate-50 border border-slate-100 rounded-3xl p-16 text-center max-w-lg mx-auto flex flex-col items-center gap-4">
-          <div className="p-4 bg-slate-200/50 text-slate-400 rounded-2xl">
-            <Inbox size={32} />
-          </div>
-          <div>
-            <h3 className="font-bold text-base text-slate-700">No Payments Recorded</h3>
-            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-              Your payment records and transaction receipts will appear here automatically once you schedule and pay for clinical visits.
-            </p>
-          </div>
+        <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto">
+          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            NO TRANSACTION ENTRIES
+          </span>
+          <p className="text-ui-md text-swiss-gray-600 font-bold max-w-sm">
+            Your billing receipts and clinical payouts history will appear automatically.
+          </p>
         </div>
       ) : (
-        /* Payment Ledger Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {payments.map((payment) => {
-            const doctorName = payment.doctor?.user?.name || 'Physiotherapist';
-            const specialization = payment.doctor?.specialization?.join(', ') || 'General Physiotherapy';
-            const appt = payment.appointment || {};
-            const paymentIdShort = payment.razorpayPaymentId
-              ? payment.razorpayPaymentId.slice(-8)
-              : 'N/A';
+        <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none">
+          <Table>
+            <Table.Head>
+              <tr>
+                <Table.Header>DATE</Table.Header>
+                <Table.Header>APPOINTMENT</Table.Header>
+                <Table.Header numeric>AMOUNT</Table.Header>
+                <Table.Header>PAYMENT ID</Table.Header>
+                <Table.Header>STATUS</Table.Header>
+                <Table.Header actions>ACTIONS</Table.Header>
+              </tr>
+            </Table.Head>
+            <Table.Body>
+              {payments.map((payment) => {
+                const docName = payment.doctor?.user?.name || 'Physiotherapist';
+                const specText = Array.isArray(payment.doctor?.specialization)
+                  ? payment.doctor.specialization[0]
+                  : payment.doctor?.specialization || 'Clinical';
 
-            return (
-              <div
-                key={payment._id}
-                className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm hover:shadow-md hover:border-slate-200 transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-1">
-                  <div className="flex justify-between items-start gap-2">
-                    <h3 className="font-extrabold text-slate-800 text-sm truncate">Dr. {doctorName}</h3>
-                    <span className="text-base font-extrabold text-slate-800 shrink-0">
+                const payDateText = new Date(payment.createdAt).toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                }).toUpperCase();
+
+                const shortId = payment.razorpayPaymentId
+                  ? payment.razorpayPaymentId.slice(-8)
+                  : 'N/A';
+
+                return (
+                  <Table.Row key={payment._id} hoverable={true}>
+                    <Table.Cell className="font-bold text-swiss-gray-400">
+                      {payDateText}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <div className="flex flex-col text-left">
+                        <span className="font-black text-swiss-black uppercase">
+                          DR. {docName.toUpperCase()}
+                        </span>
+                        <span className="text-[10px] text-swiss-red font-black tracking-widest mt-0.5">
+                          {specText.toUpperCase()}
+                        </span>
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell numeric className="font-black">
                       ₹{payment.amount}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 font-bold truncate">{specialization}</p>
-                </div>
-
-                <div className="space-y-2.5 pt-4 border-t border-slate-100 text-xs font-semibold text-slate-600">
-                  <p className="flex items-center gap-2">
-                    <Calendar size={14} className="text-slate-400 shrink-0" />
-                    {formatHumanDate(appt.date)}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Clock size={14} className="text-slate-400 shrink-0" />
-                    {appt.startTime} – {appt.endTime}
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-medium">
-                    Paid on {formatPaidOn(payment.createdAt)}
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <span
-                    className="text-[9px] text-slate-400 font-bold bg-slate-50 border border-slate-100/50 px-2 py-0.5 rounded-lg cursor-help shrink-0"
-                    title={payment.razorpayPaymentId}
-                  >
-                    Txn: {paymentIdShort}
-                  </span>
-                  <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full flex items-center gap-1">
-                    <ShieldCheck size={11} /> Paid
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+                    </Table.Cell>
+                    <Table.Cell className="font-mono text-ui-xs font-bold text-swiss-gray-400 swiss-numeric">
+                      <span title={payment.razorpayPaymentId || 'N/A'}>
+                        {shortId}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Badge variant="paid" />
+                    </Table.Cell>
+                    <Table.Cell actions>
+                      <ActionLink onClick={() => downloadReceipt(payment)}>
+                        DOWNLOAD RECEIPT →
+                      </ActionLink>
+                      <ActionLink onClick={() => navigate('/patient/appointments')}>
+                        VIEW APPOINTMENT →
+                      </ActionLink>
+                    </Table.Cell>
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
+          </Table>
         </div>
       )}
+
     </div>
   );
 };

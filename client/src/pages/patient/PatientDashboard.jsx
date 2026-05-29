@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Calendar, CheckCircle, Clock, Star, ArrowRight, Search } from 'lucide-react';
-import toast from 'react-hot-toast';
-import useAuthStore from '../../store/authStore';
+import { Link, useNavigate } from 'react-router-dom';
 import { getMyAppointments } from '../../api/appointment.api';
+import useAuthStore from '../../store/authStore';
+import SectionHeader from '../../components/common/SectionHeader';
+import Badge from '../../components/common/Badge';
+import Button from '../../components/common/Button';
 
 const PatientDashboard = () => {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'My Dashboard — PhysioConnect';
+    document.title = 'PATIENT DASHBOARD — KINETIQ';
     const fetchData = async () => {
       try {
         const res = await getMyAppointments();
-        setAppointments(res.data?.appointments || res.appointments || []);
-      } catch {
-        // No toast — graceful empty state
+        setAppointments(res.data || res.appointments || []);
+      } catch (err) {
+        console.warn('Dashboard appointments load failure:', err);
       } finally {
         setLoading(false);
       }
@@ -25,174 +27,220 @@ const PatientDashboard = () => {
     fetchData();
   }, []);
 
-  // Compute stats
+  // Compute metrics
   const total = appointments.length;
   const completed = appointments.filter((a) => a.status === 'completed').length;
-  const upcoming = appointments.filter((a) => a.status === 'confirmed').length;
+  const upcomingCount = appointments.filter((a) => a.status === 'confirmed').length;
   const reviewsGiven = appointments.filter((a) => a.reviewSubmitted).length;
+  const doctorsSeen = new Set(
+    appointments.filter(a => a.doctor).map(a => a.doctor._id || a.doctor)
+  ).size;
 
-  // Next 2 upcoming appointments
+  // Find next upcoming appointment within next 7 days
+  const now = new Date();
+  const sevenDaysLater = new Date();
+  sevenDaysLater.setDate(now.getDate() + 7);
+
   const upcomingAppts = appointments
     .filter((a) => a.status === 'confirmed')
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .slice(0, 2);
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  const STATUS_COLORS = {
-    confirmed:  'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    completed:  'bg-green-500/10 text-green-400 border-green-500/20',
-    cancelled:  'bg-red-500/10 text-red-400 border-red-500/20',
-    pending:    'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  const spotlightAppt = upcomingAppts[0]; // Next immediate appointment
+
+  // Get first name for greeting
+  const firstName = user?.name ? user.name.split(' ')[0].toUpperCase() : 'PATIENT';
+
+  // Today's formatted date
+  const todayFormatted = new Date().toLocaleDateString('en-IN', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).toUpperCase();
+
+  // Handle Spotlight Date formatting
+  const formatSpotlightDate = (dateStr) => {
+    try {
+      return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'short'
+      });
+    } catch (e) {
+      return dateStr;
+    }
   };
 
-  const metrics = [
-    {
-      label: 'Total Appointments',
-      value: loading ? '—' : total,
-      icon: <Calendar size={20} />,
-      bg: 'bg-blue-50 text-blue-600',
-    },
-    {
-      label: 'Upcoming',
-      value: loading ? '—' : upcoming,
-      icon: <Clock size={20} />,
-      bg: 'bg-amber-50 text-amber-600',
-    },
-    {
-      label: 'Completed',
-      value: loading ? '—' : completed,
-      icon: <CheckCircle size={20} />,
-      bg: 'bg-green-50 text-green-600',
-    },
-    {
-      label: 'Reviews Given',
-      value: loading ? '—' : reviewsGiven,
-      icon: <Star size={20} />,
-      bg: 'bg-purple-50 text-purple-600',
-    },
-  ];
+  const handleRowClick = () => {
+    navigate('/patient/appointments');
+  };
 
   return (
-    <div className="space-y-8 p-6">
-      {/* Greeting */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800">
-          Welcome back, {user?.name || 'Patient'}!
+    <div className="flex flex-col gap-10 select-none bg-swiss-white text-left">
+      
+      {/* ── Page Header Greeting ── */}
+      <div className="flex flex-col gap-3">
+        <h1 className="text-display-sm font-black text-swiss-black uppercase tracking-tighter leading-none mb-1">
+          GOOD MORNING, {firstName}.
         </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Here's a summary of your health journey on Theralign.
-        </p>
+        <span className="text-ui-lg font-bold text-swiss-gray-400 uppercase tracking-widest block">
+          {todayFormatted}
+        </span>
+        <div className="h-[4px] bg-swiss-black w-full mt-4" />
       </div>
 
-      {/* Metric Cards */}
+      {/* ── Upcoming Appointment Spotlight ── */}
+      {loading ? (
+        <div className="h-40 bg-swiss-gray-100 animate-pulse border-2 border-swiss-black rounded-none" />
+      ) : spotlightAppt ? (
+        <div className="w-full p-6 bg-swiss-gray-100 border-2 border-swiss-black rounded-none shadow-none text-left flex flex-col gap-4 relative swiss-diagonal">
+          <div>
+            <span className="text-ui-xs font-black text-swiss-red uppercase tracking-widest block mb-2">
+              YOUR NEXT APPOINTMENT
+            </span>
+            <h3 className="text-display-xs font-black text-swiss-black uppercase tracking-tighter leading-none mb-2">
+              DR. {(spotlightAppt.doctor?.user?.name || 'Physiotherapist').toUpperCase()}
+            </h3>
+            <p className="text-ui-xl font-black text-swiss-black uppercase tracking-wide">
+              {formatSpotlightDate(spotlightAppt.date)} · {spotlightAppt.startTime} – {spotlightAppt.endTime}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-6 text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            <span className="text-swiss-red">
+              {Array.isArray(spotlightAppt.doctor?.specialization)
+                ? spotlightAppt.doctor.specialization[0]
+                : spotlightAppt.doctor?.specialization || 'CLINICAL'}
+            </span>
+            <span>·</span>
+            <span>{spotlightAppt.doctor?.clinicName || 'Clinic'}</span>
+            <span>·</span>
+            <span className="text-swiss-black">₹{spotlightAppt.consultationFee || spotlightAppt.doctor?.consultationFee}</span>
+          </div>
+
+          <div className="flex gap-2 mt-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleRowClick}
+            >
+              VIEW DETAILS →
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRowClick}
+            >
+              CANCEL →
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full p-8 border-2 border-swiss-black bg-swiss-white text-center flex flex-col items-center gap-4 rounded-none">
+          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            NO UPCOMING APPOINTMENTS
+          </span>
+          <p className="text-ui-md text-swiss-gray-600 font-bold max-w-sm">
+            You have no clinical appointments scheduled. Book a session with a practitioner near you.
+          </p>
+          <Button
+            variant="primary"
+            onClick={() => navigate('/doctors')}
+            className="mt-2"
+          >
+            FIND A DOCTOR →
+          </Button>
+        </div>
+      )}
+
+      {/* ── Metric Cards Row (4x1) ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.map((m) => (
+        {[
+          { label: 'TOTAL APPOINTMENTS', val: total },
+          { label: 'COMPLETED SESSIONS', val: completed },
+          { label: 'DOCTORS SEEN', val: doctorsSeen },
+          { label: 'REVIEWS GIVEN', val: reviewsGiven },
+        ].map((m) => (
           <div
             key={m.label}
-            className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center justify-between"
+            className="group bg-swiss-white border-2 border-swiss-black hover:border-4 p-6 transition-all duration-fast select-none rounded-none text-left"
           >
-            <div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                {m.label}
-              </span>
-              <span className="text-3xl font-extrabold text-slate-800 mt-1.5 block">
-                {m.value}
-              </span>
-            </div>
-            <div className={`p-3 rounded-xl ${m.bg}`}>{m.icon}</div>
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-2">
+              {m.label}
+            </span>
+            <h2 className="text-display-sm font-black text-swiss-black uppercase tracking-tighter leading-none">
+              {loading ? '—' : m.val}
+            </h2>
           </div>
         ))}
       </div>
 
-      {/* Upcoming Appointments Preview */}
-      <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-slate-800 text-base">Upcoming Appointments</h2>
-          <Link
-            to="/patient/appointments"
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
-          >
-            View All <ArrowRight size={12} />
-          </Link>
-        </div>
+      {/* ── Recent Activity Table Rows ── */}
+      <div className="flex flex-col gap-6 mt-4">
+        <SectionHeader title="RECENT ACTIVITY" size="sm" ruled={true} className="mb-0" />
 
         {loading ? (
-          <div className="space-y-3">
-            {[1, 2].map((i) => (
-              <div key={i} className="h-16 bg-slate-100 rounded-xl animate-pulse" />
+          <div className="space-y-2">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-12 bg-swiss-gray-100 animate-pulse border border-swiss-gray-200" />
             ))}
           </div>
-        ) : upcomingAppts.length === 0 ? (
-          <div className="text-center py-8 text-slate-400">
-            <Calendar size={32} className="mx-auto mb-2 text-slate-300" />
-            <p className="text-sm">No upcoming appointments.</p>
-            <Link
-              to="/doctors"
-              className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-            >
-              Find a doctor <ArrowRight size={12} />
-            </Link>
+        ) : appointments.length === 0 ? (
+          <div className="border-2 border-swiss-black border-dashed p-10 text-center rounded-none text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+            NO RECENT SYSTEM ACTIVITY RECORDED.
           </div>
         ) : (
-          <div className="space-y-3">
-            {upcomingAppts.map((appt) => (
-              <div
-                key={appt._id}
-                className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100"
+          <div className="flex flex-col w-full">
+            {appointments.slice(0, 3).map((appt) => {
+              const apptDate = new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+              }).toUpperCase();
+              const doctorName = appt.doctor?.user?.name || 'Physiotherapist';
+              const spec = Array.isArray(appt.doctor?.specialization)
+                ? appt.doctor.specialization[0]
+                : appt.doctor?.specialization || 'Clinical';
+
+              return (
+                <div
+                  key={appt._id}
+                  onClick={handleRowClick}
+                  className="flex items-center justify-between py-4 border-b border-swiss-gray-200 hover:bg-swiss-gray-50 transition-colors duration-fast cursor-pointer text-ui-sm font-bold uppercase tracking-wider"
+                >
+                  <div className="flex items-center gap-6">
+                    <span className="text-swiss-gray-400 w-16 shrink-0 text-left">
+                      {apptDate}
+                    </span>
+                    <span className="text-swiss-black font-black w-48 shrink-0 truncate">
+                      DR. {doctorName.toUpperCase()}
+                    </span>
+                    <span className="text-swiss-red text-ui-xs font-black tracking-widest hidden sm:inline">
+                      {spec.toUpperCase()}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-6 shrink-0">
+                    <Badge variant={appt.status} size="sm" />
+                    <span className="text-ui-xs font-black text-swiss-black hover:text-swiss-red hover:underline select-none">
+                      VIEW →
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+
+            <div className="mt-4">
+              <Button
+                variant="secondary"
+                onClick={handleRowClick}
               >
-                <div>
-                  <p className="font-semibold text-slate-800 text-sm">
-                    Dr. {appt.doctor?.user?.name || '—'}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {Array.isArray(appt.doctor?.specialization)
-                      ? appt.doctor.specialization[0]
-                      : appt.doctor?.specialization || '—'}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-semibold text-slate-700">
-                    {appt.date} · {appt.startTime}
-                  </p>
-                  <span className={`text-[10px] font-bold capitalize px-2 py-0.5 rounded-full border mt-1 inline-block ${STATUS_COLORS[appt.status] || 'bg-slate-100 text-slate-500'}`}>
-                    {appt.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+                VIEW ALL APPOINTMENTS →
+              </Button>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link
-          to="/doctors"
-          className="flex items-center gap-4 p-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl shadow-lg hover:opacity-90 transition-all"
-        >
-          <div className="p-3 bg-white/20 rounded-xl">
-            <Search size={22} />
-          </div>
-          <div>
-            <p className="font-bold">Find a Doctor</p>
-            <p className="text-blue-100 text-sm mt-0.5">Search physiotherapists near you</p>
-          </div>
-          <ArrowRight size={20} className="ml-auto" />
-        </Link>
-
-        <Link
-          to="/patient/appointments"
-          className="flex items-center gap-4 p-5 bg-white border border-slate-200 text-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all"
-        >
-          <div className="p-3 bg-slate-100 rounded-xl text-slate-600">
-            <Calendar size={22} />
-          </div>
-          <div>
-            <p className="font-bold text-slate-800">My Appointments</p>
-            <p className="text-slate-500 text-sm mt-0.5">View booking history</p>
-          </div>
-          <ArrowRight size={20} className="ml-auto text-slate-400" />
-        </Link>
-      </div>
     </div>
   );
 };

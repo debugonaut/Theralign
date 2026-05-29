@@ -1,34 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Calendar, ChevronRight, AlertTriangle, ArrowRight, MessageSquare, Clock, X } from 'lucide-react';
 import { getMyAppointments, cancelAppointment } from '../../api/appointment.api';
-import PatientAppointmentCard from '../../components/appointments/PatientAppointmentCard';
-import RescheduleModal from '../../components/booking/RescheduleModal';
+import { submitReview } from '../../api/review.api';
+import SectionHeader from '../../components/common/SectionHeader';
+import Table, { ActionLink } from '../../components/common/Table';
+import Badge from '../../components/common/Badge';
+import Button from '../../components/common/Button';
+import Modal from '../../components/common/Modal';
 
 const PatientAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('upcoming');
+  const [activeTab, setActiveTab] = useState('ALL APPOINTMENTS');
+
+  // Expanded row ID for inline details
+  const [expandedRowId, setExpandedRowId] = useState(null);
+
+  // Cancellation Modal state (Destructive action)
   const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null, reason: '' });
   const [cancelling, setCancelling] = useState(false);
 
-  // Rescheduling states
-  const [rescheduleModal, setRescheduleModal] = useState({ open: false, appointment: null });
-
-  const handleOpenRescheduleModal = (appointment) => {
-    setRescheduleModal({ open: true, appointment });
-  };
-
-  const handleCloseRescheduleModal = () => {
-    setRescheduleModal({ open: false, appointment: null });
-  };
-
-  const handleRescheduleSuccess = (updatedAppt) => {
-    setAppointments(
-      appointments.map((a) => (a._id === updatedAppt._id ? updatedAppt : a))
-    );
-  };
+  // Inline Review Form states
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState({}); // { [apptId]: boolean }
+  const [submittedReviews, setSubmittedReviews] = useState({}); // { [apptId]: { rating, comment } }
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -39,222 +35,485 @@ const PatientAppointments = () => {
       }
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load your appointments history.');
+      toast.error('FAILED TO FETCH APPOINTMENT TRANSACTION RECORDS.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    document.title = 'MY APPOINTMENTS — KINETIQ';
     fetchAppointments();
   }, []);
 
-  // Compute local date string for date-based categorization
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const todayString = `${year}-${month}-${day}`;
+  // Sync date categorizations
+  const todayStr = new Date().toISOString().split('T')[0];
 
-  // Grouping logic
-  const upcoming = appointments.filter(
-    (a) => a.status === 'confirmed' && a.date >= todayString
-  );
-  
-  const past = appointments.filter(
-    (a) => a.status === 'completed' || a.status === 'cancelled' || a.date < todayString
-  );
+  // Derive filtered list
+  const getFilteredAppointments = () => {
+    switch (activeTab) {
+      case 'UPCOMING':
+        return appointments.filter((a) => a.status === 'confirmed' && a.date >= todayStr);
+      case 'COMPLETED':
+        return appointments.filter((a) => a.status === 'completed');
+      case 'CANCELLED':
+        return appointments.filter((a) => a.status === 'cancelled');
+      case 'ALL APPOINTMENTS':
+      default:
+        return appointments;
+    }
+  };
 
-  const activeAppointments = activeTab === 'upcoming' ? upcoming : past;
+  const activeAppts = getFilteredAppointments();
 
-  // Trigger cancel modal
-  const handleOpenCancelModal = (appointmentId) => {
+  // Handle Cancellation
+  const handleOpenCancelModal = (e, appointmentId) => {
+    e.stopPropagation(); // Prevent expanding row
     setCancelModal({ open: true, appointmentId, reason: '' });
   };
 
-  const handleCloseCancelModal = () => {
-    setCancelModal({ open: false, appointmentId: null, reason: '' });
-  };
-
   const handleConfirmCancel = async () => {
-    const { appointmentId, reason } = cancelModal;
     setCancelling(true);
     try {
-      const res = await cancelAppointment(appointmentId, reason);
+      const res = await cancelAppointment(cancelModal.appointmentId, cancelModal.reason);
       if (res.success) {
-        toast.success('Appointment cancelled successfully.');
-        
-        // Optimistic UI update: update only the cancelled appointment in local state
+        toast.success('BOOKING CANCELLED.');
         setAppointments(
           appointments.map((a) =>
-            a._id === appointmentId
-              ? { ...a, status: 'cancelled', cancellationReason: reason, cancelledBy: 'patient' }
+            a._id === cancelModal.appointmentId
+              ? { ...a, status: 'cancelled', cancellationReason: cancelModal.reason }
               : a
           )
         );
-        handleCloseCancelModal();
+        setCancelModal({ open: false, appointmentId: null, reason: '' });
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || 'Failed to cancel appointment.');
+      toast.error('FAILED TO CANCEL APPOINTMENT.');
     } finally {
       setCancelling(false);
     }
   };
 
+  // Handle Review submission
+  const handleReviewSubmit = async (apptId) => {
+    if (rating === 0) {
+      toast.error('PLEASE SELECT A RATING VALUE.');
+      return;
+    }
+    if (comment.trim().length < 10) {
+      toast.error('COMMENT MUST EXCEED 10 CHARACTERS.');
+      return;
+    }
+
+    setSubmittingReview({ ...submittingReview, [apptId]: true });
+    try {
+      const res = await submitReview({
+        appointmentId: apptId,
+        rating,
+        comment,
+      });
+
+      if (res.success) {
+        toast.success('REVIEW FILED.');
+        // Set local confirmation
+        setSubmittedReviews({
+          ...submittedReviews,
+          [apptId]: { rating, comment }
+        });
+        // Update main list
+        setAppointments(
+          appointments.map((a) =>
+            a._id === apptId ? { ...a, reviewSubmitted: true } : a
+          )
+        );
+        // Reset local form values
+        setRating(0);
+        setComment('');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || 'REVIEW SUBMISSION FAILURE.');
+    } finally {
+      setSubmittingReview({ ...submittingReview, [apptId]: false });
+    }
+  };
+
+  const toggleRowExpansion = (apptId) => {
+    setExpandedRowId(expandedRowId === apptId ? null : apptId);
+    // Reset review form when changing rows
+    setRating(0);
+    setComment('');
+  };
+
   return (
-    <div className="space-y-8 select-none">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <Calendar className="text-primary" size={24} />
-          My Appointments
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Review your upcoming clinical consultations and keep track of your past recovery visits.
-        </p>
-      </div>
+    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+      
+      {/* Page Header Section */}
+      <SectionHeader
+        title="MY APPOINTMENTS"
+        size="lg"
+        ruled={true}
+        className="mb-0"
+      />
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-100 gap-6">
-        <button
-          type="button"
-          onClick={() => setActiveTab('upcoming')}
-          className={`pb-3 font-bold text-sm tracking-wide transition-all border-b-2 cursor-pointer ${
-            activeTab === 'upcoming'
-              ? 'border-primary text-slate-800'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          Upcoming Visits ({upcoming.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('past')}
-          className={`pb-3 font-bold text-sm tracking-wide transition-all border-b-2 cursor-pointer ${
-            activeTab === 'past'
-              ? 'border-primary text-slate-800'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          Past History ({past.length})
-        </button>
-      </div>
-
-      {/* Content */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-slate-100 rounded-3xl h-48" />
-          ))}
-        </div>
-      ) : activeAppointments.length === 0 ? (
-        <div className="bg-white border border-slate-100 border-dashed rounded-3xl p-12 text-center max-w-lg mx-auto shadow-sm flex flex-col items-center gap-3">
-          <span className="text-4xl text-slate-300">🏥</span>
-          <p className="text-sm font-bold text-slate-700">
-            {activeTab === 'upcoming' ? 'No Upcoming Consultations' : 'No Past Visits Recorded'}
-          </p>
-          <p className="text-xs text-slate-400 max-w-sm">
-            {activeTab === 'upcoming'
-              ? 'You do not have any clinical appointments scheduled at this moment. Find specialized physiotherapists near you and book a slot.'
-              : 'You do not have any past medical history recorded on our system yet.'}
-          </p>
-          {activeTab === 'upcoming' && (
-            <Link
-              to="/doctors"
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white rounded-xl px-5 py-2.5 font-bold text-xs shadow-md transition-all cursor-pointer mt-3"
+      {/* Segmented Tab Row */}
+      <div className="flex items-center gap-1.5 pt-2">
+        {['ALL APPOINTMENTS', 'UPCOMING', 'COMPLETED', 'CANCELLED'].map((tab) => {
+          const isActive = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => {
+                setActiveTab(tab);
+                setExpandedRowId(null); // Reset expansion on tab swap
+              }}
+              className={`px-4 py-2 border-2 border-swiss-black font-black text-[11px] uppercase tracking-widest transition-colors duration-fast rounded-none cursor-pointer select-none
+                ${isActive 
+                  ? 'bg-swiss-black text-swiss-white' 
+                  : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                }
+              `}
             >
-              Browse Physiotherapists
-              <ArrowRight size={14} />
-            </Link>
-          )}
+              {tab}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Appointments Ledger Table */}
+      {loading ? (
+        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+          LOADING CLINIC TRANSACTION LEDGERS...
+        </div>
+      ) : activeAppts.length === 0 ? (
+        <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto">
+          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            NO SESSIONS FILED
+          </span>
+          <p className="text-ui-md text-swiss-gray-600 font-bold max-w-sm">
+            There are no booking entries recorded in this list status tab.
+          </p>
+          <Button variant="primary" onClick={() => navigate('/doctors')}>
+            SCHEDULE VISIT →
+          </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeAppointments.map((appointment) => (
-            <PatientAppointmentCard
-              key={appointment._id}
-              appointment={appointment}
-              onCancel={handleOpenCancelModal}
-              onReschedule={handleOpenRescheduleModal}
-            />
-          ))}
+        <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none">
+          <Table>
+            <Table.Head>
+              <tr>
+                <Table.Header>DATE</Table.Header>
+                <Table.Header>DOCTOR</Table.Header>
+                <Table.Header>TIME</Table.Header>
+                <Table.Header className="hidden md:table-cell">DURATION</Table.Header>
+                <Table.Header numeric>FEE</Table.Header>
+                <Table.Header>PAYMENT</Table.Header>
+                <Table.Header>STATUS</Table.Header>
+                <Table.Header actions>ACTIONS</Table.Header>
+              </tr>
+            </Table.Head>
+            <Table.Body>
+              {activeAppts.map((appt) => {
+                const isExpanded = expandedRowId === appt._id;
+                const docName = appt.doctor?.user?.name || 'Physiotherapist';
+                
+                // Stacked spec Text
+                const specText = Array.isArray(appt.doctor?.specialization)
+                  ? appt.doctor.specialization[0]
+                  : appt.doctor?.specialization || 'CLINICAL';
+
+                // Format human Date
+                const dateText = new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                }).toUpperCase();
+
+                const isFuture = appt.date >= todayStr;
+                const canCancel = appt.status === 'confirmed' && isFuture;
+
+                return (
+                  <React.Fragment key={appt._id}>
+                    {/* Standard Table Row */}
+                    <Table.Row
+                      hoverable={true}
+                      expanded={isExpanded}
+                      onClick={() => toggleRowExpansion(appt._id)}
+                    >
+                      <Table.Cell className="font-bold text-swiss-gray-400">
+                        {dateText}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <div className="flex flex-col text-left">
+                          <span className="font-black text-swiss-black uppercase">
+                            DR. {docName.toUpperCase()}
+                          </span>
+                          <span className="text-[10px] text-swiss-red font-black tracking-widest mt-0.5">
+                            {specText.toUpperCase()}
+                          </span>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="font-bold">
+                        {appt.startTime} – {appt.endTime}
+                      </Table.Cell>
+                      <Table.Cell className="hidden md:table-cell text-swiss-gray-400 font-bold">
+                        30 MIN
+                      </Table.Cell>
+                      <Table.Cell numeric className="font-black">
+                        ₹{appt.consultationFee || appt.doctor?.consultationFee}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Badge variant={appt.paymentStatus === 'paid' ? 'paid' : 'pending'} />
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Badge variant={appt.status} />
+                      </Table.Cell>
+                      <Table.Cell actions>
+                        <ActionLink onClick={() => toggleRowExpansion(appt._id)}>
+                          VIEW
+                        </ActionLink>
+                        {canCancel && (
+                          <ActionLink
+                            destructive={true}
+                            onClick={(e) => handleOpenCancelModal(e, appt._id)}
+                          >
+                            CANCEL
+                          </ActionLink>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+
+                    {/* Inline Row Expansion (Indented, 4px black left accent border) */}
+                    {isExpanded && (
+                      <Table.Row expanded={true} className="border-l-4 border-swiss-black">
+                        <td colSpan={8} className="bg-swiss-gray-100 p-6 text-left">
+                          <div className="flex flex-col gap-6 w-full">
+                            {/* Summary Details */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                              <div>
+                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                  CLINIC NAME
+                                </span>
+                                <span className="text-ui-md font-bold text-swiss-black uppercase block">
+                                  {appt.doctor?.clinicName || 'Theralign Clinic Center'}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                  CLINIC LOCATION
+                                </span>
+                                <span className="text-ui-md font-bold text-swiss-black uppercase block">
+                                  {appt.doctor?.clinicAddress || 'Pune, India'}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                  PATIENT NOTES
+                                </span>
+                                <span className="text-ui-md font-bold text-swiss-gray-600 uppercase block leading-relaxed italic">
+                                  "{appt.patientNotes || 'NO SYMPTOMS FILED ON TRANSACTION RECORD.'}"
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Session Document Attachment F3 */}
+                            {appt.sessionDocument && (
+                              <div className="pt-4 border-t border-swiss-gray-200 flex items-center justify-between">
+                                <div>
+                                  <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block">
+                                    CLINICAL DOCUMENTS ATTACHED
+                                  </span>
+                                  <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5">
+                                    Your physiotherapist has uploaded session recovery logs.
+                                  </span>
+                                </div>
+                                <a
+                                  href={appt.sessionDocument}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="h-10 px-4 border-2 border-swiss-teal text-swiss-teal bg-swiss-white hover:bg-swiss-teal hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
+                                >
+                                  DOWNLOAD NOTES →
+                                </a>
+                              </div>
+                            )}
+
+                            {/* Cancellation Log */}
+                            {appt.status === 'cancelled' && (
+                              <div className="p-4 bg-swiss-white border-2 border-swiss-gray-200 rounded-none text-left">
+                                <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                                  CANCELLATION SUMMARY
+                                </span>
+                                <p className="text-ui-sm text-swiss-gray-600 font-medium">
+                                  Cancelled by {appt.cancelledBy || 'system'}. Reason: <b>{appt.cancellationReason || 'UNSPECIFIED'}</b>.
+                                </p>
+                              </div>
+                            )}
+
+                            {/* ── D3.7 Inline Review Form ── */}
+                            {appt.status === 'completed' && appt.paymentStatus === 'paid' && (
+                              <div className="pt-6 border-t border-swiss-gray-200 text-left">
+                                {!appt.reviewSubmitted && !submittedReviews[appt._id] ? (
+                                  <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none flex flex-col gap-4">
+                                    <div>
+                                      <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                                        LEAVE A REVIEW
+                                      </span>
+                                      <h4 className="text-ui-lg font-black text-swiss-black uppercase tracking-tighter">
+                                        SHARE YOUR SESSION EXPERIENCE WITH DR. {docName.toUpperCase()}
+                                      </h4>
+                                      <div className="h-[1px] bg-swiss-gray-200 w-full mt-2" />
+                                    </div>
+
+                                    {/* Number star rating selector */}
+                                    <div className="flex flex-col gap-2">
+                                      <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                                        RATING
+                                      </span>
+                                      <div className="flex items-center gap-1.5">
+                                        {[1, 2, 3, 4, 5].map((val) => {
+                                          const isSelected = rating === val;
+                                          return (
+                                            <button
+                                              key={val}
+                                              type="button"
+                                              onClick={() => setRating(val)}
+                                              className={`w-10 h-10 border-2 font-black text-ui-sm flex items-center justify-center rounded-none select-none cursor-pointer transition-colors
+                                                ${isSelected 
+                                                  ? 'bg-swiss-black border-swiss-black text-swiss-white' 
+                                                  : 'bg-swiss-white border-swiss-black text-swiss-black hover:bg-swiss-gray-100'
+                                                }
+                                              `}
+                                            >
+                                              {val}
+                                            </button>
+                                          );
+                                        })}
+                                        {rating > 0 && (
+                                          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest ml-3">
+                                            {rating === 1 && '1 = POOR'}
+                                            {rating === 2 && '2 = FAIR'}
+                                            {rating === 3 && '3 = GOOD'}
+                                            {rating === 4 && '4 = EXCELLENT'}
+                                            {rating === 5 && '5 = OUTSTANDING'}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Review Text */}
+                                    <div className="flex flex-col gap-2">
+                                      <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                                        YOUR EXPERIENCE
+                                      </span>
+                                      <textarea
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        placeholder="Describe your session, the physiotherapist's approach, and your recovery progress..."
+                                        maxLength={1000}
+                                        rows={3}
+                                        className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+                                      />
+                                      <span className="text-[9px] font-black text-swiss-gray-400 text-right uppercase tracking-widest">
+                                        {comment.length} / 1000 CHARACTERS (MIN 10 CHARACTERS)
+                                      </span>
+                                    </div>
+
+                                    {/* Submit action */}
+                                    <div className="pt-2">
+                                      <Button
+                                        onClick={() => handleReviewSubmit(appt._id)}
+                                        disabled={rating === 0 || comment.trim().length < 10 || submittingReview[appt._id]}
+                                        variant="primary"
+                                        fullWidth
+                                      >
+                                        {submittingReview[appt._id] ? 'SUBMITTING...' : 'SUBMIT REVIEW →'}
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  /* Post-submission confirmed card state */
+                                  <div className="bg-swiss-white border-2 border-swiss-teal p-6 rounded-none flex flex-col gap-3">
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-8 h-8 border-2 border-swiss-teal flex items-center justify-center text-swiss-teal text-ui-sm font-black rounded-none">
+                                        {submittedReviews[appt._id]?.rating || appt.rating || 5}
+                                      </div>
+                                      <div className="text-left">
+                                        <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block">
+                                          REVIEW SUBMITTED — THANK YOU.
+                                        </span>
+                                        <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5">
+                                          Your feedback helps patient search indexes remain transparent.
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <p className="text-ui-md text-swiss-black italic font-medium leading-relaxed mt-2">
+                                      "{submittedReviews[appt._id]?.comment || appt.comment || 'YOUR REVIEW WAS RECORDED SUCCESSFULLY.'}"
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                          </div>
+                        </td>
+                      </Table.Row>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </Table.Body>
+          </Table>
         </div>
       )}
 
       {/* Cancellation Reason Modal */}
       {cancelModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={handleCloseCancelModal} />
-          
-          <div className="bg-white border border-slate-100 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative z-10 animate-scaleIn text-left">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50 bg-slate-50/50">
-              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <AlertTriangle className="text-rose-500" size={16} />
-                Cancel Appointment
-              </h3>
-              <button onClick={handleCloseCancelModal} className="text-slate-400 hover:text-slate-600 cursor-pointer">
-                <X size={18} />
-              </button>
+        <Modal
+          isOpen={cancelModal.open}
+          onClose={() => setCancelModal({ open: false, appointmentId: null, reason: '' })}
+          title="CANCEL APPOINTMENT"
+        >
+          <div className="flex flex-col gap-5 text-left select-none">
+            <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide leading-relaxed">
+              Are you sure you want to cancel your clinical consultation slot? Unlocked slots will immediately become available for other patients to book.
+            </p>
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                REASON FOR CANCELLATION (OPTIONAL)
+              </label>
+              <textarea
+                value={cancelModal.reason}
+                onChange={(e) => setCancelModal({ ...cancelModal, reason: e.target.value })}
+                placeholder="E.G. SCHEDULE CONFLICT, FEELING BETTER, BOOKED ANOTHER PRACTICE CLINIC..."
+                rows={3}
+                maxLength={200}
+                className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+              />
             </div>
 
-            <div className="p-6 space-y-4">
-              <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                Are you sure you want to cancel your clinical consultation slot? Unlocked slots will immediately become available for other patients to book.
-              </p>
-              
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                  <MessageSquare size={12} />
-                  Reason for Cancellation (Optional)
-                </label>
-                <textarea
-                  value={cancelModal.reason}
-                  onChange={(e) => setCancelModal({ ...cancelModal, reason: e.target.value })}
-                  placeholder="e.g. Schedule conflict, feeling better, booked another doctor..."
-                  rows={3}
-                  maxLength={200}
-                  className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-3 text-slate-700 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
-                />
-              </div>
-            </div>
-
-            <div className="px-6 py-4 border-t border-slate-50 bg-slate-50/50 flex items-center justify-end gap-3">
-              <button
-                onClick={handleCloseCancelModal}
-                disabled={cancelling}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all cursor-pointer disabled:opacity-50"
-              >
-                No, Keep It
-              </button>
-              <button
+            <div className="flex flex-col gap-2 pt-2">
+              <Button
+                variant="accent"
                 onClick={handleConfirmCancel}
                 disabled={cancelling}
-                className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-5 py-2.5 font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                {cancelling ? (
-                  <>
-                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Cancelling...
-                  </>
-                ) : (
-                  'Yes, Cancel Booking'
-                )}
-              </button>
+                {cancelling ? 'CANCELLING...' : 'YES, CANCEL APPOINTMENT'}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setCancelModal({ open: false, appointmentId: null, reason: '' })}
+                disabled={cancelling}
+              >
+                NO, KEEP APPOINTMENT
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
-      {/* Reschedule Modal Overlay */}
-      {rescheduleModal.open && (
-        <RescheduleModal
-          isOpen={rescheduleModal.open}
-          onClose={handleCloseRescheduleModal}
-          appointment={rescheduleModal.appointment}
-          onSuccess={handleRescheduleSuccess}
-        />
-      )}
     </div>
   );
 };

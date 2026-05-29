@@ -38,8 +38,8 @@ const Navbar = () => {
 
   const roleLinks = {
     patient: [
-      { label: 'DASHBOARD', to: '/patient/dashboard' },
-      { label: 'APPOINTMENTS', to: '/patient/appointments' },
+      { label: 'FIND DOCTORS', to: '/doctors' },
+      { label: 'MY APPOINTMENTS', to: '/patient/appointments' },
     ],
     doctor: [
       { label: 'DASHBOARD', to: '/doctor/dashboard' },

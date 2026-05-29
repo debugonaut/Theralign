@@ -202,3 +202,42 @@ This development log tracks the engineering decisions, implementations, and arch
 - **High-Conversion Autocomplete**: Debouncing search suggestions at 300ms minimizes database reads. Utilizing `onMouseDown` prevents browser blur events from hiding the results dropdown before clicks register.
 - **Transactional Schedule Integrity**: Rescheduling old slots only after new slot claims are successful guarantees patients never lose their original booking if their new choice fails, preventing platform data inconsistencies.
 - **Patient Retention Loops**: The waitlist feature converts an empty picker from a bounce-point into a high-fidelity patient retention signal, automatically re-engaging users when clinic availability changes.
+
+---
+
+## 🎨 Phase 10: Landing Page Reimagination (Design Phase 2)
+
+### What We Did
+1. **Design System Adherence**: Restructured the UI to rigorously follow the Swiss minimal aesthetics mandated by Phase 1 (`swiss-black`, `swiss-red`, 4px heavy borders). Eliminated all drop shadows, transparency effects, rounded corners, and soft gradients.
+2. **Hero Section Redesign**: Created an asymmetric 7:5 split. Left column focuses on typographic authority and symptom search. Right column acts as a geometric proof of concept showcasing verification badges and metrics without using stock photography.
+3. **Trust & Metrics Architecture**: Implemented a bold, full-width `TrustBar.jsx` separating navigation, and built a borderless, oversized `StatsBar.jsx` focusing entirely on typographic scale (e.g., 500+ Verified Doctors).
+4. **Specializations Hover Inversion**: Refactored the specializations grid into an 8-card `4x2` layout. Employed stark black/white color inversion upon hover, with single corner-anchored Lucide icons on a `swiss-dot-matrix` background.
+5. **Rigorous Layout Assembly**: Built `HowItWorksSection.jsx`, `PatientReviewsSection.jsx`, and `VerificationExplanationSection.jsx` using asymmetric structural splits (e.g., 5:7) and mechanical, typographic focuses. Integrated `swiss-nav-link` micro-interactions across the navigation bar and footer.
+
+### Why We Did It
+- **Authoritative Tone**: The healthcare infrastructure tone is prioritized over casual consumer aesthetics. High contrast, sharp edges, and zero-decoration signal trust and medical precision.
+- **Micro-Interactions over Animations**: Removing floating animations in favor of mechanical, 150ms state changes creates a highly responsive, snappy experience aligned with utility and speed.
+- **Architectural Layouts**: Using strict grid splits (7:5 or 1:1:1) replaces arbitrary whitespace with deliberate mathematical structure.
+
+---
+
+## 🎨 Phase 11: Patient Experience Reimagination (Design Phase 3)
+
+### What We Did
+1. **Layout Shells & Access-Guarded Navbar**: Redesigned role-based navigation links in `Navbar.jsx` (restricting patients strictly to `FIND DOCTORS` and `MY APPOINTMENTS`). Re-engineered `DashboardLayout.jsx` to render a flat sidebar (`bg-swiss-white`, 240px wide, 2px borders) featuring 48px height uppercase tracked navigation rows, active left indicators, and a bottom user card.
+2. **High-Fidelity Doctor Discovery**: Refactored `DoctorListingPage.jsx` with a full-width top search bar (bordered square Lucide search icon, attached black CTA), inline AI symptom triage inputs (red uppercase headers), active filter chips, segmented sorting selectors, and a custom 3-column / 2-column card grid.
+3. **Smart Search Autocomplete Suggestions**: Redesigned `SearchSuggestions.jsx` to render flat bordered rectangles (no border-radius) with category Lucide squares, bold uppercase rows, hover gray surface inversions, and a Snappy 150ms select-flash inversion.
+4. **Interactive Swiss Doctor Cards**: Completely rewrote `DoctorCard.jsx` to render flat white cards, rounded initials circles, and numerical ratings (no stars). Employed progressive disclosure sliding in a `BOOK NOW →` ghost button from the bottom on card hover at 200ms with border thickening.
+5. **asymmetric Profile Detail Page**: Built a stark `7:5` split layout in `DoctorDetailPage.jsx` separating doctor information and reviews on the left from a scroll-sticky clinical booking sidebar on the right. Formatted key metrics (years, sessions, ratings) separated by thin vertical bars.
+6. **Custom Availability Heatmaps**: Constructed a sharp `7x4` grid in `AvailabilityHeatmap.jsx` (36px × 36px square cells, 4px gaps, no rounded corners) color-coding cell states to Available, Selected, Limited (1-2 slots), Fully Booked, and Empty, complete with bordered square legends.
+7. **Clinical Waitlist Preservations**: Built waitlist trigger blocks in `SlotPicker.jsx` replacing slots with gray textured diagonal-pattern cards and primary black join buttons. Showed verified checkmark waitlist badges upon patient subscription.
+8. **Stark Confirmation Overlay**: Redesigned `BookingConfirmationModal.jsx` into a 560px modal featuring definition list summaries (doctor, date, timing, fee), AMOUNT DUE invoices, and stacked payment CTA triggers.
+9. **Personalized Patient Dashboard**: Overhauled `PatientDashboard.jsx` using displays greetings, personalized dates, and horizontal separators. spotlighted upcoming clinical visits in gray textured cards, rendered metric summaries, and structured recent audit logs.
+10. **Data-Grid Appointments Table**: Converted grid cards in `PatientAppointments.jsx` into a full-width flat table. clicking row entries dynamically expands inline drawers (gray bg, 4px black left accent border) revealing clinic locations, F3 notes, and inline 1–5 review submission forms.
+11. **Financial Transaction Ledgers**: Redesigned `PatientPayments.jsx` utilizing dual metrics rows, tabular-nums right-aligned payment tables, and zero-dependency text receipt generation. Redesigned `MyReviews.jsx` to present static, non-editable review history logs.
+
+### Why We Did It
+- **Zero-Friction Transaction Pipelines**: Removing star graphics, drop shadows, and complex roundings centers the patient's focus entirely on information density, clinical credentials, and financial checkout speed.
+- **Snappy Proximity Disclosures**: Progressive transitions (card hover sliders and inline table drawer expansions) prevent visual clutter on load while placing operational inputs immediately at the patient's cursor.
+- **UTC slot alignments**: Utilizing tabular-nums coordinates aligned in strict table grids satisfies high financial readability constraints across paid ledgers.
+

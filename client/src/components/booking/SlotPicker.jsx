@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Calendar, Clock, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { getDoctorAvailability, bookAppointment } from '../../api/appointment.api';
 import { joinWaitlist, leaveWaitlist, checkWaitlistStatus } from '../../api/waitlist.api';
 import useAuthStore from '../../store/authStore';
 import BookingConfirmationModal from './BookingConfirmationModal';
 import { useRazorpay } from '../../hooks/useRazorpay';
 import AvailabilityHeatmap from './AvailabilityHeatmap';
-import { Bell, Check, AlertCircle } from 'lucide-react';
+import Button from '../common/Button';
 
 const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
   const { initiatePayment } = useRazorpay();
 
-  const [availabilityByDate, setAvailabilityByDate] = useState([]); // [{ date, slots: [] }]
+  const [availabilityByDate, setAvailabilityByDate] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -25,14 +24,13 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const [onWaitlist, setOnWaitlist] = useState(false);
   const [waitlistLoading, setWaitlistLoading] = useState(false);
 
-  // Fetch available slots for this doctor
+  // Fetch available slots
   const fetchAvailability = async () => {
     setLoading(true);
     try {
       const res = await getDoctorAvailability(doctorId);
       if (res.success && res.data) {
         setAvailabilityByDate(res.data);
-        // Pre-select first date if slots exist
         if (res.data.length > 0) {
           setSelectedDate(res.data[0].date);
           setSelectedSlot(null);
@@ -43,7 +41,6 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       }
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load doctor clinical slots.');
     } finally {
       setLoading(false);
     }
@@ -53,19 +50,17 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     fetchAvailability();
   }, [doctorId]);
 
-  // Check waitlist subscription status on mount/availability fetch
+  // Check waitlist status if empty
   useEffect(() => {
     const fetchWaitlistStatus = async () => {
       if (availabilityByDate.length === 0 && isAuthenticated && user?.role === 'patient') {
         try {
           const res = await checkWaitlistStatus(doctorId);
-          if (res.data?.success && res.data.data) {
-            setOnWaitlist(res.data.data.onWaitlist);
-          } else if (res.success && res.data) {
+          if (res.success && res.data) {
             setOnWaitlist(res.data.onWaitlist);
           }
         } catch (err) {
-          console.warn('Silent waitlist status fetch warning:', err.message);
+          console.warn('Silent waitlist fetch warning:', err.message);
         }
       }
     };
@@ -77,9 +72,9 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     try {
       const res = await joinWaitlist(doctorId);
       setOnWaitlist(true);
-      toast.success(res.message || res.data?.message || 'Joined waitlist! We will notify you when slots open.');
+      toast.success('JOINED WAITLIST SUCCESSFULLY.');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to join waitlist.');
+      toast.error('FAILED TO JOIN WAITLIST.');
     } finally {
       setWaitlistLoading(false);
     }
@@ -88,22 +83,21 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const handleLeaveWaitlist = async () => {
     setWaitlistLoading(true);
     try {
-      const res = await leaveWaitlist(doctorId);
+      await leaveWaitlist(doctorId);
       setOnWaitlist(false);
-      toast.success(res.message || res.data?.message || 'Removed from waitlist.');
+      toast.success('LEFT WAITLIST SUCCESSFULLY.');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to leave waitlist.');
+      toast.error('FAILED TO LEAVE WAITLIST.');
     } finally {
       setWaitlistLoading(false);
     }
   };
 
-  // Derived state: slots for the selected date
   const slotsForSelectedDate = availabilityByDate.find(d => d.date === selectedDate)?.slots || [];
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    setSelectedSlot(null); // Reset time selection on date switch
+    setSelectedSlot(null);
   };
 
   const handleSlotSelect = (slot) => {
@@ -112,18 +106,18 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
   const handleOpenBookingModal = () => {
     if (!isAuthenticated) {
-      toast.error('Please log in to schedule an appointment.');
+      toast.error('PLEASE LOG IN TO SCHEDULE AN APPOINTMENT.');
       navigate('/login', { state: { from: window.location.pathname } });
       return;
     }
     
     if (user?.role !== 'patient') {
-      toast.error('Only patient accounts can schedule appointments.');
+      toast.error('ONLY PATIENTS CAN SCHEDULE APPOINTMENTS.');
       return;
     }
 
     if (!selectedSlot) {
-      toast.error('Please select a time slot.');
+      toast.error('PLEASE SELECT A TIME SLOT.');
       return;
     }
 
@@ -140,201 +134,171 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
       if (res.success && res.data) {
         const appointmentId = res.data._id;
-
-        // Immediately trigger the secure online payment flow
         await initiatePayment({
           appointmentId,
           onSuccess: () => {
             setShowModal(false);
-            setTimeout(() => {
-              navigate('/patient/appointments');
-            }, 1500);
+            setTimeout(() => navigate('/patient/appointments'), 1500);
           },
           onFailure: () => {
             setShowModal(false);
-            setTimeout(() => {
-              navigate('/patient/appointments');
-            }, 1500);
+            setTimeout(() => navigate('/patient/appointments'), 1500);
           },
         });
       }
     } catch (err) {
       console.error(err);
       setShowModal(false);
-      
       if (err.response?.status === 409) {
-        toast.error('This slot was just booked by another patient. Please select another slot.');
+        toast.error('SLOT CONCURRENTLY CLAIMED. RETRYING...');
         await fetchAvailability();
       } else {
-        toast.error(err.response?.data?.message || 'Booking transaction failed. Please try again.');
+        toast.error(err.response?.data?.message || 'TRANSACTION SCHEDULING FAILURE.');
       }
     } finally {
       setBookingLoading(false);
     }
   };
 
-  const formatDatePill = (dateStr) => {
-    try {
-      const dateObj = new Date(dateStr + 'T00:00:00');
-      const weekday = dateObj.toLocaleDateString('en-US', { weekday: 'short' }); // Mon
-      const dayNum = dateObj.toLocaleDateString('en-US', { day: 'numeric' }); // 10
-      const month = dateObj.toLocaleDateString('en-US', { month: 'short' }); // Feb
-      return { weekday, dayNum, month };
-    } catch (e) {
-      return { weekday: '', dayNum: dateStr, month: '' };
-    }
+  // ── Render Waitlist UI if no availability (D3.10) ──
+  const renderWaitlistUI = () => {
+    return (
+      <div className="w-full p-6 bg-swiss-gray-100 border-2 border-swiss-black rounded-none shadow-none text-left swiss-diagonal">
+        <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+          NO AVAILABILITY
+        </span>
+        <h3 className="text-ui-xl font-black text-swiss-black uppercase tracking-tighter mb-2 leading-none">
+          DR. {doctorName.toUpperCase()} HAS NO OPEN SLOTS CURRENTLY
+        </h3>
+        <p className="text-ui-sm text-swiss-gray-600 font-bold mb-4">
+          Join the waitlist and we'll notify you when new slots open.
+        </p>
+
+        {onWaitlist ? (
+          <div className="flex flex-col gap-2 bg-swiss-white border-2 border-swiss-teal p-4 rounded-none">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 border-2 border-swiss-teal flex items-center justify-center text-swiss-teal text-xs font-black shrink-0 rounded-none bg-swiss-white">
+                ✓
+              </div>
+              <div className="text-left">
+                <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block">
+                  YOU'RE ON THE WAITLIST
+                </span>
+                <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5">
+                  We'll notify you when new slots are available.
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleLeaveWaitlist}
+              disabled={waitlistLoading}
+              className="text-[9px] font-black text-swiss-gray-400 hover:text-swiss-red uppercase tracking-widest text-left mt-2 select-none cursor-pointer border-t border-swiss-gray-200 pt-2 w-full bg-transparent border-0"
+            >
+              {waitlistLoading ? 'LEAVING...' : 'LEAVE WAITLIST'}
+            </button>
+          </div>
+        ) : (
+          <Button
+            onClick={handleJoinWaitlist}
+            disabled={waitlistLoading}
+            variant="primary"
+            fullWidth
+          >
+            {waitlistLoading ? 'PROCESSING...' : 'JOIN WAITLIST →'}
+          </Button>
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm text-left select-none space-y-6">
-      <h2 className="text-lg font-bold text-slate-800 pb-2 border-b border-slate-50 flex items-center gap-2">
-        <Calendar size={20} className="text-primary" />
-        Schedule Consultation
-      </h2>
+    <div className="flex flex-col gap-5 select-none w-full">
+      {/* ── Consultation Fee Header ── */}
+      <div className="text-left pb-3 border-b-2 border-swiss-black">
+        <h2 className="text-display-sm font-black text-swiss-black uppercase tracking-tighter leading-none">
+          ₹{consultationFee}
+        </h2>
+        <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest mt-1.5 block">
+          PER SESSION
+        </span>
+      </div>
 
-      {/* Auth Guard Banner */}
-      {!isAuthenticated && (
-        <div className="bg-slate-50 border border-slate-100/80 rounded-2xl p-5 text-center flex flex-col items-center gap-3">
-          <div className="p-2.5 bg-slate-200/50 text-slate-500 rounded-xl">
-            <Lock size={20} />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-700">Patient Scheduling Restricted</p>
-            <p className="text-[10px] text-slate-400 mt-1">
-              Please sign in or register a patient account to browse dates and claim time slots.
-            </p>
-          </div>
-          <Link
-            to="/login"
-            state={{ from: window.location.pathname }}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline transition-colors mt-1 cursor-pointer"
-          >
-            Login to Book Slot <ArrowRight size={14} />
-          </Link>
+      {/* ── Loading / Auth Gates ── */}
+      {loading && (
+        <div className="w-full py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+          LOADING CLINIC AVAILABILITY...
         </div>
       )}
 
-      {isAuthenticated && user?.role !== 'patient' && (
-        <div className="bg-slate-50 border border-slate-100/80 rounded-2xl p-5 text-center flex flex-col items-center gap-2.5">
-          <Lock className="text-slate-400" size={20} />
-          <p className="text-xs font-bold text-slate-700">Patients-Only Action</p>
-          <p className="text-[10px] text-slate-400 leading-relaxed max-w-xs">
-            You are logged in as a <b>{user?.role}</b>. Realtime bookings are only permitted for patient accounts.
-          </p>
-        </div>
-      )}
-
-      {/* Loading Skeletons */}
-      {loading && isAuthenticated && user?.role === 'patient' && (
-        <div className="space-y-4 animate-pulse">
-          <div className="h-4 bg-slate-100 rounded w-1/4" />
-          <div className="flex gap-3 overflow-hidden">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="w-16 h-20 bg-slate-100 rounded-2xl shrink-0" />
-            ))}
-          </div>
-          <div className="h-4 bg-slate-100 rounded w-1/4 pt-2" />
-          <div className="grid grid-cols-3 gap-2">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-10 bg-slate-100 rounded-xl" />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Main Picker Interface */}
-      {!loading && isAuthenticated && user?.role === 'patient' && (
+      {!loading && (
         <>
           {availabilityByDate.length === 0 ? (
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-8 text-center flex flex-col items-center gap-3">
-              <div className="p-3 bg-white rounded-full border border-slate-100 shadow-sm flex items-center justify-center">
-                <Bell className="h-6 w-6 text-slate-400" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-slate-700">No Clinic Slots Available</p>
-                <p className="text-[10px] text-slate-400 max-w-xs mt-1">
-                  This doctor hasn't posted availability slots yet. Join the waitlist to receive immediate alerts when slots open up!
-                </p>
-              </div>
-
-              {onWaitlist ? (
-                <div className="w-full flex flex-col items-center mt-2 p-3 bg-emerald-50/50 border border-emerald-100 rounded-xl animate-fadeIn">
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold">
-                    <Check className="h-4 w-4 bg-emerald-100 rounded-full p-0.5" />
-                    You are on the waitlist
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-1">
-                    We will notify you immediately once slot dates are scheduled.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleLeaveWaitlist}
-                    disabled={waitlistLoading}
-                    className="text-[10px] text-slate-400 hover:text-red-500 font-bold transition-colors mt-3 border-t border-slate-100 w-full pt-2"
-                  >
-                    {waitlistLoading ? 'Processing...' : 'Leave waitlist'}
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleJoinWaitlist}
-                  disabled={waitlistLoading}
-                  className="inline-flex items-center gap-1.5 bg-primary hover:bg-primary-dark text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm hover:shadow transition-all cursor-pointer mt-2 w-full justify-center"
-                >
-                  <Bell className="h-3.5 w-3.5" />
-                  {waitlistLoading ? 'Joining...' : 'Join Waitlist'}
-                </button>
-              )}
-            </div>
+            renderWaitlistUI()
           ) : (
-            <div className="space-y-6">
-              {/* Availability Heatmap (Feature F6) */}
+            <div className="flex flex-col gap-6 text-left">
+              {/* Heatmap calendar */}
               <AvailabilityHeatmap
                 availabilityByDate={availabilityByDate}
                 selectedDate={selectedDate}
                 onDateSelect={handleDateSelect}
               />
 
-              {/* Time Chips */}
-              {selectedDate && (
-                <div className="space-y-2.5 animate-fadeIn">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                    Select a Time Window
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {slotsForSelectedDate.map((slot) => {
-                      const isSelected = selectedSlot?._id === slot._id;
-                      return (
-                        <button
-                          key={slot._id}
-                          type="button"
-                          onClick={() => handleSlotSelect(slot)}
-                          className={`py-3 px-4 rounded-xl border font-bold text-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                            isSelected
-                              ? 'bg-blue-50 border-primary text-primary shadow-sm ring-1 ring-primary/20'
-                              : 'bg-slate-50/50 border-slate-100 hover:border-slate-300 text-slate-700'
-                          }`}
-                        >
-                          <Clock size={12} className={isSelected ? 'text-primary' : 'text-slate-400'} />
-                          {slot.startTime} – {slot.endTime}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              {/* Time slot grid selector */}
+              <div className="flex flex-col gap-3 pt-4 border-t border-swiss-gray-200">
+                <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                  SELECT TIME SLOT
+                </label>
 
-              {/* CTA Booking Button */}
-              <button
-                type="button"
-                onClick={handleOpenBookingModal}
-                disabled={!selectedSlot}
-                className="w-full bg-primary hover:bg-primary-dark text-white rounded-2xl py-3.5 font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-              >
-                Schedule Booking
-                <ArrowRight size={16} />
-              </button>
+                {selectedDate ? (
+                  slotsForSelectedDate.length === 0 ? (
+                    <span className="text-ui-xs text-swiss-gray-400 font-bold uppercase">
+                      NO SLOTS SCHEDULED FOR THIS DATE.
+                    </span>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      {slotsForSelectedDate.map((slot) => {
+                        const isSelected = selectedSlot?._id === slot._id;
+                        return (
+                          <button
+                            key={slot._id}
+                            type="button"
+                            onClick={() => handleSlotSelect(slot)}
+                            className={`h-10 border-2 font-bold text-[11px] flex items-center justify-center rounded-none transition-colors select-none cursor-pointer
+                              ${isSelected
+                                ? 'bg-swiss-black border-swiss-black text-swiss-white'
+                                : 'bg-swiss-white border-swiss-black text-swiss-black hover:bg-swiss-gray-100'
+                              }
+                            `}
+                          >
+                            {slot.startTime} – {slot.endTime}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )
+                ) : (
+                  <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                    SELECT A DATE TO SEE AVAILABLE TIMES →
+                  </span>
+                )}
+              </div>
+
+              {/* CTA Booking Action */}
+              <div className="pt-2">
+                <Button
+                  variant="accent"
+                  fullWidth
+                  disabled={!selectedSlot}
+                  onClick={handleOpenBookingModal}
+                  className="font-black h-12"
+                >
+                  {selectedSlot ? 'CONFIRM & PAY →' : 'SELECT A TIME SLOT'}
+                </Button>
+                <p className="text-[9px] font-bold text-swiss-gray-400 mt-2 text-center tracking-wider">
+                  Secure payment via Razorpay. Confirmation sent by email.
+                </p>
+              </div>
             </div>
           )}
         </>

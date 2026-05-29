@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { getSpecializationsAPI } from '../../api/discovery.api';
-import { Star, SlidersHorizontal, RefreshCw } from 'lucide-react';
+import SectionHeader from '../common/SectionHeader';
 import Button from '../common/Button';
 
 const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
   const [specializations, setSpecializations] = useState([]);
+  const [showAllSpecs, setShowAllSpecs] = useState(false);
+
+  // Filter States
   const [specialization, setSpecialization] = useState(initialFilters.specialization || '');
+  const [city, setCity] = useState(initialFilters.city || '');
   const [minFee, setMinFee] = useState(initialFilters.minFee || '');
   const [maxFee, setMaxFee] = useState(initialFilters.maxFee || '');
-  const [minRating, setMinRating] = useState(initialFilters.minRating || '');
-  const [minExperience, setMinExperience] = useState(initialFilters.minExperience || '');
+  const [availability, setAvailability] = useState(
+    initialFilters.nearby ? 'ANY TIME' : 'ANY TIME' // default
+  );
 
-  // Load specializations with real doctor counts
+  // Segmented control state
+  const [activeAvailability, setActiveAvailability] = useState('ANY TIME');
+
+  // Load specializations
   useEffect(() => {
     const loadSpecs = async () => {
       try {
         const res = await getSpecializationsAPI();
-        if (res.success && res.data.specializations) {
+        if (res.success && res.data?.specializations) {
           setSpecializations(res.data.specializations);
         }
       } catch (err) {
@@ -26,232 +34,186 @@ const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
     loadSpecs();
   }, []);
 
-  // Sync state with incoming initialFilters on change (e.g. from browser back/refresh)
+  // Sync state with incoming initialFilters on change
   useEffect(() => {
     setSpecialization(initialFilters.specialization || '');
+    setCity(initialFilters.city || '');
     setMinFee(initialFilters.minFee || '');
     setMaxFee(initialFilters.maxFee || '');
-    setMinRating(initialFilters.minRating || '');
-    setMinExperience(initialFilters.minExperience || '');
   }, [initialFilters]);
-
-  // Preset Fee handlers
-  const handleFeePreset = (min, max) => {
-    setMinFee(min);
-    setMaxFee(max);
-  };
 
   const handleApply = () => {
     onApply({
       specialization,
+      city,
       minFee: minFee ? Number(minFee) : '',
       maxFee: maxFee ? Number(maxFee) : '',
-      minRating: minRating ? Number(minRating) : '',
-      minExperience: minExperience ? Number(minExperience) : '',
+      availability: activeAvailability,
     });
   };
 
   const handleClear = () => {
     setSpecialization('');
+    setCity('');
     setMinFee('');
     setMaxFee('');
-    setMinRating('');
-    setMinExperience('');
+    setActiveAvailability('ANY TIME');
     onClear();
   };
 
+  const handleGeolocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Punishing Pune coordinates to simple City text or trigger listing proximity
+        setCity('Pune');
+      },
+      (error) => {
+        console.warn('Geolocation failed:', error);
+      }
+    );
+  };
+
+  const visibleSpecs = showAllSpecs ? specializations : specializations.slice(0, 6);
+
   return (
-    <div className="bg-white rounded-card border border-slate-100 shadow-card p-6 flex flex-col gap-6 w-full shrink-0">
-      {/* Sidebar Title */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-          <SlidersHorizontal size={18} className="text-primary" />
-          Filter Criteria
-        </h2>
+    <div className="w-full flex flex-col gap-6 select-none bg-swiss-white border-r-2 border-swiss-black pr-6 py-2">
+      {/* Sidebar Section Header - No bottom rule or number */}
+      <SectionHeader title="FILTERS" ruled={false} className="mb-0" />
+
+      {/* 1. SPECIALIZATION FILTER */}
+      <div className="flex flex-col gap-3 pt-4 border-t border-swiss-gray-200">
+        <span className="swiss-label text-swiss-red block font-black">
+          SPECIALIZATION
+        </span>
+        <div className="flex flex-col gap-2">
+          {specializations.length === 0 ? (
+            <span className="text-ui-xs text-swiss-gray-400 font-bold uppercase">Loading...</span>
+          ) : (
+            visibleSpecs.map((spec) => {
+              const isSelected = specialization === spec.name;
+              return (
+                <button
+                  key={spec.name}
+                  type="button"
+                  onClick={() => setSpecialization(isSelected ? '' : spec.name)}
+                  className="flex items-center gap-3 w-full hover:bg-swiss-gray-100 py-1 transition-colors text-left font-medium select-none cursor-pointer rounded-none"
+                >
+                  {/* Custom square checkbox indicator */}
+                  <div className={`w-4 h-4 border-2 border-swiss-black shrink-0 transition-colors rounded-none
+                    ${isSelected ? 'bg-swiss-black' : 'bg-swiss-white'}
+                  `} />
+                  <span className="text-ui-md text-swiss-black capitalize">
+                    {spec.name.toLowerCase()}
+                  </span>
+                </button>
+              );
+            })
+          )}
+        </div>
+
+        {specializations.length > 6 && (
+          <button
+            type="button"
+            onClick={() => setShowAllSpecs(!showAllSpecs)}
+            className="text-ui-xs font-black text-swiss-black hover:text-swiss-red uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-1"
+          >
+            {showAllSpecs ? '— SHOW LESS' : '+ SHOW MORE'}
+          </button>
+        )}
+      </div>
+
+      {/* 2. LOCATION FILTER */}
+      <div className="flex flex-col gap-3 pt-4 border-t border-swiss-gray-200 text-left">
+        <span className="swiss-label text-swiss-red block font-black">
+          LOCATION
+        </span>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="ENTER CITY"
+          className="w-full h-10 px-4 bg-swiss-white border-2 border-swiss-black text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none"
+        />
         <button
-          onClick={handleClear}
-          className="text-xs font-bold text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-1 cursor-pointer"
+          type="button"
+          onClick={handleGeolocation}
+          className="text-ui-xs font-black text-swiss-red hover:underline uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-0.5"
         >
-          <RefreshCw size={12} />
-          Reset All
+          NEAR ME →
         </button>
       </div>
 
-      {/* 1. Specializations counts */}
-      <div className="flex flex-col gap-2.5">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">
-            Specialization
-          </h3>
-          {specialization && (
-            <button
-              onClick={() => setSpecialization('')}
-              className="text-[10px] font-bold text-primary hover:underline cursor-pointer"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-        <div className="flex flex-col gap-1 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
-          {specializations.length === 0 ? (
-            <div className="text-xs text-slate-400 py-2">Loading categories...</div>
-          ) : (
-            specializations.map((spec) => (
+      {/* 3. AVAILABILITY FILTER */}
+      <div className="flex flex-col gap-3 pt-4 border-t border-swiss-gray-200 text-left">
+        <span className="swiss-label text-swiss-red block font-black">
+          AVAILABILITY
+        </span>
+        {/* Segmented controls */}
+        <div className="flex flex-col gap-2">
+          {['ANY TIME', 'TODAY', 'THIS WEEK'].map((opt) => {
+            const isActive = activeAvailability === opt;
+            return (
               <button
-                key={spec.name}
+                key={opt}
                 type="button"
-                onClick={() => setSpecialization(specialization === spec.name ? '' : spec.name)}
-                className={`flex items-center justify-between text-xs px-2.5 py-2 rounded-lg font-medium select-none cursor-pointer transition-all ${
-                  specialization === spec.name
-                    ? 'bg-blue-50 text-primary font-bold'
-                    : 'text-slate-600 hover:bg-slate-50'
-                }`}
+                onClick={() => setActiveAvailability(opt)}
+                className={`h-10 border-2 border-swiss-black font-bold uppercase tracking-wider text-ui-sm flex items-center justify-center transition-colors rounded-none cursor-pointer select-none
+                  ${isActive 
+                    ? 'bg-swiss-black text-swiss-white' 
+                    : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                  }
+                `}
               >
-                <span className="truncate pr-2">{spec.name}</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                  specialization === spec.name
-                    ? 'bg-primary text-white'
-                    : 'bg-slate-100 text-slate-500'
-                }`}>
-                  {spec.count}
-                </span>
+                {opt}
               </button>
-            ))
-          )}
+            );
+          })}
         </div>
       </div>
 
-      {/* 2. Fee Range & Presets */}
-      <div className="flex flex-col gap-2.5">
-        <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">
-          Consultation Fee
-        </h3>
-        {/* Quick Presets */}
-        <div className="flex flex-wrap gap-1.5 mb-1">
-          <button
-            type="button"
-            onClick={() => handleFeePreset('', 500)}
-            className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-primary hover:bg-blue-50/20 cursor-pointer select-none transition-colors"
-          >
-            Under ₹500
-          </button>
-          <button
-            type="button"
-            onClick={() => handleFeePreset(500, 1000)}
-            className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-primary hover:bg-blue-50/20 cursor-pointer select-none transition-colors"
-          >
-            ₹500 - ₹1000
-          </button>
-          <button
-            type="button"
-            onClick={() => handleFeePreset(1000, '')}
-            className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-primary hover:bg-blue-50/20 cursor-pointer select-none transition-colors"
-          >
-            ₹1000+
-          </button>
-        </div>
-
-        {/* Inputs */}
+      {/* 4. FEE RANGE FILTER */}
+      <div className="flex flex-col gap-3 pt-4 border-t border-swiss-gray-200 text-left">
+        <span className="swiss-label text-swiss-red block font-black">
+          FEE RANGE
+        </span>
         <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <span className="absolute left-2.5 top-2.5 text-xs text-slate-400 font-bold">₹</span>
+          <div className="flex-1">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+              MIN ₹
+            </span>
             <input
               type="number"
-              placeholder="Min"
               value={minFee}
               onChange={(e) => setMinFee(e.target.value)}
-              className="w-full pl-6 pr-2.5 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-primary text-xs font-medium"
+              className="w-full h-10 px-3 bg-swiss-white border-2 border-swiss-black text-ui-sm font-bold text-swiss-black rounded-none focus:border-4"
             />
           </div>
-          <span className="text-slate-400 text-xs">-</span>
-          <div className="relative flex-1">
-            <span className="absolute left-2.5 top-2.5 text-xs text-slate-400 font-bold">₹</span>
+          <span className="text-swiss-gray-400 self-end mb-2.5 font-bold">—</span>
+          <div className="flex-1">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+              MAX ₹
+            </span>
             <input
               type="number"
-              placeholder="Max"
               value={maxFee}
               onChange={(e) => setMaxFee(e.target.value)}
-              className="w-full pl-6 pr-2.5 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-primary text-xs font-medium"
+              className="w-full h-10 px-3 bg-swiss-white border-2 border-swiss-black text-ui-sm font-bold text-swiss-black rounded-none focus:border-4"
             />
           </div>
         </div>
       </div>
 
-      {/* 3. Minimum Rating */}
-      <div className="flex flex-col gap-2.5">
-        <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">
-          Minimum Rating
-        </h3>
-        <div className="flex flex-col gap-1.5">
-          {[4, 3, 0].map((stars) => (
-            <button
-              key={stars}
-              type="button"
-              onClick={() => setMinRating(stars || '')}
-              className={`flex items-center gap-2 text-xs px-2.5 py-2 rounded-lg font-medium transition-all ${
-                (minRating === stars || (stars === 0 && !minRating))
-                  ? 'bg-blue-50 text-primary font-bold'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              {stars > 0 ? (
-                <>
-                  <div className="flex text-amber-400 fill-amber-400">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={12}
-                        className={i < stars ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}
-                      />
-                    ))}
-                  </div>
-                  <span>{stars}.0 & Above</span>
-                </>
-              ) : (
-                <span>Any Rating</span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 4. Experience */}
-      <div className="flex flex-col gap-2.5">
-        <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">
-          Experience Range
-        </h3>
-        <div className="flex flex-col gap-1.5">
-          {[
-            { label: 'Any Experience', value: '' },
-            { label: '2+ Years', value: '2' },
-            { label: '5+ Years', value: '5' },
-            { label: '10+ Years', value: '10' },
-          ].map((exp) => (
-            <label
-              key={exp.value}
-              className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium cursor-pointer transition-colors ${
-                minExperience === exp.value
-                  ? 'bg-blue-50/60 text-primary font-bold'
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              <input
-                type="radio"
-                name="experience"
-                checked={minExperience === exp.value}
-                onChange={() => setMinExperience(exp.value)}
-                className="text-primary focus:ring-primary w-3.5 h-3.5"
-              />
-              <span>{exp.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* 5. Action Buttons */}
-      <div className="mt-2 flex flex-col gap-2">
-        <Button onClick={handleApply} className="w-full py-2.5 text-xs font-bold">
-          Apply Search Filters
+      {/* 5. ACTION BUTTONS */}
+      <div className="flex flex-col gap-2 pt-6 border-t border-swiss-gray-200">
+        <Button onClick={handleApply} variant="primary" className="w-full">
+          APPLY FILTERS
+        </Button>
+        <Button onClick={handleClear} variant="secondary" className="w-full">
+          RESET ALL
         </Button>
       </div>
     </div>

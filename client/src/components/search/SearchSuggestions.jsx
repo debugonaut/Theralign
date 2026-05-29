@@ -5,6 +5,7 @@ import { getSearchSuggestions } from '../../api/search.api';
 const SearchSuggestions = ({ query, onSelect, visible }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [flashingIndex, setFlashingIndex] = useState(null);
 
   // Debounce API calls by 300ms to reduce database load on rapid typing
   useEffect(() => {
@@ -18,7 +19,6 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
       try {
         const res = await getSearchSuggestions(query);
         if (res.data?.success) {
-          // Standard successResponse maps payload to data key
           setSuggestions(res.data.data?.suggestions || res.data.suggestions || []);
         } else {
           setSuggestions([]);
@@ -39,44 +39,68 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
   const getIcon = (type) => {
     switch (type) {
       case 'specialization':
-        return <Hospital className="h-4 w-4 text-primary" />;
+        return <Hospital className="h-4 w-4 text-swiss-black" />;
       case 'doctor':
-        return <User className="h-4 w-4 text-emerald-500" />;
+        return <User className="h-4 w-4 text-swiss-black" />;
       case 'city':
-        return <MapPin className="h-4 w-4 text-amber-500" />;
+        return <MapPin className="h-4 w-4 text-swiss-black" />;
       default:
-        return <Search className="h-4 w-4 text-slate-400" />;
+        return <Search className="h-4 w-4 text-swiss-black" />;
     }
   };
 
+  const handleRowClick = (s, index) => {
+    setFlashingIndex(index);
+    setTimeout(() => {
+      onSelect(s);
+      setFlashingIndex(null);
+    }, 150);
+  };
+
   return (
-    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden max-h-80 overflow-y-auto transform origin-top transition-all duration-150">
+    <div className="absolute top-full left-0 right-0 mt-1 bg-swiss-white border-2 border-swiss-black z-50 overflow-hidden max-h-80 overflow-y-auto rounded-none shadow-none animate-none">
       {isLoading && (
-        <div className="px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
-          <span className="inline-block animate-spin">⏳</span> Searching options...
+        <div className="px-4 py-3 text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest flex items-center gap-2">
+          <span className="inline-block animate-swiss-spin">⏳</span> SEARCHING OPTIONS...
         </div>
       )}
 
-      {!isLoading && suggestions.map((s, i) => (
-        <button
-          key={i}
-          type="button"
-          onMouseDown={(e) => {
-            // Use onMouseDown instead of onClick to fire before the input's onBlur hides the container!
-            e.preventDefault();
-            onSelect(s);
-          }}
-          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left border-b border-slate-50 last:border-0 transition-colors"
-        >
-          <div className="p-2 bg-slate-50 rounded-lg flex-shrink-0 group-hover:bg-white transition-colors">
-            {getIcon(s.type)}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-slate-800 truncate">{s.label}</p>
-            <p className="text-xs text-slate-400 truncate mt-0.5">{s.subLabel}</p>
-          </div>
-        </button>
-      ))}
+      {!isLoading && suggestions.map((s, i) => {
+        const isFlashing = flashingIndex === i;
+        return (
+          <button
+            key={i}
+            type="button"
+            onMouseDown={(e) => {
+              // Use onMouseDown instead of onClick to fire before the input's onBlur hides the container!
+              e.preventDefault();
+              handleRowClick(s, i);
+            }}
+            className={`w-full flex items-center gap-4 px-4 py-3 text-left border-b border-swiss-gray-200 last:border-0 transition-colors duration-fast select-none cursor-pointer rounded-none
+              ${isFlashing 
+                ? 'bg-swiss-black text-swiss-white' 
+                : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+              }
+            `}
+          >
+            {/* Bordered square category indicator on the left */}
+            <div className={`w-8 h-8 border-2 shrink-0 flex items-center justify-center rounded-none
+              ${isFlashing ? 'border-swiss-white bg-swiss-white' : 'border-swiss-black bg-swiss-white'}
+            `}>
+              {getIcon(s.type)}
+            </div>
+            
+            <div className="min-w-0 flex-1">
+              <p className="text-ui-sm font-black uppercase tracking-wider truncate">
+                {s.label}
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-widest truncate mt-0.5 text-swiss-gray-400">
+                {s.subLabel}
+              </p>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 };

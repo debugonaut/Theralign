@@ -1,8 +1,8 @@
 import React from 'react';
 
 /**
- * AvailabilityHeatmap — Surfaced density map of the next 28 days of doctor slot density.
- * Helps patients find dates with high booking flexibility instantly.
+ * AvailabilityHeatmap — D3.3 availability heatmap in strict Swiss minimalist style.
+ * 7×4 grid, 36px×36px square cells, 4px gaps, zero rounded corners, explicit state colors.
  */
 const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect }) => {
   
@@ -15,16 +15,8 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
     const available = entry.slots.filter(s => !s.isBooked && s.isActive).length;
 
     if (available === 0) return 'full';
-    if (available < total / 2) return 'limited';
+    if (available <= 2) return 'limited'; // 1-2 slots remaining
     return 'available';
-  };
-
-  // Color schemas matching clinical statuses
-  const statusStyles = {
-    available:   'bg-emerald-50 text-emerald-700 hover:bg-emerald-100/80 cursor-pointer border-emerald-100',
-    limited:     'bg-amber-50 text-amber-700 hover:bg-amber-100/80 cursor-pointer border-amber-100',
-    full:        'bg-slate-100 text-slate-400 border-slate-200/50 cursor-not-allowed opacity-60',
-    unavailable: 'bg-slate-50/60 text-slate-300 border-slate-100 cursor-not-allowed opacity-40',
   };
 
   // Generate date array for the subsequent 28 days from local today
@@ -40,32 +32,50 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
   };
 
   const next28Days = generateNext28Days();
+  const daysHeader = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-  // Helper to format days name titles
-  const daysHeader = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  // Cell state style selectors
+  const getCellClassName = (status, isSelected) => {
+    if (isSelected) {
+      return 'bg-swiss-black text-swiss-white border-swiss-black';
+    }
+
+    switch (status) {
+      case 'available':
+        return 'bg-swiss-gray-100 border-swiss-black text-swiss-black hover:bg-swiss-gray-200 cursor-pointer';
+      case 'limited':
+        return 'bg-swiss-amber/10 border-swiss-amber text-swiss-amber hover:bg-swiss-amber/20 cursor-pointer';
+      case 'full':
+        return 'bg-swiss-gray-50 border-swiss-gray-200 text-swiss-gray-400 cursor-not-allowed';
+      case 'unavailable':
+      default:
+        return 'bg-swiss-white border-transparent text-swiss-gray-200 cursor-not-allowed';
+    }
+  };
 
   return (
-    <div className="space-y-4 border border-slate-100 bg-slate-50/30 rounded-2xl p-4 select-none">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">
-          Availability Heatmap
+    <div className="flex flex-col gap-4 select-none">
+      <div className="flex items-center justify-between pb-2 border-b border-swiss-gray-200">
+        <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+          AVAILABILITY HEATMAP
         </label>
-        <span className="text-[10px] font-bold text-slate-400">Next 28 Days</span>
+        <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-widest">
+          28-DAY GRID
+        </span>
       </div>
 
-      {/* Grid wrapper */}
-      <div className="space-y-1.5">
+      <div className="flex flex-col gap-1">
         {/* Mon-Sun Day Titles */}
-        <div className="grid grid-cols-7 gap-1.5 text-center">
-          {daysHeader.map(day => (
-            <span key={day} className="text-[10px] font-bold text-slate-400 uppercase tracking-wider py-0.5">
+        <div className="grid grid-cols-7 gap-1 text-center mb-1">
+          {daysHeader.map((day, idx) => (
+            <span key={idx} className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest">
               {day}
             </span>
           ))}
         </div>
 
-        {/* 28-day grid cell items */}
-        <div className="grid grid-cols-7 gap-1.5">
+        {/* 7x4 square cells, 36px x 36px approx, 4px gaps (gap-1 matches ~4px in modern flex/grid) */}
+        <div className="grid grid-cols-7 gap-1">
           {next28Days.map((dateStr) => {
             const status = getDateStatus(dateStr);
             const dateObj = new Date(dateStr + 'T00:00:00');
@@ -80,32 +90,29 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
                 disabled={!isClickable}
                 onClick={() => isClickable && onDateSelect(dateStr)}
                 className={`
-                  aspect-square rounded-xl text-xs font-extrabold border
-                  flex flex-col items-center justify-center
-                  transition-all duration-150
-                  ${statusStyles[status]}
-                  ${isSelected ? 'ring-2 ring-primary ring-offset-1 border-primary/20 scale-105' : ''}
+                  w-[36px] h-[36px] border-2 text-[11px] font-bold
+                  flex items-center justify-center transition-all duration-fast select-none rounded-none
+                  ${getCellClassName(status, isSelected)}
                 `}
-                title={`${dateStr} (${status})`}
+                title={`${dateStr} — ${status.toUpperCase()}`}
               >
-                <span>{dayNum}</span>
+                {dayNum}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Legend indicator bar */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 border-t border-slate-100">
+      {/* Legend utilizing bordered squares */}
+      <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-swiss-gray-200">
         {[
-          { color: 'bg-emerald-50 border-emerald-100', label: 'Available' },
-          { color: 'bg-amber-50 border-amber-100', label: 'Limited' },
-          { color: 'bg-slate-100 border-slate-200/50', label: 'Fully Booked' },
-          { color: 'bg-slate-50/60 border-slate-100', label: 'No Slots' },
-        ].map(({ color, label }) => (
-          <div key={label} className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-            <span className={`w-3.5 h-3.5 rounded-md border shrink-0 ${color}`} />
-            <span>{label}</span>
+          { color: 'bg-swiss-gray-100 border-swiss-black', label: 'AVAILABLE' },
+          { color: 'bg-swiss-amber/10 border-swiss-amber', label: 'LIMITED' },
+          { color: 'bg-swiss-gray-50 border-swiss-gray-200', label: 'FULL' },
+        ].map((item) => (
+          <div key={item.label} className="flex items-center gap-1.5 text-[9px] text-swiss-gray-400 font-bold uppercase tracking-widest">
+            <span className={`w-3.5 h-3.5 border-2 rounded-none shrink-0 ${item.color}`} />
+            <span>{item.label}</span>
           </div>
         ))}
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, IndianRupee, MessageSquare, AlertCircle, X, ShieldCheck } from 'lucide-react';
+import Modal from '../common/Modal';
+import Button from '../common/Button';
 
 const BookingConfirmationModal = ({ 
   isOpen, 
@@ -32,116 +33,130 @@ const BookingConfirmationModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop overlay */}
-      <div 
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
-        onClick={onClose} 
-      />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="CONFIRM BOOKING"
+      size="md" // 560px width
+    >
+      <div className="flex flex-col gap-6 text-left select-none">
+        
+        {/* Definition-list layout for key-value appointment details */}
+        <dl className="grid grid-cols-1 gap-y-4">
+          <div className="flex justify-between items-baseline border-b border-swiss-gray-200 pb-2">
+            <dt className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              DOCTOR
+            </dt>
+            <dd className="text-ui-md font-bold text-swiss-black uppercase">
+              DR. {doctorName}
+            </dd>
+          </div>
 
-      {/* Modal Content */}
-      <div className="bg-white border border-slate-100 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative z-10 select-none animate-scaleIn">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50 bg-slate-50/50">
-          <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-            <ShieldCheck className="text-primary" size={18} />
-            Confirm Appointment
-          </h3>
-          <button 
-            onClick={onClose} 
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all cursor-pointer"
+          <div className="flex justify-between items-baseline border-b border-swiss-gray-200 pb-2">
+            <dt className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              SPECIALIZATION
+            </dt>
+            <dd className="text-[10px] font-black text-swiss-red uppercase tracking-widest">
+              CLINICAL PHYSIOTHERAPY
+            </dd>
+          </div>
+
+          <div className="flex justify-between items-baseline border-b border-swiss-gray-200 pb-2">
+            <dt className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              DATE
+            </dt>
+            <dd className="text-ui-md font-bold text-swiss-black uppercase">
+              {formatHumanDate(slot.date)}
+            </dd>
+          </div>
+
+          <div className="flex justify-between items-baseline border-b border-swiss-gray-200 pb-2">
+            <dt className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              TIME
+            </dt>
+            <dd className="text-ui-md font-bold text-swiss-black uppercase">
+              {slot.startTime} – {slot.endTime}
+            </dd>
+          </div>
+
+          <div className="flex justify-between items-baseline border-b border-swiss-gray-200 pb-2">
+            <dt className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              DURATION
+            </dt>
+            <dd className="text-ui-md font-bold text-swiss-black uppercase">
+              30 MINUTES
+            </dd>
+          </div>
+
+          <div className="flex justify-between items-center pt-2">
+            <dt className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              CONSULTATION FEE
+            </dt>
+            <dd className="text-display-xs font-black text-swiss-black tracking-tighter uppercase">
+              ₹{consultationFee}
+            </dd>
+          </div>
+        </dl>
+
+        <div className="h-[2px] bg-swiss-black w-full my-1" />
+
+        {/* Symptoms / Medical Notes (Optional) */}
+        <div className="flex flex-col gap-2">
+          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            SYMPTOMS / MEDICAL NOTES (OPTIONAL)
+          </label>
+          <textarea
+            value={patientNotes}
+            onChange={(e) => setPatientNotes(e.target.value)}
+            placeholder="E.G. CHRONIC LOWER BACK STIFFNESS, POST-RUNNING KNEE INFLAMMATION..."
+            maxLength={300}
+            rows={3}
+            className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+          />
+        </div>
+
+        {/* Payment details card on gray surface */}
+        <div className="bg-swiss-gray-100 border-2 border-swiss-black p-5 rounded-none flex flex-col gap-2">
+          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            AMOUNT DUE
+          </span>
+          <h2 className="text-display-sm font-black text-swiss-black uppercase tracking-tighter leading-none">
+            ₹{consultationFee}
+          </h2>
+          <span className="text-[9px] font-black text-swiss-teal uppercase tracking-widest mt-1 block">
+            PAID VIA RAZORPAY GATEWAY
+          </span>
+        </div>
+
+        {/* Notice line */}
+        <p className="text-[10px] text-swiss-gray-400 leading-relaxed font-bold uppercase tracking-wide">
+          You will be redirected to complete payment. Your appointment is confirmed immediately upon successful payment.
+        </p>
+
+        {/* Action Buttons Stacked Full-Width */}
+        <div className="flex flex-col gap-2 mt-2">
+          <Button
+            variant="accent"
+            fullWidth
+            onClick={handleConfirm}
+            loading={loading}
+            className="font-black h-12"
           >
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="p-6 space-y-5 text-left">
-          {/* Summary Card */}
-          <div className="bg-slate-50 border border-slate-100/80 rounded-2xl p-4 space-y-3">
-            <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Physiotherapist</p>
-              <p className="text-sm font-extrabold text-slate-800">Dr. {doctorName}</p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">
-                  <Calendar size={10} /> Date
-                </p>
-                <p className="text-xs font-bold text-slate-700 mt-1">{formatHumanDate(slot.date)}</p>
-              </div>
-
-              <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">
-                  <Clock size={10} /> Timing
-                </p>
-                <p className="text-xs font-bold text-slate-700 mt-1">{slot.startTime} – {slot.endTime}</p>
-              </div>
-            </div>
-
-            <div className="pt-2.5 border-t border-slate-200/50 flex justify-between items-center">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">
-                <IndianRupee size={10} /> Consultation Fee
-              </p>
-              <p className="text-sm font-extrabold text-slate-800">₹{consultationFee}</p>
-            </div>
-          </div>
-
-          {/* Patient Notes */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <MessageSquare size={13} className="text-slate-400" />
-              Symptoms / Medical Notes (Optional)
-            </label>
-            <textarea
-              value={patientNotes}
-              onChange={(e) => setPatientNotes(e.target.value)}
-              placeholder="e.g. Chronic back pain, recovery from ankle sprain, post-surgery rehab notes..."
-              maxLength={500}
-              rows={3}
-              className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-3 text-slate-700 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
-            />
-            <div className="text-[10px] text-slate-400 text-right font-medium">
-              {patientNotes.length}/500 characters
-            </div>
-          </div>
-
-          {/* Informational banner */}
-          <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-xl flex items-start gap-2">
-            <AlertCircle className="text-primary mt-0.5 shrink-0" size={14} />
-            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
-              Secure online payment via Razorpay. You will be redirected to complete payment. You can reschedule or cancel this booking without any penalty up to 24 hours prior.
-            </p>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-50 bg-slate-50/50 flex items-center justify-end gap-3">
-          <button
+            {loading ? 'PROCESSING...' : `CONFIRM & PAY ₹${consultationFee} →`}
+          </Button>
+          <Button
+            variant="ghost"
+            fullWidth
             onClick={onClose}
             disabled={loading}
-            className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all cursor-pointer disabled:opacity-50"
+            className="font-black h-12"
           >
-            Cancel
-          </button>
-          <button
-            onClick={handleConfirm}
-            disabled={loading}
-            className="bg-primary hover:bg-primary-dark text-white rounded-xl px-5 py-2.5 font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
-          >
-            {loading ? (
-              <>
-                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Processing Payment...
-              </>
-            ) : (
-              'Confirm & Pay'
-            )}
-          </button>
+            CANCEL
+          </Button>
         </div>
+
       </div>
-    </div>
+    </Modal>
   );
 };
 

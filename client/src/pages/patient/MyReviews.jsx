@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Star, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import { getMyReviews } from '../../api/review.api';
+import SectionHeader from '../../components/common/SectionHeader';
+import EmptyState from '../../components/common/EmptyState';
 
-/**
- * MyReviews (Patient) — shows all reviews the patient has submitted.
- * Route: /patient/reviews
- */
 const MyReviews = () => {
+  const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = 'MY REVIEWS — KINETIQ';
     const fetch = async () => {
       setLoading(true);
       try {
         const res = await getMyReviews();
         if (res.data?.data?.reviews) {
           setReviews(res.data.data.reviews);
+        } else if (res.success && res.data) {
+          setReviews(res.data);
         }
       } catch (err) {
         console.error('Failed to load reviews:', err);
@@ -28,123 +30,85 @@ const MyReviews = () => {
     fetch();
   }, []);
 
-  const renderStars = (rating) =>
-    Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < Math.floor(rating) ? 'text-amber-400' : 'text-slate-200'}>
-        {i < Math.floor(rating) ? '★' : '☆'}
-      </span>
-    ));
-
   return (
-    <div className="space-y-8 select-none p-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <Star className="text-primary" size={24} />
-          My Reviews
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Reviews you have submitted for completed appointments.
-        </p>
-      </div>
+    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+      {/* Page Header */}
+      <SectionHeader
+        title="MY REVIEWS"
+        size="lg"
+        ruled={true}
+        className="mb-0"
+      />
 
-      {/* Loading skeleton */}
+      {/* Reviews List */}
       {loading ? (
-        <div className="space-y-4 animate-pulse">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-slate-100 rounded-3xl h-36" />
-          ))}
+        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+          LOADING SUBMITTED REVIEWS...
         </div>
       ) : reviews.length === 0 ? (
-        /* Empty state */
-        <div className="bg-white border border-slate-100 border-dashed rounded-3xl p-12 text-center max-w-lg mx-auto shadow-sm flex flex-col items-center gap-3">
-          <span className="text-4xl">⭐</span>
-          <p className="text-sm font-bold text-slate-700">You haven't written any reviews yet.</p>
-          <p className="text-xs text-slate-400 max-w-sm">
-            After a completed appointment, you can share your experience directly from your appointments page.
-          </p>
-          <Link
-            to="/doctors"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white rounded-xl px-5 py-2.5 font-bold text-xs shadow-md transition-all cursor-pointer mt-3"
-          >
-            Find a Doctor
-            <ArrowRight size={14} />
-          </Link>
-        </div>
+        <EmptyState
+          title="NO REVIEWS YET"
+          description="Reviews help other patients find the right physiotherapist. Share your experience after a completed session."
+          icon={Star}
+          actionLabel="VIEW MY APPOINTMENTS"
+          onAction={() => navigate('/patient/appointments')}
+        />
       ) : (
-        /* Review cards */
-        <div className="space-y-4">
-          {reviews.map((review) => (
-            <ReviewHistoryCard key={review._id} review={review} renderStars={renderStars} />
-          ))}
+        <div className="flex flex-col gap-6 max-w-content">
+          {reviews.map((rev) => {
+            const docName = rev.doctor?.user?.name || 'Physiotherapist';
+            const specText = Array.isArray(rev.doctor?.specialization)
+              ? rev.doctor.specialization[0]
+              : rev.doctor?.specialization || 'Clinical';
+
+            const apptDate = rev.appointment?.date
+              ? new Date(rev.appointment.date + 'T00:00:00').toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                }).toUpperCase()
+              : 'N/A';
+
+            const submittedOn = new Date(rev.createdAt).toLocaleDateString('en-IN', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            }).toUpperCase();
+
+            return (
+              <div
+                key={rev._id}
+                className="relative bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left"
+              >
+                {/* Rating square in top-right corner */}
+                <div className="absolute top-6 right-6 w-10 h-10 border-2 border-swiss-black flex items-center justify-center text-ui-md font-black text-swiss-black bg-swiss-white rounded-none select-none">
+                  {rev.rating}
+                </div>
+
+                <div className="flex flex-col gap-1 pr-16 mb-4">
+                  <h3 className="font-black text-swiss-black text-ui-xl uppercase tracking-tighter">
+                    DR. {docName.toUpperCase()}
+                  </h3>
+                  <span className="text-[10px] text-swiss-red font-black uppercase tracking-widest">
+                    {specText.toUpperCase()}
+                  </span>
+                  <span className="text-[9px] text-swiss-gray-400 font-bold uppercase tracking-widest mt-0.5">
+                    APPOINTMENT DATE: {apptDate}
+                  </span>
+                </div>
+
+                <p className="text-ui-lg text-swiss-black italic font-medium leading-relaxed mb-4 pl-4 border-l-2 border-swiss-gray-200">
+                  "{rev.comment}"
+                </p>
+
+                <div className="text-[9px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                  FILED ON {submittedOn}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
-    </div>
-  );
-};
-
-/**
- * Inner component for each review history card.
- */
-const ReviewHistoryCard = ({ review, renderStars }) => {
-  const [expanded, setExpanded] = useState(false);
-  const MAX_COMMENT_LENGTH = 200;
-
-  const doctorName = review.doctor?.user?.name || 'Physiotherapist';
-  const specialization = Array.isArray(review.doctor?.specialization)
-    ? review.doctor.specialization.join(', ')
-    : review.doctor?.specialization || '';
-
-  const appointmentDate = review.appointment?.date || '';
-  const appointmentTime = review.appointment?.startTime || '';
-
-  const reviewedOn = new Date(review.createdAt).toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-
-  const comment = review.comment || '';
-  const isLong = comment.length > MAX_COMMENT_LENGTH;
-  const displayComment = !expanded && isLong ? comment.slice(0, MAX_COMMENT_LENGTH) + '...' : comment;
-
-  return (
-    <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm hover:border-slate-200 transition-all text-left">
-      {/* Doctor info */}
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div>
-          <h3 className="text-sm font-extrabold text-slate-800">Dr. {doctorName}</h3>
-          {specialization && (
-            <p className="text-xs text-primary font-bold mt-0.5 uppercase tracking-wide">{specialization}</p>
-          )}
-        </div>
-        {/* Star rating */}
-        <div className="flex items-center gap-0.5 text-lg">{renderStars(review.rating)}</div>
-      </div>
-
-      {/* Appointment info */}
-      {appointmentDate && (
-        <p className="text-[10px] text-slate-400 font-medium mt-1.5">
-          Appointment: {appointmentDate}
-          {appointmentTime && ` · ${appointmentTime}`}
-        </p>
-      )}
-
-      {/* Comment */}
-      <p className="mt-3 text-sm text-slate-600 font-medium leading-relaxed italic border-l-2 border-primary/20 pl-3">
-        "{displayComment}"
-      </p>
-      {isLong && (
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="text-xs text-primary font-bold hover:underline mt-1 cursor-pointer"
-        >
-          {expanded ? 'read less' : 'read more'}
-        </button>
-      )}
-
-      {/* Reviewed on */}
-      <p className="text-[10px] text-slate-400 font-medium mt-3">Reviewed on {reviewedOn}</p>
     </div>
   );
 };
