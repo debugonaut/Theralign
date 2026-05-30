@@ -56,16 +56,16 @@ export default {
     },
 
     fontSize: {
-      // UI track — interface elements, data, labels
-      'ui-xs':  ['11px', { lineHeight: '16px', letterSpacing: '0.08em'  }],
-      'ui-sm':  ['12px', { lineHeight: '18px', letterSpacing: '0.06em'  }],
-      'ui-md':  ['14px', { lineHeight: '20px', letterSpacing: '0.01em'  }],
-      'ui-lg':  ['16px', { lineHeight: '24px', letterSpacing: '0em'     }],
-      'ui-xl':  ['18px', { lineHeight: '28px', letterSpacing: '-0.01em' }],
+      // UI track — interface elements, data, labels (scaled up by ~2px for superior readability)
+      'ui-xs':  ['13px', { lineHeight: '18px', letterSpacing: '0.08em'  }],
+      'ui-sm':  ['14px', { lineHeight: '20px', letterSpacing: '0.06em'  }],
+      'ui-md':  ['16px', { lineHeight: '24px', letterSpacing: '0.01em'  }],
+      'ui-lg':  ['18px', { lineHeight: '28px', letterSpacing: '0em'     }],
+      'ui-xl':  ['20px', { lineHeight: '30px', letterSpacing: '-0.01em' }],
 
       // Display track — section headers, page titles, hero type
-      'display-xs':  ['24px', { lineHeight: '28px',  letterSpacing: '-0.02em' }],
-      'display-sm':  ['32px', { lineHeight: '36px',  letterSpacing: '-0.03em' }],
+      'display-xs':  ['26px', { lineHeight: '30px',  letterSpacing: '-0.02em' }],
+      'display-sm':  ['34px', { lineHeight: '38px',  letterSpacing: '-0.03em' }],
       'display-md':  ['48px', { lineHeight: '52px',  letterSpacing: '-0.04em' }],
       'display-lg':  ['64px', { lineHeight: '68px',  letterSpacing: '-0.04em' }],
       'display-xl':  ['80px', { lineHeight: '84px',  letterSpacing: '-0.05em' }],

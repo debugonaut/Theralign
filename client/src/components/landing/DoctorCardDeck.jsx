@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { getNearbyDoctorsAPI } from '../../api/discovery.api';
 import VerifiedBadge from '../common/VerifiedBadge';
 
-// Premium Unsplash medical avatars & details as high-quality default fallbacks
+// Premium local doctor avatars matching user-supplied images exactly
 const DEFAULT_DOCTORS = [
   {
     id: 'doc_1',
     name: 'Dr. Priya Sharma',
     specialty: 'Orthopedic Physiotherapy',
-    avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300',
+    avatar: '/images/doc1.avif',
     rating: 4.9,
     reviewCount: 142,
     verificationStatus: 'verified',
@@ -18,7 +18,7 @@ const DEFAULT_DOCTORS = [
     id: 'doc_2',
     name: 'Dr. John Smith',
     specialty: 'Sports Injury Rehab',
-    avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=300',
+    avatar: '/images/doc2.jpg',
     rating: 4.8,
     reviewCount: 98,
     verificationStatus: 'verified',
@@ -28,7 +28,7 @@ const DEFAULT_DOCTORS = [
     id: 'doc_3',
     name: 'Dr. Sarah Jenkins',
     specialty: 'Neurological Care',
-    avatar: 'https://images.unsplash.com/photo-1594824813573-246434de83fb?auto=format&fit=crop&q=80&w=300',
+    avatar: '/images/doc3.jpg',
     rating: 4.7,
     reviewCount: 115,
     verificationStatus: 'verified',
@@ -38,41 +38,48 @@ const DEFAULT_DOCTORS = [
     id: 'doc_4',
     name: 'Dr. Marcus Vance',
     specialty: 'Geriatric Rehab',
-    avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300',
+    avatar: '/images/doc4.webp',
     rating: 4.9,
     reviewCount: 76,
     verificationStatus: 'verified',
     distance: '4.1'
+  },
+  {
+    id: 'doc_5',
+    name: 'Dr. Ananya Iyer',
+    specialty: 'Pediatric Physiotherapy',
+    avatar: '/images/doc5.jpg',
+    rating: 4.8,
+    reviewCount: 122,
+    verificationStatus: 'verified',
+    distance: '5.0'
   }
 ];
 
+// Staggered 5-card config. Top card is index 0.
 const CARD_STACK_CONFIG = [
-  { zIndex: 30, x: 0,   y: 0,   scale: 1.00, opacity: 1.00 },
-  { zIndex: 20, x: 8,   y: 8,   scale: 0.97, opacity: 0.90 },
-  { zIndex: 10, x: 16,  y: 16,  scale: 0.94, opacity: 0.75 },
+  { zIndex: 50, x: 0,   y: 0,   scale: 1.00, opacity: 1.00 },
+  { zIndex: 40, x: 8,   y: 8,   scale: 0.97, opacity: 0.95 },
+  { zIndex: 30, x: 16,  y: 16,  scale: 0.94, opacity: 0.85 },
+  { zIndex: 20, x: 24,  y: 24,  scale: 0.91, opacity: 0.70 },
+  { zIndex: 10, x: 32,  y: 32,  scale: 0.88, opacity: 0.50 },
 ];
 
-function DoctorCard({ doctor, stackIndex, isTop, onClick }) {
-  const config = CARD_STACK_CONFIG[stackIndex] || CARD_STACK_CONFIG[CARD_STACK_CONFIG.length - 1];
-
+function DoctorCard({ doctor, style, isTop, onClick }) {
+  const docName = doctor.name || 'Physiotherapist';
   const specialtyText = Array.isArray(doctor.specialty)
     ? doctor.specialty[0]
     : doctor.specialty || 'General Physiotherapy';
 
-  const docName = doctor.name || 'Physiotherapist';
   const initial = docName.replace('Dr. ', '').charAt(0).toUpperCase();
 
   return (
     <div
       onClick={isTop ? onClick : undefined}
-      className={`absolute top-0 left-0 w-full transition-all duration-[250ms] ease-swiss ${
+      className={`absolute top-0 left-0 w-full transition-all duration-[300ms] ease-swiss ${
         isTop ? 'cursor-pointer hover:-translate-x-1.5 hover:-translate-y-1.5' : 'cursor-default pointer-events-none'
       }`}
-      style={{
-        zIndex: config.zIndex,
-        transform: `translate(${config.x}px, ${config.y}px) scale(${config.scale})`,
-        opacity: config.opacity,
-      }}
+      style={style}
     >
       <div
         className="bg-swiss-white border-2 border-swiss-black p-5 rounded-none text-left select-none relative"
@@ -89,25 +96,33 @@ function DoctorCard({ doctor, stackIndex, isTop, onClick }) {
 
         <div className="flex gap-4 items-start pr-12">
           {doctor.avatar ? (
-            <img
-              src={doctor.avatar}
-              alt={docName}
-              className="w-14 h-14 object-cover border-2 border-swiss-black rounded-none shrink-0"
-            />
+            <div className="relative w-14 h-14 shrink-0">
+              <img
+                src={doctor.avatar}
+                alt={docName}
+                className="w-14 h-14 object-cover border-2 border-swiss-black rounded-none absolute inset-0 z-10"
+                onError={(e) => {
+                  e.target.style.opacity = '0';
+                }}
+              />
+              <div className="w-14 h-14 rounded-none bg-swiss-black text-swiss-white flex items-center justify-center font-black text-lg select-none border-2 border-swiss-black absolute inset-0 z-0">
+                {initial}
+              </div>
+            </div>
           ) : (
             <div className="w-14 h-14 rounded-none bg-swiss-black text-swiss-white flex items-center justify-center font-black text-lg select-none shrink-0 border-2 border-swiss-black">
               {initial}
             </div>
           )}
           
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 text-left">
             <p className="font-black text-swiss-black text-ui-md uppercase tracking-tight truncate leading-none mb-1">
               {docName.startsWith('Dr. ') ? docName : `DR. ${docName}`}
             </p>
             <p className="text-[10px] text-swiss-red font-black uppercase tracking-widest truncate mb-2">
               {specialtyText}
             </p>
-            <p className="text-ui-xs font-bold text-swiss-gray-600 uppercase tracking-wider mb-2">
+            <p className="text-ui-xs font-bold text-swiss-gray-650 uppercase tracking-wider mb-2">
               ★ {Number(doctor.rating || 0).toFixed(1)} <span className="text-swiss-gray-400">({doctor.reviewCount || 0} reviews)</span>
             </p>
 
@@ -127,7 +142,6 @@ export default function DoctorCardDeck() {
   const [doctors, setDoctors] = useState(DEFAULT_DOCTORS);
   const [topIndex, setTopIndex] = useState(0);
   const [isShuffling, setIsShuffling] = useState(false);
-  const [exitingCard, setExitingCard] = useState(null);
   const [locationState, setLocationState] = useState('idle'); 
   // States: 'idle' | 'requesting' | 'loading' | 'success' | 'denied' | 'error'
 
@@ -196,21 +210,19 @@ export default function DoctorCardDeck() {
     );
   };
 
-  const stackSize = Math.min(doctors.length, 3);
-  const visibleDoctors = Array.from({ length: stackSize }).map((_, i) => {
+  // We render 6 items in the buffer loop so the shuffle transition is flawless
+  const visibleDoctors = Array.from({ length: 6 }).map((_, i) => {
     return doctors[(topIndex + i) % doctors.length];
   });
 
   const handleShuffle = () => {
     if (isShuffling || doctors.length <= 1) return;
     setIsShuffling(true);
-    setExitingCard(visibleDoctors[0]);
 
     setTimeout(() => {
       setTopIndex(prev => (prev + 1) % doctors.length);
-      setExitingCard(null);
       setIsShuffling(false);
-    }, 250);
+    }, 300); // 300ms transition sync
   };
 
   const labels = {
@@ -227,69 +239,62 @@ export default function DoctorCardDeck() {
       
       {/* 3D Staggered Cards container */}
       <div className="relative w-full h-[210px] select-none">
-        
-        {/* Render the exiting card using vanilla CSS transition */}
-        {exitingCard && (
-          <div
-            className="absolute top-0 left-0 w-full transition-all duration-[250ms] ease-in-out"
-            style={{
-              zIndex: 40,
-              transform: 'translate(-280px, 40px) rotate(-8deg)',
-              opacity: 0,
-            }}
-          >
-            <div
-              className="bg-swiss-white border-2 border-swiss-black p-5 rounded-none text-left relative"
-              style={{ minHeight: '170px' }}
-            >
-              {exitingCard.verificationStatus === 'verified' && (
-                <div className="absolute top-4 right-4 z-10">
-                  <VerifiedBadge size="xs" />
-                </div>
-              )}
-              <div className="flex gap-4 items-start pr-12">
-                {exitingCard.avatar ? (
-                  <img
-                    src={exitingCard.avatar}
-                    alt={exitingCard.name}
-                    className="w-14 h-14 object-cover border-2 border-swiss-black rounded-none shrink-0"
-                  />
-                ) : (
-                  <div className="w-14 h-14 rounded-none bg-swiss-black text-swiss-white flex items-center justify-center font-black text-lg select-none shrink-0 border-2 border-swiss-black" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="font-black text-swiss-black text-ui-md uppercase tracking-tight truncate leading-none mb-1">
-                    {exitingCard.name.startsWith('Dr. ') ? exitingCard.name : `DR. ${exitingCard.name}`}
-                  </p>
-                  <p className="text-[10px] text-swiss-red font-black uppercase tracking-widest truncate mb-2">
-                    {Array.isArray(exitingCard.specialty) ? exitingCard.specialty[0] : exitingCard.specialty}
-                  </p>
-                  <p className="text-ui-xs font-bold text-swiss-gray-600 uppercase tracking-wider mb-2">
-                    ★ {Number(exitingCard.rating || 0).toFixed(1)} <span className="text-swiss-gray-400">({exitingCard.reviewCount || 0} reviews)</span>
-                  </p>
-                  {exitingCard.distance && (
-                    <span className="inline-block text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-swiss-black text-swiss-white">
-                      {exitingCard.distance} KM AWAY
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Back-to-front rendering of remaining cards */}
         {visibleDoctors.map((doc, idx) => {
-          const stackIdx = visibleDoctors.length - 1 - idx;
+          // Render order: bottom-to-top so elements overlap correctly
+          const stackIdx = 5 - idx;
+          if (stackIdx < 0 || stackIdx > 5) return null;
+
           const currentDoc = visibleDoctors[stackIdx];
-          
-          if (exitingCard && currentDoc.id === exitingCard.id) return null;
+
+          // Compute visual card parameters based on shuffling states
+          let style = {};
+          if (isShuffling) {
+            if (stackIdx === 0) {
+              // Shuffling out to the left
+              style = {
+                zIndex: 60,
+                transform: 'translate(-280px, 40px) rotate(-8deg) scale(1.00)',
+                opacity: 0,
+              };
+            } else if (stackIdx === 5) {
+              // Fades in at the very bottom
+              style = {
+                zIndex: 5,
+                transform: 'translate(40px, 40px) scale(0.85)',
+                opacity: 0,
+              };
+            } else {
+              // Standard slide-up
+              const config = CARD_STACK_CONFIG[stackIdx - 1];
+              style = {
+                zIndex: config.zIndex,
+                transform: `translate(${config.x}px, ${config.y}px) scale(${config.scale})`,
+                opacity: config.opacity,
+              };
+            }
+          } else {
+            if (stackIdx === 5) {
+              // Hide the extra 6th buffer card when idle
+              style = {
+                zIndex: 5,
+                transform: 'translate(40px, 40px) scale(0.85)',
+                opacity: 0,
+              };
+            } else {
+              const config = CARD_STACK_CONFIG[stackIdx];
+              style = {
+                zIndex: config.zIndex,
+                transform: `translate(${config.x}px, ${config.y}px) scale(${config.scale})`,
+                opacity: config.opacity,
+              };
+            }
+          }
 
           return (
             <DoctorCard
-              key={currentDoc.id}
+              key={`${currentDoc.id}_${stackIdx}`}
               doctor={currentDoc}
-              stackIndex={stackIdx}
+              style={style}
               isTop={stackIdx === 0}
               onClick={handleShuffle}
             />
