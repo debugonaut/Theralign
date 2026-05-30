@@ -57,7 +57,7 @@ const Navbar = () => {
     // For mobile menu or simple links where animation isn't needed, we just use standard text
     // But Phase 2 spec asks for .swiss-nav-link micro-interaction
     return (
-      <Link to={to} className="swiss-nav-link swiss-label">
+      <Link to={to} className="swiss-nav-link swiss-label text-[17px]">
         <span className="nav-text-default text-swiss-black">{label}</span>
         <span className="nav-text-hover">{label}</span>
       </Link>
@@ -71,10 +71,11 @@ const Navbar = () => {
           
           {/* Logo */}
           <div className="flex">
-            <Link to="/" className="flex items-center text-swiss-black">
+            <Link to="/" className="flex items-center gap-3 text-swiss-black">
               <span className="font-black text-2xl tracking-tighter uppercase font-swiss">
                 THERALIGN
               </span>
+              <img src="/theralign-logo.png" alt="Theralign Logo" className="w-10 h-10 object-contain" />
             </Link>
           </div>
 

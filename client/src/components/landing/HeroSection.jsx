@@ -59,7 +59,7 @@ const HeroSection = () => {
             <div className="absolute top-24 left-0 w-56 h-56 border-2 border-swiss-black bg-swiss-white swiss-dot-matrix z-10"></div>
 
             {/* Geometric Element: Doctor Card Mockup replaced by DoctorCardDeck */}
-            <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[440px] z-20">
+            <div className="absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[480px] z-20">
               <DoctorCardDeck />
             </div>
           </div>

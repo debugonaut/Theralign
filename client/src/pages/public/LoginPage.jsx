@@ -51,7 +51,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-[85vh] bg-swiss-white flex items-center justify-center p-6 py-12">
       {/* Card */}
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-[480px] mx-auto">
         {/* Logo / Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-swiss-black border-2 border-swiss-black rounded-none mb-4">
@@ -61,7 +61,7 @@ const LoginPage = () => {
           <p className="text-swiss-gray-600 mt-2 text-ui-sm font-bold uppercase tracking-[0.06em]">Sign in to your Theralign account</p>
         </div>
 
-        <div className="bg-swiss-white border-2 border-swiss-black p-8 rounded-none shadow-none">
+        <div className="bg-[#F7F7F7] border-2 border-swiss-black p-8 rounded-none shadow-none">
           {/* Inline Error Banner */}
           {error && (
             <div className="mb-5 bg-swiss-red/5 border-2 border-swiss-red text-swiss-red px-4 py-3 rounded-none text-ui-sm flex items-start gap-2">

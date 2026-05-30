@@ -94,11 +94,11 @@ function DoctorCard({ doctor, style, isTop, onClick }) {
       <div
         className="bg-swiss-white border-2 border-swiss-black p-4 rounded-none text-left select-none relative flex flex-col justify-between"
         style={{
-          minHeight: '380px',
+          minHeight: '420px',
         }}
       >
         {/* Centered Image (Polaroid Photo Aspect) */}
-        <div className="relative w-full h-[220px] border-2 border-swiss-black bg-swiss-gray-50 flex items-center justify-center overflow-hidden mb-4">
+        <div className="relative w-full h-[260px] border-2 border-swiss-black bg-swiss-gray-50 flex items-center justify-center overflow-hidden mb-4">
           {doctor.avatar ? (
             <div className="relative w-full h-full">
               <img
@@ -250,10 +250,10 @@ export default function DoctorCardDeck() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full max-w-[440px] mx-auto select-none">
+    <div className="flex flex-col items-center gap-6 w-full max-w-[480px] mx-auto select-none">
       
       {/* 3D Staggered Cards container */}
-      <div className="relative w-full h-[420px] select-none">
+      <div className="relative w-full h-[460px] select-none">
         {visibleDoctors.map((doc, idx) => {
           // Render order: bottom-to-top so elements overlap correctly
           const stackIdx = 5 - idx;
