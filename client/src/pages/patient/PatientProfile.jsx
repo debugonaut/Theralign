@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useAuthStore from '../../store/authStore';
-import { patientProfileService } from '../../services/patientProfileService';
+import { patientProfileService } from '../../api/patientProfile.api';
 import SegmentedControl from '../../components/common/SegmentedControl';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Button from '../../components/common/Button';

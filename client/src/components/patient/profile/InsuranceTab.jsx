@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Info } from 'lucide-react';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
-import { patientProfileService } from '../../../services/patientProfileService';
+import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
 const InsuranceTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {

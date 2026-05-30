@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
 import EmptyState from '../../common/EmptyState';
-import { patientProfileService } from '../../../services/patientProfileService';
+import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
 const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {

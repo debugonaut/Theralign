@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 /**
  * SegmentedControl
@@ -31,19 +30,6 @@ const SegmentedControl = ({ options, value, onChange, className = '', optionClas
       })}
     </div>
   );
-};
-
-SegmentedControl.propTypes = {
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.any.isRequired,
-      label: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  value: PropTypes.any.isRequired,
-  onChange: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  optionClassName: PropTypes.string,
 };
 
 export default SegmentedControl;

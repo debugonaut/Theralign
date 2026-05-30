@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
 import SegmentedControl from '../../common/SegmentedControl';
-import { patientProfileService } from '../../../services/patientProfileService';
+import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
 const LifestyleTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
