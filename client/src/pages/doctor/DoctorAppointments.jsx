@@ -1,67 +1,117 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { Calendar, AlertTriangle, MessageSquare, Clock, X, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, X, Check } from 'lucide-react';
 import { getDoctorAppointments, cancelAppointment, completeAppointment } from '../../api/appointment.api';
-import DoctorAppointmentCard from '../../components/appointments/DoctorAppointmentCard';
+import axiosInstance from '../../api/axiosInstance';
+import SectionHeader from '../../components/common/SectionHeader';
+import Table, { ActionLink } from '../../components/common/Table';
+import Badge from '../../components/common/Badge';
+import Modal from '../../components/common/Modal';
+import Button from '../../components/common/Button';
 
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('upcoming');
+  const [activeTab, setActiveTab] = useState('ALL');
+
+  // Date filters
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
+  // Row expansion state
+  const [expandedRowId, setExpandedRowId] = useState(null);
+
+  // Cancellation Modal state
   const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null, reason: '' });
   const [cancelling, setCancelling] = useState(false);
+
+  // Document action loading state
+  const [actionLoading, setActionLoading] = useState({});
 
   const fetchAppointments = async () => {
     setLoading(true);
     try {
       const res = await getDoctorAppointments();
-      if (res.success && res.data) {
-        setAppointments(res.data);
-      }
+      const rawAppts = res.data?.appointments || res.data || res.appointments || [];
+      setAppointments(rawAppts);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load patient appointments pipeline.');
+      toast.error('FAILED TO FETCH APPOINTMENT TRANSACTION RECORDS.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    document.title = 'APPOINTMENTS — KINETIQ';
     fetchAppointments();
   }, []);
 
-  // Compute local date string for date-based categorization
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const todayString = `${year}-${month}-${day}`;
+  const todayStr = new Date().toISOString().split('T')[0];
 
-  // Filtering logic
-  const upcoming = appointments.filter(
-    (a) => a.status === 'confirmed' && a.date >= todayString
-  );
-  
-  const completed = appointments.filter((a) => a.status === 'completed');
-  
-  const cancelled = appointments.filter((a) => a.status === 'cancelled');
+  // Filtering Logic
+  const getFilteredAppointments = () => {
+    let filtered = [...appointments];
 
-  const activeAppointments = {
-    upcoming,
-    completed,
-    cancelled,
-  }[activeTab] || [];
+    // Filter by tab
+    if (activeTab === 'UPCOMING') {
+      filtered = filtered.filter((a) => a.status === 'confirmed' || a.status === 'pending');
+    } else if (activeTab === 'COMPLETED') {
+      filtered = filtered.filter((a) => a.status === 'completed');
+    } else if (activeTab === 'CANCELLED') {
+      filtered = filtered.filter((a) => a.status === 'cancelled');
+    }
 
-  // Trigger Complete Flow
-  const handleMarkComplete = async (id) => {
-    const confirmComplete = window.confirm('Are you sure you want to mark this appointment as completed?');
-    if (!confirmComplete) return;
+    // Filter by Date Range (From - To)
+    if (fromDate) {
+      filtered = filtered.filter((a) => a.date >= fromDate);
+    }
+    if (toDate) {
+      filtered = filtered.filter((a) => a.date <= toDate);
+    }
+
+    return filtered;
+  };
+
+  const activeAppts = getFilteredAppointments();
+
+  const handleOpenCancelModal = (e, appointmentId) => {
+    e.stopPropagation(); // Avoid triggering expansion
+    setCancelModal({ open: true, appointmentId, reason: '' });
+  };
+
+  const handleConfirmCancel = async () => {
+    setCancelling(true);
+    try {
+      const res = await cancelAppointment(cancelModal.appointmentId, cancelModal.reason);
+      if (res.success) {
+        toast.success('APPOINTMENT CANCELLED.');
+        setAppointments(
+          appointments.map((a) =>
+            a._id === cancelModal.appointmentId
+              ? { ...a, status: 'cancelled', cancellationReason: cancelModal.reason, cancelledBy: 'doctor' }
+              : a
+          )
+        );
+        setCancelModal({ open: false, appointmentId: null, reason: '' });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('FAILED TO CANCEL APPOINTMENT.');
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const handleMarkComplete = async (e, id) => {
+    e.stopPropagation(); // Avoid triggering expansion
+    const confirm = window.confirm('ARE YOU SURE YOU WANT TO MARK THIS CONSULTATION AS COMPLETED?');
+    if (!confirm) return;
 
     try {
       const res = await completeAppointment(id);
       if (res.success) {
-        toast.success('Appointment marked as completed.');
-        // Optimistic UI update
+        toast.success('CONSULTATION COMPLETED.');
         setAppointments(
           appointments.map((a) =>
             a._id === id ? { ...a, status: 'completed' } : a
@@ -70,200 +120,443 @@ const DoctorAppointments = () => {
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || 'Failed to complete appointment.');
+      toast.error('FAILED TO COMPLETE APPOINTMENT.');
     }
   };
 
-  // Callback to update a single appointment card state in place (e.g. on document upload/delete)
-  const handleUpdateAppointment = (updatedAppt) => {
-    setAppointments(
-      appointments.map((a) => (a._id === updatedAppt._id ? updatedAppt : a))
-    );
-  };
+  const handleUploadNotes = async (apptId, file) => {
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      toast.error('ONLY PDF DOCUMENTS ARE ACCEPTED.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('PDF FILE SIZE MUST NOT EXCEED 5MB.');
+      return;
+    }
 
-  // Trigger Cancel Flow
-  const handleOpenCancelModal = (appointmentId) => {
-    setCancelModal({ open: true, appointmentId, reason: '' });
-  };
+    const formData = new FormData();
+    formData.append('document', file);
 
-  const handleCloseCancelModal = () => {
-    setCancelModal({ open: false, appointmentId: null, reason: '' });
-  };
-
-  const handleConfirmCancel = async () => {
-    const { appointmentId, reason } = cancelModal;
-    setCancelling(true);
+    setActionLoading((prev) => ({ ...prev, [apptId]: true }));
     try {
-      const res = await cancelAppointment(appointmentId, reason);
-      if (res.success) {
-        toast.success('Appointment cancelled successfully.');
-        
-        // Optimistic UI update: update local state instantly
+      const res = await axiosInstance.post(`/documents/upload/${apptId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      if (res.data?.success && res.data?.data) {
+        toast.success('CLINICAL SESSION NOTES ATTACHED.');
+        // Update local appointment state with returned appointment object
         setAppointments(
-          appointments.map((a) =>
-            a._id === appointmentId
-              ? { ...a, status: 'cancelled', cancellationReason: reason, cancelledBy: 'doctor' }
-              : a
-          )
+          appointments.map((a) => (a._id === apptId ? res.data.data : a))
         );
-        handleCloseCancelModal();
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || 'Failed to cancel appointment.');
+      toast.error(err.response?.data?.message || 'FAILED TO UPLOAD DOCUMENT.');
     } finally {
-      setCancelling(false);
+      setActionLoading((prev) => ({ ...prev, [apptId]: false }));
     }
   };
 
+  const handleRemoveNotes = async (apptId) => {
+    const confirm = window.confirm('ARE YOU SURE YOU WANT TO REMOVE THIS SESSION DOCUMENT?');
+    if (!confirm) return;
+
+    setActionLoading((prev) => ({ ...prev, [apptId]: true }));
+    try {
+      const res = await axiosInstance.delete(`/documents/${apptId}`);
+      if (res.data?.success && res.data?.data) {
+        toast.success('CLINICAL DOCUMENT REMOVED.');
+        setAppointments(
+          appointments.map((a) => (a._id === apptId ? res.data.data : a))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('FAILED TO REMOVE CLINICAL DOCUMENT.');
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [apptId]: false }));
+    }
+  };
+
+  const toggleRowExpansion = (apptId) => {
+    setExpandedRowId(expandedRowId === apptId ? null : apptId);
+  };
+
+  const handleActionLinkClick = (e, apptId, actionType) => {
+    e.stopPropagation(); // Avoid triggering expansion
+    toggleRowExpansion(apptId);
+  };
+
+  const handleClearFilters = () => {
+    setFromDate('');
+    setToDate('');
+  };
+
   return (
-    <div className="space-y-8 select-none">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <Calendar className="text-primary" size={24} />
-          Patient Appointments
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Monitor your patient onboarding flow, complete consultations, and manage cancellations.
-        </p>
-      </div>
+    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+      
+      {/* ── Page Header Section ── */}
+      <SectionHeader title="APPOINTMENTS" size="lg" ruled={true} className="mb-0" />
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-100 gap-6">
-        <button
-          type="button"
-          onClick={() => setActiveTab('upcoming')}
-          className={`pb-3 font-bold text-sm tracking-wide transition-all border-b-2 cursor-pointer ${
-            activeTab === 'upcoming'
-              ? 'border-primary text-slate-800'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          Upcoming ({upcoming.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('completed')}
-          className={`pb-3 font-bold text-sm tracking-wide transition-all border-b-2 cursor-pointer ${
-            activeTab === 'completed'
-              ? 'border-primary text-slate-800'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          Completed ({completed.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('cancelled')}
-          className={`pb-3 font-bold text-sm tracking-wide transition-all border-b-2 cursor-pointer ${
-            activeTab === 'cancelled'
-              ? 'border-primary text-slate-800'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          Cancelled ({cancelled.length})
-        </button>
-      </div>
-
-      {/* Content */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-slate-100 rounded-3xl h-48" />
-          ))}
+      {/* ── Filter and Control Row ── */}
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 border border-swiss-black p-6 bg-swiss-white rounded-none">
+        
+        {/* Status segmented filters */}
+        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+          {['ALL', 'UPCOMING', 'COMPLETED', 'CANCELLED'].map((tab) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => {
+                  setActiveTab(tab);
+                  setExpandedRowId(null);
+                }}
+                className={`px-4 py-2 border-2 border-swiss-black font-black text-[11px] uppercase tracking-widest transition-colors duration-fast rounded-none cursor-pointer select-none
+                  ${isActive 
+                    ? 'bg-swiss-black text-swiss-white' 
+                    : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                  }
+                `}
+              >
+                {tab}
+              </button>
+            );
+          })}
         </div>
-      ) : activeAppointments.length === 0 ? (
-        <div className="bg-white border border-slate-100 border-dashed rounded-3xl p-12 text-center max-w-lg mx-auto shadow-sm flex flex-col items-center gap-3">
-          <span className="text-4xl text-slate-300">👥</span>
-          <p className="text-sm font-bold text-slate-700">
-            {activeTab === 'upcoming' && 'No Upcoming Consultations Scheduled'}
-            {activeTab === 'completed' && 'No Completed Consultations Yet'}
-            {activeTab === 'cancelled' && 'No Cancelled Appointments'}
-          </p>
-          <p className="text-xs text-slate-400 max-w-sm">
-            {activeTab === 'upcoming' && 'Patients will appear here once they schedule visits using your public slots. Keep your availability dynamic!'}
-            {activeTab === 'completed' && 'You have not marked any consultations completed yet.'}
-            {activeTab === 'cancelled' && 'No cancellations recorded in this category.'}
+
+        {/* Date inputs date range selector */}
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              FROM
+            </span>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+            />
+          </div>
+
+          <span className="text-ui-md font-bold text-swiss-black select-none self-center mb-2">—</span>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              TO
+            </span>
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+            />
+          </div>
+
+          {(fromDate || toDate) && (
+            <button
+              onClick={handleClearFilters}
+              className="h-10 px-4 text-ui-xs font-black uppercase tracking-widest text-swiss-red border-2 border-swiss-red hover:bg-swiss-red hover:text-swiss-white transition-colors rounded-none cursor-pointer self-end"
+            >
+              CLEAR
+            </button>
+          )}
+        </div>
+
+      </div>
+
+      {/* ── Appointments Table Ledger ── */}
+      {loading ? (
+        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+          LOADING CLINIC TRANSACTION LEDGERS...
+        </div>
+      ) : activeAppts.length === 0 ? (
+        <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto w-full bg-swiss-white select-none">
+          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            NO SESSIONS FILED
+          </span>
+          <p className="text-ui-md text-swiss-gray-600 font-bold max-w-sm">
+            There are no booking entries recorded in this ledger list.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeAppointments.map((appointment) => (
-            <DoctorAppointmentCard
-              key={appointment._id}
-              appointment={appointment}
-              onComplete={handleMarkComplete}
-              onCancel={handleOpenCancelModal}
-              onUpdate={handleUpdateAppointment}
-            />
-          ))}
+        <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none bg-swiss-white select-none">
+          <Table>
+            <Table.Head>
+              <tr>
+                <Table.Header>DATE</Table.Header>
+                <Table.Header>PATIENT</Table.Header>
+                <Table.Header>TIME</Table.Header>
+                <Table.Header numeric>FEE</Table.Header>
+                <Table.Header>PAYMENT</Table.Header>
+                <Table.Header>STATUS</Table.Header>
+                <Table.Header actions>ACTIONS</Table.Header>
+              </tr>
+            </Table.Head>
+            <Table.Body>
+              {activeAppts.map((appt) => {
+                const isExpanded = expandedRowId === appt._id;
+                const patientName = appt.patient?.name || 'Patient';
+                const initial = patientName.charAt(0).toUpperCase();
+
+                // Format human Date
+                const dateText = new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                }).toUpperCase();
+
+                const isUpcoming = appt.status === 'confirmed' || appt.status === 'pending';
+                const isCompleted = appt.status === 'completed';
+
+                return (
+                  <React.Fragment key={appt._id}>
+                    {/* Standard Table Row */}
+                    <Table.Row
+                      hoverable={true}
+                      expanded={isExpanded}
+                      onClick={() => toggleRowExpansion(appt._id)}
+                    >
+                      <Table.Cell className="font-bold text-swiss-gray-400">
+                        {dateText}
+                      </Table.Cell>
+                      
+                      <Table.Cell>
+                        <div className="flex items-center gap-3">
+                          {/* 24px initial circle */}
+                          <div className="w-6 h-6 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-xs shrink-0 select-none">
+                            {initial}
+                          </div>
+                          <span className="font-black text-swiss-black uppercase">
+                            {patientName.toUpperCase()}
+                          </span>
+                        </div>
+                      </Table.Cell>
+
+                      <Table.Cell className="font-bold">
+                        {appt.startTime} – {appt.endTime}
+                      </Table.Cell>
+
+                      <Table.Cell numeric className="font-black">
+                        ₹{appt.consultationFee}
+                      </Table.Cell>
+
+                      <Table.Cell>
+                        <Badge variant={appt.paymentStatus === 'paid' ? 'paid' : 'pending'} />
+                      </Table.Cell>
+
+                      <Table.Cell>
+                        <Badge variant={appt.status} />
+                      </Table.Cell>
+
+                      <Table.Cell actions>
+                        {isUpcoming && (
+                          <>
+                            <button
+                              onClick={(e) => handleMarkComplete(e, appt._id)}
+                              className="font-bold uppercase cursor-pointer text-swiss-black hover:text-swiss-gray-600 bg-transparent border-0 text-[11px] tracking-widest"
+                            >
+                              MARK COMPLETE →
+                            </button>
+                            <button
+                              onClick={(e) => handleOpenCancelModal(e, appt._id)}
+                              className="font-bold uppercase cursor-pointer text-swiss-red hover:opacity-75 bg-transparent border-0 text-[11px] tracking-widest"
+                            >
+                              CANCEL →
+                            </button>
+                          </>
+                        )}
+
+                        {isCompleted && (
+                          appt.sessionDocument?.url ? (
+                            <ActionLink onClick={(e) => handleActionLinkClick(e, appt._id, 'view')}>
+                              VIEW NOTES →
+                            </ActionLink>
+                          ) : (
+                            <ActionLink onClick={(e) => handleActionLinkClick(e, appt._id, 'upload')}>
+                              UPLOAD NOTES →
+                            </ActionLink>
+                          )
+                        )}
+
+                        {!isUpcoming && !isCompleted && (
+                          <ActionLink onClick={() => toggleRowExpansion(appt._id)}>
+                            VIEW →
+                          </ActionLink>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+
+                    {/* Inline Row Expansion */}
+                    {isExpanded && (
+                      <Table.Row expanded={true} className="border-l-4 border-swiss-black">
+                        <td colSpan={7} className="bg-swiss-gray-100 p-6 text-left">
+                          <div className="flex flex-col gap-6 w-full">
+                            
+                            {/* Grid Detail layout */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div>
+                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                  PATIENT CONTACT EMAIL (PRIVACY COMPLIANT)
+                                </span>
+                                <span className="text-ui-md font-bold text-swiss-black uppercase block">
+                                  {appt.patient?.email || 'N/A'}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                                  PATIENT NOTES
+                                </span>
+                                <span className="text-ui-md font-bold text-swiss-gray-600 uppercase block leading-relaxed italic">
+                                  "{appt.patientNotes || 'NO SYMPTOMS FILED ON TRANSACTION RECORD.'}"
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Cancellation Summary */}
+                            {appt.status === 'cancelled' && (
+                              <div className="p-4 bg-swiss-white border-2 border-swiss-gray-200 rounded-none">
+                                <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                                  CANCELLATION REASON
+                                </span>
+                                <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide">
+                                  Cancelled by {appt.cancelledBy || 'system'}. Reason: <b>{appt.cancellationReason || 'UNSPECIFIED'}</b>.
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Session Document Upload/Download section */}
+                            {isCompleted && (
+                              <div className="pt-4 border-t border-swiss-gray-200 flex flex-col gap-4">
+                                <div>
+                                  <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block">
+                                    CLINICAL SESSION DOCUMENTATION
+                                  </span>
+                                  <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5">
+                                    Upload session recovery logs or prescriptions in PDF format. Patients can download this from their portals.
+                                  </span>
+                                </div>
+
+                                {appt.sessionDocument?.url ? (
+                                  <div className="flex items-center justify-between bg-swiss-white border-2 border-swiss-black p-4 rounded-none">
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-lg">📄</span>
+                                      <div className="flex flex-col">
+                                        <span className="text-ui-sm font-black text-swiss-black uppercase">
+                                          {appt.sessionDocument.fileName || 'SESSION_NOTES.PDF'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      <a
+                                        href={appt.sessionDocument.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="h-10 px-4 border-2 border-swiss-black text-swiss-black bg-swiss-white hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
+                                      >
+                                        DOWNLOAD →
+                                      </a>
+                                      <button
+                                        onClick={() => handleRemoveNotes(appt._id)}
+                                        disabled={actionLoading[appt._id]}
+                                        className="h-10 px-4 border-2 border-swiss-red text-swiss-red bg-swiss-white hover:bg-swiss-red hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none cursor-pointer"
+                                      >
+                                        {actionLoading[appt._id] ? 'REMOVING...' : 'REMOVE'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center border-2 border-dashed border-swiss-gray-400 bg-swiss-white p-6 rounded-none">
+                                    <label className="flex flex-col items-center justify-center gap-1.5 cursor-pointer text-center w-full">
+                                      <input
+                                        type="file"
+                                        accept=".pdf"
+                                        onChange={(e) => {
+                                          const file = e.target.files[0];
+                                          handleUploadNotes(appt._id, file);
+                                        }}
+                                        disabled={actionLoading[appt._id]}
+                                        className="hidden"
+                                      />
+                                      {actionLoading[appt._id] ? (
+                                        <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest">
+                                          UPLOADING PDF FILE...
+                                        </span>
+                                      ) : (
+                                        <>
+                                          <span className="text-ui-xs font-black text-swiss-black uppercase tracking-widest border-2 border-swiss-black px-4 py-2 hover:bg-swiss-black hover:text-swiss-white transition-colors">
+                                            UPLOAD SESSION NOTES (PDF ONLY)
+                                          </span>
+                                          <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-1">
+                                            MAXIMUM FILE SIZE 5MB.
+                                          </span>
+                                        </>
+                                      )}
+                                    </label>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                          </div>
+                        </td>
+                      </Table.Row>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </Table.Body>
+          </Table>
         </div>
       )}
 
-      {/* Doctor Cancel Modal Overlay */}
+      {/* Cancellation Reason Modal */}
       {cancelModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={handleCloseCancelModal} />
-          
-          <div className="bg-white border border-slate-100 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative z-10 animate-scaleIn text-left">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50 bg-slate-50/50">
-              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <AlertTriangle className="text-rose-500" size={16} />
-                Cancel Consultation
-              </h3>
-              <button onClick={handleCloseCancelModal} className="text-slate-400 hover:text-slate-600 cursor-pointer">
-                <X size={18} />
-              </button>
+        <Modal
+          isOpen={cancelModal.open}
+          onClose={() => setCancelModal({ open: false, appointmentId: null, reason: '' })}
+          title="CANCEL APPOINTMENT"
+        >
+          <div className="flex flex-col gap-5 text-left select-none">
+            <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide leading-relaxed">
+              Are you sure you want to cancel this patient consultation slot? The slot will immediately unlock and become available for other patients to book.
+            </p>
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                REASON FOR CANCELLATION (OPTIONAL)
+              </label>
+              <textarea
+                value={cancelModal.reason}
+                onChange={(e) => setCancelModal({ ...cancelModal, reason: e.target.value })}
+                placeholder="E.G. CLINIC CLOSED, EMERGENCY CONFLICTS, RESCHEDULE PREFERENCE..."
+                rows={3}
+                maxLength={200}
+                className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+              />
             </div>
 
-            <div className="p-6 space-y-4">
-              <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                Are you sure you want to cancel this patient visit? If you cancel this appointment, the slot will instantly unlock and become available for other patients to book.
-              </p>
-              
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                  <MessageSquare size={12} />
-                  Cancellation Feedback for Patient (Optional)
-                </label>
-                <textarea
-                  value={cancelModal.reason}
-                  onChange={(e) => setCancelModal({ ...cancelModal, reason: e.target.value })}
-                  placeholder="e.g. Doctor is unavailable, emergency clinic closure, schedule conflicts..."
-                  rows={3}
-                  maxLength={200}
-                  className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-3 text-slate-700 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
-                />
-              </div>
-            </div>
-
-            <div className="px-6 py-4 border-t border-slate-50 bg-slate-50/50 flex items-center justify-end gap-3">
-              <button
-                onClick={handleCloseCancelModal}
-                disabled={cancelling}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all cursor-pointer disabled:opacity-50"
-              >
-                No, Keep Booking
-              </button>
-              <button
+            <div className="flex flex-col gap-2 pt-2">
+              <Button
+                variant="accent"
                 onClick={handleConfirmCancel}
                 disabled={cancelling}
-                className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl px-5 py-2.5 font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                {cancelling ? (
-                  <>
-                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Cancelling...
-                  </>
-                ) : (
-                  'Yes, Cancel Booking'
-                )}
-              </button>
+                {cancelling ? 'CANCELLING...' : 'YES, CANCEL APPOINTMENT'}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setCancelModal({ open: false, appointmentId: null, reason: '' })}
+                disabled={cancelling}
+              >
+                NO, KEEP APPOINTMENT
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
+
     </div>
   );
 };

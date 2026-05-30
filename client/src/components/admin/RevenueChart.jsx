@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const PERIOD_OPTIONS = ['daily', 'weekly', 'monthly'];
 
@@ -9,16 +9,16 @@ const formatYAxis = (value) => {
 };
 
 const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
-  const WIDTH = 560;
-  const HEIGHT = 260;
-  const PADDING = { top: 20, right: 20, bottom: 40, left: 60 };
+  const WIDTH = 640;
+  const HEIGHT = 280;
+  const PADDING = { top: 30, right: 30, bottom: 40, left: 70 };
   const chartWidth = WIDTH - PADDING.left - PADDING.right;
   const chartHeight = HEIGHT - PADDING.top - PADDING.bottom;
 
   const hasData = data.length > 1;
 
   const maxRevenue = hasData ? Math.max(...data.map((d) => d.revenue || 0)) : 1;
-  const maxDisplay = maxRevenue * 1.15;
+  const maxDisplay = maxRevenue > 0 ? maxRevenue * 1.15 : 1000;
 
   const xStep = hasData ? chartWidth / (data.length - 1) : chartWidth;
 
@@ -26,11 +26,10 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
   const toY = (val) =>
     PADDING.top + chartHeight - (val / maxDisplay) * chartHeight;
 
-  const revenuePoints = data.map((d, i) => `${toX(i)},${toY(d.revenue || 0)}`).join(' ');
-  const commissionPoints = data.map((d, i) => `${toX(i)},${toY(d.commission || 0)}`).join(' ');
+  const points = data.map((d, i) => `${toX(i)},${toY(d.revenue || 0)}`).join(' ');
 
   // Tooltip state
-  const [tooltip, setTooltip] = React.useState(null);
+  const [tooltip, setTooltip] = useState(null);
 
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((t) => ({
     value: maxDisplay * t,
@@ -43,78 +42,104 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
       const parts = val.split('-');
       return `${parts[2]}/${parts[1]}`;
     }
-    return val;
+    return val.toUpperCase();
   };
 
   return (
-    <div>
-      {/* Period Toggle */}
-      <div className="flex gap-2 mb-4 justify-end">
-        {PERIOD_OPTIONS.map((p) => (
-          <button
-            key={p}
-            onClick={() => onPeriodChange?.(p)}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg capitalize transition-all ${
-              period === p
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
-            }`}
-          >
-            {p}
-          </button>
-        ))}
+    <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left flex flex-col gap-6 relative">
+      {/* Chart Title and Period Control Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-swiss-gray-200">
+        <div>
+          <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+            FINANCIAL INDEX
+          </span>
+          <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+            REVENUE STREAM TREND
+          </h3>
+        </div>
+        
+        {/* Segmented Control Toggle */}
+        <div className="flex border-2 border-swiss-black rounded-none shadow-none">
+          {PERIOD_OPTIONS.map((p) => {
+            const isActive = period === p;
+            return (
+              <button
+                key={p}
+                onClick={() => onPeriodChange?.(p)}
+                className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all duration-fast border-r-2 last:border-r-0 border-swiss-black select-none cursor-pointer ${
+                  isActive 
+                    ? 'bg-swiss-black text-swiss-white' 
+                    : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-150'
+                }`}
+              >
+                {p}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {!hasData ? (
-        <div className="flex flex-col items-center justify-center h-[260px] text-slate-500 text-sm">
-          No revenue data for this period.
+        <div className="flex flex-col items-center justify-center h-[240px] text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+          NO INDEX DATA AVAILABLE
         </div>
       ) : (
         <div className="relative">
           <svg
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-            className="w-full"
+            className="w-full h-auto select-none"
             style={{ height: 280 }}
             onMouseLeave={() => setTooltip(null)}
           >
-            {/* Grid lines */}
+            {/* Grid horizontal lines */}
             {yTicks.map((tick, i) => (
               <g key={i}>
                 <line
                   x1={PADDING.left} y1={tick.y}
                   x2={PADDING.left + chartWidth} y2={tick.y}
-                  stroke="#1e293b" strokeWidth="1"
+                  stroke="#E5E5E5" strokeWidth="1"
                 />
                 <text
-                  x={PADDING.left - 8} y={tick.y + 4}
+                  x={PADDING.left - 12} y={tick.y + 4}
                   textAnchor="end"
-                  fill="#64748b" fontSize="11"
+                  fill="#A3A3A3" fontSize="10" fontWeight="bold"
+                  className="swiss-numeric"
                 >
                   {formatYAxis(tick.value)}
                 </text>
               </g>
             ))}
 
-            {/* Revenue line */}
+            {/* Crispy single black line - NO gradients, NO background fills */}
             <polyline
-              points={revenuePoints}
+              points={points}
               fill="none"
-              stroke="#3b82f6"
-              strokeWidth="2.5"
-              strokeLinejoin="round"
+              stroke="#0F0F0F"
+              strokeWidth="3"
+              strokeLinecap="square"
+              strokeLinejoin="miter"
             />
 
-            {/* Commission dashed line */}
-            <polyline
-              points={commissionPoints}
-              fill="none"
-              stroke="#a855f7"
-              strokeWidth="1.5"
-              strokeDasharray="5,3"
-              strokeLinejoin="round"
-            />
+            {/* Active hover markers */}
+            {tooltip && (
+              <>
+                <line
+                  x1={tooltip.x} y1={PADDING.top}
+                  x2={tooltip.x} y2={PADDING.top + chartHeight}
+                  stroke="#A3A3A3" strokeWidth="1" strokeDasharray="4,4"
+                />
+                <circle 
+                  cx={tooltip.x} 
+                  cy={toY(tooltip.data.revenue || 0)} 
+                  r="5" 
+                  fill="#0F0F0F" 
+                  stroke="#FFFFFF" 
+                  strokeWidth="2" 
+                />
+              </>
+            )}
 
-            {/* X axis labels + hover targets */}
+            {/* X axis labels and hover targets */}
             {data.map((d, i) => {
               const showLabel = data.length <= 15 || i % Math.ceil(data.length / 10) === 0;
               return (
@@ -123,66 +148,43 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
                     <text
                       x={toX(i)} y={HEIGHT - 8}
                       textAnchor="middle"
-                      fill="#64748b" fontSize="10"
+                      fill="#A3A3A3" fontSize="10" fontWeight="bold"
+                      className="swiss-numeric"
                     >
                       {formatDate(d.date)}
                     </text>
                   )}
-                  {/* Invisible hover rect */}
+                  {/* Hover detector rect */}
                   <rect
                     x={toX(i) - xStep / 2}
                     y={PADDING.top}
                     width={xStep}
                     height={chartHeight}
                     fill="transparent"
+                    className="cursor-pointer"
                     onMouseEnter={() => setTooltip({ index: i, data: d, x: toX(i), y: toY(d.revenue || 0) })}
                   />
                 </g>
               );
             })}
-
-            {/* Tooltip vertical line */}
-            {tooltip && (
-              <>
-                <line
-                  x1={tooltip.x} y1={PADDING.top}
-                  x2={tooltip.x} y2={PADDING.top + chartHeight}
-                  stroke="#475569" strokeWidth="1" strokeDasharray="3,2"
-                />
-                <circle cx={tooltip.x} cy={toY(tooltip.data.revenue || 0)} r="4" fill="#3b82f6" />
-                <circle cx={tooltip.x} cy={toY(tooltip.data.commission || 0)} r="3" fill="#a855f7" />
-              </>
-            )}
           </svg>
 
-          {/* Tooltip box */}
+          {/* Snappy Tooltip Box: 0px border-radius, no shadow, snappy 150ms hover */}
           {tooltip && (
             <div
-              className="absolute bg-slate-900 border border-slate-700 rounded-lg p-2.5 shadow-xl text-xs pointer-events-none z-10"
+              className="absolute bg-swiss-white border-2 border-swiss-black p-3.5 z-20 pointer-events-none text-left select-none rounded-none shadow-none transition-all duration-fast"
               style={{
-                left: `${Math.min(85, (tooltip.index / (data.length - 1)) * 100)}%`,
-                top: '10%',
+                left: `${Math.min(85, Math.max(15, (tooltip.index / (data.length - 1)) * 100))}%`,
+                top: '5%',
                 transform: 'translateX(-50%)',
               }}
             >
-              <p className="font-semibold text-slate-200 mb-1">{tooltip.data.date}</p>
-              <p className="text-blue-400">Revenue: ₹{(tooltip.data.revenue || 0).toLocaleString('en-IN')}</p>
-              <p className="text-purple-400">Commission: ₹{(tooltip.data.commission || 0).toLocaleString('en-IN')}</p>
-              <p className="text-slate-400">{tooltip.data.appointments} appts</p>
+              <p className="text-[10px] font-black text-swiss-red uppercase tracking-widest mb-1.5">{tooltip.data.date}</p>
+              <p className="text-ui-sm font-black text-swiss-black uppercase">REVENUE: <span className="swiss-numeric text-swiss-black">₹{(tooltip.data.revenue || 0).toLocaleString('en-IN')}</span></p>
+              <p className="text-ui-xs font-bold text-swiss-gray-600 uppercase mt-0.5">COMMISSION: <span className="swiss-numeric">₹{(tooltip.data.commission || 0).toLocaleString('en-IN')}</span></p>
+              <p className="text-[10px] font-bold text-swiss-gray-400 uppercase mt-1">{tooltip.data.appointments} SESSIONS COMPLETED</p>
             </div>
           )}
-
-          {/* Legend */}
-          <div className="flex gap-4 mt-2 justify-center text-xs text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <span className="w-5 h-0.5 bg-blue-500 inline-block rounded" />
-              Revenue
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-5 h-0 inline-block border-t-2 border-dashed border-purple-500" style={{borderTopWidth: '2px'}} />
-              Commission
-            </span>
-          </div>
         </div>
       )}
     </div>

@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { 
-  Calendar, Clock, Plus, Trash2, ShieldAlert, Sparkles, CheckCircle2, AlertCircle 
-} from 'lucide-react';
 import { createSlot, createRecurringSlots, getMySlots, deleteSlot } from '../../api/availability.api';
+import SectionHeader from '../../components/common/SectionHeader';
+import Badge from '../../components/common/Badge';
 
 const DoctorAvailability = () => {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
+  // Form State
   const [formData, setFormData] = useState({ date: '', startTime: '', endTime: '' });
-  const [formError, setFormError] = useState('');
-  
-  // Recurring slots state
   const [isRecurring, setIsRecurring] = useState(false);
   const [repeatWeeks, setRepeatWeeks] = useState(4);
+
+  // Selected date filter from heatmap
+  const [selectedDate, setSelectedDate] = useState('');
+
+  // Inline delete confirmation state: stores the ID of the slot currently being deleted
+  const [deletingSlotId, setDeletingSlotId] = useState(null);
 
   // Get today's local date string formatted as YYYY-MM-DD for the date input's minimum attribute
   const today = new Date();
@@ -23,89 +27,68 @@ const DoctorAvailability = () => {
   const day = String(today.getDate()).padStart(2, '0');
   const todayString = `${year}-${month}-${day}`;
 
-  // Fetch slots on component mount
   const fetchSlots = async () => {
     setLoading(true);
     try {
       const res = await getMySlots();
-      if (res.success && res.data) {
-        setSlots(res.data);
-      }
+      const rawSlots = res.data?.slots || res.data || res.slots || [];
+      setSlots(rawSlots);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load your availability slots.');
+      toast.error('FAILED TO FETCH CLINICAL SCHEDULE SLOTS.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    document.title = 'MANAGE AVAILABILITY — KINETIQ';
     fetchSlots();
   }, []);
 
-  // Compute grouped slots by date, sorted chronologically
-  const slotsByDate = slots.reduce((acc, slot) => {
-    if (!acc[slot.date]) acc[slot.date] = [];
-    acc[slot.date].push(slot);
-    return acc;
-  }, {});
-
-  // Sort dates keys chronologically
-  const sortedDates = Object.keys(slotsByDate).sort();
-
-  // Form handle change
+  // Form Handle Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setFormError('');
   };
+
+  // Form validations
+  const isTimeInvalid = formData.startTime && formData.endTime && formData.startTime >= formData.endTime;
+  const isFormIncomplete = !formData.date || !formData.startTime || !formData.endTime || isTimeInvalid;
 
   // Add new slot
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { date, startTime, endTime } = formData;
-
-    if (!date || !startTime || !endTime) {
-      setFormError('All fields are required.');
-      return;
-    }
-
-    if (startTime >= endTime) {
-      setFormError('Start time must be strictly before end time.');
-      return;
-    }
+    if (isFormIncomplete) return;
 
     setSubmitting(true);
-    setFormError('');
     try {
       if (isRecurring) {
         const res = await createRecurringSlots({
-          date,
-          startTime,
-          endTime,
+          date: formData.date,
+          startTime: formData.startTime,
+          endTime: formData.endTime,
           repeatWeeks,
         });
         if (res.success) {
-          toast.success(res.message || 'Weekly slots created successfully!');
-          // Reset form times but keep the date
-          setFormData({ date, startTime: '', endTime: '' });
+          toast.success('WEEKLY RECURRING SLOTS CREATED.');
+          setFormData({ date: formData.date, startTime: '', endTime: '' });
           setIsRecurring(false);
           await fetchSlots();
         }
       } else {
         const res = await createSlot(formData);
         if (res.success) {
-          toast.success('Availability slot added successfully!');
-          // Reset form times but keep the selected date to make adding multiple slots for the same day easy
-          setFormData({ date, startTime: '', endTime: '' });
+          toast.success('AVAILABILITY SLOT ADDED.');
+          setFormData({ date: formData.date, startTime: '', endTime: '' });
           await fetchSlots();
         }
       }
     } catch (err) {
       console.error(err);
       if (err.response?.status === 409) {
-        toast.error('A slot already exists for this date and time.');
+        toast.error('A SLOT OVERLAP DETECTED FOR THIS TIME RANGE.');
       } else {
-        toast.error(err.response?.data?.message || 'Failed to add availability slot.');
+        toast.error(err.response?.data?.message || 'FAILED TO CREATE TIME SLOT.');
       }
     } finally {
       setSubmitting(false);
@@ -113,261 +96,416 @@ const DoctorAvailability = () => {
   };
 
   // Delete slot
-  const handleDelete = async (slot) => {
-    if (slot.isBooked) {
-      toast.error('Cannot delete a slot with an existing booking.');
-      return;
-    }
-
-    const confirmDelete = window.confirm('Are you sure you want to delete this availability slot?');
-    if (!confirmDelete) return;
-
+  const handleDeleteConfirm = async (slotId) => {
     try {
-      const res = await deleteSlot(slot._id);
+      const res = await deleteSlot(slotId);
       if (res.success) {
-        toast.success('Availability slot deleted.');
-        // Update local state instantly for snappy UX
-        setSlots(slots.filter(s => s._id !== slot._id));
+        toast.success('SLOT DELETED.');
+        setSlots(slots.filter((s) => s._id !== slotId));
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || 'Failed to delete availability slot.');
+      toast.error('FAILED TO DELETE SLOT.');
+    } finally {
+      setDeletingSlotId(null);
     }
+  };
+
+  // 4-Week Date Generation for Heatmap
+  const generateNext28Days = () => {
+    const dates = [];
+    const today = new Date();
+    for (let i = 0; i < 28; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() + i);
+      dates.push(d.toISOString().split('T')[0]); // "YYYY-MM-DD"
+    }
+    return dates;
+  };
+
+  const next28Days = generateNext28Days();
+  const daysHeader = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  // Helper to query slot count and booking count for a date
+  const getSlotsForDate = (dateStr) => {
+    return slots.filter((s) => s.date === dateStr);
   };
 
   const formatHumanDate = (dateStr) => {
     try {
-      // Append local T00:00:00 to prevent off-by-one UTC conversions
       return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
         weekday: 'long',
-        year: 'numeric',
+        day: 'numeric',
         month: 'long',
-        day: 'numeric'
-      });
+      }).toUpperCase();
     } catch (e) {
       return dateStr;
     }
   };
 
+  // Filter slots for list
+  const getFilteredSlots = () => {
+    if (selectedDate) {
+      return slots
+        .filter((s) => s.date === selectedDate)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }
+    // Default to show all future slots sorted chronologically
+    return [...slots]
+      .filter((s) => s.date >= todayString)
+      .sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime));
+  };
+
+  const displayedSlots = getFilteredSlots();
+
   return (
-    <div className="space-y-8 select-none">
-      {/* Greeting/Header */}
+    <div className="flex flex-col gap-10 select-none text-left bg-swiss-white">
+      
+      {/* ── Page Header Section ── */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <Calendar className="text-primary" size={24} />
-          Manage Availability Slots
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Create and manage your clinical time slots to allow patients to schedule appointments with you.
+        <SectionHeader title="MANAGE AVAILABILITY" size="lg" ruled={true} className="mb-0" />
+        <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide mt-3">
+          Create time slots to allow patients to book appointments. Slots you add here appear on your public profile.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Left Column: Form Card */}
-        <div className="lg:col-span-1 bg-white border border-slate-100 p-6 rounded-2xl shadow-card">
-          <h2 className="text-md font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <Plus className="text-primary" size={18} />
-            Add New Slot
-          </h2>
+      {/* ── Add Slot Form Card (Horizontal Density Single Row Layout) ── */}
+      <div className="w-full p-6 bg-swiss-white border-2 border-swiss-black rounded-none shadow-none">
+        <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-4 w-full">
           
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-                Date
-              </label>
-              <input
-                type="date"
-                name="date"
-                min={todayString}
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5 text-slate-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-              />
-            </div>
+          {/* Date Input */}
+          <div className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              DATE
+            </span>
+            <input
+              type="date"
+              name="date"
+              min={todayString}
+              value={formData.date}
+              onChange={handleChange}
+              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+              required
+            />
+          </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-                  Start Time
-                </label>
+          {/* Start Time */}
+          <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              START TIME
+            </span>
+            <input
+              type="time"
+              name="startTime"
+              value={formData.startTime}
+              onChange={handleChange}
+              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+              required
+            />
+          </div>
+
+          {/* End Time */}
+          <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              END TIME
+            </span>
+            <input
+              type="time"
+              name="endTime"
+              value={formData.endTime}
+              onChange={handleChange}
+              className={`bg-swiss-white border-2 px-4 py-2 text-ui-sm font-bold uppercase tracking-wider focus:border-4 focus:ring-0 transition-all duration-fast rounded-none
+                ${isTimeInvalid 
+                  ? 'border-swiss-amber text-swiss-amber' 
+                  : 'border-swiss-black text-swiss-black'
+                }
+              `}
+              required
+            />
+          </div>
+
+          {/* Repeat Weekly Toggle */}
+          <div className="flex items-center gap-3 bg-swiss-gray-100 border-2 border-swiss-black p-1.5 h-[42px] shrink-0 rounded-none">
+            <button
+              type="button"
+              onClick={() => setIsRecurring(!isRecurring)}
+              className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors duration-fast rounded-none cursor-pointer
+                ${isRecurring 
+                  ? 'bg-swiss-black text-swiss-white' 
+                  : 'bg-swiss-white text-swiss-black border border-swiss-black hover:bg-swiss-gray-200'
+                }
+              `}
+            >
+              REPEAT WEEKLY
+            </button>
+
+            {isRecurring && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">FOR</span>
                 <input
-                  type="time"
-                  name="startTime"
-                  value={formData.startTime}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5 text-slate-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  type="number"
+                  min="2"
+                  max="12"
+                  value={repeatWeeks}
+                  onChange={(e) => setRepeatWeeks(parseInt(e.target.value) || 4)}
+                  className="w-12 bg-swiss-white border border-swiss-black text-center text-ui-xs font-black p-0.5 rounded-none"
                 />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-                  End Time
-                </label>
-                <input
-                  type="time"
-                  name="endTime"
-                  value={formData.endTime}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5 text-slate-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Recurring toggle */}
-            <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3.5 space-y-3">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={isRecurring}
-                  onChange={(e) => setIsRecurring(e.target.checked)}
-                  className="w-4 h-4 accent-primary rounded text-primary focus:ring-primary/20 cursor-pointer"
-                />
-                <span className="text-sm font-semibold text-slate-700">Repeat slot weekly</span>
-              </label>
-
-              {isRecurring && (
-                <div className="flex items-center gap-2 transition-all duration-300">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">For:</span>
-                  <select
-                    value={repeatWeeks}
-                    onChange={(e) => setRepeatWeeks(Number(e.target.value))}
-                    className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.2 text-slate-700 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  >
-                    {[2, 3, 4, 6, 8, 12].map((w) => (
-                      <option key={w} value={w}>{w} weeks</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
-
-            {formError && (
-              <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-center gap-2 text-xs font-bold text-rose-600 animate-pulse-subtle">
-                <AlertCircle size={14} className="shrink-0" />
-                <span>{formError}</span>
+                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">WEEKS</span>
               </div>
             )}
+          </div>
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full bg-primary hover:bg-primary-dark text-white rounded-xl py-3 font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {submitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Adding Slot...
-                </>
-              ) : (
-                <>
-                  <Plus size={16} />
-                  Add Time Slot
-                </>
-              )}
-            </button>
-          </form>
+          {/* Add Slot Button (Accent Red CTA) */}
+          <button
+            type="submit"
+            disabled={isFormIncomplete || submitting}
+            className="h-[42px] px-6 bg-swiss-red border-2 border-swiss-black hover:bg-swiss-black hover:text-swiss-white text-swiss-white font-black text-ui-sm uppercase tracking-wider transition-colors select-none shrink-0 rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {submitting ? 'ADDING...' : 'ADD SLOT →'}
+          </button>
 
-          <div className="mt-6 p-4 bg-slate-50/60 border border-slate-100 rounded-xl flex items-start gap-2.5">
-            <Sparkles className="text-primary mt-0.5 shrink-0" size={15} />
-            <div className="text-[11px] text-slate-500 leading-relaxed font-medium">
-              Adding custom slots makes your clinic instantly discoverable to local patients in Pune. Keep your calendar up to date to boost ratings.
+        </form>
+      </div>
+
+      {/* ── Grid split for Heatmap calendar and slots list ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Heatmap picker (Left 5 columns) */}
+        <div className="lg:col-span-5 flex flex-col gap-4 border-2 border-swiss-black p-6 bg-swiss-white rounded-none select-none">
+          <div className="flex items-center justify-between pb-2 border-b border-swiss-gray-200">
+            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+              AVAILABILITY HEATMAP
+            </span>
+            <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-widest">
+              28-DAY PLANNER
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {/* Days header */}
+            <div className="grid grid-cols-7 gap-1.5 text-center">
+              {daysHeader.map((day, idx) => (
+                <span key={idx} className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                  {day}
+                </span>
+              ))}
+            </div>
+
+            {/* Cells grid */}
+            <div className="grid grid-cols-7 gap-1.5">
+              {next28Days.map((dateStr) => {
+                const dateObj = new Date(dateStr + 'T00:00:00');
+                const dayNum = dateObj.getDate();
+                const isSelected = dateStr === selectedDate;
+                
+                const dateSlots = getSlotsForDate(dateStr);
+                const totalSlots = dateSlots.length;
+                const bookedSlots = dateSlots.filter((s) => s.isBooked).length;
+                const availableSlots = totalSlots - bookedSlots;
+
+                let cellState = 'empty'; // No slots created
+                if (totalSlots > 0) {
+                  if (availableSlots === 0) {
+                    cellState = 'full'; // All slots booked
+                  } else {
+                    cellState = 'available'; // Has available slots
+                  }
+                }
+
+                // Decide cell styles based on state
+                let cellClass = 'bg-swiss-white border-swiss-gray-200 text-swiss-gray-200 border-[1px] hover:border-swiss-black cursor-pointer';
+                let countText = '—';
+                let isCountAmber = false;
+
+                if (cellState === 'available') {
+                  cellClass = 'bg-swiss-white border-swiss-black border-2 text-swiss-black hover:bg-swiss-gray-100 cursor-pointer';
+                  countText = `${availableSlots}`;
+                } else if (cellState === 'full') {
+                  cellClass = 'bg-swiss-gray-100 border-swiss-black border-2 text-swiss-gray-400 cursor-pointer';
+                  countText = `0/${totalSlots}`;
+                  isCountAmber = true;
+                }
+
+                if (isSelected) {
+                  cellClass = 'bg-swiss-black border-swiss-black border-2 text-swiss-white cursor-pointer';
+                }
+
+                return (
+                  <button
+                    key={dateStr}
+                    type="button"
+                    onClick={() => {
+                      setSelectedDate(selectedDate === dateStr ? '' : dateStr);
+                      setDeletingSlotId(null);
+                    }}
+                    className={`h-[48px] text-center flex flex-col items-center justify-center rounded-none transition-colors duration-fast ${cellClass}`}
+                  >
+                    <span className="text-[11px] font-black block leading-none select-none">
+                      {dayNum}
+                    </span>
+                    <span className={`text-[8px] font-black uppercase mt-1 block leading-none select-none
+                      ${isCountAmber && !isSelected ? 'text-swiss-amber' : ''}
+                      ${isSelected ? 'text-swiss-white' : ''}
+                    `}>
+                      {countText}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
+
+          {/* Heatmap Legend */}
+          <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-swiss-gray-200">
+            {[
+              { style: 'bg-swiss-white border-2 border-swiss-black text-swiss-black', label: 'AVAILABLE' },
+              { style: 'bg-swiss-gray-100 border-2 border-swiss-black text-swiss-amber', label: '0/N BOOKED' },
+              { style: 'bg-swiss-white border border-swiss-gray-200 text-swiss-gray-200', label: 'NO SLOTS' },
+            ].map((item, idx) => (
+              <div key={idx} className="flex items-center gap-1.5 text-[9px] text-swiss-gray-400 font-bold uppercase tracking-widest">
+                <span className={`w-4 h-4 rounded-none shrink-0 ${item.style.split(' ')[0]} ${item.style.split(' ')[1]} ${item.style.split(' ')[2]}`} />
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
+
         </div>
 
-        {/* Right Column: Existing Slots Schedule */}
-        <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-md font-bold text-slate-800 flex items-center gap-2">
-            <Clock className="text-primary" size={18} />
-            Your Scheduled Slots
-          </h2>
+        {/* Slot list (Right 7 columns) */}
+        <div className="lg:col-span-7 flex flex-col gap-4 select-none">
+          <div className="flex items-center justify-between pb-2 border-b-2 border-swiss-black">
+            <span className="text-ui-md font-black text-swiss-black uppercase tracking-tighter">
+              {selectedDate ? formatHumanDate(selectedDate) : 'ALL UPCOMING SLOTS'}
+            </span>
+            {selectedDate && (
+              <button
+                onClick={() => setSelectedDate('')}
+                className="text-[9px] font-black text-swiss-red uppercase tracking-widest hover:underline cursor-pointer"
+              >
+                RESET DATE FILTER
+              </button>
+            )}
+          </div>
 
-          {loading ? (
-            <div className="bg-white border border-slate-100 rounded-2xl p-12 text-center shadow-sm select-none">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-4 text-xs font-semibold text-slate-400">Loading your clinic hours...</p>
-            </div>
-          ) : sortedDates.length === 0 ? (
-            <div className="bg-white border border-slate-100 border-dashed rounded-2xl p-12 text-center shadow-sm select-none flex flex-col items-center gap-3">
-              <span className="text-4xl text-slate-300">📅</span>
-              <p className="text-sm font-bold text-slate-700">No Availability Slots Added Yet</p>
-              <p className="text-xs text-slate-400 max-w-sm">
-                Add your first time slot using the form on the left to start appearing in search lists!
+          {displayedSlots.length === 0 ? (
+            <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none bg-swiss-white select-none flex flex-col items-center gap-2">
+              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                NO SLOTS LISTED
+              </span>
+              <p className="text-ui-sm text-swiss-gray-600 font-bold max-w-sm uppercase">
+                {selectedDate 
+                  ? 'No slots created for this selected calendar date.' 
+                  : 'Add slots using the form at the top to configure your clinic availability.'
+                }
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
-              {sortedDates.map((dateKey) => (
-                <div key={dateKey} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm space-y-4">
-                  {/* Date Header */}
-                  <h3 className="text-xs font-extrabold text-slate-700 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg inline-block">
-                    {formatHumanDate(dateKey)}
-                  </h3>
+            <div className="w-full border-2 border-swiss-black rounded-none bg-swiss-white select-none">
+              <table className="w-full text-left border-collapse select-none">
+                <thead>
+                  <tr className="border-b-4 border-swiss-black bg-swiss-white">
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">START</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">END</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">DURATION</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">STATUS</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-right">DELETE</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-swiss-gray-200">
+                  {displayedSlots.map((slot) => {
+                    const isBooked = slot.isBooked;
+                    const isDeleting = deletingSlotId === slot._id;
+                    
+                    // Calculate duration in minutes
+                    let durationText = '30 MIN';
+                    try {
+                      const [sh, sm] = slot.startTime.split(':').map(Number);
+                      const [eh, em] = slot.endTime.split(':').map(Number);
+                      const diff = (eh * 60 + em) - (sh * 60 + sm);
+                      durationText = `${diff} MIN`;
+                    } catch (e) {}
 
-                  {/* Slots Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {slotsByDate[dateKey].map((slot) => (
-                      <div
+                    return (
+                      <tr
                         key={slot._id}
-                        className={`border rounded-xl p-3.5 flex items-center justify-between transition-all ${
-                          slot.isBooked
-                            ? 'bg-slate-50/50 border-slate-100'
-                            : 'bg-white border-slate-100 hover:border-slate-200 shadow-sm'
-                        }`}
+                        className={`h-12 transition-colors duration-fast select-none
+                          ${isDeleting ? 'bg-[rgba(255,48,0,0.04)]' : 'hover:bg-swiss-gray-50'}
+                        `}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-lg ${slot.isBooked ? 'bg-slate-200/50 text-slate-400' : 'bg-blue-50 text-primary'}`}>
-                            <Clock size={16} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-extrabold text-slate-800">
-                              {slot.startTime} – {slot.endTime}
-                            </p>
-                            <div className="mt-1 flex items-center gap-1.5">
-                              {slot.isBooked ? (
-                                <span className="inline-flex items-center text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded">
-                                  Booked
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 px-1.5 py-0.5 rounded">
-                                  Available
-                                </span>
-                              )}
-                              {!slot.isActive && (
-                                <span className="inline-flex items-center text-[10px] font-bold bg-rose-50 text-rose-500 border border-rose-100 px-1.5 py-0.5 rounded">
-                                  Inactive
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                        {/* Start Time */}
+                        <td className="px-6 py-3 text-ui-sm font-black text-swiss-black uppercase">
+                          {slot.startTime}
+                        </td>
 
-                        {/* Actions */}
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(slot)}
-                          disabled={slot.isBooked}
-                          className={`p-2 rounded-lg transition-all ${
-                            slot.isBooked
-                              ? 'text-slate-300 bg-slate-100/50 cursor-not-allowed'
-                              : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer'
-                          }`}
-                          title={slot.isBooked ? 'Has booking — cannot delete' : 'Delete slot'}
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                        {/* End Time */}
+                        <td className="px-6 py-3 text-ui-sm font-black text-swiss-black uppercase">
+                          {slot.endTime}
+                        </td>
+
+                        {/* Duration */}
+                        <td className="px-6 py-3 text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+                          {durationText}
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-6 py-3">
+                          {isBooked ? (
+                            <Badge variant="paid" label="BOOKED" />
+                          ) : !slot.isActive ? (
+                            <Badge variant="cancelled" label="INACTIVE" />
+                          ) : (
+                            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                              AVAILABLE
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Delete action */}
+                        <td className="px-6 py-3 text-right">
+                          {isBooked ? (
+                            <span
+                              className="text-swiss-gray-400 text-sm font-black select-none block text-right pr-2 cursor-default"
+                              title="CANNOT DELETE A BOOKED SLOT"
+                            >
+                              —
+                            </span>
+                          ) : isDeleting ? (
+                            <div className="flex items-center justify-end gap-3 select-none">
+                              <button
+                                onClick={() => handleDeleteConfirm(slot._id)}
+                                className="text-[9px] font-black text-swiss-red border border-swiss-red px-2 py-0.5 uppercase tracking-wider hover:bg-swiss-red hover:text-swiss-white transition-colors cursor-pointer rounded-none"
+                              >
+                                CONFIRM DELETE
+                              </button>
+                              <button
+                                onClick={() => setDeletingSlotId(null)}
+                                className="text-[9px] font-black text-swiss-gray-400 uppercase tracking-wider hover:text-swiss-black cursor-pointer bg-transparent border-0"
+                              >
+                                CANCEL
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setDeletingSlotId(slot._id)}
+                              className="w-7 h-7 border border-swiss-black hover:border-swiss-red text-swiss-black hover:text-swiss-red flex items-center justify-center font-black transition-colors rounded-none cursor-pointer bg-swiss-white ml-auto"
+                              title="Delete slot"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
+
         </div>
+
       </div>
+
     </div>
   );
 };

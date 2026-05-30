@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Info } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { getDoctorReviews } from '../../api/review.api';
 import { getDoctorProfileAPI } from '../../api/doctor.api';
+import SectionHeader from '../../components/common/SectionHeader';
+import EmptyState from '../../components/common/EmptyState';
 
-/**
- * MyReviews (Doctor) — read-only view of all reviews patients have left.
- * Route: /doctor/reviews
- */
 const MyReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,20 +14,18 @@ const MyReviews = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch doctor's own profile to get their _id and rating stats
         const profileRes = await getDoctorProfileAPI();
         if (profileRes.success && profileRes.data?.profile) {
           const profile = profileRes.data.profile;
           setDoctorProfile(profile);
 
-          // Fetch reviews using the doctor profile _id
           const reviewsRes = await getDoctorReviews(profile._id);
-          if (reviewsRes.data?.data?.reviews) {
-            setReviews(reviewsRes.data.data.reviews);
-          }
+          const rawReviews = reviewsRes.data?.reviews || reviewsRes.data?.data?.reviews || reviewsRes.reviews || [];
+          setReviews(rawReviews);
         }
       } catch (err) {
         console.error('Failed to load doctor reviews:', err);
+        toast.error('FAILED TO FETCH REPUTATION RECORD LEDGERS.');
       } finally {
         setLoading(false);
       }
@@ -37,115 +33,168 @@ const MyReviews = () => {
     fetchData();
   }, []);
 
-  const renderStars = (rating) =>
-    Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < Math.floor(rating) ? 'text-amber-400' : 'text-slate-200'}>
-        {i < Math.floor(rating) ? '★' : '☆'}
-      </span>
-    ));
+  // Compute rating distribution
+  const totalReviews = reviews.length;
+  const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  reviews.forEach((r) => {
+    if (ratingCounts[r.rating] !== undefined) {
+      ratingCounts[r.rating]++;
+    }
+  });
+
+  const getTreatedSpecialization = () => {
+    if (doctorProfile?.specialization && doctorProfile.specialization.length > 0) {
+      return doctorProfile.specialization[0].toUpperCase();
+    }
+    return 'PHYSICAL THERAPY';
+  };
+
+  if (loading) {
+    return (
+      <div className="py-24 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest bg-swiss-white">
+        LOADING REPUTATION REVIEWS PANELS...
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8 select-none p-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <Star className="text-primary" size={24} />
-          Patient Reviews About You
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Reviews submitted by patients after completed appointments.
-        </p>
-      </div>
+    <div className="flex flex-col gap-10 select-none text-left bg-swiss-white">
+      
+      {/* ── Page Header Section ── */}
+      <SectionHeader title="MY REVIEWS" size="lg" ruled={true} className="mb-0" />
 
-      {/* Disclaimer note */}
-      <div className="flex items-start gap-3 p-4 bg-blue-50/80 border border-blue-100 rounded-2xl">
-        <Info size={16} className="text-primary shrink-0 mt-0.5" />
-        <p className="text-xs text-slate-600 font-medium leading-relaxed">
-          Reviews are submitted by patients after completed appointments.
-          Contact support if you believe a review violates platform guidelines.
-        </p>
-      </div>
-
-      {loading ? (
-        <div className="space-y-4 animate-pulse">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-slate-100 rounded-3xl h-28" />
-          ))}
+      {reviews.length === 0 ? (
+        <div className="py-12 bg-swiss-white select-none">
+          <EmptyState
+            title="NO REVIEWS YET"
+            description="Patient reviews appear here after completed appointments. Focus on delivering excellent care."
+          />
         </div>
       ) : (
         <>
-          {/* Rating Summary Card */}
+          {/* ── Rating Summary Card (4:8 split) ── */}
           {doctorProfile && (
-            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex items-center gap-5">
-              <div className="text-3xl leading-none flex">
-                {renderStars(doctorProfile.averageRating || 0)}
-              </div>
-              <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Your Rating</p>
-                <p className="text-2xl font-extrabold text-slate-800 mt-0.5">
-                  {(doctorProfile.totalReviews || 0) > 0
-                    ? doctorProfile.averageRating.toFixed(1)
-                    : '—'}
-                  <span className="text-sm font-medium text-slate-400 ml-1">
-                    · {doctorProfile.totalReviews || 0} total review{doctorProfile.totalReviews !== 1 ? 's' : ''}
+            <div className="w-full p-8 bg-swiss-gray-100 border-2 border-swiss-black rounded-none shadow-none text-left">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                
+                {/* Left 4 Columns */}
+                <div className="md:col-span-4 flex flex-col gap-2 border-b-2 md:border-b-0 md:border-r-2 border-swiss-black pb-6 md:pb-0 md:pr-6">
+                  <span className="text-[64px] font-black text-swiss-black select-none leading-none block">
+                    {doctorProfile.averageRating ? parseFloat(doctorProfile.averageRating).toFixed(1) : '0.0'}
                   </span>
-                </p>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
-                  This is how patients see you on the platform.
-                </p>
+                  <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+                    OUT OF 5
+                  </span>
+                  <span className="text-ui-sm font-bold text-swiss-gray-600 uppercase tracking-wider block mt-1">
+                    BASED ON {totalReviews} {totalReviews === 1 ? 'REVIEW' : 'REVIEWS'}
+                  </span>
+                </div>
+
+                {/* Right 8 Columns (Distribution bars) */}
+                <div className="md:col-span-8 flex flex-col gap-2">
+                  {[5, 4, 3, 2, 1].map((rating) => {
+                    const count = ratingCounts[rating];
+                    const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+                    return (
+                      <div key={rating} className="flex items-center gap-3 w-full">
+                        {/* Star Rating Number label */}
+                        <span className="text-ui-xs font-black text-swiss-black w-3 shrink-0">
+                          {rating}
+                        </span>
+                        
+                        {/* Horizontal rectangular track */}
+                        <div className="flex-1 h-3 bg-swiss-gray-200 border border-swiss-black rounded-none overflow-hidden relative">
+                          <div
+                            className="h-full bg-swiss-black rounded-none"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+
+                        {/* Count text */}
+                        <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest w-12 text-right shrink-0">
+                          {count} {count === 1 ? 'REV' : 'REVS'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
               </div>
             </div>
           )}
 
-          {/* Reviews */}
-          {reviews.length === 0 ? (
-            <div className="bg-white border border-slate-100 border-dashed rounded-3xl p-12 text-center shadow-sm flex flex-col items-center gap-3">
-              <span className="text-4xl">⭐</span>
-              <p className="text-sm font-bold text-slate-700">No reviews yet.</p>
-              <p className="text-xs text-slate-400 max-w-sm">
-                Complete appointments to receive patient feedback.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
+          {/* Centered supportive disclaimer text */}
+          <p className="text-ui-sm text-swiss-gray-400 font-bold uppercase tracking-wider text-center max-w-2xl mx-auto leading-relaxed">
+            Reviews are submitted by verified patients after completed, paid appointments. Contact support if a review violates platform guidelines.
+          </p>
+
+          {/* ── Reviews Feedback List ── */}
+          <div className="flex flex-col gap-6 select-none">
+            <SectionHeader title="PATIENT FEEDBACK" size="sm" ruled={true} className="mb-0" />
+            
+            <div className="flex flex-col gap-6">
               {reviews.map((review) => {
                 const patientName = review.patient?.name || 'Anonymous';
                 const initial = patientName.charAt(0).toUpperCase();
-                const formattedDate = new Date(review.createdAt).toLocaleDateString('en-IN', {
-                  month: 'long',
-                  year: 'numeric',
-                });
+                const firstName = patientName.split(' ')[0];
+                const lastName = patientName.split(' ')[1] || '';
+                const displayPatient = `${firstName} ${lastName ? lastName[0] + '.' : ''}`;
+
+                const formattedDate = new Date(review.createdAt)
+                  .toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                  .toUpperCase();
 
                 return (
                   <div
                     key={review._id}
-                    className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:border-slate-200 transition-all text-left"
+                    className="w-full p-8 bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left flex flex-col md:flex-row justify-between gap-6"
                   >
-                    <div className="flex items-center gap-3">
-                      {/* Patient avatar */}
-                      <div className="w-9 h-9 rounded-full bg-blue-50 text-primary flex items-center justify-center font-bold text-sm shrink-0 border border-blue-100">
-                        {initial}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <p className="text-sm font-bold text-slate-800 truncate">{patientName}</p>
-                          <span className="text-xs text-slate-400 font-medium shrink-0">{formattedDate}</span>
-                        </div>
-                        <div className="flex items-center gap-0.5 text-base mt-0.5">
-                          {renderStars(review.rating)}
+                    {/* Left 9 Columns - Content */}
+                    <div className="flex-1 flex gap-4">
+                      {/* Quote symbol */}
+                      <span className="text-display-xs text-swiss-gray-400 font-black leading-none select-none">
+                        “
+                      </span>
+
+                      <div className="flex flex-col gap-4">
+                        <p className="text-ui-lg text-swiss-black italic font-medium leading-relaxed uppercase">
+                          {review.comment}
+                        </p>
+                        
+                        <div className="flex items-center gap-3">
+                          {/* 24px initial circle */}
+                          <div className="w-6 h-6 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-xs shrink-0 select-none">
+                            {initial}
+                          </div>
+                          
+                          <span className="text-ui-xs font-black text-swiss-black uppercase tracking-wider">
+                            {displayPatient}
+                          </span>
+                          <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider">
+                            · {formattedDate}
+                          </span>
                         </div>
                       </div>
                     </div>
-                    <p className="mt-3 text-sm text-slate-600 font-medium leading-relaxed italic border-l-2 border-primary/20 pl-3">
-                      "{review.comment}"
-                    </p>
+
+                    {/* Right 3 Columns - Rating box */}
+                    <div className="shrink-0 flex md:flex-col items-center md:items-end justify-between md:justify-center gap-4">
+                      <div className="w-14 h-14 border-4 border-swiss-black bg-swiss-white text-swiss-black font-black text-display-xs flex items-center justify-center rounded-none select-none">
+                        {review.rating}
+                      </div>
+                      <span className="text-[9px] font-black text-swiss-red tracking-widest uppercase block select-none">
+                        {getTreatedSpecialization()}
+                      </span>
+                    </div>
+
                   </div>
                 );
               })}
             </div>
-          )}
+          </div>
         </>
       )}
+
     </div>
   );
 };

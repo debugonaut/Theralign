@@ -48,7 +48,7 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="col-span-1 flex flex-col items-start gap-4">
             <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-swiss-black">
-              THERALIGN
+              PHYSIOCONNECT
             </span>
             <p className="text-[12px] text-swiss-gray-600 font-medium">
               India's premier verified physiotherapy marketplace. Connect with clinical specialists.

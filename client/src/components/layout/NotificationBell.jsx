@@ -1,38 +1,41 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell } from 'lucide-react';
-import { getMyNotifications, getUnreadCount, markAllRead } from '../../api/notification.api';
+import { getMyNotifications, getUnreadCount, markAllRead, markAsRead } from '../../api/notification.api';
 
-// Self-contained, zero-dependency helper to format dates like date-fns
-const formatDistanceToNow = (dateString) => {
+const formatTimeAgo = (dateString) => {
   try {
     const now = new Date();
     const date = new Date(dateString);
     const diffInSeconds = Math.floor((now - date) / 1000);
 
-    if (isNaN(diffInSeconds) || diffInSeconds < 0) return 'Just now';
-    if (diffInSeconds < 60) return 'Just now';
+    if (isNaN(diffInSeconds) || diffInSeconds < 0) return 'JUST NOW';
+    if (diffInSeconds < 60) return 'JUST NOW';
 
     const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes}m ago`;
-    }
+    if (diffInMinutes < 60) return `${diffInMinutes}M AGO`;
 
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) {
-      return `${diffInHours}h ago`;
-    }
+    if (diffInHours < 24) return `${diffInHours}H AGO`;
 
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 30) {
-      return `${diffInDays}d ago`;
-    }
+    if (diffInDays < 30) return `${diffInDays}D AGO`;
 
     const diffInMonths = Math.floor(diffInDays / 30);
-    return `${diffInMonths}mo ago`;
+    return `${diffInMonths}MO AGO`;
   } catch (e) {
-    return 'Just now';
+    return 'JUST NOW';
   }
+};
+
+const CATEGORY_MAP = {
+  appointment_booked: 'NEW BOOKING',
+  appointment_cancelled: 'APPOINTMENT CANCELLED',
+  appointment_completed: 'APPOINTMENT COMPLETED',
+  review_received: 'FEEDBACK SUBMITTED',
+  verification_approved: 'VERIFICATION UPDATE',
+  verification_rejected: 'VERIFICATION UPDATE',
+  document_uploaded: 'FILE ATTACHED',
 };
 
 const NotificationBell = () => {
@@ -44,29 +47,30 @@ const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Poll for unread count every 60 seconds
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const token = localStorage.getItem('theralign_token');
-        if (!token) return; // Only fetch if authenticated
-        
-        const res = await getUnreadCount();
-        if (res.data?.success) {
-          setUnreadCount(res.data.data.count);
-        }
-      } catch (err) {
-        // Fail-safe degradation: logging error instead of interrupting UI
-        console.warn('Silent count fetch warning:', err.message);
+  // Poll for unread count every 30 seconds
+  const fetchUnreadCount = async () => {
+    try {
+      const token = localStorage.getItem('theralign_token');
+      if (!token) return;
+      
+      const res = await getUnreadCount();
+      if (res.data?.success) {
+        setUnreadCount(res.data.data.count);
+      } else if (res.success) {
+        setUnreadCount(res.data?.count ?? 0);
       }
-    };
+    } catch (err) {
+      console.warn('Silent count fetch warning:', err.message);
+    }
+  };
 
+  useEffect(() => {
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 60000);
+    const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  // Close dropdown when clicking outside
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -86,15 +90,8 @@ const NotificationBell = () => {
       setIsLoading(true);
       try {
         const res = await getMyNotifications();
-        if (res.data?.success) {
-          setNotifications(res.data.data);
-          
-          // If we had unread notifications, mark all as read atomically
-          if (unreadCount > 0) {
-            await markAllRead();
-            setUnreadCount(0);
-          }
-        }
+        const list = res.data?.data || res.data || [];
+        setNotifications(list);
       } catch (err) {
         console.error('Failed to load notifications:', err.message);
       } finally {
@@ -103,101 +100,118 @@ const NotificationBell = () => {
     }
   };
 
-  const handleNotificationClick = (link) => {
-    setIsOpen(false);
-    if (link) {
-      navigate(link);
+  const handleMarkAllRead = async (e) => {
+    e.stopPropagation();
+    try {
+      await markAllRead();
+      setUnreadCount(0);
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      toast.success('All notifications marked as read.');
+    } catch (err) {
+      toast.error('Failed to mark all as read.');
     }
   };
 
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case 'appointment_booked':
-        return '📅';
-      case 'appointment_cancelled':
-        return '❌';
-      case 'appointment_completed':
-        return '✓';
-      case 'review_received':
-        return '⭐';
-      case 'verification_approved':
-        return '🛡️';
-      case 'verification_rejected':
-        return '⚠️';
-      case 'document_uploaded':
-        return '📄';
-      default:
-        return '🔔';
+  const handleNotificationClick = async (item) => {
+    setIsOpen(false);
+    try {
+      if (!item.isRead) {
+        await markAsRead(item._id);
+        fetchUnreadCount();
+      }
+      if (item.link) {
+        navigate(item.link);
+      }
+    } catch (err) {
+      console.error(err);
+      if (item.link) navigate(item.link);
     }
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative inline-block select-none" ref={dropdownRef}>
       {/* Bell Icon Trigger Button */}
       <button
         onClick={handleToggleDropdown}
-        className="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-50 rounded-full transition-all duration-150 focus:outline-none"
-        aria-label="View notifications"
+        className="relative p-2 text-swiss-black hover:text-swiss-red transition-all duration-fast focus:outline-none bg-transparent border-0 cursor-pointer"
+        aria-label="View notifications dropdown"
       >
-        <Bell className="h-5.5 w-5.5" />
+        <Bell className="h-5.5 w-5.5 text-swiss-black" strokeWidth={1.5} />
+        
+        {/* Unread Count Rectangular Badge */}
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center ring-2 ring-white animate-pulse">
-            {unreadCount > 9 ? '9+' : unreadCount}
+          <span className="absolute -top-0.5 -right-0.5 border border-swiss-black bg-swiss-white text-swiss-black text-[9px] font-black px-1 py-0.5 leading-none select-none rounded-none">
+            {unreadCount}
           </span>
         )}
       </button>
 
-      {/* Dropdown Card */}
+      {/* Dropdown Container: 280px wide, border-2 black, white bg, snappy */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden transform origin-top-right transition-all">
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-100">
-            <span className="font-semibold text-slate-800 text-sm">Notifications</span>
-            {unreadCount > 0 && (
-              <span className="text-xs text-primary font-medium">{unreadCount} new</span>
-            )}
+        <div className="absolute right-0 mt-3 w-280 bg-swiss-white border-2 border-swiss-black z-50 overflow-hidden rounded-none shadow-none text-left">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 bg-swiss-gray-50 border-b-2 border-swiss-black select-none">
+            <span className="font-black text-swiss-black text-[10px] uppercase tracking-widest">
+              NOTIFICATIONS
+            </span>
+            <button
+              onClick={handleMarkAllRead}
+              className="text-[9px] font-black text-swiss-red uppercase tracking-widest bg-transparent border-0 hover:underline cursor-pointer select-none"
+            >
+              MARK ALL READ
+            </button>
           </div>
 
-          <div className="max-h-[360px] overflow-y-auto divide-y divide-slate-50">
+          {/* List content */}
+          <div className="max-h-[360px] overflow-y-auto divide-y divide-swiss-gray-200">
             {isLoading && (
-              <div className="py-8 text-center text-sm text-slate-400">
-                <span className="inline-block animate-spin mr-2">⏳</span> Loading...
+              <div className="py-8 text-center text-xs font-bold uppercase tracking-wider text-swiss-gray-400">
+                <span className="inline-block animate-spin mr-2">⏳</span> LOADING...
               </div>
             )}
 
             {!isLoading && notifications.length === 0 && (
-              <div className="py-10 px-4 text-center">
-                <div className="text-3xl mb-2">🔔</div>
-                <p className="text-sm font-medium text-slate-600">All caught up!</p>
-                <p className="text-xs text-slate-400 mt-1">No notifications yet.</p>
+              <div className="py-10 px-4 text-center select-none">
+                <span className="text-2xl block mb-2">🔔</span>
+                <p className="text-xs font-black text-swiss-black uppercase tracking-wider">ALL CAUGHT UP!</p>
+                <p className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider mt-1">No notifications yet.</p>
               </div>
             )}
 
-            {!isLoading && notifications.map((item) => (
-              <div
-                key={item._id}
-                onClick={() => handleNotificationClick(item.link)}
-                className={`flex gap-3 p-4 hover:bg-slate-50 cursor-pointer transition-all ${
-                  !item.isRead ? 'bg-sky-50/30 font-medium' : ''
-                }`}
-              >
-                <div className="text-xl flex-shrink-0 mt-0.5 select-none">
-                  {getTypeIcon(item.type)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline gap-2">
-                    <p className="text-sm text-slate-800 truncate font-semibold">
-                      {item.title}
-                    </p>
-                    <span className="text-[10px] text-slate-400 whitespace-nowrap">
-                      {formatDistanceToNow(item.createdAt)}
+            {!isLoading && notifications.map((item) => {
+              const category = CATEGORY_MAP[item.type] || 'SYSTEM NOTIFICATION';
+              const isUnread = !item.isRead;
+
+              return (
+                <div
+                  key={item._id}
+                  onClick={() => handleNotificationClick(item)}
+                  style={{ height: '72px' }}
+                  className={`flex flex-col justify-between p-3.5 hover:bg-swiss-gray-50 cursor-pointer transition-all duration-fast select-none relative ${
+                    isUnread 
+                      ? 'border-l-4 border-swiss-black bg-swiss-gray-50/55' 
+                      : 'border-l-4 border-transparent bg-swiss-white'
+                  }`}
+                >
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-[9px] font-black text-swiss-red uppercase tracking-widest truncate max-w-[170px] block leading-none">
+                      {category}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed break-words">
-                    {item.message}
+
+                  <p className="text-[12px] font-bold text-swiss-black uppercase tracking-wide truncate mt-1 leading-none select-none">
+                    {item.title || item.message}
                   </p>
+
+                  <div className="text-right mt-1.5 leading-none">
+                    <span className="text-[9px] font-bold text-swiss-gray-400 font-mono tracking-wider block">
+                      {formatTimeAgo(item.createdAt)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

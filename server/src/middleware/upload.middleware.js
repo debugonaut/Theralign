@@ -48,12 +48,13 @@ const multerDocs = multer({
 // ─── Exported Onboarding Middleware ──────────────────────────────────────────
 /**
  * Express middleware to handle doctor onboarding documents.
- * Expects 'degreeDocument' and 'licenseDocument' fields.
+ * Expects 'degreeDocument', 'licenseDocument', and 'profileImage' fields.
  */
 export const uploadOnboardingDocs = (req, res, next) => {
   const fields = multerDocs.fields([
     { name: 'degreeDocument', maxCount: 1 },
     { name: 'licenseDocument', maxCount: 1 },
+    { name: 'profileImage', maxCount: 1 },
   ]);
 
   fields(req, res, (err) => {

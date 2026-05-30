@@ -1,53 +1,112 @@
 import React from 'react';
+import Table from '../common/Table';
+import Badge from '../common/Badge';
 
-const ICONS = {
-  appointment: '📅',
-  registration: '👤',
-  payment: '💳',
-  review: '⭐',
+const EVENT_TYPE_MAP = {
+  appointment: 'BOOKING',
+  registration: 'REGISTRATION',
+  payment: 'PAYMENT',
+  verification: 'VERIFICATION',
+  review: 'REVIEW',
 };
 
-const timeAgo = (date) => {
-  const diff = Date.now() - new Date(date).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1)  return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24)  return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+const formatTimeAgo = (dateStr) => {
+  try {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1)  return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24)  return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  } catch (e) {
+    return 'just now';
+  }
 };
 
-const RecentActivityFeed = ({ activity = [] }) => {
-  if (activity.length === 0) {
+// First name and last initial only for privacy (e.g. "John Doe" -> "JOHN D.")
+const formatActorName = (name) => {
+  if (!name) return 'SYSTEM';
+  const clean = name.replace(/^(Dr\.|Dr)\s+/i, '').trim();
+  const parts = clean.split(/\s+/);
+  if (parts.length === 1) return parts[0].toUpperCase();
+  const first = parts[0].toUpperCase();
+  const lastInitial = parts[parts.length - 1][0].toUpperCase();
+  return `${first} ${lastInitial}.`;
+};
+
+const RecentActivityFeed = ({ activity = [], loading }) => {
+  if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-40 text-slate-500 text-sm text-center">
-        <span className="text-2xl mb-2">📭</span>
-        <p>No recent activity.</p>
-        <p className="text-xs text-slate-600 mt-1">Platform activity will appear here.</p>
+      <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left space-y-4">
+        <div className="pb-4 border-b border-swiss-gray-200">
+          <div className="h-3 w-20 bg-swiss-gray-100 animate-pulse mb-2" />
+          <div className="h-5 w-40 bg-swiss-gray-100 animate-pulse" />
+        </div>
+        <div className="space-y-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-10 bg-swiss-gray-150 animate-pulse rounded-none" />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-h-[380px] overflow-y-auto pr-1 space-y-1">
-      {activity.map((item, index) => (
-        <div
-          key={index}
-          className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-800/50 transition-colors group"
-        >
-          <div className="text-lg shrink-0 mt-0.5">
-            {ICONS[item.type] || '📌'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm text-slate-300 group-hover:text-slate-100 transition-colors leading-snug">
-              {item.message}
-            </p>
-          </div>
-          <span className="text-[11px] text-slate-600 shrink-0 font-medium">
-            {timeAgo(item.timestamp)}
-          </span>
+    <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+      {/* Feed Header */}
+      <div className="p-6 border-b border-swiss-gray-200">
+        <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+          PLATFORM AUDIT LOG
+        </span>
+        <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+          RECENT ACTIVITY FEED
+        </h3>
+      </div>
+
+      {activity.length === 0 ? (
+        <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+          NO SYSTEM ACTIVITIES FILED
         </div>
-      ))}
+      ) : (
+        <Table>
+          <Table.Head>
+            <Table.Row>
+              <Table.Header className="w-[120px]">Time</Table.Header>
+              <Table.Header className="w-[160px]">Event Type</Table.Header>
+              <Table.Header className="w-[180px]">Actor</Table.Header>
+              <Table.Header>Detail</Table.Header>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            {activity.map((item, index) => {
+              const displayType = EVENT_TYPE_MAP[item.type] || item.type?.toUpperCase() || 'SYSTEM';
+              const actorName = formatActorName(item.actorName || item.actor || item.user?.name);
+              
+              // Truncate detail sentence with full text tooltip on row hover
+              const details = item.message || '';
+              const truncatedDetails = details.length > 90 ? details.slice(0, 90) + '...' : details;
+
+              return (
+                <Table.Row key={index} hoverable={true}>
+                  <Table.Cell className="font-mono text-swiss-gray-600 text-xs whitespace-nowrap">
+                    {formatTimeAgo(item.timestamp || item.createdAt)}
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Badge variant="neutral" label={displayType} size="sm" />
+                  </Table.Cell>
+                  <Table.Cell className="font-bold text-swiss-black uppercase tracking-wider text-xs">
+                    {actorName}
+                  </Table.Cell>
+                  <Table.Cell className="text-swiss-gray-600 font-medium" title={details}>
+                    {truncatedDetails}
+                  </Table.Cell>
+                </Table.Row>
+              );
+            })}
+          </Table.Body>
+        </Table>
+      )}
     </div>
   );
 };

@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import {
-  Stethoscope,
-  Check,
-  X,
-  FileText,
-  ExternalLink,
-  MapPin,
-  AlertCircle,
-  Calendar,
-  ChevronRight,
-  Info,
-} from 'lucide-react';
+import { Search, Eye, ExternalLink, ShieldAlert, Award } from 'lucide-react';
 
 import {
   getPendingDoctorsAPI,
@@ -19,397 +9,622 @@ import {
   rejectDoctorAPI,
 } from '../../api/admin.api';
 
+import {
+  getAllDoctorsAdminAPI,
+  suspendDoctorAPI,
+  reconsiderDoctorAPI,
+} from '../../api/analytics.api';
+
+import SectionHeader from '../../components/common/SectionHeader';
+import Table, { ActionLink } from '../../components/common/Table';
+import Badge from '../../components/common/Badge';
+import Button from '../../components/common/Button';
+
 const AdminDoctorVerification = () => {
-  const [pendingDoctors, setPendingDoctors] = useState([]);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isActionLoading, setIsActionLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Rejection Modal State
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  // State Management
+  const [pendingQueue, setPendingQueue] = useState([]);
+  const [directory, setDirectory] = useState([]);
+  const [directoryTotal, setDirectoryTotal] = useState(0);
+  const [loadingQueue, setLoadingQueue] = useState(true);
+  const [loadingDirectory, setLoadingDirectory] = useState(true);
+
+  // Filter & Search Controls
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Queue Expansion & Operations State
+  const [expandedQueueRow, setExpandedQueueRow] = useState(null);
+  const [rejectingQueueRow, setRejectingQueueRow] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
 
-  // Fetch pending list
-  const fetchPendingQueue = async () => {
+  const LIMIT = 10;
+
+  // 1. Fetch verification queue
+  const fetchQueue = async () => {
     try {
+      setLoadingQueue(true);
       const res = await getPendingDoctorsAPI();
-      if (res.success) {
-        setPendingDoctors(res.data.profiles || []);
-      }
+      const list = res.data?.profiles || res.data || [];
+      setPendingQueue(list);
     } catch (err) {
-      console.error('Failed to load pending doctor applications:', err);
-      toast.error('Unable to fetch the pending verification queue.');
+      toast.error('Failed to load pending applications queue');
     } finally {
-      setIsLoading(false);
+      setLoadingQueue(false);
     }
   };
+
+  // 2. Fetch full directory (paginated, searchable, filterable)
+  const fetchDirectory = useCallback(async () => {
+    try {
+      setLoadingDirectory(true);
+      const params = { page, limit: LIMIT };
+      if (search) params.search = search;
+      if (statusFilter !== 'all') params.status = statusFilter;
+
+      const res = await getAllDoctorsAdminAPI(params);
+      const data = res.data?.data || res.data || {};
+      setDirectory(data.doctors || []);
+      setDirectoryTotal(data.total || 0);
+      setTotalPages(data.totalPages || 1);
+    } catch (err) {
+      toast.error('Failed to load doctor directory ledger');
+    } finally {
+      setLoadingDirectory(false);
+    }
+  }, [page, search, statusFilter]);
 
   useEffect(() => {
-    fetchPendingQueue();
+    fetchQueue();
   }, []);
 
-  // ─── Verification Actions ──────────────────────────────────────────────────
-  const handleApprove = async (profileId) => {
-    if (!window.confirm('Are you sure you want to approve and verify this doctor?')) return;
+  useEffect(() => {
+    fetchDirectory();
+  }, [fetchDirectory]);
 
-    setIsActionLoading(true);
-    const toastId = toast.loading('Verifying doctor credentials...');
-
-    try {
-      const res = await verifyDoctorAPI(profileId);
-      if (res.success) {
-        toast.success('Doctor verified successfully!', { id: toastId });
-        setSelectedDoctor(null);
-        // Refresh queue
-        await fetchPendingQueue();
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || 'Approval failed.', { id: toastId });
-    } finally {
-      setIsActionLoading(false);
-    }
+  // Handle Search Input Change
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1);
   };
 
-  const handleOpenRejectModal = () => {
-    setRejectionReason('');
-    setIsRejectModalOpen(true);
+  // Handle Status Tab Change
+  const handleStatusFilter = (status) => {
+    setStatusFilter(status);
+    setPage(1);
   };
 
-  const handleRejectSubmit = async (e) => {
-    e.preventDefault();
-    if (rejectionReason.trim().length < 15) {
-      toast.error('Rejection reason must be at least 15 characters long.');
+  // Export to CSV
+  const handleExport = () => {
+    if (directory.length === 0) {
+      toast.error('No doctor data available for export');
       return;
     }
+    const headers = ['NAME', 'EMAIL', 'SPECIALIZATION', 'EXPERIENCE', 'STATUS', 'EARNINGS'];
+    const rows = directory.map(d => [
+      d.user?.name || '',
+      d.user?.email || '',
+      Array.isArray(d.specialization) ? d.specialization.join('; ') : d.specialization || '',
+      `${d.experience || 0} Years`,
+      d.verificationStatus || '',
+      `Rs. ${d.totalEarnings || 0}`
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(','), ...rows.map(e => e.map(val => `"${val.replace(/"/g, '""')}"`).join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `physioconnect_doctors_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Doctor ledger exported to CSV successfully');
+  };
 
-    setIsActionLoading(true);
-    setIsRejectModalOpen(false);
-    const toastId = toast.loading('Submitting profile rejection...');
+  // ─── Actions ───────────────────────────────────────────────────────────────
 
+  // Approve Doctor Application
+  const handleApprove = async (profileId) => {
+    if (!window.confirm('Verify this clinician profile?')) return;
+    setActionLoading(true);
+    const toastId = toast.loading('Approving clinician credentials...');
     try {
-      const res = await rejectDoctorAPI(selectedDoctor._id, rejectionReason);
-      if (res.success) {
-        toast.success('Doctor application rejected and feedback sent.', { id: toastId });
-        setSelectedDoctor(null);
-        await fetchPendingQueue();
+      const res = await verifyDoctorAPI(profileId);
+      if (res.success || res.message) {
+        toast.success('Clinician profile verified successfully', { id: toastId });
+        setExpandedQueueRow(null);
+        setRejectingQueueRow(null);
+        // Refresh queue & directory
+        await Promise.all([fetchQueue(), fetchDirectory()]);
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || 'Rejection failed.', { id: toastId });
+      toast.error(err.response?.data?.message || 'Verification approval failed', { id: toastId });
     } finally {
-      setIsActionLoading(false);
+      setActionLoading(false);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p className="mt-4 text-slate-500 font-medium">Loading pending applications...</p>
-      </div>
-    );
-  }
+  // Submit Rejection Reason
+  const handleRejectSubmit = async (e, profileId) => {
+    e.preventDefault();
+    if (rejectionReason.trim().length < 15) {
+      toast.error('Constructive feedback must contain at least 15 characters.');
+      return;
+    }
+    setActionLoading(true);
+    const toastId = toast.loading('Submitting application rejection...');
+    try {
+      const res = await rejectDoctorAPI(profileId, rejectionReason);
+      if (res.success) {
+        toast.success('Clinician onboarding rejected & feedback sent.', { id: toastId });
+        setExpandedQueueRow(null);
+        setRejectingQueueRow(null);
+        setRejectionReason('');
+        await Promise.all([fetchQueue(), fetchDirectory()]);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Rejection submit failed', { id: toastId });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Toggle Suspend Status
+  const handleToggleSuspend = async (doc) => {
+    const isSuspended = doc.verificationStatus === 'suspended';
+    if (isSuspended) {
+      if (!window.confirm(`Reconsider & lift suspension for Dr. ${doc.user?.name}?`)) return;
+      const toastId = toast.loading('Reconsidering account state...');
+      try {
+        const res = await reconsiderDoctorAPI(doc._id);
+        if (res.success || res.data) {
+          toast.success('Clinician account reactivated successfully', { id: toastId });
+          await fetchDirectory();
+        }
+      } catch (err) {
+        toast.error('Reconsideration action failed', { id: toastId });
+      }
+    } else {
+      const reason = window.prompt(`Enter suspension explanation reason for Dr. ${doc.user?.name}:`);
+      if (reason === null) return; // user cancelled
+      if (reason.trim().length < 10) {
+        toast.error('Suspension explanation must contain at least 10 characters.');
+        return;
+      }
+      const toastId = toast.loading('Suspending clinician account...');
+      try {
+        const res = await suspendDoctorAPI(doc._id, reason);
+        if (res.success || res.data) {
+          toast.success('Clinician account suspended successfully', { id: toastId });
+          await fetchDirectory();
+        }
+      } catch (err) {
+        toast.error('Suspension action failed', { id: toastId });
+      }
+    }
+  };
 
   return (
-    <div className="space-y-8 relative">
+    <div className="space-y-12 select-none text-swiss-black">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <Stethoscope className="text-primary" size={26} />
-            Doctor Verification Queue
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Review professional medical credentials and approve physiotherapist onboarding applications.
-          </p>
+      <SectionHeader
+        title="DOCTORS"
+        subtitle="CLINICAL CREDENTIAL VERIFICATION AND PLATFORM PRACTITIONER LEDGER CONTROL."
+      />
+
+      {/* Control bar - Search, filters, and Export action */}
+      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-2 border-swiss-black p-4 bg-swiss-white">
+        {/* Real-time search */}
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-swiss-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="FILTER BY NAME, EMAIL, REGISTRATION..."
+            value={search}
+            onChange={handleSearchChange}
+            className="w-full pl-9 pr-4 py-2 bg-swiss-white border-2 border-swiss-black text-xs font-bold uppercase placeholder-swiss-gray-400 focus:outline-none transition-colors"
+          />
         </div>
-        <div className="bg-blue-50 text-primary px-4 py-2 rounded-xl text-sm font-bold border border-blue-100">
-          Pending Applications: {pendingDoctors.length}
+
+        {/* Status segmented controls */}
+        <div className="flex border-2 border-swiss-black">
+          {['all', 'verified', 'pending', 'suspended'].map((status) => (
+            <button
+              key={status}
+              onClick={() => handleStatusFilter(status)}
+              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors border-r-2 last:border-r-0 border-swiss-black cursor-pointer ${
+                statusFilter === status
+                  ? 'bg-swiss-black text-swiss-white font-black'
+                  : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
         </div>
+
+        {/* Export secondary button */}
+        <button
+          onClick={handleExport}
+          className="px-6 py-2.5 bg-swiss-white border-2 border-swiss-black text-[11px] font-black uppercase tracking-widest text-swiss-black hover:bg-swiss-black hover:text-swiss-white transition-all cursor-pointer"
+        >
+          EXPORT →
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* ─── Applications List (Left 2 Columns) ─────────────────────────── */}
-        <div className="lg:col-span-2 space-y-4">
-          {pendingDoctors.length === 0 ? (
-            <div className="bg-white border border-slate-100 rounded-2xl p-12 text-center shadow-sm">
-              <Check className="mx-auto text-emerald-500 mb-3 bg-emerald-50 p-2.5 rounded-full" size={48} />
-              <h3 className="font-bold text-slate-800 text-lg">Queue Clear!</h3>
-              <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
-                No doctor onboarding applications are currently pending verification. Good job!
-              </p>
-            </div>
-          ) : (
-            <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                      <th className="px-6 py-4">Applicant</th>
-                      <th className="px-6 py-4">Reg Number</th>
-                      <th className="px-6 py-4">Experience</th>
-                      <th className="px-6 py-4">Submitted</th>
-                      <th className="px-6 py-4 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
-                    {pendingDoctors.map((doc) => (
-                      <tr
-                        key={doc._id}
-                        className={`hover:bg-slate-50/50 transition-colors cursor-pointer ${
-                          selectedDoctor?._id === doc._id ? 'bg-blue-50/30' : ''
-                        }`}
-                        onClick={() => setSelectedDoctor(doc)}
+      {/* ─── 1. Verification Queue Section ─── */}
+      {!loadingQueue && pendingQueue.length > 0 && (
+        <div className="border-t-4 border-swiss-amber border-2 border-swiss-black p-6 bg-swiss-white">
+          <div className="flex items-center gap-3 pb-4 border-b border-swiss-gray-200 mb-6">
+            <span className="text-[11px] font-bold text-swiss-amber uppercase tracking-widest block">
+              ⚠️ PENDING APPLICATIONS
+            </span>
+            <span className="border border-swiss-amber bg-swiss-white text-swiss-amber text-[10px] px-1.5 py-0.5 font-bold">
+              {pendingQueue.length} WAITING
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {pendingQueue.map((doc) => {
+              const isExpanded = expandedQueueRow === doc._id;
+              const isRejecting = rejectingQueueRow === doc._id;
+              const docName = doc.user?.name || 'Physiotherapist';
+              const createdDate = new Date(doc.createdAt).toLocaleDateString('en-IN', {
+                day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+              });
+
+              return (
+                <div 
+                  key={doc._id}
+                  className={`border-2 border-swiss-black transition-all ${
+                    isExpanded ? 'bg-swiss-gray-100' : 'bg-swiss-white hover:bg-swiss-gray-50'
+                  }`}
+                >
+                  {/* Row Summary — 80px tall layout */}
+                  <div 
+                    onClick={() => {
+                      setExpandedQueueRow(isExpanded ? null : doc._id);
+                      setRejectingQueueRow(null);
+                    }}
+                    className="h-20 px-6 flex items-center justify-between cursor-pointer"
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Name initial circle */}
+                      <div className="w-10 h-10 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-sm uppercase shrink-0">
+                        {docName[0]}
+                      </div>
+                      
+                      <div className="text-left">
+                        <span className="font-black text-xs uppercase text-swiss-black tracking-wide block">
+                          Dr. {docName}
+                        </span>
+                        <span className="text-[10px] text-swiss-gray-400 font-mono block mt-0.5">
+                          {doc.user?.email} · REG: {doc.registrationNumber || 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-8">
+                      <div className="text-right hidden sm:block">
+                        <span className="text-[10px] text-swiss-gray-400 font-bold block uppercase tracking-wider">
+                          EXPERIENCE / APPLIED
+                        </span>
+                        <span className="text-xs font-bold text-swiss-black block uppercase mt-0.5">
+                          {doc.experience} YEARS · {createdDate}
+                        </span>
+                      </div>
+
+                      <button
+                        className="px-4 py-2 border-2 border-swiss-black text-[10px] font-black uppercase tracking-widest bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white transition-all shrink-0"
                       >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 uppercase border border-slate-200">
-                              {doc.user?.name ? doc.user.name[0] : 'Dr'}
-                            </div>
-                            <div>
-                              <span className="font-semibold text-slate-800 block">
-                                Dr. {doc.user?.name || 'Physiotherapist'}
-                              </span>
-                              <span className="text-xs text-slate-400 font-mono block">
-                                {doc.user?.email}
-                              </span>
+                        {isExpanded ? 'CLOSE' : 'REVIEW'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Expanded block */}
+                  {isExpanded && (
+                    <div className="border-t border-swiss-black p-6 bg-swiss-white text-left space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                        {/* Profile Info (7 cols) */}
+                        <div className="md:col-span-7 space-y-4">
+                          <div>
+                            <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                              CLINIC ADDRESS
+                            </span>
+                            <span className="font-bold text-swiss-black text-xs uppercase">
+                              {doc.clinicName?.toUpperCase()} · {doc.clinicAddress?.toUpperCase()}
+                            </span>
+                          </div>
+
+                          <div>
+                            <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                              QUALIFICATIONS
+                            </span>
+                            <div className="flex flex-wrap gap-2">
+                              {doc.specialization?.map(spec => (
+                                <Badge key={spec} variant="neutral" label={spec} size="sm" />
+                              ))}
                             </div>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 font-mono font-semibold text-slate-600">
-                          {doc.registrationNumber}
-                        </td>
-                        <td className="px-6 py-4 font-medium">{doc.experience} Years</td>
-                        <td className="px-6 py-4 text-xs text-slate-400 font-medium">
-                          {new Date(doc.createdAt).toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </td>
-                        <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+
+                          <div>
+                            <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                              PRACTITIONER BIOGRAPHY
+                            </span>
+                            <p className="text-xs text-swiss-gray-600 leading-relaxed font-medium bg-swiss-gray-50 border p-4">
+                              {doc.bio || 'No biography uploaded.'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Documents Zoom list (5 cols) */}
+                        <div className="md:col-span-5 space-y-3">
+                          <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                            VERIFICATION FILES
+                          </span>
+                          
+                          {/* Degree Document Thumbnail */}
+                          {doc.degreeDocument ? (
+                            <a
+                              href={doc.degreeDocument}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group flex items-center justify-between border-2 border-swiss-black p-4 hover:bg-swiss-gray-50 transition-colors"
+                            >
+                              <div className="text-left">
+                                <span className="font-bold text-xs uppercase tracking-wider block text-swiss-black">
+                                  DEGREE CERTIFICATE
+                                </span>
+                                <span className="text-[9px] text-swiss-gray-400 font-bold block mt-0.5">
+                                  VERIFIED FILE ATTACHED
+                                </span>
+                              </div>
+                              <ExternalLink size={14} className="text-swiss-gray-400 group-hover:text-swiss-red transition-colors" />
+                            </a>
+                          ) : (
+                            <div className="border border-dashed p-4 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+                              DEGREE MISSING
+                            </div>
+                          )}
+
+                          {/* License Document Thumbnail */}
+                          {doc.licenseDocument ? (
+                            <a
+                              href={doc.licenseDocument}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group flex items-center justify-between border-2 border-swiss-black p-4 hover:bg-swiss-gray-50 transition-colors"
+                            >
+                              <div className="text-left">
+                                <span className="font-bold text-xs uppercase tracking-wider block text-swiss-black">
+                                  PRACTITIONER LICENSE
+                                </span>
+                                <span className="text-[9px] text-swiss-gray-400 font-bold block mt-0.5">
+                                  VERIFIED FILE ATTACHED
+                                </span>
+                              </div>
+                              <ExternalLink size={14} className="text-swiss-gray-400 group-hover:text-swiss-red transition-colors" />
+                            </a>
+                          ) : (
+                            <div className="border border-dashed p-4 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+                              LICENSE MISSING
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Twin Action CTAs */}
+                      <div className="border-t border-swiss-gray-200 pt-6 flex flex-col gap-4">
+                        <div className="flex gap-4">
                           <button
-                            onClick={() => setSelectedDoctor(doc)}
-                            className="inline-flex items-center gap-0.5 text-xs font-bold text-primary hover:text-primary-dark hover:underline bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-all"
+                            onClick={() => handleApprove(doc._id)}
+                            disabled={actionLoading}
+                            className="px-6 py-2.5 bg-swiss-white border-2 border-swiss-teal text-[11px] font-black uppercase tracking-widest text-swiss-teal hover:bg-swiss-teal hover:text-swiss-white transition-all cursor-pointer disabled:opacity-40"
                           >
-                            Review <ChevronRight size={14} />
+                            APPROVE VERIFICATION →
                           </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
+                          
+                          <button
+                            onClick={() => {
+                              setRejectingQueueRow(isRejecting ? null : doc._id);
+                              setRejectionReason('');
+                            }}
+                            disabled={actionLoading}
+                            className="px-6 py-2.5 bg-swiss-white border-2 border-swiss-red text-[11px] font-black uppercase tracking-widest text-swiss-red hover:bg-swiss-red hover:text-swiss-white transition-all cursor-pointer disabled:opacity-40"
+                          >
+                            {isRejecting ? 'CANCEL REJECTION' : 'REJECT APPLICATION →'}
+                          </button>
+                        </div>
 
-        {/* ─── Review Drawer Panel (Right Column) ─────────────────────────── */}
-        <div className="lg:col-span-1">
-          {selectedDoctor ? (
-            <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-md space-y-6 sticky top-6">
-              <div className="flex justify-between items-start border-b border-slate-100 pb-4">
-                <div>
-                  <h2 className="font-bold text-slate-800 text-lg">Dr. {selectedDoctor.user?.name}</h2>
-                  <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mt-0.5">
-                    Application Details
-                  </span>
-                </div>
-                <button
-                  onClick={() => setSelectedDoctor(null)}
-                  className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg transition-all"
-                >
-                  <X size={16} />
-                </button>
-              </div>
+                        {/* Inline Rejection Note — NO modals! */}
+                        {isRejecting && (
+                          <form 
+                            onSubmit={(e) => handleRejectSubmit(e, doc._id)}
+                            className="border-2 border-swiss-red p-6 bg-swiss-gray-50 flex flex-col gap-4 animate-fade-in text-left"
+                          >
+                            <div>
+                              <label className="block text-[10px] font-black text-swiss-red uppercase tracking-widest mb-1.5">
+                                REQUIRED REASON FOR REJECTION (MINIMUM 15 CHARACTERS)
+                              </label>
+                              <textarea
+                                required
+                                placeholder="e.g. YOUR REGISTRATION FILE CANNOT BE OPENED. PLEASE UPLOAD A HIGH-RESOLUTION JPEG SHOWING THE ENTIRE CERTIFICATE."
+                                rows={3}
+                                value={rejectionReason}
+                                onChange={(e) => setRejectionReason(e.target.value)}
+                                className="w-full px-4 py-2.5 bg-swiss-white border-2 border-swiss-black rounded-none text-xs font-bold uppercase placeholder-swiss-gray-400 focus:outline-none focus:border-swiss-red transition-all"
+                              />
+                              <div className="flex justify-between items-center mt-2 text-[9px] font-bold">
+                                <span className="text-swiss-gray-400">PROVIDE CLEAR EXPLANATION</span>
+                                <span className={rejectionReason.trim().length < 15 ? 'text-swiss-red' : 'text-swiss-teal'}>
+                                  {rejectionReason.trim().length} CHARACTERS
+                                </span>
+                              </div>
+                            </div>
 
-              {/* Application Details Block */}
-              <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
-                <div>
-                  <span className="text-xs font-bold text-slate-400 block uppercase mb-1">
-                    Specializations
-                  </span>
-                  <div className="flex flex-wrap gap-1">
-                    {selectedDoctor.specialization.map((spec) => (
-                      <span
-                        key={spec}
-                        className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs font-medium"
-                      >
-                        {spec}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-xs font-bold text-slate-400 block uppercase mb-0.5">
-                    Clinic Details
-                  </span>
-                  <p className="font-semibold text-slate-800">{selectedDoctor.clinicName}</p>
-                  <p className="text-xs text-slate-500 mt-0.5 flex items-start gap-1">
-                    <MapPin size={12} className="shrink-0 mt-0.5 text-slate-400" />
-                    {selectedDoctor.clinicAddress}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 border-y border-slate-50 py-3">
-                  <div>
-                    <span className="text-xs font-bold text-slate-400 block uppercase">Fee</span>
-                    <span className="font-bold text-slate-800">₹{selectedDoctor.consultationFee}</span>
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-slate-400 block uppercase">Experience</span>
-                    <span className="font-bold text-slate-800">{selectedDoctor.experience} Yrs</span>
-                  </div>
-                </div>
-
-                {/* Uploaded Documents preview links */}
-                <div className="space-y-2.5">
-                  <span className="text-xs font-bold text-slate-400 block uppercase">
-                    Verification Documents
-                  </span>
-
-                  {/* Degree Doc */}
-                  <a
-                    href={selectedDoctor.degreeDocument}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between bg-slate-50 hover:bg-slate-100 border border-slate-200 p-3 rounded-xl transition-all group"
-                  >
-                    <div className="flex items-center gap-2">
-                      <FileText size={18} className="text-red-500 shrink-0" />
-                      <div>
-                        <span className="font-semibold text-slate-800 text-xs block">
-                          Degree Certificate
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium block">
-                          PDF/Image Document
-                        </span>
+                            <button
+                              type="submit"
+                              disabled={rejectionReason.trim().length < 15 || actionLoading}
+                              className="px-6 py-2 bg-swiss-red text-white text-[10px] font-black uppercase tracking-widest hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed select-none cursor-pointer self-start"
+                            >
+                              SUBMIT REJECTION →
+                            </button>
+                          </form>
+                        )}
                       </div>
                     </div>
-                    <ExternalLink size={14} className="text-slate-400 group-hover:text-primary transition-colors" />
-                  </a>
-
-                  {/* License Doc */}
-                  <a
-                    href={selectedDoctor.licenseDocument}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between bg-slate-50 hover:bg-slate-100 border border-slate-200 p-3 rounded-xl transition-all group"
-                  >
-                    <div className="flex items-center gap-2">
-                      <FileText size={18} className="text-red-500 shrink-0" />
-                      <div>
-                        <span className="font-semibold text-slate-800 text-xs block">
-                          Practice License
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium block">
-                          PDF/Image Document
-                        </span>
-                      </div>
-                    </div>
-                    <ExternalLink size={14} className="text-slate-400 group-hover:text-primary transition-colors" />
-                  </a>
+                  )}
                 </div>
-              </div>
-
-              {/* Action CTA Buttons */}
-              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
-                <button
-                  onClick={handleOpenRejectModal}
-                  disabled={isActionLoading}
-                  className="inline-flex items-center justify-center gap-1 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300 py-2.5 rounded-xl font-bold text-sm transition-all"
-                >
-                  <X size={16} /> Reject
-                </button>
-                <button
-                  onClick={() => handleApprove(selectedDoctor._id)}
-                  disabled={isActionLoading}
-                  className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md"
-                >
-                  <Check size={16} /> Approve
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-8 text-center text-slate-400 flex flex-col items-center justify-center min-h-[300px] leading-relaxed">
-              <Info size={32} className="mb-2 text-slate-300" />
-              <span className="font-semibold text-slate-500 text-sm">No Doctor Selected</span>
-              <span className="text-xs max-w-[200px] mt-1">
-                Select a doctor from the pending queue to inspect their qualifications and verification files.
-              </span>
-            </div>
-          )}
+              );
+            })}
+          </div>
         </div>
+      )}
+
+      {/* ─── 2. Main Directory Table ─── */}
+      <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+        <div className="p-6 border-b border-swiss-gray-200">
+          <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+            PLATFORM LEDGER
+          </span>
+          <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+            PRACTITIONER DIRECTORY
+          </h3>
+        </div>
+
+        {loadingDirectory ? (
+          <div className="p-12 text-center">
+            <span className="inline-block animate-spin mr-2">⏳</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-swiss-gray-400">RETRIEVING DIRECTORY DATA...</span>
+          </div>
+        ) : directory.length === 0 ? (
+          <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+            NO PRACTITIONERS MATCH FILTERS
+          </div>
+        ) : (
+          <Table>
+            <Table.Head>
+              <Table.Row>
+                <Table.Header>Doctor</Table.Header>
+                <Table.Header>Specialization</Table.Header>
+                <Table.Header>Status</Table.Header>
+                <Table.Header>Joined</Table.Header>
+                <Table.Header numeric={true}>Appointments</Table.Header>
+                <Table.Header numeric={true}>Earnings</Table.Header>
+                <Table.Header actions={true} className="w-[180px]">Actions</Table.Header>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {directory.map((doc) => {
+                const docName = doc.user?.name || 'Physiotherapist';
+                const createdDate = new Date(doc.createdAt).toLocaleDateString('en-IN', {
+                  day: 'numeric', month: 'short', year: 'numeric'
+                });
+                
+                let badgeVariant = 'pending';
+                if (doc.verificationStatus === 'verified') badgeVariant = 'verified';
+                if (doc.verificationStatus === 'suspended') badgeVariant = 'suspended';
+
+                return (
+                  <tr 
+                    key={doc._id}
+                    className="border-b border-swiss-gray-200 hover:bg-swiss-gray-50 transition-colors"
+                  >
+                    {/* Doctor with initial circle */}
+                    <td className="px-4 py-4 align-middle">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                          {docName[0]}
+                        </div>
+                        <div className="text-left">
+                          <span className="font-bold text-swiss-black uppercase tracking-wide text-xs block">
+                            Dr. {docName}
+                          </span>
+                          <span className="text-[10px] text-swiss-gray-400 font-mono block">
+                            {doc.user?.email}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Specialization */}
+                    <td className="px-4 py-4 align-middle font-bold text-swiss-gray-600 text-xs uppercase tracking-wide">
+                      {Array.isArray(doc.specialization) ? doc.specialization[0] : doc.specialization || 'GENERAL'}
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-4 py-4 align-middle">
+                      <Badge variant={badgeVariant} size="sm" />
+                    </td>
+
+                    {/* Joined */}
+                    <td className="px-4 py-4 align-middle text-swiss-gray-500 font-mono text-xs">
+                      {createdDate}
+                    </td>
+
+                    {/* Appointments count */}
+                    <td className="px-4 py-4 align-middle text-right font-bold text-swiss-black swiss-numeric">
+                      {doc.appointmentsCount || 0}
+                    </td>
+
+                    {/* Earnings right-aligned monospace */}
+                    <td className="px-4 py-4 align-middle text-right font-black text-swiss-black swiss-numeric">
+                      ₹{(doc.totalEarnings || 0).toLocaleString('en-IN')}
+                    </td>
+
+                    {/* Actions links: VIEW (text) and SUSPEND (red text link) */}
+                    <td className="px-4 py-4 align-middle text-right">
+                      <div className="flex items-center justify-end gap-4">
+                        <ActionLink 
+                          onClick={() => navigate(`/admin/doctors/${doc._id}`)}
+                          className="hover:underline"
+                        >
+                          VIEW
+                        </ActionLink>
+                        
+                        <ActionLink 
+                          onClick={() => handleToggleSuspend(doc)}
+                          destructive={doc.verificationStatus !== 'suspended'}
+                          className="hover:underline"
+                        >
+                          {doc.verificationStatus === 'suspended' ? 'RECONSIDER' : 'SUSPEND'}
+                        </ActionLink>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </Table.Body>
+          </Table>
+        )}
       </div>
 
-      {/* ─── Rejection Reason Modal ─────────────────────────────────────── */}
-      {isRejectModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl p-6 border border-slate-100 animate-slide-up">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-4">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="text-rose-500 animate-pulse" size={22} />
-                <h3 className="font-bold text-slate-800 text-lg">Reject Onboarding Application</h3>
-              </div>
-              <button
-                onClick={() => setIsRejectModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 bg-slate-50 p-1.5 rounded-lg"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <form onSubmit={handleRejectSubmit} className="mt-4 space-y-4">
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Provide constructive, actionable feedback explaining why this application is being rejected. The doctor will see this comment on their dashboard and can update their profile.
-              </p>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                  Detailed Rejection Explanation *
-                </label>
-                <textarea
-                  required
-                  placeholder="e.g. Your medical license document is blurry. Please re-upload a high-resolution scan of your license certificate showing the registration number clearly."
-                  rows={4}
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100 transition-all text-sm leading-relaxed"
-                />
-                <div className="flex justify-between items-center mt-1">
-                  <span className="text-[10px] text-slate-400">
-                    Minimum 15 characters required.
-                  </span>
-                  <span
-                    className={`text-xs font-bold ${
-                      rejectionReason.trim().length < 15 ? 'text-rose-500' : 'text-emerald-500'
-                    }`}
-                  >
-                    {rejectionReason.trim().length} chars
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsRejectModalOpen(false)}
-                  className="px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl font-bold text-sm transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={rejectionReason.trim().length < 15}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-sm transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Submit Rejection
-                </button>
-              </div>
-            </form>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
+          <span className="text-swiss-gray-400">
+            PAGE {page} OF {totalPages} · {directoryTotal} TOTAL DOCTORS
+          </span>
+          <div className="flex gap-4">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(p => p - 1)}
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+            >
+              ← PREV
+            </button>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(p => p + 1)}
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+            >
+              NEXT →
+            </button>
           </div>
         </div>
       )}

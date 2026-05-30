@@ -1,57 +1,59 @@
 import React from 'react';
+import Card from '../common/Card';
+import Skeleton from '../common/Skeleton';
 
-const colorMap = {
-  blue:   'border-l-blue-500',
-  green:  'border-l-green-500',
-  amber:  'border-l-amber-500',
-  purple: 'border-l-purple-500',
-  red:    'border-l-red-500',
-};
+const MetricCard = ({ title = '', value, subtitle, loading }) => {
+  const cleanTitle = title.toUpperCase().trim();
+  
+  // Conditional border signals
+  let borderClass = 'hover:border-swiss-black';
+  let titleColorClass = 'text-swiss-gray-400';
+  let valueColorClass = 'text-swiss-black';
 
-const bgMap = {
-  blue:   'bg-blue-500/10 text-blue-400',
-  green:  'bg-green-500/10 text-green-400',
-  amber:  'bg-amber-500/10 text-amber-400',
-  purple: 'bg-purple-500/10 text-purple-400',
-  red:    'bg-red-500/10 text-red-400',
-};
-
-const MetricCard = ({ title, value, subtitle, icon, color = 'blue', loading }) => {
-  const borderClass = colorMap[color] || colorMap.blue;
-  const iconBgClass = bgMap[color] || bgMap.blue;
+  if (cleanTitle === 'TOTAL REVENUE' || cleanTitle === 'PLATFORM COMMISSION' || cleanTitle === 'PLATFORM COMMISSION (10%)') {
+    borderClass = '!border-swiss-teal hover:!border-swiss-teal';
+    titleColorClass = 'text-swiss-teal';
+    valueColorClass = 'text-swiss-teal';
+  } else if (cleanTitle === 'PENDING VERIFICATION' || cleanTitle.includes('PENDING')) {
+    borderClass = '!border-swiss-amber hover:!border-swiss-amber';
+    titleColorClass = 'text-swiss-amber';
+    valueColorClass = 'text-swiss-amber';
+  }
 
   if (loading) {
     return (
-      <div className={`bg-slate-950 border border-slate-800 p-5 rounded-2xl shadow-lg border-l-4 ${borderClass} flex items-center justify-between`}>
-        <div className="space-y-2 flex-1">
-          <div className="h-3 w-24 bg-slate-800 rounded animate-pulse" />
-          <div className="h-7 w-20 bg-slate-800 rounded animate-pulse" />
-          <div className="h-2.5 w-32 bg-slate-800 rounded animate-pulse" />
-        </div>
-        <div className="h-12 w-12 bg-slate-800 rounded-xl animate-pulse ml-4" />
+      <div className="border-2 border-swiss-black bg-swiss-gray-100 p-6 flex flex-col justify-between h-36">
+        <Skeleton className="h-4 w-2/3 mb-3 bg-swiss-gray-250" />
+        <Skeleton className="h-8 w-1/2 mb-3 bg-swiss-gray-250" />
+        <div className="border-t border-swiss-gray-200 my-1" />
+        <Skeleton className="h-3 w-3/4 mt-2 bg-swiss-gray-250" />
       </div>
     );
   }
 
   return (
-    <div className={`bg-slate-950 border border-slate-800 p-5 rounded-2xl shadow-lg border-l-4 ${borderClass} flex items-center justify-between hover:border-opacity-100 transition-all`}>
-      <div className="text-left min-w-0">
-        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-          {title}
+    <Card
+      variant="metric"
+      className={`p-6 flex flex-col justify-between h-36 transition-all duration-fast ${borderClass}`}
+    >
+      <div className="text-left">
+        <span className={`text-[11px] font-bold uppercase tracking-widest block leading-none mb-2 ${titleColorClass}`}>
+          {cleanTitle}
         </span>
-        <span className="text-2xl font-extrabold text-slate-100 mt-1.5 block truncate">
+        <span className={`text-display-xs font-black tracking-tighter leading-none block ${valueColorClass}`}>
           {value}
         </span>
+      </div>
+      
+      <div>
+        <div className="border-t border-swiss-gray-200 my-1" />
         {subtitle && (
-          <span className="text-[11px] text-slate-500 font-medium mt-1 block">
+          <span className="text-[11px] text-swiss-gray-600 font-bold uppercase tracking-wider block mt-1.5 leading-none">
             {subtitle}
           </span>
         )}
       </div>
-      <div className={`p-3 rounded-xl shrink-0 ml-3 text-xl ${iconBgClass}`}>
-        {icon}
-      </div>
-    </div>
+    </Card>
   );
 };
 

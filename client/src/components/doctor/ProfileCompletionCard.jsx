@@ -1,54 +1,99 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { calculateProfileCompletion } from '../../utils/profileCompletion';
 
-const ProfileCompletionCard = ({ doctorProfile, user, slotCount }) => {
-  const profileWithSlots = { ...doctorProfile, hasSlots: slotCount > 0 };
-  const { percentage, missing, isComplete } = calculateProfileCompletion(profileWithSlots, user);
+const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
+  if (!doctorProfile) return null;
 
-  if (isComplete) return null; // Hide the card entirely when profile is 100% complete
+  // Let's calculate profile completion according to the specified weights in F8
+  // Key elements: bio (20%), profile photo (20%), fee (15%), specialization (15%), experience (10%), clinic details (10%), availability (10%)
+  const hasPhoto = !!(doctorProfile.profileImage || doctorProfile.user?.profileImage);
+  const hasBio = !!(doctorProfile.bio && doctorProfile.bio.trim().length >= 50);
+  const hasFee = !!(doctorProfile.consultationFee && doctorProfile.consultationFee > 0);
+  const hasSpecialization = !!(doctorProfile.specialization && doctorProfile.specialization.length > 0);
+  const hasExperience = !!(doctorProfile.experience && doctorProfile.experience > 0);
+  const hasClinic = !!(doctorProfile.clinicName && doctorProfile.clinicAddress);
+  const hasSlots = slotCount > 0;
+
+  const items = [
+    { key: 'photo', label: 'ADD PROFILE PHOTO', met: hasPhoto, weight: 20, link: '/doctor/profile' },
+    { key: 'bio', label: 'WRITE PROFESSIONAL BIO', met: hasBio, weight: 20, link: '/doctor/profile' },
+    { key: 'fee', label: 'SET CONSULTATION FEE', met: hasFee, weight: 15, link: '/doctor/profile' },
+    { key: 'spec', label: 'SET SPECIALIZATION', met: hasSpecialization, weight: 15, link: '/doctor/profile' },
+    { key: 'exp', label: 'ADD ACTIVE EXPERIENCE', met: hasExperience, weight: 10, link: '/doctor/profile' },
+    { key: 'clinic', label: 'ADD CLINIC DETAILS', met: hasClinic, weight: 10, link: '/doctor/profile' },
+    { key: 'slots', label: 'ADD AVAILABILITY SLOTS', met: hasSlots, weight: 10, link: '/doctor/availability' },
+  ];
+
+  const percentage = items.reduce((sum, item) => sum + (item.met ? item.weight : 0), 0);
+
+  if (percentage === 100) {
+    return null; // Disappears entirely when profile is 100% complete
+  }
 
   return (
-    <div className="bg-white rounded-xl border border-slate-100 p-6 shadow-sm mb-6 transition-all duration-300">
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h3 className="font-bold text-slate-800 text-base">Complete Your Profile</h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            A complete profile gets up to 3× more patient bookings.
-          </p>
+    <div className="w-full p-8 bg-swiss-gray-100 border-2 border-swiss-black rounded-none shadow-none text-left">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        {/* Left Side: 6 columns */}
+        <div className="flex flex-col gap-4">
+          <div>
+            <span className="text-display-md font-black text-swiss-black select-none leading-none block">
+              {percentage}%
+            </span>
+            <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block mt-2">
+              PROFILE COMPLETE
+            </span>
+          </div>
+
+          {/* Pure horizontal progress bar (solid black on gray-200 track) */}
+          <div className="w-full h-4 bg-swiss-gray-200 border-2 border-swiss-black rounded-none overflow-hidden relative mt-2">
+            <div
+              className="h-full bg-swiss-black transition-all duration-standard rounded-none"
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
         </div>
-        <span className="text-2xl font-extrabold text-primary select-none">{percentage}%</span>
-      </div>
 
-      {/* Progress Bar Container */}
-      <div className="w-full bg-slate-100 rounded-full h-2.5 mb-5 overflow-hidden">
-        <div
-          className="bg-primary h-2.5 rounded-full transition-all duration-700 ease-out"
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
-
-      {/* Missing Checklist */}
-      <div className="space-y-3">
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-          Remaining Actions:
-        </p>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {missing.map((item) => (
-            <li key={item.key}>
+        {/* Right Side: 6 columns (Missing checklist) */}
+        <div className="flex flex-col gap-3">
+          <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+            REMAINING ACTIONS
+          </span>
+          
+          <div className="flex flex-col border border-swiss-gray-200 bg-swiss-white divide-y divide-swiss-gray-200 rounded-none">
+            {items.map((item) => (
               <Link
+                key={item.key}
                 to={item.link}
-                className="flex items-center gap-2.5 p-2 rounded-lg text-sm text-slate-600 hover:text-primary hover:bg-slate-50 border border-slate-100/50 hover:border-primary/20 transition-all group"
+                className="flex items-center justify-between px-4 py-3 hover:bg-swiss-gray-50 transition-colors select-none"
               >
-                <span className="w-4 h-4 rounded-full border-2 border-slate-300 group-hover:border-primary flex-shrink-0 flex items-center justify-center transition-colors" />
-                <span className="truncate">{item.label}</span>
-                <span className="text-xs text-slate-400 font-semibold ml-auto flex-shrink-0 bg-slate-100 group-hover:bg-sky-50 group-hover:text-primary px-1.5 py-0.5 rounded transition-all">
-                  +{item.weight}%
-                </span>
+                <div className="flex items-center gap-3 min-w-0">
+                  {/* Square indicator */}
+                  <div
+                    className={`w-5 h-5 border border-swiss-black rounded-none flex items-center justify-center shrink-0 ${
+                      item.met ? 'bg-swiss-black' : 'bg-swiss-white'
+                    }`}
+                  >
+                    {item.met && <span className="text-swiss-white font-black text-[10px]">✓</span>}
+                  </div>
+                  
+                  <span
+                    className={`text-ui-sm font-bold truncate uppercase tracking-wider ${
+                      item.met ? 'text-swiss-gray-400 line-through' : 'text-swiss-black'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </div>
+
+                {!item.met && (
+                  <span className="text-[11px] font-black text-swiss-red tracking-wider shrink-0 select-none">
+                    +{item.weight}%
+                  </span>
+                )}
               </Link>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

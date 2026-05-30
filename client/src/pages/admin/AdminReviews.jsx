@@ -1,20 +1,20 @@
 import React from 'react';
 import ReviewsTable from '../../components/admin/ReviewsTable';
+import SectionHeader from '../../components/common/SectionHeader';
 
-/**
- * AdminReviews — dedicated admin page for review moderation.
- * Route: /admin/reviews
- */
 const AdminReviews = () => {
   return (
-    <div className="p-8 space-y-8 select-none">
+    <div className="space-y-8 select-none text-swiss-black bg-swiss-white">
+      {/* Page Title */}
+      <SectionHeader
+        title="REVIEWS"
+        subtitle="PATIENT REVIEWS DIRECTORY MODERATION, VERIFIED QUALITY CHECKS, AND VISIBILITY CONTROLS."
+      />
+      
+      {/* Reviews Moderation Table */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-100">Review Moderation</h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Manage platform reviews, toggle visibility, and monitor patient feedback quality.
-        </p>
+        <ReviewsTable />
       </div>
-      <ReviewsTable />
     </div>
   );
 };

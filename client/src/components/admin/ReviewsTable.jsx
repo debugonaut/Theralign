@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { Star, Eye, EyeOff } from 'lucide-react';
 import { getAllReviewsAdmin, toggleReviewVisibilityAPI } from '../../api/review.api';
+import Table, { ActionLink } from '../common/Table';
+import Badge from '../common/Badge';
 
-/**
- * ReviewsTable — Admin component to view all reviews and toggle visibility.
- * Embedded in AdminDashboard or accessible from the admin sidebar.
- */
 const ReviewsTable = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [toggling, setToggling] = useState(null); // reviewId being toggled
+  const [toggling, setToggling] = useState(null); // ID of toggling review
 
   const LIMIT = 10;
 
@@ -21,15 +18,13 @@ const ReviewsTable = () => {
     setLoading(true);
     try {
       const res = await getAllReviewsAdmin(page, LIMIT);
-      if (res.data?.data) {
-        setReviews(res.data.data.reviews || []);
-        setTotalPages(res.data.data.totalPages || 1);
-        setTotalCount(res.data.data.totalCount || 0);
-        setCurrentPage(res.data.data.currentPage || page);
-      }
+      const data = res.data?.data || res.data || {};
+      setReviews(data.reviews || []);
+      setTotalPages(data.totalPages || 1);
+      setTotalCount(data.totalCount || 0);
+      setCurrentPage(data.currentPage || page);
     } catch (err) {
-      console.error('Failed to load reviews:', err);
-      toast.error('Failed to load reviews.');
+      toast.error('Failed to load platform reviews.');
     } finally {
       setLoading(false);
     }
@@ -43,18 +38,17 @@ const ReviewsTable = () => {
     setToggling(reviewId);
     try {
       const res = await toggleReviewVisibilityAPI(reviewId);
-      if (res.data?.data?.review) {
-        const updatedReview = res.data.data.review;
-        // Update only the specific row in local state
-        setReviews((prev) =>
-          prev.map((r) => (r._id === reviewId ? { ...r, isVisible: updatedReview.isVisible } : r))
-        );
-        toast.success(
-          updatedReview.isVisible ? 'Review is now visible.' : 'Review hidden from public.'
-        );
-      }
+      const updated = res.data?.data?.review || res.data?.review || {};
+      
+      // Update locally in-place
+      setReviews((prev) =>
+        prev.map((r) => (r._id === reviewId ? { ...r, isVisible: updated.isVisible } : r))
+      );
+      toast.success(
+        updated.isVisible ? 'Review is now visible.' : 'Review hidden successfully.'
+      );
     } catch (err) {
-      toast.error('Failed to update review visibility.');
+      toast.error('Failed to toggle review visibility.');
     } finally {
       setToggling(null);
     }
@@ -64,164 +58,155 @@ const ReviewsTable = () => {
     fetchReviews(page);
   };
 
-  const truncate = (text, max = 80) =>
-    text && text.length > max ? text.slice(0, max) + '…' : text;
-
   return (
-    <div className="space-y-4">
-      {/* Section Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-            <Star size={18} className="text-amber-400" />
-            Platform Reviews
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {loading ? 'Loading...' : `${totalCount} total reviews (including hidden)`}
-          </p>
+    <div className="space-y-6">
+      {/* Table grid wrapper */}
+      <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+        {/* Table Header block */}
+        <div className="p-6 border-b border-swiss-gray-200">
+          <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+            PATIENT FEEDBACK AUDIT
+          </span>
+          <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+            REVIEWS MODERATION LEDGER
+          </h3>
         </div>
+
+        {loading ? (
+          <div className="p-12 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+            <span className="inline-block animate-spin mr-2">⏳</span> RETRIEVING REVIEWS LEDGER...
+          </div>
+        ) : reviews.length === 0 ? (
+          <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+            NO REVIEWS SUBMITTED YET.
+          </div>
+        ) : (
+          <Table>
+            <Table.Head>
+              <Table.Row>
+                <Table.Header>Patient</Table.Header>
+                <Table.Header>Doctor</Table.Header>
+                <Table.Header numeric={true} className="w-[100px]">Rating</Table.Header>
+                <Table.Header>Comment</Table.Header>
+                <Table.Header>Date</Table.Header>
+                <Table.Header>Visibility</Table.Header>
+                <Table.Header actions={true} className="w-[150px]">Actions</Table.Header>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {reviews.map((rev) => {
+                const patientName = rev.patient?.name || 'Anonymous';
+                const doctorName = rev.doctor?.user?.name || 'Practitioner';
+                const specialization = Array.isArray(rev.doctor?.specialization)
+                  ? rev.doctor.specialization[0]
+                  : rev.doctor?.specialization || 'GENERAL';
+
+                const reviewDate = new Date(rev.createdAt).toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                });
+
+                const truncatedComment = rev.comment && rev.comment.length > 90
+                  ? `${rev.comment.slice(0, 90)}...`
+                  : rev.comment || '—';
+
+                return (
+                  <Table.Row key={rev._id}>
+                    {/* Patient */}
+                    <Table.Cell>
+                      <div className="text-left">
+                        <span className="font-bold text-swiss-black uppercase tracking-wide text-xs block">
+                          {patientName}
+                        </span>
+                        <span className="text-[10px] text-swiss-gray-400 font-mono block">
+                          {rev.patient?.email || ''}
+                        </span>
+                      </div>
+                    </Table.Cell>
+
+                    {/* Doctor */}
+                    <Table.Cell>
+                      <div className="text-left">
+                        <span className="font-bold text-swiss-black uppercase tracking-wide text-xs block">
+                          Dr. {doctorName}
+                        </span>
+                        <span className="text-[10px] text-swiss-red font-bold block uppercase tracking-widest text-[9px] mt-0.5">
+                          {specialization.toUpperCase()}
+                        </span>
+                      </div>
+                    </Table.Cell>
+
+                    {/* Rating square */}
+                    <Table.Cell numeric={true}>
+                      <div className="flex justify-end">
+                        <div className="w-8 h-8 border-2 border-swiss-black bg-swiss-white flex items-center justify-center text-xs font-black text-swiss-black rounded-none">
+                          {rev.rating}
+                        </div>
+                      </div>
+                    </Table.Cell>
+
+                    {/* Comment with full text tooltip */}
+                    <Table.Cell className="text-swiss-gray-650 font-medium italic" title={rev.comment}>
+                      “{truncatedComment}”
+                    </Table.Cell>
+
+                    {/* Date */}
+                    <Table.Cell className="font-mono text-xs text-swiss-gray-500 whitespace-nowrap">
+                      {reviewDate}
+                    </Table.Cell>
+
+                    {/* Visibility */}
+                    <Table.Cell>
+                      {rev.isVisible ? (
+                        <Badge variant="paid" label="VISIBLE" size="sm" />
+                      ) : (
+                        <Badge variant="neutral" label="HIDDEN" size="sm" />
+                      )}
+                    </Table.Cell>
+
+                    {/* Action - HIDE red link or UNHIDE black link */}
+                    <Table.Cell actions={true}>
+                      <ActionLink
+                        onClick={() => handleToggle(rev._id)}
+                        disabled={toggling === rev._id}
+                        destructive={rev.isVisible}
+                        className="hover:underline"
+                      >
+                        {toggling === rev._id ? '...' : rev.isVisible ? 'HIDE' : 'UNHIDE'}
+                      </ActionLink>
+                    </Table.Cell>
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
+          </Table>
+        )}
       </div>
 
-      {loading ? (
-        <div className="animate-pulse space-y-3">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-12 bg-slate-800 rounded-xl" />
-          ))}
-        </div>
-      ) : reviews.length === 0 ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
-          <p className="text-slate-400 text-sm font-medium">No reviews submitted yet.</p>
-        </div>
-      ) : (
-        <>
-          {/* Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-800">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-slate-800/70 text-slate-400 uppercase tracking-wider text-[10px]">
-                  <th className="px-4 py-3 text-left font-bold">Patient</th>
-                  <th className="px-4 py-3 text-left font-bold">Doctor</th>
-                  <th className="px-4 py-3 text-left font-bold">Rating</th>
-                  <th className="px-4 py-3 text-left font-bold">Comment</th>
-                  <th className="px-4 py-3 text-left font-bold">Visibility</th>
-                  <th className="px-4 py-3 text-left font-bold">Date</th>
-                  <th className="px-4 py-3 text-left font-bold">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {reviews.map((review) => {
-                  const patientName = review.patient?.name || '—';
-                  const doctorName = review.doctor?.user?.name || '—';
-                  const specialization = Array.isArray(review.doctor?.specialization)
-                    ? review.doctor.specialization[0]
-                    : review.doctor?.specialization || '';
-
-                  const reviewDate = new Date(review.createdAt).toLocaleDateString('en-IN', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                  });
-
-                  return (
-                    <tr
-                      key={review._id}
-                      className="bg-slate-950 hover:bg-slate-900 transition-colors"
-                    >
-                      {/* Patient */}
-                      <td className="px-4 py-3">
-                        <p className="font-semibold text-slate-200">{patientName}</p>
-                        <p className="text-slate-500 text-[10px]">{review.patient?.email || ''}</p>
-                      </td>
-
-                      {/* Doctor */}
-                      <td className="px-4 py-3">
-                        <p className="font-semibold text-slate-200">Dr. {doctorName}</p>
-                        {specialization && (
-                          <p className="text-slate-500 text-[10px] truncate max-w-[120px]">
-                            {specialization}
-                          </p>
-                        )}
-                      </td>
-
-                      {/* Rating */}
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-0.5 text-base">
-                          {Array.from({ length: 5 }, (_, i) => (
-                            <span
-                              key={i}
-                              className={i < review.rating ? 'text-amber-400' : 'text-slate-600'}
-                            >
-                              {i < review.rating ? '★' : '☆'}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-
-                      {/* Comment */}
-                      <td className="px-4 py-3 max-w-[200px]">
-                        <p className="text-slate-400 italic">{truncate(review.comment)}</p>
-                      </td>
-
-                      {/* Visibility badge */}
-                      <td className="px-4 py-3">
-                        {review.isVisible ? (
-                          <span className="inline-flex items-center gap-1 bg-emerald-900/30 text-emerald-400 border border-emerald-700/40 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                            <Eye size={10} /> Visible
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 bg-rose-900/30 text-rose-400 border border-rose-700/40 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                            <EyeOff size={10} /> Hidden
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Date */}
-                      <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{reviewDate}</td>
-
-                      {/* Action */}
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => handleToggle(review._id)}
-                          disabled={toggling === review._id}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50 ${
-                            review.isVisible
-                              ? 'bg-rose-900/30 text-rose-400 hover:bg-rose-900/50 border border-rose-700/40'
-                              : 'bg-emerald-900/30 text-emerald-400 hover:bg-emerald-900/50 border border-emerald-700/40'
-                          }`}
-                        >
-                          {toggling === review._id ? '...' : review.isVisible ? 'Hide' : 'Unhide'}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
+          <span className="text-swiss-gray-400">
+            PAGE {currentPage} OF {totalPages} · {totalCount} REVIEWS
+          </span>
+          <div className="flex gap-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+            >
+              ← PREV
+            </button>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+            >
+              NEXT →
+            </button>
           </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage <= 1}
-                className="px-3 py-1.5 text-xs font-bold text-slate-400 border border-slate-700 rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                ← Prev
-              </button>
-              <span className="text-xs text-slate-500 font-medium">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage >= totalPages}
-                className="px-3 py-1.5 text-xs font-bold text-slate-400 border border-slate-700 rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                Next →
-              </button>
-            </div>
-          )}
-        </>
+        </div>
       )}
     </div>
   );

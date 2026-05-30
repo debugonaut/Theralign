@@ -44,6 +44,8 @@ const AdminUsers = lazy(() => import('../pages/admin/AdminUsers'));
 const AdminRevenue = lazy(() => import('../pages/admin/AdminRevenue'));
 const AdminReviews = lazy(() => import('../pages/admin/AdminReviews'));
 const AdminAITools = lazy(() => import('../pages/admin/AdminAITools'));
+const AdminAnalytics = lazy(() => import('../pages/admin/AdminAnalytics'));
+const AdminDoctorDetail = lazy(() => import('../pages/admin/AdminDoctorDetail'));
 
 const DASHBOARD_ROUTES = {
   patient: '/patient/dashboard',
@@ -133,11 +135,13 @@ const AppRoutes = () => {
         >
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/doctors" element={<AdminDoctorVerification />} />
+          <Route path="/admin/doctors/:id" element={<AdminDoctorDetail />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/revenue" element={<AdminRevenue />} />
           <Route path="/admin/reviews" element={<AdminReviews />} />
           <Route path="/admin/ai-tools" element={<AdminAITools />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
         </Route>
 
         {/* ─── Catch-All 404 ──────────────────────────────────────────────── */}

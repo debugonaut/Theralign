@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { IndianRupee, Stethoscope, TrendingUp, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getDoctorAppointments } from '../../api/appointment.api';
+import SectionHeader from '../../components/common/SectionHeader';
+import Badge from '../../components/common/Badge';
+import EmptyState from '../../components/common/EmptyState';
 
 const DoctorEarnings = () => {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10;
 
   useEffect(() => {
+    document.title = 'EARNINGS — KINETIQ';
     const fetchData = async () => {
       try {
         const res = await getDoctorAppointments();
-        const all = res.data?.appointments || res.appointments || [];
-        // Only completed + paid appointments matter for earnings
+        const all = res.data?.appointments || res.data || res.appointments || [];
+        // Only completed + paid appointments reflect in earnings
         const paid = all.filter((a) => a.status === 'completed' && a.paymentStatus === 'paid');
         setAppointments(paid);
-      } catch {
-        toast.error('Failed to load earnings data');
+      } catch (err) {
+        console.error(err);
+        toast.error('FAILED TO FETCH EARNINGS RECORDS.');
       } finally {
         setLoading(false);
       }
@@ -24,166 +32,280 @@ const DoctorEarnings = () => {
     fetchData();
   }, []);
 
-  // Top-level metrics
+  // Basic stats
   const totalEarnings = appointments.reduce((sum, a) => sum + (a.doctorEarnings || 0), 0);
   const totalSessions = appointments.length;
   const avgPerSession = totalSessions > 0 ? totalEarnings / totalSessions : 0;
 
-  // Group by month — YYYY-MM
+  // Group by Month — YYYY-MM
   const monthlyMap = {};
   for (const appt of appointments) {
     const month = appt.date?.slice(0, 7) || 'Unknown';
-    if (!monthlyMap[month]) monthlyMap[month] = { sessions: 0, grossFee: 0, commission: 0, earnings: 0 };
+    if (!monthlyMap[month]) {
+      monthlyMap[month] = { sessions: 0, grossFee: 0, commission: 0, earnings: 0 };
+    }
     monthlyMap[month].sessions++;
     monthlyMap[month].grossFee += appt.consultationFee || 0;
     monthlyMap[month].commission += appt.platformCommission || 0;
     monthlyMap[month].earnings += appt.doctorEarnings || 0;
   }
+
   const monthlyBreakdown = Object.entries(monthlyMap)
     .sort(([a], [b]) => b.localeCompare(a))
     .map(([month, data]) => ({ month, ...data }));
 
-  // Recent 10 paid sessions
-  const recentPayments = [...appointments]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 10);
+  // Month-over-month calculation for Current Month vs Previous Month
+  const currentMonthKey = new Date().toISOString().slice(0, 7); // YYYY-MM
+  
+  // Previous month key
+  const prevDate = new Date();
+  prevDate.setMonth(prevDate.getMonth() - 1);
+  const prevMonthKey = prevDate.toISOString().slice(0, 7);
+
+  const currentMonthEarnings = monthlyMap[currentMonthKey]?.earnings || 0;
+  const prevMonthEarnings = monthlyMap[prevMonthKey]?.earnings || 0;
+  const diffEarnings = currentMonthEarnings - prevMonthEarnings;
+  const isPositiveDiff = diffEarnings >= 0;
+
+  // Pagination for Recent Transactions
+  const sortedPayments = [...appointments].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const totalPages = Math.ceil(sortedPayments.length / limit) || 1;
+  const startIndex = (currentPage - 1) * limit;
+  const paginatedPayments = sortedPayments.slice(startIndex, startIndex + limit);
 
   const formatMonth = (m) => {
     if (!m || m === 'Unknown') return m;
     const [year, month] = m.split('-');
     const date = new Date(year, parseInt(month) - 1);
-    return date.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+    return date.toLocaleString('en-IN', { month: 'long', year: 'numeric' }).toUpperCase();
   };
 
-  const metricCards = [
-    {
-      label: 'Total Earnings',
-      value: `₹${totalEarnings.toLocaleString('en-IN')}`,
-      icon: <IndianRupee size={20} />,
-      bg: 'bg-emerald-50 text-emerald-600',
-    },
-    {
-      label: 'Total Sessions',
-      value: totalSessions,
-      icon: <Stethoscope size={20} />,
-      bg: 'bg-blue-50 text-blue-600',
-    },
-    {
-      label: 'Avg per Session',
-      value: `₹${Math.round(avgPerSession).toLocaleString('en-IN')}`,
-      icon: <TrendingUp size={20} />,
-      bg: 'bg-purple-50 text-purple-600',
-    },
-  ];
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-        <p className="mt-4 text-slate-500 font-medium">Loading earnings data...</p>
-      </div>
-    );
-  }
+  const formatTransactionDate = (dateStr) => {
+    try {
+      return new Date(dateStr + 'T00:00:00')
+        .toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+        .toUpperCase();
+    } catch (e) {
+      return dateStr;
+    }
+  };
 
   return (
-    <div className="space-y-8 p-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-          <IndianRupee className="text-emerald-600" size={26} />
-          Earnings Dashboard
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Your financial performance from completed consultations.
-        </p>
-      </div>
+    <div className="flex flex-col gap-10 select-none text-left bg-swiss-white">
+      
+      {/* ── Page Header Section ── */}
+      <SectionHeader title="EARNINGS" size="lg" ruled={true} className="mb-0" />
 
-      {/* Top Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {metricCards.map((m) => (
-          <div key={m.label} className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{m.label}</span>
-              <span className="text-2xl font-extrabold text-slate-800 mt-1.5 block">{m.value}</span>
+      {appointments.length === 0 && !loading ? (
+        <div className="py-12 bg-swiss-white select-none">
+          <EmptyState
+            title="NO EARNINGS YET"
+            description="Complete your first appointments to see your earnings here."
+            action={() => navigate('/doctor/availability')}
+            actionLabel="MANAGE AVAILABILITY →"
+          />
+        </div>
+      ) : (
+        <>
+          {/* ── Top Metrics Row (3x1 Grid) ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Total Earnings */}
+            <div className="p-6 bg-swiss-white border-2 border-swiss-black rounded-none transition-all duration-fast hover:border-4 flex flex-col justify-between h-32 select-none">
+              <div>
+                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+                  TOTAL EARNINGS
+                </span>
+                <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-1">
+                  LIFETIME EARNINGS
+                </span>
+              </div>
+              <div className="flex items-baseline select-none">
+                <span className="text-ui-xl text-swiss-black font-medium mr-1 select-none">₹</span>
+                <span className="text-display-xs font-black text-swiss-black select-none leading-none block">
+                  {totalEarnings.toLocaleString('en-IN')}
+                </span>
+              </div>
             </div>
-            <div className={`p-3 rounded-xl ${m.bg}`}>{m.icon}</div>
-          </div>
-        ))}
-      </div>
 
-      {/* Monthly Breakdown */}
-      {monthlyBreakdown.length > 0 && (
-        <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
-            <h2 className="font-bold text-slate-800">Monthly Breakdown</h2>
+            {/* This Month's Earnings (With MoM green/amber comparison text) */}
+            <div className="p-6 bg-swiss-white border-2 border-swiss-black rounded-none transition-all duration-fast hover:border-4 flex flex-col justify-between h-32 select-none">
+              <div>
+                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+                  THIS MONTH
+                </span>
+                {diffEarnings !== 0 ? (
+                  isPositiveDiff ? (
+                    <span className="text-[10px] text-swiss-teal font-black uppercase tracking-wider block mt-1 select-none">
+                      +₹{diffEarnings.toLocaleString('en-IN')} FROM LAST MONTH
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-swiss-amber font-black uppercase tracking-wider block mt-1 select-none">
+                      ↓₹{Math.abs(diffEarnings).toLocaleString('en-IN')} FROM LAST MONTH
+                    </span>
+                  )
+                ) : (
+                  <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-1">
+                    CURRENT MONTH
+                  </span>
+                )}
+              </div>
+              <div className="flex items-baseline select-none">
+                <span className="text-ui-xl text-swiss-black font-medium mr-1 select-none">₹</span>
+                <span className="text-display-xs font-black text-swiss-black select-none leading-none block">
+                  {currentMonthEarnings.toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+
+            {/* Average Per Session */}
+            <div className="p-6 bg-swiss-white border-2 border-swiss-black rounded-none transition-all duration-fast hover:border-4 flex flex-col justify-between h-32 select-none">
+              <div>
+                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+                  AVERAGE PER SESSION
+                </span>
+                <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-1">
+                  PER SESSION AVG
+                </span>
+              </div>
+              <div className="flex items-baseline select-none">
+                <span className="text-ui-xl text-swiss-black font-medium mr-1 select-none">₹</span>
+                <span className="text-display-xs font-black text-swiss-black select-none leading-none block">
+                  {Math.round(avgPerSession).toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-slate-100 text-slate-400 text-xs uppercase tracking-wider bg-slate-50">
-                  <th className="px-6 py-3.5">Month</th>
-                  <th className="px-6 py-3.5 text-right">Sessions</th>
-                  <th className="px-6 py-3.5 text-right">Gross Fee</th>
-                  <th className="px-6 py-3.5 text-right">Commission (10%)</th>
-                  <th className="px-6 py-3.5 text-right">Your Earnings</th>
-                </tr>
-              </thead>
-              <tbody>
-                {monthlyBreakdown.map((row) => (
-                  <tr key={row.month} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-slate-700">{formatMonth(row.month)}</td>
-                    <td className="px-6 py-4 text-right text-slate-600">{row.sessions}</td>
-                    <td className="px-6 py-4 text-right text-slate-600">₹{row.grossFee.toLocaleString('en-IN')}</td>
-                    <td className="px-6 py-4 text-right text-rose-500">₹{row.commission.toLocaleString('en-IN')}</td>
-                    <td className="px-6 py-4 text-right text-emerald-600 font-bold">₹{row.earnings.toLocaleString('en-IN')}</td>
+
+          {/* ── Monthly Breakdown Section ── */}
+          <div className="flex flex-col gap-6 select-none">
+            <SectionHeader title="MONTHLY BREAKDOWN" size="sm" ruled={true} className="mb-0" />
+            
+            <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none bg-swiss-white select-none">
+              <table className="w-full text-left border-collapse select-none">
+                <thead>
+                  <tr className="border-b-4 border-swiss-black bg-swiss-white">
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">MONTH</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-center">SESSIONS</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-right">GROSS FEE</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-right">PLATFORM FEE (10%)</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-ui-sm tracking-widest text-right">YOUR EARNINGS</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-swiss-gray-200">
+                  {monthlyBreakdown.map((row) => {
+                    const isCurrentMonthRow = row.month === currentMonthKey;
+                    return (
+                      <tr
+                        key={row.month}
+                        className={`h-14 hover:bg-swiss-gray-50 transition-colors duration-fast select-none
+                          ${isCurrentMonthRow ? 'border-l-4 border-swiss-black' : ''}
+                        `}
+                      >
+                        <td className="px-6 py-3 text-ui-sm font-black text-swiss-black uppercase">
+                          {formatMonth(row.month)}
+                        </td>
+                        <td className="px-6 py-3 text-center text-ui-md font-bold text-swiss-black">
+                          {row.sessions}
+                        </td>
+                        <td className="px-6 py-3 text-right text-ui-md font-bold text-swiss-black">
+                          ₹{row.grossFee.toLocaleString('en-IN')}
+                        </td>
+                        <td className="px-6 py-3 text-right text-ui-md font-bold text-swiss-black">
+                          ₹{row.commission.toLocaleString('en-IN')}
+                        </td>
+                        <td className="px-6 py-3 text-right text-ui-md font-black text-swiss-black">
+                          ₹{row.earnings.toLocaleString('en-IN')}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* Recent Payments */}
-      {recentPayments.length > 0 && (
-        <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
-            <h2 className="font-bold text-slate-800">Recent Sessions</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-slate-100 text-slate-400 text-xs uppercase tracking-wider bg-slate-50">
-                  <th className="px-6 py-3.5">Date</th>
-                  <th className="px-6 py-3.5">Patient</th>
-                  <th className="px-6 py-3.5 text-right">Fee</th>
-                  <th className="px-6 py-3.5 text-right">Your Earnings</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentPayments.map((appt) => (
-                  <tr key={appt._id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4 text-slate-600">{appt.date}</td>
-                    <td className="px-6 py-4 text-slate-700 font-medium">
-                      {/* Show first name only for privacy */}
-                      {appt.patient?.name?.split(' ')[0] || 'Patient'}
-                    </td>
-                    <td className="px-6 py-4 text-right text-slate-600">₹{(appt.consultationFee || 0).toLocaleString('en-IN')}</td>
-                    <td className="px-6 py-4 text-right text-emerald-600 font-bold">₹{(appt.doctorEarnings || 0).toLocaleString('en-IN')}</td>
+          {/* ── Recent Transactions Section ── */}
+          <div className="flex flex-col gap-6 select-none">
+            <SectionHeader title="RECENT TRANSACTIONS" size="sm" ruled={true} className="mb-0" />
+            
+            <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none bg-swiss-white select-none">
+              <table className="w-full text-left border-collapse select-none">
+                <thead>
+                  <tr className="border-b-4 border-swiss-black bg-swiss-white">
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">DATE</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">PATIENT</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-right">SESSION FEE</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-right">PLATFORM FEE</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-right">YOUR EARNING</th>
+                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">STATUS</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-swiss-gray-200">
+                  {paginatedPayments.map((appt) => {
+                    const patientName = appt.patient?.name || 'Patient';
+                    const firstName = patientName.split(' ')[0];
+                    const lastName = patientName.split(' ')[1] || '';
+                    const initial = lastName ? ` ${lastName[0].toUpperCase()}.` : '';
+                    const displayName = `${firstName}${initial}`;
+
+                    return (
+                      <tr key={appt._id} className="h-14 hover:bg-swiss-gray-50 transition-colors duration-fast select-none">
+                        <td className="px-6 py-3 text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+                          {formatTransactionDate(appt.date)}
+                        </td>
+                        <td className="px-6 py-3 text-ui-sm font-black text-swiss-black uppercase">
+                          {displayName.toUpperCase()}
+                        </td>
+                        <td className="px-6 py-3 text-right text-ui-md font-bold text-swiss-black">
+                          ₹{(appt.consultationFee || 0).toLocaleString('en-IN')}
+                        </td>
+                        <td className="px-6 py-3 text-right text-ui-sm font-bold text-swiss-gray-400">
+                          ₹{(appt.platformCommission || 0).toLocaleString('en-IN')}
+                        </td>
+                        <td className="px-6 py-3 text-right text-ui-md font-black text-swiss-black">
+                          ₹{(appt.doctorEarnings || 0).toLocaleString('en-IN')}
+                        </td>
+                        <td className="px-6 py-3">
+                          <Badge variant="paid" label="PAID" />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination footer */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between border border-swiss-black p-4 bg-swiss-white rounded-none select-none">
+                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                  PAGE {currentPage} OF {totalPages} ({sortedPayments.length} SESSIONS)
+                </span>
+                
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    className="h-10 px-4 border-2 border-swiss-black text-swiss-black hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs uppercase tracking-widest transition-colors select-none rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    ← PREVIOUS
+                  </button>
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    className="h-10 px-4 border-2 border-swiss-black text-swiss-black hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs uppercase tracking-widest transition-colors select-none rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    NEXT →
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        </>
       )}
 
-      {appointments.length === 0 && (
-        <div className="bg-white border border-slate-100 rounded-2xl p-12 text-center shadow-sm">
-          <Calendar size={40} className="mx-auto text-slate-300 mb-3" />
-          <h3 className="font-bold text-slate-700">No Earnings Yet</h3>
-          <p className="text-slate-400 text-sm mt-1">Complete appointments will appear here once payments are processed.</p>
-        </div>
-      )}
     </div>
   );
 };

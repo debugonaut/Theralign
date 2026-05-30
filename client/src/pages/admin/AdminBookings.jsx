@@ -1,15 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { getAllAppointments } from '../../api/admin.api';
-import PageHeader from '../../components/admin/PageHeader';
-
-const STATUS_COLORS = {
-  confirmed:  'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  completed:  'bg-green-500/10 text-green-400 border-green-500/20',
-  cancelled:  'bg-red-500/10 text-red-400 border-red-500/20',
-  pending:    'bg-amber-500/10 text-amber-400 border-amber-500/20',
-};
+import SectionHeader from '../../components/common/SectionHeader';
+import Table from '../../components/common/Table';
+import Badge from '../../components/common/Badge';
 
 const AdminBookings = () => {
   const [appointments, setAppointments] = useState([]);
@@ -20,20 +15,19 @@ const AdminBookings = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [expandedRow, setExpandedRow] = useState(null);
 
-  // Summary totals from current page
+  // Summary aggregates for current page
   const [pageTotals, setPageTotals] = useState({ fees: 0, commission: 0 });
 
   const LIMIT = 10;
 
   const fetchAppointments = useCallback(async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const res = await getAllAppointments(page, LIMIT);
-      // admin.api.js returns response.data (the response body: {success, data: {appointments, total, totalPages}})
-      const d = res.data || res;
+      const d = res.data || res || {};
       const appts = d.appointments || [];
 
-      // Filter by status if set (client-side on top of API)
+      // Client-side status filtering matching selection
       const filtered = statusFilter
         ? appts.filter((a) => a.status === statusFilter)
         : appts;
@@ -46,7 +40,7 @@ const AdminBookings = () => {
       const comm = filtered.reduce((s, a) => s + (a.platformCommission || 0), 0);
       setPageTotals({ fees, commission: comm });
     } catch {
-      toast.error('Failed to load appointments');
+      toast.error('Failed to load appointments registry');
     } finally {
       setLoading(false);
     }
@@ -57,30 +51,31 @@ const AdminBookings = () => {
   }, [fetchAppointments]);
 
   const STATUS_TABS = [
-    { label: 'All', value: '' },
-    { label: 'Pending', value: 'pending' },
-    { label: 'Confirmed', value: 'confirmed' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'ALL BOOKINGS', value: '' },
+    { label: 'PENDING', value: 'pending' },
+    { label: 'CONFIRMED', value: 'confirmed' },
+    { label: 'COMPLETED', value: 'completed' },
+    { label: 'CANCELLED', value: 'cancelled' },
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <PageHeader
-        title="Appointment Management"
-        subtitle={`${total} total appointments on the platform`}
+    <div className="space-y-8 select-none text-swiss-black bg-swiss-white">
+      {/* Page Title */}
+      <SectionHeader
+        title="APPOINTMENTS"
+        subtitle="PLATFORM TRANSACTION SCHEDULER, REAL-TIME STATUS AUDITS, AND SESSION RECORDS."
       />
 
-      {/* Status filter tabs */}
-      <div className="flex gap-2 flex-wrap">
+      {/* Filter bar - Segmented status controls */}
+      <div className="flex border-2 border-swiss-black self-start inline-flex">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.value}
             onClick={() => { setStatusFilter(tab.value); setPage(1); }}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-r-2 last:border-r-0 border-swiss-black cursor-pointer transition-colors duration-fast ${
               statusFilter === tab.value
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+                ? 'bg-swiss-black text-swiss-white'
+                : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
             }`}
           >
             {tab.label}
@@ -88,102 +83,126 @@ const AdminBookings = () => {
         ))}
       </div>
 
-      {/* Table */}
-      <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden">
+      {/* Bookings table */}
+      <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
         {loading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+          <div className="p-12 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+            <span className="inline-block animate-spin mr-2">⏳</span> RETRIEVING SCHEDULER ENTRIES...
           </div>
         ) : appointments.length === 0 ? (
-          <div className="text-center py-16 text-slate-500 text-sm">
-            No appointments found for this filter.
+          <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+            NO SCHEDULER RECORDS MATCH FILTERS
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-slate-800 text-slate-500 text-xs uppercase tracking-wider">
-                  <th className="px-5 py-3.5">#</th>
-                  <th className="px-5 py-3.5">Patient</th>
-                  <th className="px-5 py-3.5">Doctor</th>
-                  <th className="px-5 py-3.5">Date</th>
-                  <th className="px-5 py-3.5 text-right">Fee</th>
-                  <th className="px-5 py-3.5 text-right hidden md:table-cell">Commission</th>
-                  <th className="px-5 py-3.5">Payment</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5" />
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((appt, i) => (
+          <Table>
+            <Table.Head>
+              <Table.Row>
+                <Table.Header className="w-[60px]">#</Table.Header>
+                <Table.Header>Patient</Table.Header>
+                <Table.Header>Doctor</Table.Header>
+                <Table.Header>Scheduled Date</Table.Header>
+                <Table.Header numeric={true}>Fee</Table.Header>
+                <Table.Header numeric={true}>Commission</Table.Header>
+                <Table.Header>Payment</Table.Header>
+                <Table.Header>Status</Table.Header>
+                <Table.Header className="w-[60px]" />
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {appointments.map((appt, i) => {
+                const isExpanded = expandedRow === appt._id;
+                const feeVal = appt.consultationFee || 0;
+                const commVal = appt.platformCommission || 0;
+
+                let paymentBadgeVariant = appt.paymentStatus === 'paid' ? 'paid' : 'pending';
+                let statusBadgeVariant = 'pending';
+                if (appt.status === 'confirmed') statusBadgeVariant = 'confirmed';
+                if (appt.status === 'completed') statusBadgeVariant = 'completed';
+                if (appt.status === 'cancelled') statusBadgeVariant = 'cancelled';
+
+                return (
                   <React.Fragment key={appt._id}>
                     <tr
-                      className="border-b border-slate-800/50 hover:bg-slate-900/50 transition-colors cursor-pointer"
-                      onClick={() => setExpandedRow(expandedRow === appt._id ? null : appt._id)}
+                      className={`border-b border-swiss-gray-200 hover:bg-swiss-gray-50 transition-colors cursor-pointer ${
+                        isExpanded ? 'bg-swiss-gray-100' : ''
+                      }`}
+                      onClick={() => setExpandedRow(isExpanded ? null : appt._id)}
                     >
-                      <td className="px-5 py-4 text-slate-500 text-xs">
+                      {/* Row index */}
+                      <td className="px-4 py-4 align-middle text-swiss-gray-500 font-mono text-xs">
                         {(page - 1) * LIMIT + i + 1}
                       </td>
-                      <td className="px-5 py-4 text-slate-200 font-medium">
-                        {appt.patient?.name || '—'}
-                      </td>
-                      <td className="px-5 py-4 text-slate-300">
-                        {appt.doctor?.user?.name ? `Dr. ${appt.doctor.user.name}` : '—'}
-                      </td>
-                      <td className="px-5 py-4 text-slate-400 text-xs">
-                        {appt.date} · {appt.startTime}
-                      </td>
-                      <td className="px-5 py-4 text-right text-slate-200 font-semibold">
-                        ₹{(appt.consultationFee || 0).toLocaleString('en-IN')}
-                      </td>
-                      <td className="px-5 py-4 text-right text-slate-400 hidden md:table-cell text-xs">
-                        ₹{(appt.platformCommission || 0).toLocaleString('en-IN')}
-                      </td>
-                      <td className="px-5 py-4">
-                        {appt.paymentStatus === 'paid' ? (
-                          <span className="text-xs font-semibold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
-                            Paid
-                          </span>
-                        ) : (
-                          <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
-                            Unpaid
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={`text-xs font-semibold capitalize px-2 py-0.5 rounded-full border ${STATUS_COLORS[appt.status] || 'bg-slate-800 text-slate-400'}`}>
-                          {appt.status}
+
+                      {/* Patient */}
+                      <td className="px-4 py-4 align-middle">
+                        <span className="font-bold text-swiss-black uppercase tracking-wide text-xs">
+                          {appt.patient?.name || 'Patient Deleted'}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-slate-500">
-                        {expandedRow === appt._id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+
+                      {/* Doctor */}
+                      <td className="px-4 py-4 align-middle font-bold text-swiss-black uppercase tracking-wide text-xs">
+                        Dr. {appt.doctor?.user?.name || 'Physio Deleted'}
+                      </td>
+
+                      {/* Scheduled Date */}
+                      <td className="px-4 py-4 align-middle font-mono text-xs text-swiss-gray-650">
+                        {appt.date} · {appt.startTime}
+                      </td>
+
+                      {/* Fee */}
+                      <td className="px-4 py-4 align-middle text-right font-bold text-swiss-black swiss-numeric">
+                        ₹{feeVal.toLocaleString('en-IN')}
+                      </td>
+
+                      {/* Commission */}
+                      <td className="px-4 py-4 align-middle text-right font-bold text-swiss-gray-500 swiss-numeric">
+                        ₹{commVal.toLocaleString('en-IN')}
+                      </td>
+
+                      {/* Payment Status */}
+                      <td className="px-4 py-4 align-middle">
+                        <Badge variant={paymentBadgeVariant} size="sm" />
+                      </td>
+
+                      {/* Booking Status */}
+                      <td className="px-4 py-4 align-middle">
+                        <Badge variant={statusBadgeVariant} size="sm" />
+                      </td>
+
+                      {/* Collapse indicator */}
+                      <td className="px-4 py-4 align-middle text-swiss-gray-400">
+                        {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </td>
                     </tr>
 
-                    {/* Expanded row */}
-                    {expandedRow === appt._id && (
-                      <tr className="bg-slate-900/60 border-b border-slate-800">
-                        <td colSpan={9} className="px-8 py-4">
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    {/* Collapsible Details Drawer */}
+                    {isExpanded && (
+                      <tr className="bg-swiss-gray-50 border-b border-swiss-black">
+                        <td colSpan={9} className="px-8 py-6 text-left">
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs">
                             <div>
-                              <span className="text-slate-500 uppercase font-bold block mb-1">Patient Email</span>
-                              <span className="text-slate-300">{appt.patient?.email || '—'}</span>
+                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">PATIENT EMAIL</span>
+                              <span className="text-swiss-black font-bold uppercase">{appt.patient?.email || '—'}</span>
                             </div>
+                            
                             <div>
-                              <span className="text-slate-500 uppercase font-bold block mb-1">Clinic</span>
-                              <span className="text-slate-300">{appt.doctor?.clinicName || '—'}</span>
+                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">CLINIC FACILITY</span>
+                              <span className="text-swiss-black font-bold uppercase">{appt.doctor?.clinicName || '—'}</span>
                             </div>
+
                             <div>
-                              <span className="text-slate-500 uppercase font-bold block mb-1">Patient Notes</span>
-                              <span className="text-slate-300">{appt.patientNotes || 'None'}</span>
+                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">PATIENT NOTES</span>
+                              <span className="text-swiss-gray-600 font-bold uppercase italic">“{appt.patientNotes || 'NO ADDITIONAL NOTES'}”</span>
                             </div>
+
                             <div>
-                              <span className="text-slate-500 uppercase font-bold block mb-1">
-                                {appt.status === 'cancelled' ? 'Cancellation Reason' : 'Payment ID'}
+                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">
+                                {appt.status === 'cancelled' ? 'CANCELLATION REASON' : 'TRANSACTION ID'}
                               </span>
-                              <span className="text-slate-300 font-mono text-[10px]">
+                              <span className="text-swiss-black font-bold uppercase font-mono text-[10px]">
                                 {appt.status === 'cancelled'
-                                  ? (appt.cancellationReason || 'Not provided')
+                                  ? (appt.cancellationReason || 'NOT REGISTERED')
                                   : (appt.paymentId || '—')}
                               </span>
                             </div>
@@ -192,19 +211,19 @@ const AdminBookings = () => {
                       </tr>
                     )}
                   </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                );
+              })}
+            </Table.Body>
+          </Table>
         )}
 
-        {/* Summary row */}
+        {/* Totals aggregate row */}
         {!loading && appointments.length > 0 && (
-          <div className="px-5 py-3 border-t border-slate-800 bg-slate-900/50 flex items-center justify-between text-xs text-slate-500">
-            <span>Showing {appointments.length} appointments</span>
-            <div className="flex gap-4">
-              <span>Total Fees: <span className="text-slate-300 font-semibold">₹{pageTotals.fees.toLocaleString('en-IN')}</span></span>
-              <span>Commission: <span className="text-slate-300 font-semibold">₹{pageTotals.commission.toLocaleString('en-IN')}</span></span>
+          <div className="px-6 py-4 border-t-2 border-swiss-black bg-swiss-gray-50 flex items-center justify-between text-xs font-bold uppercase tracking-wider">
+            <span className="text-swiss-gray-400">INDEXED {appointments.length} APPOINTMENTS SESSIONS</span>
+            <div className="flex gap-6 text-swiss-black">
+              <span>TOTAL FEES: <span className="text-swiss-black font-black swiss-numeric">₹{pageTotals.fees.toLocaleString('en-IN')}</span></span>
+              <span>COMMISSIONS (10%): <span className="text-swiss-teal font-black swiss-numeric">₹{pageTotals.commission.toLocaleString('en-IN')}</span></span>
             </div>
           </div>
         )}
@@ -212,22 +231,22 @@ const AdminBookings = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-500">Page {page} of {totalPages}</span>
-          <div className="flex gap-2">
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
+          <span className="text-swiss-gray-400">PAGE {page} OF {totalPages}</span>
+          <div className="flex gap-4">
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
             >
-              <ChevronLeft size={14} /> Prev
+              ← PREV
             </button>
             <button
               disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
             >
-              Next <ChevronRight size={14} />
+              NEXT →
             </button>
           </div>
         </div>

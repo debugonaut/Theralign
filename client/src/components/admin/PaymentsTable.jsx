@@ -1,39 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
-import { IndianRupee, ChevronLeft, ChevronRight, AlertCircle, ShieldCheck } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { getAllPayments } from '../../api/admin.api';
+import Table from '../common/Table';
+import Badge from '../common/Badge';
 
-const PaymentsTable = ({ limit = 10, onPaymentsFetched }) => {
-  const [payments, setPayments] = useState([]);
+const PaymentsTable = ({ onRevenueAggregates }) => {
+  const [allPayments, setAllPayments] = useState([]);
+  const [filteredPayments, setFilteredPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
+  
+  // Filter states
+  const [search, setSearch] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  const fetchPayments = async (page) => {
-    setLoading(true);
+  const [page, setPage] = useState(1);
+  const LIMIT = 10;
+
+  const fetchPayments = async () => {
     try {
-      const res = await getAllPayments(page, limit);
-      if (res.success && res.data) {
-        setPayments(res.data.payments);
-        setTotalPages(res.data.totalPages);
-        setTotalCount(res.data.totalCount);
+      setLoading(true);
+      // Fetch high limit of payments to allow client-side audit filtering
+      const res = await getAllPayments(1, 100);
+      const data = res.data?.payments || res.payments || [];
+      setAllPayments(data);
+      setFilteredPayments(data);
 
-        // Notify parent of fetched payments, including the calculated revenue aggregates
-        if (onPaymentsFetched) {
-          onPaymentsFetched({
-            payments: res.data.payments,
-            totalCount: res.data.totalCount,
-            revenue: res.data.revenue || {
-              totalRevenue: 0,
-              totalCommission: 0,
-              totalDoctorEarnings: 0
-            }
-          });
-        }
+      // Trigger aggregate computations for the parent cards
+      if (onRevenueAggregates) {
+        const totalRev = data.reduce((s, p) => s + (p.amount || 0), 0);
+        const totalComm = data.reduce((s, p) => s + (p.platformCommission || 0), 0);
+        onRevenueAggregates({
+          revenue: totalRev,
+          commission: totalComm,
+          earnings: totalRev - totalComm,
+        });
       }
     } catch (err) {
-      console.error(err);
       toast.error('Failed to load transaction ledger.');
     } finally {
       setLoading(false);
@@ -41,145 +46,234 @@ const PaymentsTable = ({ limit = 10, onPaymentsFetched }) => {
   };
 
   useEffect(() => {
-    fetchPayments(currentPage);
-  }, [currentPage]);
+    fetchPayments();
+  }, []);
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
-    }
-  };
+  // Filter computation
+  useEffect(() => {
+    let result = [...allPayments];
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+    // Search filter
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(p => 
+        (p.patient?.name || '').toLowerCase().includes(q) ||
+        (p.doctor?.user?.name || '').toLowerCase().includes(q) ||
+        (p.razorpayPaymentId || '').toLowerCase().includes(q)
+      );
     }
-  };
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      // In this system all records are PAID or pending
+      const checkPaid = statusFilter === 'paid';
+      result = result.filter(p => checkPaid ? p.amount > 0 : p.amount === 0);
+    }
+
+    // Date range filter
+    if (startDate) {
+      const start = new Date(startDate);
+      result = result.filter(p => {
+        const apptDate = p.appointment?.date ? new Date(p.appointment.date) : null;
+        return apptDate ? apptDate >= start : true;
+      });
+    }
+
+    if (endDate) {
+      const end = new Date(endDate);
+      result = result.filter(p => {
+        const apptDate = p.appointment?.date ? new Date(p.appointment.date) : null;
+        return apptDate ? apptDate <= end : true;
+      });
+    }
+
+    setFilteredPayments(result);
+    setPage(1);
+  }, [allPayments, search, statusFilter, startDate, endDate]);
+
+  const totalPages = Math.ceil(filteredPayments.length / LIMIT);
+  const startIndex = (page - 1) * LIMIT;
+  const pagePayments = filteredPayments.slice(startIndex, startIndex + LIMIT);
 
   const formatHumanDate = (dateStr) => {
     try {
-      return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
+      if (!dateStr) return '—';
+      return new Date(dateStr).toLocaleDateString('en-IN', {
         year: 'numeric',
         month: 'short',
         day: 'numeric'
-      });
+      }).toUpperCase();
     } catch (e) {
       return dateStr;
     }
   };
 
   return (
-    <div className="bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl select-none text-left">
-      {/* Table Header Wrapper */}
-      <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between">
-        <div>
-          <h3 className="font-bold text-base text-slate-100">Platform Payments Ledger</h3>
-          <p className="text-xs text-slate-500 mt-1">Audit and monitor transaction receipts, commission splits, and payouts.</p>
+    <div className="space-y-6">
+      {/* Date Range Inputs & Status Segmented Controls Filter Bar */}
+      <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between border-2 border-swiss-black p-4 bg-swiss-white">
+        
+        {/* Search */}
+        <div className="flex-1 relative min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-swiss-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="FILTER BY PATIENT, DOCTOR, OR PAYMENT ID..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 bg-swiss-white border-2 border-swiss-black text-xs font-bold uppercase placeholder-swiss-gray-400 focus:outline-none transition-colors"
+          />
         </div>
-        <span className="bg-primary/10 text-primary border border-primary/20 text-xs font-bold px-3 py-1 rounded-full">
-          {totalCount} Paid
-        </span>
+
+        {/* Date Inputs */}
+        <div className="flex items-center gap-3">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="px-3 py-1.5 border-2 border-swiss-black bg-swiss-white text-xs font-bold focus:outline-none uppercase"
+          />
+          <span className="text-xs font-bold text-swiss-black">—</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="px-3 py-1.5 border-2 border-swiss-black bg-swiss-white text-xs font-bold focus:outline-none uppercase"
+          />
+        </div>
+
+        {/* Status segmented controls */}
+        <div className="flex border-2 border-swiss-black">
+          {['all', 'paid'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest border-r-2 last:border-r-0 border-swiss-black cursor-pointer ${
+                statusFilter === status
+                  ? 'bg-swiss-black text-swiss-white'
+                  : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+              }`}
+            >
+              {status === 'all' ? 'ALL STATUS' : 'PAID ONLY'}
+            </button>
+          ))}
+        </div>
+
       </div>
 
-      {/* Table Content */}
-      {loading ? (
-        <div className="p-12 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-xs font-semibold text-slate-500">Retrieving platform payments...</p>
-        </div>
-      ) : payments.length === 0 ? (
-        <div className="p-12 text-center flex flex-col items-center gap-3">
-          <AlertCircle className="text-slate-600" size={32} />
-          <p className="text-sm font-bold text-slate-400">No Payments Recorded</p>
-          <p className="text-xs text-slate-600">No successful payment transactions have been logged yet.</p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-slate-300 text-sm">
-            <thead>
-              <tr className="bg-slate-900/50 border-b border-slate-800 text-slate-400 text-xs font-extrabold uppercase tracking-wider">
-                <th className="px-6 py-4">Patient</th>
-                <th className="px-6 py-4">Physiotherapist</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Amount</th>
-                <th className="px-6 py-4">Commission</th>
-                <th className="px-6 py-4">Doctor Earnings</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Payment ID</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {payments.map((payment) => {
+      {/* Bordered Table wrapper */}
+      <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+        {loading ? (
+          <div className="p-12 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+            <span className="inline-block animate-spin mr-2">⏳</span> RETRIEVING TRANSACTIONS...
+          </div>
+        ) : filteredPayments.length === 0 ? (
+          <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+            NO TRANSACTION RECORDS MATCH FILTERS
+          </div>
+        ) : (
+          <Table>
+            <Table.Head>
+              <Table.Row>
+                <Table.Header>Date</Table.Header>
+                <Table.Header>Patient</Table.Header>
+                <Table.Header>Physiotherapist</Table.Header>
+                <Table.Header numeric={true}>Amount</Table.Header>
+                <Table.Header numeric={true}>Commission</Table.Header>
+                <Table.Header numeric={true}>Doctor Earnings</Table.Header>
+                <Table.Header>Payment ID</Table.Header>
+                <Table.Header className="w-[100px]">Status</Table.Header>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {pagePayments.map((payment) => {
                 const patName = payment.patient?.name || 'Patient Deleted';
                 const patEmail = payment.patient?.email || '';
                 const docName = payment.doctor?.user?.name || 'Physio Deleted';
                 const appt = payment.appointment || {};
-                const paymentIdShort = payment.razorpayPaymentId
-                  ? payment.razorpayPaymentId.slice(-8)
-                  : 'N/A';
+                const paymentId = payment.razorpayPaymentId || 'N/A';
+                const paymentIdShort = paymentId !== 'N/A'
+                  ? `…${paymentId.slice(-8)}`
+                  : '—';
 
                 return (
-                  <tr key={payment._id} className="hover:bg-slate-900/20 transition-all font-medium">
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="font-extrabold text-slate-200">{patName}</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">{patEmail}</p>
+                  <Table.Row key={payment._id}>
+                    {/* Date */}
+                    <Table.Cell className="font-mono text-xs whitespace-nowrap text-swiss-gray-600">
+                      {formatHumanDate(appt.date || payment.createdAt)}
+                    </Table.Cell>
+
+                    {/* Patient */}
+                    <Table.Cell>
+                      <div className="text-left">
+                        <span className="font-bold text-swiss-black uppercase tracking-wide text-xs block">
+                          {patName}
+                        </span>
+                        <span className="text-[10px] text-swiss-gray-400 font-mono block">
+                          {patEmail}
+                        </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="font-extrabold text-slate-200">Dr. {docName}</p>
-                    </td>
-                    <td className="px-6 py-4 text-xs font-bold">{formatHumanDate(appt.date)}</td>
-                    <td className="px-6 py-4 text-slate-200 font-extrabold">₹{payment.amount}</td>
-                    <td className="px-6 py-4 text-primary font-extrabold">
+                    </Table.Cell>
+
+                    {/* Doctor */}
+                    <Table.Cell className="font-bold text-swiss-black uppercase tracking-wide text-xs">
+                      Dr. {docName}
+                    </Table.Cell>
+
+                    {/* Amount */}
+                    <Table.Cell numeric={true} className="font-bold text-swiss-black">
+                      ₹{payment.amount}
+                    </Table.Cell>
+
+                    {/* Commission */}
+                    <Table.Cell numeric={true} className="font-bold text-swiss-gray-600">
                       ₹{payment.platformCommission}
-                      <span className="text-[9px] text-slate-500 font-bold block">(10%)</span>
-                    </td>
-                    <td className="px-6 py-4 text-emerald-400 font-extrabold">
+                      <span className="text-[9px] text-swiss-gray-400 font-bold block">(10%)</span>
+                    </Table.Cell>
+
+                    {/* Doctor net earnings */}
+                    <Table.Cell numeric={true} className="font-black text-swiss-black">
                       ₹{payment.doctorEarnings}
-                      <span className="text-[9px] text-slate-500 font-bold block">(90%)</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
-                        <ShieldCheck size={10} /> Paid
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <span
-                        className="text-[10px] text-slate-400 font-bold bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-lg cursor-help"
-                        title={payment.razorpayPaymentId}
-                      >
-                        {paymentIdShort}
-                      </span>
-                    </td>
-                  </tr>
+                      <span className="text-[9px] text-swiss-gray-400 font-bold block">(90%)</span>
+                    </Table.Cell>
+
+                    {/* Payment ID with tooltip */}
+                    <Table.Cell className="font-mono text-xs text-swiss-gray-500 whitespace-nowrap" title={paymentId}>
+                      {paymentIdShort}
+                    </Table.Cell>
+
+                    {/* Paid Status */}
+                    <Table.Cell>
+                      <Badge variant="paid" size="sm" />
+                    </Table.Cell>
+                  </Table.Row>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-      )}
+            </Table.Body>
+          </Table>
+        )}
+      </div>
 
-      {/* Table Pagination */}
+      {/* Pagination */}
       {!loading && totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/10 flex items-center justify-between">
-          <p className="text-xs text-slate-500 font-bold">
-            Page {currentPage} of {totalPages}
-          </p>
-          <div className="flex gap-2">
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
+          <span className="text-swiss-gray-400">
+            PAGE {page} OF {totalPages} · {filteredPayments.length} TRANSACTIONS
+          </span>
+          <div className="flex gap-4">
             <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="p-2 border border-slate-800 rounded-xl bg-slate-950 hover:bg-slate-900 text-slate-400 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              disabled={page === 1}
+              onClick={() => setPage(p => p - 1)}
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
             >
-              <ChevronLeft size={16} />
+              ← PREV
             </button>
             <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="p-2 border border-slate-800 rounded-xl bg-slate-950 hover:bg-slate-900 text-slate-400 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              disabled={page === totalPages}
+              onClick={() => setPage(p => p + 1)}
+              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
             >
-              <ChevronRight size={16} />
+              NEXT →
             </button>
           </div>
         </div>

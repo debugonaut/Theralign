@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 const STATUS_COLORS = {
-  confirmed: '#3B82F6',
-  completed: '#10B981',
-  cancelled: '#EF4444',
-  pending:   '#F59E0B',
+  completed: '#0F0F0F',
+  cancelled: '#A3A3A3',
+  pending:   '#B45309',
+  confirmed: '#0D7377',
 };
 
 const AppointmentDonutChart = ({ data = [] }) => {
@@ -15,8 +15,8 @@ const AppointmentDonutChart = ({ data = [] }) => {
 
   if (total === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-[280px] text-slate-500">
-        <p className="text-sm">No appointment data yet.</p>
+      <div className="bg-swiss-white border-2 border-swiss-black p-6 flex flex-col items-center justify-center h-[280px] text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+        NO BOOKING DATA AVAILABLE
       </div>
     );
   }
@@ -55,65 +55,82 @@ const AppointmentDonutChart = ({ data = [] }) => {
     return result;
   });
 
-  const hoveredItem = hovered !== null ? slices[hovered] : null;
+  const hoveredSlice = hovered !== null ? slices[hovered] : null;
 
   return (
-    <div>
-      <div className="flex items-center gap-6">
+    <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left flex flex-col gap-6">
+      {/* Header */}
+      <div className="pb-4 border-b border-swiss-gray-200">
+        <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+          OPERATIONAL METRICS
+        </span>
+        <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+          APPOINTMENT STATUS INDEX
+        </h3>
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-8 py-2">
         {/* SVG Donut */}
-        <div className="relative shrink-0">
+        <div className="relative shrink-0 select-none">
           <svg width="240" height="240" viewBox="0 0 240 240">
             {slices.map((slice, i) => (
               <path
                 key={slice.status}
                 d={slice.path}
-                fill={STATUS_COLORS[slice.status] || '#64748b'}
-                opacity={hovered !== null && hovered !== i ? 0.5 : 1}
-                stroke="#0f172a"
-                strokeWidth="2"
-                style={{ cursor: 'pointer', transition: 'opacity 0.15s' }}
+                fill={STATUS_COLORS[slice.status] || '#A3A3A3'}
+                opacity={hovered !== null && hovered !== i ? 0.6 : 1}
+                stroke="#FFFFFF"
+                strokeWidth="2.5"
+                style={{ cursor: 'pointer', transition: 'opacity 150ms' }}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               />
             ))}
-            {/* Center text */}
+            {/* Center display size total count */}
             <text
-              x={CX} y={CY - 8}
+              x={CX} y={CY + 4}
               textAnchor="middle"
-              fill={hoveredItem ? STATUS_COLORS[hoveredItem.status] : '#f1f5f9'}
-              fontSize="24" fontWeight="800"
+              fill="#0F0F0F"
+              fontSize="32" fontWeight="900"
+              fontFamily="Inter, sans-serif"
             >
-              {hoveredItem ? hoveredItem.count : total}
+              {hoveredSlice ? hoveredSlice.count : total}
             </text>
             <text
-              x={CX} y={CY + 12}
+              x={CX} y={CY + 22}
               textAnchor="middle"
-              fill="#64748b"
+              fill="#A3A3A3"
               fontSize="10"
-              fontWeight="500"
+              fontWeight="900"
+              letterSpacing="0.08em"
+              fontFamily="Inter, sans-serif"
             >
-              {hoveredItem ? hoveredItem.status.toUpperCase() : 'TOTAL'}
+              {hoveredSlice ? hoveredSlice.status.toUpperCase() : 'TOTAL'}
             </text>
           </svg>
         </div>
 
         {/* Legend */}
-        <div className="space-y-3 flex-1">
-          {data.map((item) => (
-            <div key={item.status} className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-3 h-3 rounded-full shrink-0"
-                  style={{ backgroundColor: STATUS_COLORS[item.status] || '#64748b' }}
-                />
-                <span className="text-slate-400 text-xs capitalize">{item.status}</span>
+        <div className="space-y-3 flex-1 w-full sm:w-auto">
+          {data.map((item) => {
+            const color = STATUS_COLORS[item.status] || '#A3A3A3';
+            return (
+              <div key={item.status} className="flex items-center justify-between border border-swiss-gray-200 p-2.5 bg-swiss-gray-50">
+                <div className="flex items-center gap-2.5">
+                  {/* Square color swatch with 2px black border matching other rectangular shapes */}
+                  <div
+                    className="w-3.5 h-3.5 border border-swiss-black shrink-0 rounded-none"
+                    style={{ backgroundColor: color }}
+                  />
+                  <span className="text-[11px] font-black uppercase text-swiss-black tracking-widest">{item.status}</span>
+                </div>
+                <div className="text-right flex items-baseline gap-1">
+                  <span className="text-ui-sm font-black text-swiss-black swiss-numeric">{item.count}</span>
+                  <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-wider">({item.percentage}%)</span>
+                </div>
               </div>
-              <div className="text-right">
-                <span className="text-slate-200 font-semibold text-sm">{item.count}</span>
-                <span className="text-slate-600 text-xs ml-1">({item.percentage}%)</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

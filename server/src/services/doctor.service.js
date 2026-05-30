@@ -46,6 +46,19 @@ export const onboardDoctor = async (userId, profileData, files) => {
     licenseDocumentUrl = await uploadToCloudinary(licenseFile.path, 'doctor_docs');
   }
 
+  // Upload profile photo if provided and update user fields
+  const profileImageFile = files?.profileImage?.[0];
+  if (profileImageFile) {
+    user.profileImage = await uploadToCloudinary(profileImageFile.path, 'doctor_avatars');
+  }
+  if (profileData.name) {
+    user.name = profileData.name;
+  }
+  if (profileData.phone) {
+    user.phone = profileData.phone;
+  }
+  await user.save();
+
   // 4. Parse and structure data
   let parsedSpecializations;
   try {
