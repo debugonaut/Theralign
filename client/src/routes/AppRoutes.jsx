@@ -20,6 +20,13 @@ const DoctorListingPage = lazy(() => import('../pages/public/DoctorListingPage')
 const DoctorDetailPage = lazy(() => import('../pages/public/DoctorDetailPage'));
 const NotFoundPage = lazy(() => import('../pages/public/NotFoundPage'));
 const UnauthorizedPage = lazy(() => import('../pages/public/UnauthorizedPage'));
+const PricingPage = lazy(() => import('../pages/public/PricingPage'));
+const ClinicalStandardsPage = lazy(() => import('../pages/public/ClinicalStandardsPage'));
+const PracticeManagementPage = lazy(() => import('../pages/public/PracticeManagementPage'));
+const HelpCenterPage = lazy(() => import('../pages/public/HelpCenterPage'));
+const PrivacyPolicyPage = lazy(() => import('../pages/public/PrivacyPolicyPage'));
+const TermsOfServicePage = lazy(() => import('../pages/public/TermsOfServicePage'));
+const MedicalDisclaimerPage = lazy(() => import('../pages/public/MedicalDisclaimerPage'));
 
 // Patient Pages (Lazy Loaded)
 const PatientDashboard = lazy(() => import('../pages/patient/PatientDashboard'));
@@ -86,6 +93,13 @@ const AppRoutes = () => {
           <Route path="/doctors" element={<DoctorListingPage />} />
           <Route path="/doctors/:id" element={<DoctorDetailPage />} />
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/standards" element={<ClinicalStandardsPage />} />
+          <Route path="/management" element={<PracticeManagementPage />} />
+          <Route path="/help" element={<HelpCenterPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/disclaimer" element={<MedicalDisclaimerPage />} />
         </Route>
 
         {/* ─── Patient Routes ─────────────────────────────────────────────── */}
