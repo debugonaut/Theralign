@@ -1,0 +1,8 @@
+<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="40" height="40" fill="transparent" />
+  <!-- A minimal Swiss medical cross / geometric structure -->
+  <rect x="8" y="16" width="24" height="8" fill="#0F0F0F" />
+  <rect x="16" y="8" width="8" height="24" fill="#0F0F0F" />
+  <!-- Red accent square -->
+  <rect x="16" y="16" width="8" height="8" fill="#FF3000" />
+</svg>

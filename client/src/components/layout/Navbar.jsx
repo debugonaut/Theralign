@@ -75,7 +75,7 @@ const Navbar = () => {
               <span className="font-black text-2xl tracking-tighter uppercase font-swiss">
                 THERALIGN
               </span>
-              <img src="/theralign-logo.png" alt="Theralign Logo" className="w-10 h-10 object-contain" />
+              <img src="/theralign-logo.svg" alt="Theralign Logo" className="w-10 h-10 object-contain" />
             </Link>
           </div>
 
