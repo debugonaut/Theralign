@@ -8,7 +8,7 @@ const DEFAULT_DOCTORS = [
     id: 'doc_1',
     name: 'Dr. Priya Sharma',
     specialty: 'Orthopedic Physiotherapy',
-    avatar: '/images/doc1.avif',
+    avatar: '/images/doc1.jpg',
     rating: 4.9,
     reviewCount: 142,
     verificationStatus: 'verified',
