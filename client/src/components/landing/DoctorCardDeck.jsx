@@ -73,6 +73,15 @@ function DoctorCard({ doctor, style, isTop, onClick }) {
 
   const initial = docName.replace('Dr. ', '').charAt(0).toUpperCase();
 
+  // Dynamic distance color styling: green if close (< 2.0 km), yellow if middle (2.0 - 4.0 km), red if far (> 4.0 km)
+  const distVal = parseFloat(doctor.distance || 0);
+  let distColor = 'bg-[#10B981] text-swiss-white border-[#0F766E]'; // close -> green
+  if (distVal > 4.0) {
+    distColor = 'bg-swiss-red text-swiss-white border-[#B91C1C]'; // far -> red
+  } else if (distVal >= 2.0) {
+    distColor = 'bg-[#EAB308] text-swiss-black border-[#A16207]'; // middle -> yellow
+  }
+
   return (
     <div
       onClick={isTop ? onClick : undefined}
@@ -81,53 +90,59 @@ function DoctorCard({ doctor, style, isTop, onClick }) {
       }`}
       style={style}
     >
+      {/* Polaroid Frame Container */}
       <div
-        className="bg-swiss-white border-2 border-swiss-black p-5 rounded-none text-left select-none relative"
+        className="bg-swiss-white border-2 border-swiss-black p-4 rounded-none text-left select-none relative flex flex-col justify-between"
         style={{
-          minHeight: '170px',
+          minHeight: '380px',
         }}
       >
-        {/* Verified Badge */}
-        {doctor.verificationStatus === 'verified' && (
-          <div className="absolute top-4 right-4 z-10">
-            <VerifiedBadge size="xs" />
-          </div>
-        )}
-
-        <div className="flex gap-4 items-start pr-12">
+        {/* Centered Image (Polaroid Photo Aspect) */}
+        <div className="relative w-full h-[220px] border-2 border-swiss-black bg-swiss-gray-50 flex items-center justify-center overflow-hidden mb-4">
           {doctor.avatar ? (
-            <div className="relative w-14 h-14 shrink-0">
+            <div className="relative w-full h-full">
               <img
                 src={doctor.avatar}
                 alt={docName}
-                className="w-14 h-14 object-cover border-2 border-swiss-black rounded-none absolute inset-0 z-10"
+                className="w-full h-full object-cover absolute inset-0 z-10"
                 onError={(e) => {
                   e.target.style.opacity = '0';
                 }}
               />
-              <div className="w-14 h-14 rounded-none bg-swiss-black text-swiss-white flex items-center justify-center font-black text-lg select-none border-2 border-swiss-black absolute inset-0 z-0">
+              <div className="w-full h-full bg-swiss-gray-100 flex items-center justify-center font-black text-3xl text-swiss-black select-none absolute inset-0 z-0">
                 {initial}
               </div>
             </div>
           ) : (
-            <div className="w-14 h-14 rounded-none bg-swiss-black text-swiss-white flex items-center justify-center font-black text-lg select-none shrink-0 border-2 border-swiss-black">
+            <div className="w-full h-full bg-swiss-gray-100 flex items-center justify-center font-black text-3xl text-swiss-black select-none">
               {initial}
             </div>
           )}
-          
-          <div className="flex-1 min-w-0 text-left">
-            <p className="font-black text-swiss-black text-ui-md uppercase tracking-tight truncate leading-none mb-1">
-              {docName.startsWith('Dr. ') ? docName : `DR. ${docName}`}
-            </p>
-            <p className="text-[10px] text-swiss-red font-black uppercase tracking-widest truncate mb-2">
+        </div>
+        
+        {/* Polaroid Lip Details */}
+        <div className="flex-1 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start gap-2">
+              <p className="font-black text-swiss-black text-[16px] uppercase tracking-tight truncate leading-none">
+                {docName.startsWith('Dr. ') ? docName : `DR. ${docName}`}
+              </p>
+              {doctor.verificationStatus === 'verified' && (
+                <VerifiedBadge size="xs" className="shrink-0" />
+              )}
+            </div>
+            <p className="text-[10px] text-swiss-red font-black uppercase tracking-widest truncate mt-1.5">
               {specialtyText}
             </p>
-            <p className="text-ui-xs font-bold text-swiss-gray-650 uppercase tracking-wider mb-2">
+          </div>
+
+          <div className="flex justify-between items-end mt-4 pt-2 border-t border-swiss-gray-200">
+            <p className="text-ui-xs font-bold text-swiss-gray-650 uppercase tracking-wider leading-none">
               ★ {Number(doctor.rating || 0).toFixed(1)} <span className="text-swiss-gray-400">({doctor.reviewCount || 0} reviews)</span>
             </p>
 
             {doctor.distance && (
-              <span className="inline-block text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-swiss-black text-swiss-white">
+              <span className={`inline-block text-[9px] font-black uppercase tracking-widest px-2.5 py-1 border border-swiss-black leading-none ${distColor}`}>
                 {doctor.distance} KM AWAY
               </span>
             )}
@@ -235,10 +250,10 @@ export default function DoctorCardDeck() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full max-w-[360px] mx-auto select-none">
+    <div className="flex flex-col items-center gap-6 w-full max-w-[440px] mx-auto select-none">
       
       {/* 3D Staggered Cards container */}
-      <div className="relative w-full h-[210px] select-none">
+      <div className="relative w-full h-[420px] select-none">
         {visibleDoctors.map((doc, idx) => {
           // Render order: bottom-to-top so elements overlap correctly
           const stackIdx = 5 - idx;

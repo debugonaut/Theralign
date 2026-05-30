@@ -52,9 +52,6 @@ const HeroSection = () => {
         <div className="hidden lg:flex lg:col-span-5 flex-col h-full relative pl-8">
           
           <div className="relative w-full h-[450px] mb-8">
-            {/* Geometric Element: Bordered Circle */}
-            <div className="absolute top-0 right-10 w-32 h-32 rounded-full border-2 border-swiss-black bg-swiss-white z-0"></div>
-            
             {/* Geometric Element: Architectural Weight Block */}
             <div className="absolute bottom-12 right-0 w-48 h-64 bg-swiss-black z-10"></div>
             
@@ -62,7 +59,7 @@ const HeroSection = () => {
             <div className="absolute top-24 left-0 w-56 h-56 border-2 border-swiss-black bg-swiss-white swiss-dot-matrix z-10"></div>
 
             {/* Geometric Element: Doctor Card Mockup replaced by DoctorCardDeck */}
-            <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[360px] z-20">
+            <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[440px] z-20">
               <DoctorCardDeck />
             </div>
           </div>
