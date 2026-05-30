@@ -24,6 +24,7 @@ import documentRoutes from './src/routes/document.routes.js';
 import notificationRoutes from './src/routes/notification.routes.js';
 import searchRoutes from './src/routes/search.routes.js';
 import waitlistRoutes from './src/routes/waitlist.routes.js';
+import patientProfileRoutes from './src/routes/patientProfile.routes.js';
 
 const app = express();
 
@@ -130,6 +131,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/waitlist', waitlistRoutes);
+app.use('/api/patients/profile', patientProfileRoutes);
 
 // ==========================================
 // 5. FALLBACK & ERROR HANDLERS
