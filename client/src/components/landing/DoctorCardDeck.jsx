@@ -16,7 +16,7 @@ const DEFAULT_DOCTORS = [
   },
   {
     id: 'doc_2',
-    name: 'Dr. John Smith',
+    name: 'Dr. Nupoor Deshpande',
     specialty: 'Sports Injury Rehab',
     avatar: '/images/doc2.jpg',
     rating: 4.8,
@@ -26,7 +26,7 @@ const DEFAULT_DOCTORS = [
   },
   {
     id: 'doc_3',
-    name: 'Dr. Sarah Jenkins',
+    name: 'Dr. Manoj Mishra',
     specialty: 'Neurological Care',
     avatar: '/images/doc3.jpg',
     rating: 4.7,
@@ -36,7 +36,7 @@ const DEFAULT_DOCTORS = [
   },
   {
     id: 'doc_4',
-    name: 'Dr. Marcus Vance',
+    name: 'Dr. Veronica Powell',
     specialty: 'Geriatric Rehab',
     avatar: '/images/doc4.webp',
     rating: 4.9,
@@ -46,7 +46,7 @@ const DEFAULT_DOCTORS = [
   },
   {
     id: 'doc_5',
-    name: 'Dr. Ananya Iyer',
+    name: 'Dr. Lee Chong Mei',
     specialty: 'Pediatric Physiotherapy',
     avatar: '/images/doc5.jpg',
     rating: 4.8,
