@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   }, [revenuePeriod]);
 
   useEffect(() => {
-    document.title = 'System Overview — PhysioConnect';
+    document.title = 'System Overview — Theralign';
     loadDashboard();
   }, []);
 

@@ -48,7 +48,7 @@ const ClinicalStandardsPage = () => {
       {/* Description */}
       <div className="max-w-prose text-ui-lg text-swiss-gray-650 font-medium leading-relaxed space-y-4">
         <p>
-          At **PHYSIOCONNECT**, clinical safety is our highest operational priority. We believe that discovering physical therapy online should be as safe and auditable as scheduling an appointment with an institutional hospital.
+          At **THERALIGN**, clinical safety is our highest operational priority. We believe that discovering physical therapy online should be as safe and auditable as scheduling an appointment with an institutional hospital.
         </p>
         <p>
           Our strict standards define how clinicians are vetted, monitored, and maintained, ensuring that every booking connects patients with verified, high-performing physiotherapists.

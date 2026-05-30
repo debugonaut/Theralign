@@ -67,7 +67,7 @@ const PricingPage = () => {
 
           <div className="space-y-4 font-medium text-ui-md text-swiss-gray-650 flex-1">
             <p>
-              Onboard and gain exposure to patient searches in your area at **no setup cost**. PHYSIOCONNECT charges no recurring software fees.
+              Onboard and gain exposure to patient searches in your area at **no setup cost**. THERALIGN charges no recurring software fees.
             </p>
             <p>
               A single flat commission is withheld only from successfully completed consultations. Cancelled appointments trigger no fees.

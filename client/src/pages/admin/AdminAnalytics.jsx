@@ -63,7 +63,7 @@ const AdminAnalytics = () => {
   }, [revenuePeriod, topDoctorMetric]);
 
   useEffect(() => {
-    document.title = 'Analytics & Planning — PhysioConnect';
+    document.title = 'Analytics & Planning — Theralign';
     loadAnalyticsData();
   }, [loadAnalyticsData]);
 

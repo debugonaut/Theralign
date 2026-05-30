@@ -5,7 +5,7 @@ import Button from '../../components/common/Button';
 
 const NotFoundPage = () => {
   React.useEffect(() => {
-    document.title = '404 Page Not Found — PhysioConnect';
+    document.title = '404 Page Not Found — Theralign';
   }, []);
 
   return (

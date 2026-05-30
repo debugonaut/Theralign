@@ -13,7 +13,7 @@ const uploadToCloudinary = (fileBuffer, originalName) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: 'physioconnect/session-documents',
+        folder: 'theralign/session-documents',
         resource_type: 'raw', // Required for raw PDFs
         format: 'pdf',
         public_id: `doc_${Date.now()}`,

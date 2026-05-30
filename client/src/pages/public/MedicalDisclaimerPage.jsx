@@ -25,7 +25,7 @@ const MedicalDisclaimerPage = () => {
         </h2>
         <div className="h-[2px] bg-swiss-black w-full my-2" />
         <p className="text-ui-lg text-swiss-black font-semibold leading-relaxed uppercase">
-          PHYSIOCONNECT IS AN ADMINISTRATIVE SEARCH MARKETPLACE DIRECTORY. WE DO NOT PROVIDE EMERGENCY HEALTH RESPONSE SERVICES. IF YOU EXPENSE AN EMERGENCY OR SUDDEN SEVERE PAIN, IMMEDIATELY CALL 108 OR PROCEED TO THE NEAREST TRAUMA FACILITY.
+          THERALIGN IS AN ADMINISTRATIVE SEARCH MARKETPLACE DIRECTORY. WE DO NOT PROVIDE EMERGENCY HEALTH RESPONSE SERVICES. IF YOU EXPENSE AN EMERGENCY OR SUDDEN SEVERE PAIN, IMMEDIATELY CALL 108 OR PROCEED TO THE NEAREST TRAUMA FACILITY.
         </p>
       </Card>
 
@@ -39,7 +39,7 @@ const MedicalDisclaimerPage = () => {
               01. PRACTICE RESPONSIBILITIES
             </span>
             <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
-              All clinical diagnostic decisions, prescription exercises, and treatment actions are delivered solely by the registered physiotherapist, not the platform software. PHYSIOCONNECT assumes no liability for clinical advice given during consultations.
+              All clinical diagnostic decisions, prescription exercises, and treatment actions are delivered solely by the registered physiotherapist, not the platform software. THERALIGN assumes no liability for clinical advice given during consultations.
             </p>
           </div>
 
@@ -69,7 +69,7 @@ const MedicalDisclaimerPage = () => {
               04. NO PATIENT-DOCTOR Platform RELATION
             </span>
             <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
-              Booking appointments or navigating the website does not create a patient-doctor relationship between you and PHYSIOCONNECT. The relationship exists solely between you and the therapist you book.
+              Booking appointments or navigating the website does not create a patient-doctor relationship between you and THERALIGN. The relationship exists solely between you and the therapist you book.
             </p>
           </div>
         </div>

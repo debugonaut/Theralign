@@ -15,7 +15,7 @@ const UnauthorizedPage = () => {
   const { user, clearCredentials } = useAuthStore();
 
   React.useEffect(() => {
-    document.title = 'Access Restricted — PhysioConnect';
+    document.title = 'Access Restricted — Theralign';
   }, []);
 
   const handleGoToDashboard = () => {

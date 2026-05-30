@@ -50,7 +50,7 @@ export const interpretSymptoms = async (symptomsText) => {
     {
       role: 'system',
       content: `You are a physiotherapy triage assistant for a healthcare platform 
-called PhysioConnect. Your ONLY job is to analyze symptoms described by patients 
+called Theralign. Your ONLY job is to analyze symptoms described by patients 
 and suggest the most relevant physiotherapy specialization to help them find 
 the right doctor.
 

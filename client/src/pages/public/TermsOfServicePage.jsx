@@ -14,7 +14,7 @@ const TermsOfServicePage = () => {
       {/* Prose Container */}
       <div className="max-w-prose text-ui-lg text-swiss-gray-650 font-medium leading-relaxed space-y-8">
         <p>
-          Welcome to **PHYSIOCONNECT**. These service regulations govern your access to and use of our administrative marketplace platform. By creating an account or booking consultations, you agree to follow these guidelines.
+          Welcome to **THERALIGN**. These service regulations govern your access to and use of our administrative marketplace platform. By creating an account or booking consultations, you agree to follow these guidelines.
         </p>
 
         {/* Section 1 */}
@@ -43,7 +43,7 @@ const TermsOfServicePage = () => {
             03. REVENUE SPLITS & COMMISSION RULES
           </span>
           <p className="text-ui-md text-swiss-gray-650">
-            PHYSIOCONNECT deducts a flat 10% commission fee only from successfully completed consultations. The remaining 90% is swept directly to the clinician's linked bank account upon session verification. Dispute processing is handled by platform support channels.
+            THERALIGN deducts a flat 10% commission fee only from successfully completed consultations. The remaining 90% is swept directly to the clinician's linked bank account upon session verification. Dispute processing is handled by platform support channels.
           </p>
         </div>
 

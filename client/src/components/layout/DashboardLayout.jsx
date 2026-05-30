@@ -90,7 +90,7 @@ const DashboardLayout = () => {
         <div className="flex items-center justify-between py-6 px-6 border-b-2 border-swiss-black">
           <Link to="/" className="flex items-center">
             <span className="font-black text-2xl tracking-tighter uppercase font-swiss">
-              PHYSIOCONNECT
+              THERALIGN
             </span>
           </Link>
           <button 

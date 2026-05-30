@@ -41,7 +41,7 @@ const HelpCenterPage = () => {
     },
     {
       q: 'HOW DO I FILE A CLINICAL REFUND REQUEST?',
-      a: 'If a session does not occur or is cancelled by a practitioner, refunds process automatically within 5 to 7 business days to your original payment source. For disputes, contact platform operations via support@physioconnect.in.'
+      a: 'If a session does not occur or is cancelled by a practitioner, refunds process automatically within 5 to 7 business days to your original payment source. For disputes, contact platform operations via support@theralign.in.'
     }
   ];
 
@@ -52,7 +52,7 @@ const HelpCenterPage = () => {
     },
     {
       q: 'HOW ARE Platform COMMISSION FEES CALCULATED?',
-      a: 'PHYSIOCONNECT charges a flat 10% commission fee only from successfully completed appointments. There are no startup setup costs or software fees. Net earnings (90%) are directly sweep-payout reconciled.'
+      a: 'THERALIGN charges a flat 10% commission fee only from successfully completed appointments. There are no startup setup costs or software fees. Net earnings (90%) are directly sweep-payout reconciled.'
     },
     {
       q: 'HOW DO I RESET MY CLINICAL AVAILABILITY?',

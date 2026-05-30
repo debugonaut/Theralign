@@ -15,7 +15,7 @@ const PrivacyPolicyPage = () => {
       {/* Prose Container */}
       <div className="max-w-prose text-ui-lg text-swiss-gray-650 font-medium leading-relaxed space-y-6">
         <p>
-          At **PHYSIOCONNECT**, we maintain the absolute highest standards of information security. Clinical data privacy is not just a regulatory compliance box for us — it is a foundational patient right.
+          At **THERALIGN**, we maintain the absolute highest standards of information security. Clinical data privacy is not just a regulatory compliance box for us — it is a foundational patient right.
         </p>
         <p>
           This privacy charter outlines what information we collect, how it is secured, and the technical mechanisms we enforce to protect clinical histories, patient case details, and financial transactions.

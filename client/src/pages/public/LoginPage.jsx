@@ -17,7 +17,7 @@ const LoginPage = () => {
   const { setCredentials } = useAuthStore();
 
   useEffect(() => {
-    document.title = 'Login — PhysioConnect';
+    document.title = 'Login — Theralign';
   }, []);
 
   const [formData, setFormData] = useState({ email: '', password: '' });

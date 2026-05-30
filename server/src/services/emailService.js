@@ -14,7 +14,7 @@ const sendMail = async ({ to, subject, html }) => {
 
   try {
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM || `"PhysioConnect" <${process.env.EMAIL_USER}>`,
+      from: process.env.EMAIL_FROM || `"Theralign" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
@@ -43,7 +43,7 @@ export const sendBookingConfirmation = async ({
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
       <div style="background: #0EA5E9; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">PhysioConnect</h1>
+        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">Theralign</h1>
       </div>
       <div style="padding: 32px; background: #ffffff;">
         <h2 style="color: #1E293B; margin-top: 0; font-size: 20px;">Appointment Confirmed ✓</h2>
@@ -61,12 +61,12 @@ export const sendBookingConfirmation = async ({
           </p>
         </div>
         <p style="color: #475569; font-size: 14px; line-height: 1.5;">
-          Please arrive 5 minutes early. If you need to cancel or reschedule, you can do so directly from your PhysioConnect dashboard.
+          Please arrive 5 minutes early. If you need to cancel or reschedule, you can do so directly from your Theralign dashboard.
         </p>
       </div>
       <div style="padding: 16px; background: #F8FAFC; text-align: center; border-top: 1px solid #f1f5f9;">
         <p style="color: #94A3B8; font-size: 12px; margin: 0;">
-          © 2026 PhysioConnect. This is an automated message.
+          © 2026 Theralign. This is an automated message.
         </p>
       </div>
     </div>
@@ -90,7 +90,7 @@ export const sendAppointmentReminder = async ({
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
       <div style="background: #0EA5E9; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">PhysioConnect</h1>
+        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">Theralign</h1>
       </div>
       <div style="padding: 32px; background: #ffffff;">
         <h2 style="color: #1E293B; margin-top: 0; font-size: 20px;">Appointment Tomorrow 🗓️</h2>
@@ -109,7 +109,7 @@ export const sendAppointmentReminder = async ({
       </div>
       <div style="padding: 16px; background: #F8FAFC; text-align: center; border-top: 1px solid #f1f5f9;">
         <p style="color: #94A3B8; font-size: 12px; margin: 0;">
-          © 2026 PhysioConnect. This is an automated message.
+          © 2026 Theralign. This is an automated message.
         </p>
       </div>
     </div>
@@ -133,7 +133,7 @@ export const sendCancellationNotice = async ({
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
       <div style="background: #EF4444; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">PhysioConnect</h1>
+        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">Theralign</h1>
       </div>
       <div style="padding: 32px; background: #ffffff;">
         <h2 style="color: #EF4444; margin-top: 0; font-size: 20px;">Appointment Cancelled</h2>
@@ -147,7 +147,7 @@ export const sendCancellationNotice = async ({
       </div>
       <div style="padding: 16px; background: #F8FAFC; text-align: center; border-top: 1px solid #f1f5f9;">
         <p style="color: #94A3B8; font-size: 12px; margin: 0;">
-          © 2026 PhysioConnect.
+          © 2026 Theralign.
         </p>
       </div>
     </div>

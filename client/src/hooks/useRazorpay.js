@@ -22,7 +22,7 @@ export const useRazorpay = () => {
           key: orderData.keyId,
           amount: Math.round(orderData.amount * 100),          // Paise
           currency: orderData.currency,
-          name: 'PhysioConnect',
+          name: 'Theralign',
           description: `Consultation with ${orderData.doctorName}`,
           order_id: orderData.orderId,
           handler: async (response) => {

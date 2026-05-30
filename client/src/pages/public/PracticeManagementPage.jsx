@@ -38,7 +38,7 @@ const PracticeManagementPage = () => {
       {/* Description */}
       <div className="max-w-prose text-ui-lg text-swiss-gray-650 font-medium leading-relaxed space-y-4">
         <p>
-          **PHYSIOCONNECT** is more than just a discovery platform — it is a complete practitioner workspace. We eliminate administrative friction so you can focus entirely on clinical excellence and patient recovery.
+          **THERALIGN** is more than just a discovery platform — it is a complete practitioner workspace. We eliminate administrative friction so you can focus entirely on clinical excellence and patient recovery.
         </p>
         <p>
           Our secure practice management system runs entirely in the browser, providing a modern suite of scheduling, invoicing, and profiling utilities.

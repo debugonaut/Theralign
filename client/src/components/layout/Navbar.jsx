@@ -73,7 +73,7 @@ const Navbar = () => {
           <div className="flex">
             <Link to="/" className="flex items-center text-swiss-black">
               <span className="font-black text-2xl tracking-tighter uppercase font-swiss">
-                PHYSIOCONNECT
+                THERALIGN
               </span>
             </Link>
           </div>

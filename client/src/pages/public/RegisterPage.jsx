@@ -30,7 +30,7 @@ const RegisterPage = () => {
   const { setCredentials } = useAuthStore();
 
   useEffect(() => {
-    document.title = 'Create Account — PhysioConnect';
+    document.title = 'Create Account — Theralign';
   }, []);
 
   const [formData, setFormData] = useState({
