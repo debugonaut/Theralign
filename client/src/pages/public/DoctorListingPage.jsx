@@ -11,6 +11,7 @@ import EmptyState from '../../components/common/EmptyState';
 import Button from '../../components/common/Button';
 import SearchSuggestions from '../../components/search/SearchSuggestions';
 import SymptomSearchBox from '../../components/ai/SymptomSearchBox';
+import LiveDoctorMap from '../../components/ai/LiveDoctorMap';
 
 const DoctorListingPage = () => {
   const navigate = useNavigate();
@@ -214,9 +215,17 @@ const DoctorListingPage = () => {
           />
         </div>
 
-        {/* AI Symptom Triage Box */}
-        <div className="border-t border-neutral-200 pt-8 mt-4">
-          <SymptomSearchBox onSpecializationFound={(spec) => handleApplyFilters({ specialization: spec })} />
+        {/* Split Grid: AI Symptom checker on the left, Live Map on the right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border-t border-neutral-200 pt-8 mt-4">
+          {/* Left: AI Symptom Triage Box */}
+          <div className="lg:col-span-6 flex flex-col justify-between">
+            <SymptomSearchBox onSpecializationFound={(spec) => handleApplyFilters({ specialization: spec })} />
+          </div>
+
+          {/* Right: Live Interactive Doctor Heatmap */}
+          <div className="lg:col-span-6 flex">
+            <LiveDoctorMap doctors={doctors} city={currentFilters.city} />
+          </div>
         </div>
       </div>
 
