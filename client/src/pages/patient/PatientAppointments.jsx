@@ -357,7 +357,7 @@ const PatientAppointments = () => {
                             )}
 
                              {/* ── D3.7 Inline Review Form ── */}
-                            {appt.status === 'completed' && appt.paymentStatus === 'paid' && (
+                            {appt.status === 'completed' && (
                               <div className="pt-6 border-t border-neutral-200 text-left">
                                 {!appt.reviewSubmitted && !submittedReviews[appt._id] ? (
                                   <div className="bg-white border border-neutral-200/60 p-6 rounded-lg shadow-level-1 flex flex-col gap-4">

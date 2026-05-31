@@ -40,12 +40,7 @@ export const submitReview = asyncHandler(async (req, res) => {
     return errorResponse(res, 400, 'You can only review a completed appointment.');
   }
 
-  // 5. Gate 3 — Payment
-  if (appointment.paymentStatus !== 'paid') {
-    return errorResponse(res, 400, 'Payment must be confirmed before submitting a review.');
-  }
-
-  // 6. Gate 4 — No Prior Review (application-level check for clean UX)
+  // 5. Gate 3 — No Prior Review
   if (appointment.reviewSubmitted === true) {
     return errorResponse(res, 400, 'You have already submitted a review for this appointment.');
   }
