@@ -161,7 +161,8 @@ export const getMyPayments = asyncHandler(async (req, res) => {
     .populate('appointment', 'date startTime endTime status')
     .populate({
       path: 'doctor',
-      populate: { path: 'user', select: 'name specialization' }
+      select: 'specialization user',
+      populate: { path: 'user', select: 'name' }
     })
     .sort({ createdAt: -1 });
 
