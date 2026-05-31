@@ -167,6 +167,114 @@ const doctorSeeds = [
       aiSummary: 'Dr. Neha Joshi is a pediatric physiotherapist with 7 years of experience helping children with physical development challenges. She provides gentle, specialized care for cerebral palsy and developmental delays in a welcoming environment.',
     }
   },
+  {
+    user: {
+      name: 'Vikram Deshpande',
+      email: 'vikram.deshpande@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Orthopedic Physiotherapy', 'Manual Therapy'],
+      experience: 11,
+      consultationFee: 750,
+      bio: 'Dr. Vikram Deshpande is an orthopedic and spinal manual therapy expert with 11 years of experience. He specializes in lumbar disc disorders, sciatica, and cervical strain management using chiropractic alignments and core stabilization routines.',
+      qualifications: ['BPT', 'MPT - Ortho', 'COMT'],
+      clinicName: 'SpineCare & Joints Physio Clinic',
+      clinicAddress: 'Senapati Bapat Road, Shivajinagar, Pune, Maharashtra 411016',
+      city: 'Pune',
+      languages: ['English', 'Hindi', 'Marathi'],
+      clinicLocation: { type: 'Point', coordinates: [73.8306, 18.5309] },
+      registrationNumber: 'MCI-PT-77281',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.8,
+      totalReviews: 20,
+      aiSummary: 'Dr. Vikram Deshpande specializes in spine care, joint manual therapy, and orthopedic rehabilitation. He has over 11 years of experience in Pune.',
+    }
+  },
+  {
+    user: {
+      name: 'Meera Nair',
+      email: 'meera.nair@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Pediatric Physiotherapy', 'Neurological Rehabilitation'],
+      experience: 9,
+      consultationFee: 700,
+      bio: 'Dr. Meera Nair is a dedicated pediatric and neuro-developmental therapist with 9 years of practice. She specializes in cerebral palsy rehabilitation, developmental motor delays, and children sensory motor training programs.',
+      qualifications: ['BPT', 'MPT - Pediatrics'],
+      clinicName: 'Healwell Posture & Pediatric Care',
+      clinicAddress: 'MG Road, Camp, Pune, Maharashtra 411001',
+      city: 'Pune',
+      languages: ['English', 'Hindi', 'Malayalam'],
+      clinicLocation: { type: 'Point', coordinates: [73.8789, 18.5178] },
+      registrationNumber: 'MCI-PT-66192',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 15,
+      aiSummary: 'Dr. Meera Nair focuses on child motor progress and pediatric neurological conditions with 9 years of clinical rehabilitation experience in Camp, Pune.',
+    }
+  },
+  {
+    user: {
+      name: 'Rajesh Patil',
+      email: 'rajesh.patil@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Sports Injury Rehab', 'Dry Needling'],
+      experience: 6,
+      consultationFee: 600,
+      bio: 'Dr. Rajesh Patil specializes in dry needling and sports strain rehabilitation. He works with track athletes and gym goers in Pune to help them recover from acute knee pain, runner strain, and soft-tissue injury limits.',
+      qualifications: ['BPT', 'CSCS', 'Dry Needling Cert'],
+      clinicName: 'Patil Sports & Orthopedic Clinic',
+      clinicAddress: 'J.M. Road, Deccan Gymkhana, Pune, Maharashtra 411004',
+      city: 'Pune',
+      languages: ['English', 'Hindi', 'Marathi'],
+      clinicLocation: { type: 'Point', coordinates: [73.8446, 18.5190] },
+      registrationNumber: 'MCI-PT-33829',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.6,
+      totalReviews: 18,
+      aiSummary: 'Dr. Rajesh Patil uses active sports rehab and systematic dry needling to manage athletic soft tissue sprains and joint pain with 6 years of experience.',
+    }
+  },
+  {
+    user: {
+      name: 'Harish Kale',
+      email: 'harish.kale@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Neurological Rehabilitation', 'Geriatric Care'],
+      experience: 14,
+      consultationFee: 800,
+      bio: 'Dr. Harish Kale has spent 14 years in clinical practice treating neurological stroke survivors, Parkinson’s, and senior gait disorders. He is dedicated to helping older adults manage chronic balance problems.',
+      qualifications: ['BPT', 'MPT - Neuro', 'MIAP'],
+      clinicName: 'Kale Neurological & Geriatric Clinic',
+      clinicAddress: 'Satara Road, Bibwewadi, Pune, Maharashtra 411037',
+      city: 'Pune',
+      languages: ['English', 'Hindi', 'Marathi'],
+      clinicLocation: { type: 'Point', coordinates: [73.8598, 18.4876] },
+      registrationNumber: 'MCI-PT-22938',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 26,
+      aiSummary: 'Dr. Harish Kale specializes in stroke rehabilitation, geriatric balance training, and neurological care with 14 years of clinical practice in Bibwewadi, Pune.',
+    }
+  },
 
   // ─── MUMBAI (7 Doctors) ─────────────────────────────────────────────────────
   {
@@ -882,8 +990,8 @@ const doctorSeeds = [
 export const seedDoctors = async () => {
   try {
     const existingCount = await DoctorProfile.countDocuments();
-    // If we have less than 30 doctors, we assume we need to upgrade database to our premium 32-doctor set.
-    if (existingCount >= 30) {
+    // If we have less than 36 doctors, we assume we need to upgrade database to our premium 36-doctor set (with 10 Pune doctors).
+    if (existingCount >= 36) {
       logger.info('[Seed] High-fidelity multi-city doctors are already seeded — skipping.');
       return;
     }

@@ -148,6 +148,11 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     }
   });
 
+  // 5. Increment Doctor totalEarnings
+  await DoctorProfile.findByIdAndUpdate(payment.doctor, {
+    $inc: { totalEarnings: payment.doctorEarnings }
+  });
+
   return successResponse(res, 200, 'Payment verified successfully.', { appointmentId });
 });
 

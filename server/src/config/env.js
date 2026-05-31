@@ -64,7 +64,7 @@ const config = {
   },
   
   ai: {
-    openaiKey: process.env.GROQ_API_KEY || process.env.API_KEY || '',
+    openaiKey: process.env.OPENAI_API_KEY || process.env.GROQ_API_KEY || process.env.API_KEY || '',
   }
 };
 
