@@ -58,7 +58,7 @@ const DoctorListingPage = () => {
     setError(null);
     try {
       let result;
-      const apiFilters = {
+      const rawFilters = {
         specialization: currentFilters.specialization,
         city: currentFilters.city,
         minFee: currentFilters.minFee,
@@ -67,6 +67,10 @@ const DoctorListingPage = () => {
         page: currentFilters.page,
         limit: 12,
       };
+      // Strip empty string params so backend validation doesn't reject them
+      const apiFilters = Object.fromEntries(
+        Object.entries(rawFilters).filter(([_, v]) => v !== '' && v !== undefined)
+      );
 
       if (currentFilters.search) {
         result = await searchDoctorsAPI({
