@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { getDoctorPublicProfileAPI } from '../../api/discovery.api';
-import { getDoctorAISummaryAPI } from '../../api/ai.api';
 import useAuthStore from '../../store/authStore';
 import SectionHeader from '../../components/common/SectionHeader';
 import VerifiedBadge from '../../components/common/VerifiedBadge';
@@ -29,7 +28,6 @@ const DoctorDetailPage = () => {
   const [error, setError] = useState(null);
 
   const [aiSummary, setAiSummary] = useState(null);
-  const [summaryLoading, setSummaryLoading] = useState(false);
 
   const [bioExpanded, setBioExpanded] = useState(false);
   const [reviewsExpanded, setReviewsExpanded] = useState(false);
@@ -44,9 +42,13 @@ const DoctorDetailPage = () => {
       try {
         const res = await getDoctorPublicProfileAPI(id);
         if (res.success && res.data) {
-          setProfile(res.data.profile);
+          const p = res.data.profile;
+          setProfile(p);
           setReviews(res.data.reviews || []);
-          fetchAISummary(res.data.profile._id);
+          // Use cached summary from profile if available, skip AI call
+          if (p.aiSummary) {
+            setAiSummary(p.aiSummary);
+          }
         } else {
           setError('DOCTOR PROFILE NOT FOUND.');
         }
@@ -55,20 +57,6 @@ const DoctorDetailPage = () => {
         setError('FAILED TO LOAD DOCTOR DETAILS.');
       } finally {
         setLoading(false);
-      }
-    };
-
-    const fetchAISummary = async (doctorId) => {
-      setSummaryLoading(true);
-      try {
-        const res = await getDoctorAISummaryAPI(doctorId);
-        if (res.success && res.data?.aiSummary) {
-          setAiSummary(res.data.aiSummary);
-        }
-      } catch (err) {
-        console.warn('AI summary fetch failed:', err);
-      } finally {
-        setSummaryLoading(false);
       }
     };
 
@@ -212,7 +200,7 @@ const DoctorDetailPage = () => {
           </div>
 
           {/* AI Summary Section Card */}
-          {(summaryLoading || aiSummary) && (
+          {aiSummary && (
             <div className="p-6 bg-white border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col gap-4 mt-4 transition-warm">
               <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
                 <span className="text-ui-xs font-bold text-accent tracking-widest uppercase">
@@ -222,13 +210,9 @@ const DoctorDetailPage = () => {
                   Synthesized Profile
                 </span>
               </div>
-              {summaryLoading ? (
-                <div className="h-12 w-full animate-pulse bg-neutral-100 rounded-md" />
-              ) : (
-                <p className="text-ui-lg text-neutral-900 font-medium leading-relaxed italic">
-                  "{aiSummary}"
-                </p>
-              )}
+              <p className="text-ui-lg text-neutral-900 font-medium leading-relaxed italic">
+                "{aiSummary}"
+              </p>
               <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-2 block">
                 Generated from verified professional information
               </span>
