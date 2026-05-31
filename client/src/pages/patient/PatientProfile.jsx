@@ -109,7 +109,7 @@ const PatientProfile = () => {
         
         {/* Avatar Section */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-[120px] h-[120px] border-2 border-black bg-swiss-gray-100 flex items-center justify-center overflow-hidden relative">
+          <div className="w-[120px] h-[120px] border-2 border-black bg-neutral-100 flex items-center justify-center overflow-hidden relative">
             {profile?.user?.profileImage ? (
               <img src={profile.user.profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (
@@ -142,7 +142,7 @@ const PatientProfile = () => {
           </Button>
         </div>
 
-        <div className="h-[1px] bg-swiss-gray-100 w-full mb-6"></div>
+        <div className="h-[1px] bg-neutral-100 w-full mb-6"></div>
 
         {/* Identity */}
         <div className="flex flex-col mb-8">
@@ -155,7 +155,7 @@ const PatientProfile = () => {
           </div>
         </div>
 
-        <div className="h-[1px] bg-swiss-gray-100 w-full mb-6"></div>
+        <div className="h-[1px] bg-neutral-100 w-full mb-6"></div>
 
         {/* Completion */}
         <div className="flex flex-col">
@@ -165,7 +165,7 @@ const PatientProfile = () => {
           <div className="text-display-xs font-bold text-black mb-3">
             {completionScore}%
           </div>
-          <div className="w-full h-4 bg-swiss-gray-100 mb-4 border-2 border-black overflow-hidden relative p-[1px]">
+          <div className="w-full h-4 bg-neutral-100 mb-4 border-2 border-black overflow-hidden relative p-[1px]">
             <div 
               className="h-full bg-black transition-all duration-200" 
               style={{ width: `${completionScore}%` }}

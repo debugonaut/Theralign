@@ -9,13 +9,13 @@ const StatsBar = () => {
   ];
 
   return (
-    <section className="w-full bg-swiss-gray-100 py-24 border-y-2 border-swiss-black">
+    <section className="w-full bg-neutral-100 py-24 border-y-2 border-neutral-900">
       <div className="max-w-[1440px] mx-auto px-6 w-full">
-        <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-swiss-black pb-4 mb-16">
-          <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-swiss-red font-swiss">
+        <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-16">
+          <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
             04.
           </span>
-          <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-swiss-black font-swiss">
+          <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
             PLATFORM SCALE
           </h2>
         </div>
@@ -26,10 +26,10 @@ const StatsBar = () => {
               key={index}
               className="flex flex-col items-start"
             >
-              <span className="text-[48px] sm:text-[64px] leading-none font-black text-swiss-black tracking-tight font-swiss">
+              <span className="text-[48px] sm:text-[64px] leading-none font-black text-neutral-900 tracking-tight font-swiss">
                 {stat.value}
               </span>
-              <span className="text-[12px] font-bold text-swiss-gray-400 mt-2 uppercase tracking-widest">
+              <span className="text-[12px] font-bold text-neutral-500 mt-2 uppercase tracking-widest">
                 {stat.label}
               </span>
             </div>

@@ -71,7 +71,7 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
               REMOVE
             </button>
           </div>
-          <div className="h-[1px] bg-swiss-gray-100 mb-6 w-full"></div>
+          <div className="h-[1px] bg-neutral-100 mb-6 w-full"></div>
           <div className="flex gap-4">
             <div className="w-[40%]">
               <Input label="CONTACT NAME" value={contact.name} onChange={(e) => handleChange(index, 'name', e.target.value)} />
@@ -87,7 +87,7 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
       ))}
 
       {contacts.length === 1 && (
-        <div className="border-2 border-dashed border-swiss-gray-100 p-8 flex items-center justify-center">
+        <div className="border-2 border-dashed border-neutral-100 p-8 flex items-center justify-center">
           <div className="text-ui-xs text-gray-500 font-bold uppercase tracking-widest">
             + ADD SECOND CONTACT &rarr;
           </div>

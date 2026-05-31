@@ -39,34 +39,46 @@ export const sendBookingConfirmation = async ({
   consultationFee,
   appointmentId,
 }) => {
-  const subject = `Appointment Confirmed — ${date} at ${startTime}`;
+  const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
+  const subject = `Your Appointment with Dr. ${cleanDrName} is Confirmed — ${date} at ${startTime}`;
+  
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const detailLink = appointmentId ? `${clientUrl}/appointments/${appointmentId}` : `${clientUrl}/patient/appointments`;
+  const firstName = patientName.split(' ')[0];
+
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-      <div style="background: #0EA5E9; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">Theralign</h1>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
+      <div style="background: #0B4F6C; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
       </div>
-      <div style="padding: 32px; background: #ffffff;">
-        <h2 style="color: #1E293B; margin-top: 0; font-size: 20px;">Appointment Confirmed ✓</h2>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">Hi ${patientName},</p>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">
+      <div style="padding: 32px; background: #ffffff; text-align: left;">
+        <h2 style="color: #1C2B3A; margin-top: 0; font-size: 20px; font-weight: 700;">Appointment Confirmed</h2>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
           Your appointment has been successfully booked. Here are your booking details:
         </p>
-        <div style="background: #F8FAFC; border-left: 4px solid #0EA5E9; padding: 16px; margin: 24px 0; border-radius: 4px;">
-          <p style="margin: 6px 0; color: #1E293B; font-size: 14px;"><strong>Doctor:</strong> Dr. ${doctorName}</p>
-          <p style="margin: 6px 0; color: #1E293B; font-size: 14px;"><strong>Date:</strong> ${date}</p>
-          <p style="margin: 6px 0; color: #1E293B; font-size: 14px;"><strong>Time:</strong> ${startTime} – ${endTime}</p>
-          <p style="margin: 6px 0; color: #1E293B; font-size: 14px;"><strong>Consultation Fee:</strong> ₹${consultationFee}</p>
-          <p style="margin: 10px 0 0 0; color: #64748B; font-size: 12px;">
+        <div style="background: #F7F9FB; border-left: 4px solid #0A7E6E; padding: 20px; margin: 24px 0; border-radius: 6px; border-right: 1px solid #DDE3EA; border-top: 1px solid #DDE3EA; border-bottom: 1px solid #DDE3EA;">
+          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Doctor: <span style="font-weight: normal; color: #3D5166;">Dr. ${cleanDrName}</span></p>
+          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Date: <span style="font-weight: normal; color: #3D5166;">${date}</span></p>
+          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Time: <span style="font-weight: normal; color: #3D5166;">${startTime} – ${endTime}</span></p>
+          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Consultation Fee: <span style="font-weight: normal; color: #3D5166;">₹${consultationFee} / session</span></p>
+          <p style="margin: 12px 0 0 0; color: #A8B8C8; font-size: 11px; font-weight: bold; uppercase tracking: 0.05em;">
             Appointment ID: ${appointmentId}
           </p>
         </div>
-        <p style="color: #475569; font-size: 14px; line-height: 1.5;">
-          Please arrive 5 minutes early. If you need to cancel or reschedule, you can do so directly from your Theralign dashboard.
+        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+          Arrive 5 minutes early. If you need to cancel or reschedule, do so directly from your Theralign dashboard.
         </p>
+        <div style="text-align: center; margin: 32px 0 16px 0;">
+          <a href="${detailLink}" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">VIEW APPOINTMENT DETAILS</a>
+        </div>
       </div>
-      <div style="padding: 16px; background: #F8FAFC; text-align: center; border-top: 1px solid #f1f5f9;">
-        <p style="color: #94A3B8; font-size: 12px; margin: 0;">
-          © 2026 Theralign. This is an automated message.
+      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
+        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+          The Theralign Team
+        </p>
+        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
+          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
         </p>
       </div>
     </div>
@@ -85,31 +97,44 @@ export const sendAppointmentReminder = async ({
   date,
   startTime,
   endTime,
+  appointmentId,
 }) => {
-  const subject = `Reminder: Your appointment tomorrow at ${startTime}`;
+  const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
+  const subject = `Reminder: Your Appointment with Dr. ${cleanDrName} Tomorrow at ${startTime}`;
+  
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const detailLink = appointmentId ? `${clientUrl}/appointments/${appointmentId}` : `${clientUrl}/patient/appointments`;
+  const firstName = patientName.split(' ')[0];
+
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-      <div style="background: #0EA5E9; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">Theralign</h1>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
+      <div style="background: #0B4F6C; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
       </div>
-      <div style="padding: 32px; background: #ffffff;">
-        <h2 style="color: #1E293B; margin-top: 0; font-size: 20px;">Appointment Tomorrow 🗓️</h2>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">Hi ${patientName},</p>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">
+      <div style="padding: 32px; background: #ffffff; text-align: left;">
+        <h2 style="color: #1C2B3A; margin-top: 0; font-size: 20px; font-weight: 700;">Appointment Tomorrow</h2>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
           This is a friendly reminder that you have an appointment scheduled for tomorrow:
         </p>
-        <div style="background: #F8FAFC; border-left: 4px solid #0EA5E9; padding: 16px; margin: 24px 0; border-radius: 4px;">
-          <p style="margin: 6px 0; color: #1E293B; font-size: 14px;"><strong>Doctor:</strong> Dr. ${doctorName}</p>
-          <p style="margin: 6px 0; color: #1E293B; font-size: 14px;"><strong>Date:</strong> ${date}</p>
-          <p style="margin: 6px 0; color: #1E293B; font-size: 14px;"><strong>Time:</strong> ${startTime} – ${endTime}</p>
+        <div style="background: #F7F9FB; border-left: 4px solid #0A7E6E; padding: 20px; margin: 24px 0; border-radius: 6px; border-right: 1px solid #DDE3EA; border-top: 1px solid #DDE3EA; border-bottom: 1px solid #DDE3EA;">
+          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Doctor: <span style="font-weight: normal; color: #3D5166;">Dr. ${cleanDrName}</span></p>
+          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Date: <span style="font-weight: normal; color: #3D5166;">${date}</span></p>
+          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Time: <span style="font-weight: normal; color: #3D5166;">${startTime} – ${endTime}</span></p>
         </div>
-        <p style="color: #475569; font-size: 14px; line-height: 1.5;">
-          See you tomorrow! Please contact support or log into your dashboard if you have any questions.
+        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+          See you tomorrow. Contact support at support@theralign.com if you have any questions.
         </p>
+        <div style="text-align: center; margin: 32px 0 16px 0;">
+          <a href="${detailLink}" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">VIEW APPOINTMENT DETAILS</a>
+        </div>
       </div>
-      <div style="padding: 16px; background: #F8FAFC; text-align: center; border-top: 1px solid #f1f5f9;">
-        <p style="color: #94A3B8; font-size: 12px; margin: 0;">
-          © 2026 Theralign. This is an automated message.
+      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
+        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+          The Theralign Team
+        </p>
+        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
+          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
         </p>
       </div>
     </div>
@@ -128,26 +153,38 @@ export const sendCancellationNotice = async ({
   date,
   startTime,
   cancelledBy,
+  appointmentId,
 }) => {
-  const subject = `Appointment Cancelled — ${date} at ${startTime}`;
+  const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
+  const subject = `Appointment Cancelled — Dr. ${cleanDrName} on ${date} at ${startTime}`;
+  
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const firstName = patientName.split(' ')[0];
+
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-      <div style="background: #EF4444; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 0.5px;">Theralign</h1>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
+      <div style="background: #C0392B; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
       </div>
-      <div style="padding: 32px; background: #ffffff;">
-        <h2 style="color: #EF4444; margin-top: 0; font-size: 20px;">Appointment Cancelled</h2>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">Hi ${patientName},</p>
-        <p style="color: #475569; font-size: 15px; line-height: 1.5;">
-          Your scheduled appointment with Dr. ${doctorName} on ${date} at ${startTime} has been cancelled${cancelledBy === 'doctor' ? ' by the doctor' : ''}.
+      <div style="padding: 32px; background: #ffffff; text-align: left;">
+        <h2 style="color: #C0392B; margin-top: 0; font-size: 20px; font-weight: 700;">Appointment Cancelled</h2>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
+          Your scheduled appointment with Dr. ${cleanDrName} on ${date} at ${startTime} has been cancelled${cancelledBy === 'doctor' ? ' by the doctor' : ''}.
         </p>
-        <p style="color: #475569; font-size: 14px; line-height: 1.5;">
-          If this was done in error or you wish to schedule a new visit, you can explore other active slots on our discovery page at any time.
+        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+          If you wish to schedule a new visit, you can explore other active slots on our discovery page at any time.
         </p>
+        <div style="text-align: center; margin: 32px 0 16px 0;">
+          <a href="${clientUrl}/doctors" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">EXPLORE ACTIVE SLOTS</a>
+        </div>
       </div>
-      <div style="padding: 16px; background: #F8FAFC; text-align: center; border-top: 1px solid #f1f5f9;">
-        <p style="color: #94A3B8; font-size: 12px; margin: 0;">
-          © 2026 Theralign.
+      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
+        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+          The Theralign Team
+        </p>
+        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
+          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
         </p>
       </div>
     </div>

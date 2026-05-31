@@ -4,6 +4,9 @@ import { Eye, EyeOff, UserPlus, HeartPulse, Stethoscope, User } from 'lucide-rea
 import toast from 'react-hot-toast';
 import { registerAPI } from '../../api/auth.api';
 import useAuthStore from '../../store/authStore';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+import Card from '../../components/common/Card';
 
 const DASHBOARD_ROUTES = {
   patient: '/patient/dashboard',
@@ -97,21 +100,21 @@ const RegisterPage = () => {
   const strength = getPasswordStrength(formData.password);
 
   return (
-    <div className="min-h-[85vh] bg-swiss-white flex items-center justify-center p-6 py-12">
+    <div className="min-h-[85vh] bg-neutral-50 flex items-center justify-center p-6 py-12 page-fade-in px-6 sm:px-6">
       <div className="w-full max-w-[480px] mx-auto">
         {/* Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-swiss-black border-2 border-swiss-black rounded-none mb-4">
-            <HeartPulse className="w-7 h-7 text-swiss-white" />
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-lg shadow-level-1 mb-4">
+            <HeartPulse className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-[32px] leading-[1.1] font-black text-swiss-black uppercase tracking-tight font-swiss">Create your account</h1>
-          <p className="text-swiss-gray-600 mt-2 text-ui-sm font-bold uppercase tracking-[0.06em]">Join Theralign — it&apos;s free</p>
+          <h1 className="text-[32px] leading-[1.1] font-black text-neutral-900 tracking-tight font-swiss text-center">Theralign</h1>
+          <p className="text-neutral-500 mt-2 text-ui-sm font-semibold uppercase tracking-wider hidden sm:block">Join Theralign — it&apos;s free</p>
         </div>
 
-        <div className="bg-[#F7F7F7] border-2 border-swiss-black p-8 rounded-none shadow-none">
+        <Card variant="default" className="p-6 sm:p-8 rounded-[12px] md:rounded-lg shadow-level-1">
           {/* API Error Banner */}
           {error && (
-            <div className="mb-5 bg-swiss-red/5 border-2 border-swiss-red text-swiss-red px-4 py-3 rounded-none text-ui-sm flex items-start gap-2">
+            <div className="mb-5 bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm flex items-start gap-2">
               <span className="mt-0.5 shrink-0">⚠️</span>
               <span className="font-bold">{error}</span>
             </div>
@@ -120,24 +123,23 @@ const RegisterPage = () => {
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Role Toggle */}
             <div className="flex flex-col gap-1.5 text-left">
-              <label className="text-ui-xs font-black text-swiss-black uppercase tracking-[0.08em] mb-0.5">I am a…</label>
-              <div className="flex w-full border-2 border-swiss-black rounded-none">
+              <label className="text-[12px] font-semibold text-neutral-700 mb-0.5">I am a…</label>
+              <div className="flex w-full border border-neutral-200 rounded-md overflow-hidden bg-neutral-50 p-1">
                 {[
                   { value: 'patient', label: 'Patient' },
                   { value: 'doctor', label: 'Physiotherapist' },
-                ].map(({ value, label }, i) => (
+                ].map(({ value, label }) => (
                   <button
                     key={value}
                     type="button"
                     id={`role-${value}`}
                     onClick={() => setFormData((p) => ({ ...p, role: value }))}
                     className={`
-                      flex-1 py-3 text-sm font-bold tracking-wide uppercase
-                      transition-colors duration-100 cursor-pointer
-                      ${i > 0 ? 'border-l-2 border-swiss-black' : ''}
+                      flex-1 py-2 text-xs font-bold tracking-wide uppercase
+                      transition-all duration-fast cursor-pointer rounded-md
                       ${formData.role === value
-                        ? 'bg-swiss-black text-swiss-white'
-                        : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'bg-transparent text-neutral-500 hover:text-neutral-900'
                       }
                     `}
                   >
@@ -148,177 +150,128 @@ const RegisterPage = () => {
             </div>
 
             {/* Full Name */}
-            <div className="flex flex-col gap-1.5 text-left">
-              <label htmlFor="reg-name" className="text-ui-xs font-black text-swiss-black uppercase tracking-[0.08em]">
-                Full Name
-              </label>
-              <input
-                id="reg-name"
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Jane Smith"
-                required
-                disabled={isLoading}
-                className={`w-full px-4 py-3 border-2 rounded-none bg-swiss-white text-swiss-black text-ui-md placeholder-swiss-gray-400 focus:outline-none focus:border-4 focus:px-[14px] focus:py-[10px] disabled:opacity-60 transition-all duration-fast ${
-                  fieldErrors.name ? 'border-swiss-red focus:border-swiss-red' : 'border-swiss-black focus:border-swiss-black'
-                }`}
-                style={{ minHeight: '48px' }}
-              />
-              {fieldErrors.name && (
-                <p className="text-[11px] font-bold text-swiss-red mt-1 uppercase tracking-wide">ERROR: {fieldErrors.name}</p>
-              )}
-            </div>
+            <Input
+              id="reg-name"
+              type="text"
+              name="name"
+              label="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="e.g. Jane Smith"
+              required
+              disabled={isLoading}
+              error={fieldErrors.name}
+            />
 
             {/* Email */}
-            <div className="flex flex-col gap-1.5 text-left">
-              <label htmlFor="reg-email" className="text-ui-xs font-black text-swiss-black uppercase tracking-[0.08em]">
-                Email address
-              </label>
-              <input
-                id="reg-email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                required
-                autoComplete="email"
-                disabled={isLoading}
-                className={`w-full px-4 py-3 border-2 rounded-none bg-swiss-white text-swiss-black text-ui-md placeholder-swiss-gray-400 focus:outline-none focus:border-4 focus:px-[14px] focus:py-[10px] disabled:opacity-60 transition-all duration-fast ${
-                  fieldErrors.email ? 'border-swiss-red focus:border-swiss-red' : 'border-swiss-black focus:border-swiss-black'
-                }`}
-                style={{ minHeight: '48px' }}
-              />
-              {fieldErrors.email && (
-                <p className="text-[11px] font-bold text-swiss-red mt-1 uppercase tracking-wide">ERROR: {fieldErrors.email}</p>
-              )}
-            </div>
+            <Input
+              id="reg-email"
+              type="email"
+              name="email"
+              label="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="e.g. you@example.com"
+              required
+              autoComplete="email"
+              disabled={isLoading}
+              error={fieldErrors.email}
+            />
 
             {/* Password */}
-            <div className="flex flex-col gap-1.5 text-left">
-              <label htmlFor="reg-password" className="text-ui-xs font-black text-swiss-black uppercase tracking-[0.08em]">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="reg-password"
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Min. 8 chars, upper, lower, number"
-                  required
-                  autoComplete="new-password"
-                  disabled={isLoading}
-                  className={`w-full px-4 py-3 pr-12 border-2 rounded-none bg-swiss-white text-swiss-black text-ui-md placeholder-swiss-gray-400 focus:outline-none focus:border-4 focus:px-[14px] focus:py-[10px] disabled:opacity-60 transition-all duration-fast ${
-                    fieldErrors.password ? 'border-swiss-red focus:border-swiss-red' : 'border-swiss-black focus:border-swiss-black'
-                  }`}
-                  style={{ minHeight: '48px' }}
-                />
-                <button
-                  type="button"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-swiss-gray-400 hover:text-swiss-black focus:outline-none"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+            <div className="flex flex-col gap-1.5 text-left relative">
+              <Input
+                id="reg-password"
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                label="Password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Min. 8 chars, upper, lower, number"
+                required
+                autoComplete="new-password"
+                disabled={isLoading}
+                error={fieldErrors.password}
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-4 top-[38px] text-neutral-400 hover:text-neutral-900 focus:outline-none"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
               {/* Strength indicator */}
               {formData.password && (
-                <div className="mt-2">
-                  <div className="h-1.5 bg-swiss-gray-100 rounded-none overflow-hidden border border-swiss-black">
+                <div className="mt-1">
+                  <div className="h-1.5 bg-neutral-100 rounded-md overflow-hidden border border-neutral-200">
                     <div
                       className={`h-full transition-all duration-300 ${strength.color}`}
                       style={{ width: strength.width }}
                     />
                   </div>
                   <p className={`text-[11px] mt-1 font-bold uppercase tracking-wider ${
-                    strength.label === 'Weak' ? 'text-swiss-red' :
-                    strength.label === 'Medium' ? 'text-swiss-amber' : 'text-swiss-teal'
+                    strength.label === 'Weak' ? 'text-accent' :
+                    strength.label === 'Medium' ? 'text-warning' : 'text-success'
                   }`}>
                     {strength.label} password
                   </p>
                 </div>
               )}
-              {fieldErrors.password && (
-                <p className="text-[11px] font-bold text-swiss-red mt-1 uppercase tracking-wide">ERROR: {fieldErrors.password}</p>
-              )}
             </div>
 
             {/* Confirm Password */}
-            <div className="flex flex-col gap-1.5 text-left">
-              <label htmlFor="reg-confirm" className="text-ui-xs font-black text-swiss-black uppercase tracking-[0.08em]">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  id="reg-confirm"
-                  type={showConfirm ? 'text' : 'password'}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Re-enter your password"
-                  required
-                  autoComplete="new-password"
-                  disabled={isLoading}
-                  className={`w-full px-4 py-3 pr-12 border-2 rounded-none bg-swiss-white text-swiss-black text-ui-md placeholder-swiss-gray-400 focus:outline-none focus:border-4 focus:px-[14px] focus:py-[10px] disabled:opacity-60 transition-all duration-fast ${
-                    fieldErrors.confirmPassword ? 'border-swiss-red focus:border-swiss-red' : 'border-swiss-black focus:border-swiss-black'
-                  }`}
-                  style={{ minHeight: '48px' }}
-                />
-                <button
-                  type="button"
-                  aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
-                  onClick={() => setShowConfirm((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-swiss-gray-400 hover:text-swiss-black focus:outline-none"
-                  tabIndex={-1}
-                >
-                  {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              {fieldErrors.confirmPassword && (
-                <p className="text-[11px] font-bold text-swiss-red mt-1 uppercase tracking-wide">ERROR: {fieldErrors.confirmPassword}</p>
-              )}
+            <div className="flex flex-col gap-1.5 text-left relative">
+              <Input
+                id="reg-confirm"
+                type={showConfirm ? 'text' : 'password'}
+                name="confirmPassword"
+                label="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Re-enter your password"
+                required
+                autoComplete="new-password"
+                disabled={isLoading}
+                error={fieldErrors.confirmPassword}
+              />
+              <button
+                type="button"
+                aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
+                onClick={() => setShowConfirm((v) => !v)}
+                className="absolute right-4 top-[38px] text-neutral-400 hover:text-neutral-900 focus:outline-none"
+                tabIndex={-1}
+              >
+                {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
 
             {/* Submit */}
-            <button
+            <Button
               id="register-submit-btn"
               type="submit"
+              variant="primary"
+              fullWidth
+              loading={isLoading}
+              loadingText="Creating account..."
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-swiss-black hover:bg-swiss-red active:scale-[0.98] text-swiss-white font-bold uppercase tracking-widest rounded-none border-2 border-swiss-black disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-fast text-ui-sm mt-2 cursor-pointer"
+              className="h-[56px] sm:h-10 mt-2"
             >
-              {isLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4 text-swiss-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                  Creating account…
-                </>
-              ) : (
-                <>
-                  <UserPlus size={16} />
-                  Create Account
-                </>
-              )}
-            </button>
+              Create Account
+            </Button>
           </form>
 
-          <p className="mt-6 text-center text-ui-sm text-swiss-gray-600 font-medium">
+          <p className="mt-6 text-center text-ui-sm text-neutral-500 font-semibold">
             Already have an account?{' '}
             <Link
               to="/login"
-              className="text-swiss-red font-bold hover:underline transition"
+              className="text-accent font-bold hover:underline transition"
             >
               Sign in
             </Link>
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   );

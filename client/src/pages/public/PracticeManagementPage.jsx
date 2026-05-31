@@ -27,7 +27,7 @@ const PracticeManagementPage = () => {
   ];
 
   return (
-    <div className="max-w-page mx-auto py-12 px-6 select-none text-swiss-black bg-swiss-white text-left space-y-12">
+    <div className="max-w-page mx-auto py-12 px-6 select-none text-neutral-900 bg-white text-left space-y-12">
       {/* Page Title */}
       <SectionHeader
         number="03."
@@ -50,16 +50,16 @@ const PracticeManagementPage = () => {
         {tools.map((t) => (
           <Card 
             key={t.title} 
-            className="border-2 border-swiss-black p-8 bg-swiss-white flex flex-col gap-4 hover:border-swiss-black"
+            className="border-2 border-neutral-900 p-8 bg-white flex flex-col gap-4 hover:border-neutral-900"
           >
             <div>
-              <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+              <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
                 {t.prefix} OPERATIONAL FEATURE
               </span>
-              <h3 className="text-ui-md font-black text-swiss-black uppercase tracking-tight">
+              <h3 className="text-ui-md font-black text-neutral-900 uppercase tracking-tight">
                 {t.title}
               </h3>
-              <div className="h-[1px] bg-swiss-gray-200 w-full mt-3" />
+              <div className="h-[1px] bg-neutral-200 w-full mt-3" />
             </div>
 
             <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">

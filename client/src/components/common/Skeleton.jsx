@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * D1.9 — Skeleton Loading Placeholder
  *
- * All skeletons are swiss-gray-100 rectangles.
+ * All skeletons are neutral-100 rectangles.
  * Animation: opacity oscillates between 0.5 and 1.0
  *             — opacity pulse ONLY. NO movement/translation.
  *
@@ -27,8 +27,17 @@ const Skeleton = ({
   className = '',
   style = {},
 }) => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
   const baseStyle = {
-    backgroundColor: '#F2F2F2',   // swiss-gray-100
+    backgroundColor: '#F2F2F2',   // neutral-100
     animation: 'swiss-pulse 1.2s ease-in-out infinite',
     display: 'block',
     ...style,
@@ -124,7 +133,7 @@ export const TableRowSkeleton = ({ columns = 5 }) => (
 /** Metric card skeleton */
 export const MetricCardSkeleton = () => (
   <div
-    className="p-8 bg-swiss-gray-100"
+    className="p-8 bg-neutral-100"
     style={{ border: '2px solid #0F0F0F', borderRadius: '0' }}
     aria-busy="true"
   >

@@ -31,23 +31,23 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
   }
 
   return (
-    <div className="w-full p-8 bg-swiss-gray-100 border-2 border-swiss-black rounded-none shadow-none text-left">
+    <div className="w-full p-8 bg-neutral-100 border-2 border-neutral-900 rounded-none shadow-none text-left">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         {/* Left Side: 6 columns */}
         <div className="flex flex-col gap-4">
           <div>
-            <span className="text-display-md font-black text-swiss-black select-none leading-none block">
+            <span className="text-display-md font-black text-neutral-900 select-none leading-none block">
               {percentage}%
             </span>
-            <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block mt-2">
+            <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block mt-2">
               PROFILE COMPLETE
             </span>
           </div>
 
           {/* Pure horizontal progress bar (solid black on gray-200 track) */}
-          <div className="w-full h-4 bg-swiss-gray-200 border-2 border-swiss-black rounded-none overflow-hidden relative mt-2">
+          <div className="w-full h-4 bg-neutral-200 border-2 border-neutral-900 rounded-none overflow-hidden relative mt-2">
             <div
-              className="h-full bg-swiss-black transition-all duration-standard rounded-none"
+              className="h-full bg-neutral-900 transition-all duration-standard rounded-none"
               style={{ width: `${percentage}%` }}
             />
           </div>
@@ -55,30 +55,30 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
 
         {/* Right Side: 6 columns (Missing checklist) */}
         <div className="flex flex-col gap-3">
-          <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
             REMAINING ACTIONS
           </span>
           
-          <div className="flex flex-col border border-swiss-gray-200 bg-swiss-white divide-y divide-swiss-gray-200 rounded-none">
+          <div className="flex flex-col border border-neutral-200 bg-white divide-y divide-neutral-200 rounded-none">
             {items.map((item) => (
               <Link
                 key={item.key}
                 to={item.link}
-                className="flex items-center justify-between px-4 py-3 hover:bg-swiss-gray-50 transition-colors select-none"
+                className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors select-none"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {/* Square indicator */}
                   <div
-                    className={`w-5 h-5 border border-swiss-black rounded-none flex items-center justify-center shrink-0 ${
-                      item.met ? 'bg-swiss-black' : 'bg-swiss-white'
+                    className={`w-5 h-5 border border-neutral-900 rounded-none flex items-center justify-center shrink-0 ${
+                      item.met ? 'bg-neutral-900' : 'bg-white'
                     }`}
                   >
-                    {item.met && <span className="text-swiss-white font-black text-[10px]">✓</span>}
+                    {item.met && <span className="text-white font-black text-[10px]">✓</span>}
                   </div>
                   
                   <span
                     className={`text-ui-sm font-bold truncate uppercase tracking-wider ${
-                      item.met ? 'text-swiss-gray-400 line-through' : 'text-swiss-black'
+                      item.met ? 'text-neutral-500 line-through' : 'text-neutral-900'
                     }`}
                   >
                     {item.label}
@@ -86,7 +86,7 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
                 </div>
 
                 {!item.met && (
-                  <span className="text-[11px] font-black text-swiss-red tracking-wider shrink-0 select-none">
+                  <span className="text-[11px] font-black text-accent tracking-wider shrink-0 select-none">
                     +{item.weight}%
                   </span>
                 )}

@@ -66,49 +66,49 @@ const OnboardingCard = ({ profile, slotCount }) => {
   const progressPercentage = (completedCount / 4) * 100;
 
   return (
-    <div className="w-full bg-swiss-gray-100 border-2 border-swiss-black rounded-none shadow-none text-left flex flex-col gap-6 swiss-diagonal relative" style={{ borderTopWidth: '4px' }}>
+    <div className="w-full bg-neutral-100 border-2 border-neutral-900 rounded-none shadow-none text-left flex flex-col gap-6  relative" style={{ borderTopWidth: '4px' }}>
       {/* Card Header */}
       <div>
-        <span className="text-ui-xs font-black text-swiss-red tracking-widest uppercase block mb-1">
+        <span className="text-ui-xs font-black text-accent tracking-widest uppercase block mb-1">
           GETTING STARTED
         </span>
-        <h2 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+        <h2 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
           Complete these steps to start receiving bookings.
         </h2>
-        <div className="h-0.5 bg-swiss-black/10 w-full mt-4" />
+        <div className="h-0.5 bg-neutral-900/10 w-full mt-4" />
       </div>
 
       {/* Checklist Stacked Rows */}
-      <div className="flex flex-col border border-swiss-black bg-swiss-white divide-y divide-swiss-black rounded-none">
+      <div className="flex flex-col border border-neutral-900 bg-white divide-y divide-neutral-900 rounded-none">
         {steps.map((step) => {
           const isPendingVerificationStep = step.id === 4;
           return (
             <div
               key={step.id}
-              className="flex items-center justify-between h-14 px-4 bg-swiss-white select-none transition-colors"
+              className="flex items-center justify-between h-14 px-4 bg-white select-none transition-colors"
             >
               {/* Checkbox + Text block */}
               <div className="flex items-center gap-4 min-w-0">
                 {/* Bordered Square Checkbox */}
                 <div
-                  className={`w-6 h-6 border-2 border-swiss-black shrink-0 flex items-center justify-center rounded-none transition-colors ${
-                    step.isComplete ? 'bg-swiss-black' : 'bg-swiss-white'
+                  className={`w-6 h-6 border-2 border-neutral-900 shrink-0 flex items-center justify-center rounded-none transition-colors ${
+                    step.isComplete ? 'bg-neutral-900' : 'bg-white'
                   }`}
                 >
                   {step.isComplete && (
-                    <span className="text-swiss-white font-black text-xs">✓</span>
+                    <span className="text-white font-black text-xs">✓</span>
                   )}
                 </div>
 
                 <div className="flex flex-col text-left truncate leading-tight">
                   <span
                     className={`text-ui-xs font-black uppercase tracking-wider ${
-                      step.isComplete ? 'text-swiss-gray-400 line-through' : 'text-swiss-black'
+                      step.isComplete ? 'text-neutral-500 line-through' : 'text-neutral-900'
                     }`}
                   >
                     {step.title}
                   </span>
-                  <span className="text-[11px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5 truncate">
+                  <span className="text-[11px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5 truncate">
                     {step.description}
                   </span>
                 </div>
@@ -117,17 +117,17 @@ const OnboardingCard = ({ profile, slotCount }) => {
               {/* Action Link / Confirmation */}
               <div className="shrink-0 font-black text-ui-xs tracking-widest">
                 {step.isComplete ? (
-                  <span className="text-swiss-teal font-black uppercase select-none">
+                  <span className="text-success font-black uppercase select-none">
                     ✓ DONE
                   </span>
                 ) : isPendingVerificationStep ? (
-                  <span className="text-swiss-amber font-black uppercase select-none">
+                  <span className="text-warning font-black uppercase select-none">
                     IN REVIEW
                   </span>
                 ) : (
                   <Link
                     to={step.link}
-                    className="text-swiss-black hover:text-swiss-red flex items-center gap-1 font-black transition-colors"
+                    className="text-neutral-900 hover:text-accent flex items-center gap-1 font-black transition-colors"
                   >
                     <span>→</span>
                   </Link>
@@ -140,13 +140,13 @@ const OnboardingCard = ({ profile, slotCount }) => {
 
       {/* Progress Line */}
       <div className="flex flex-col gap-2">
-        <div className="w-full h-3 bg-swiss-gray-200 rounded-none border border-swiss-black overflow-hidden relative">
+        <div className="w-full h-3 bg-neutral-200 rounded-none border border-neutral-900 overflow-hidden relative">
           <div
-            className="h-full bg-swiss-black transition-all duration-standard rounded-none"
+            className="h-full bg-neutral-900 transition-all duration-standard rounded-none"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
-        <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+        <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
           {completedCount} of 4 STEPS COMPLETE
         </span>
       </div>

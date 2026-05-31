@@ -11,43 +11,78 @@ export default {
     // use `rounded-lg`, `shadow-md`, or a non-Swiss color.
 
     colors: {
-      // Base surfaces
-      'swiss-white': '#FFFFFF',   // Primary background — pure canvas
-      'swiss-black': '#0F0F0F',   // Primary text — not pure #000, one degree warmer
-      'swiss-gray': {
-        50:  '#FAFAFA',           // Lightest surface — barely off-white
-        100: '#F2F2F2',           // Muted surface — card backgrounds, sidebar panels
-        200: '#E5E5E5',           // Light border — internal table row separators only
-        400: '#A3A3A3',           // Secondary text — labels, metadata, timestamps
-        600: '#525252',           // Body text on gray surfaces
-        900: '#171717',           // Near-black for high-contrast text on white
+      // Primary — deep teal-navy. The dominant brand color.
+      primary: {
+        DEFAULT: '#0B4F6C',
+        light:   '#E8F4F8',
+        dark:    '#083A52',
       },
 
-      // Signal colors — used in EXACTLY the permitted contexts
-      'swiss-red':   '#FF3000',   // CTAs, active nav, section prefixes, destructive actions
-      'swiss-teal':  '#0D7377',   // Verified badges, confirmed status, paid status ONLY
-      'swiss-amber': '#B45309',   // Pending state — dark amber, never bright yellow
-      // Cancelled uses swiss-gray-400 — gray IS the cancelled signal
+      // Accent — warm coral. CTAs, highlights, active states.
+      accent: {
+        DEFAULT: '#F4845F',
+        light:   '#FDF0EB',
+        dark:    '#D96840',
+      },
+
+      // Neutral — the text and surface system
+      neutral: {
+        900: '#1C2B3A',   // Primary text — dark navy-black
+        700: '#3D5166',   // Secondary headings
+        500: '#6B7C93',   // Secondary text, metadata, timestamps
+        300: '#A8B8C8',   // Placeholder text, disabled states
+        200: '#DDE3EA',   // Borders — soft blue-gray
+        100: '#F0F4F7',   // Muted surfaces — sidebar, table headers
+        50:  '#F7F9FB',   // Page background
+      },
+
+      // Semantic — status signals
+      success: '#0A7E6E',   // Verified, confirmed, paid — keep existing teal
+      warning: '#B45309',   // Pending — keep existing amber
+      danger:  '#C0392B',   // Destructive actions only — a considered red, not alarm red
+
+      // Surface
+      white: '#FFFFFF',     // Cards, panels, modals sit on this
+
+      // Swiss Colors Addition from Accessibility Spec
+      'swiss-surface': '#FFFFFF',
+      'swiss-black': '#1A1A1A',
+      'swiss-gray-100': '#F0F0ED',
+      'swiss-red': '#E8341A',
+      'swiss-teal': '#0A7E6E',
+
+      // Semantic aliases for dark-mode readiness and system abstraction
+      'text-primary': '#1C2B3A', // Maps to neutral.900 (swiss-black / dark navy)
+      'text-secondary': '#6B7C93', // Maps to neutral.500
+      'surface-bg': '#F7F9FB', // Maps to neutral.50 (warm page background)
+      'surface-card': '#FFFFFF', // Maps to white (card surfaces)
+      'border-default': '#DDE3EA', // Maps to neutral.200 (soft borders)
+      'brand-teal': '#0A7E6E', // Maps to success (Theralign teal)
+      'brand-coral': '#F4845F', // Maps to accent (Theralign coral)
 
       // Utility — needed for Tailwind internals
       transparent: 'transparent',
       current: 'currentColor',
-      white: '#FFFFFF',
       black: '#000000',
     },
 
     borderRadius: {
-      // Zero border radius except for avatar circles and status dots.
-      // If you are tempted to use rounded-lg, use rounded-none instead.
-      'none': '0px',     // Default — used everywhere
-      'full': '9999px',  // Avatar initials and status dots ONLY
+      'none':  '0px',      // Structural elements
+      'sm':    '4px',      // Badges, status chips, tags
+      'md':    '6px',      // Buttons, inputs, textareas, toasts
+      'lg':    '8px',      // Cards, panels
+      'xl':    '12px',     // Modals, dropdowns, booking panel
+      '2xl':   '16px',     // Large feature cards
+      'full':  '9999px',   // Avatar circles and status dots only
     },
 
     boxShadow: {
-      // No drop shadows in this system. Zero.
-      // Elevation is expressed through border contrast and background color shifts.
-      // If you are adding a shadow, you are breaking the system.
-      'none': 'none',
+      'none':  'none',
+      'level-1': '0px 1px 3px rgba(11, 79, 108, 0.06), 0px 1px 2px rgba(11, 79, 108, 0.04)',
+      'level-2': '0px 4px 16px rgba(11, 79, 108, 0.10), 0px 2px 6px rgba(11, 79, 108, 0.07)',
+      'level-3': '0px 20px 60px rgba(11, 79, 108, 0.18), 0px 8px 24px rgba(11, 79, 108, 0.12)',
+      'btn-primary': '0 2px 8px rgba(11, 79, 108, 0.25)',
+      'btn-accent': '0 2px 8px rgba(244, 132, 95, 0.30)',
     },
 
     fontFamily: {

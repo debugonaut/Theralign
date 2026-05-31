@@ -86,7 +86,7 @@ const AdminAnalytics = () => {
   });
 
   return (
-    <div className="space-y-12 select-none text-swiss-black">
+    <div className="space-y-12 select-none text-neutral-900">
       {/* Page Title */}
       <SectionHeader
         title="ANALYTICS & PLANNING"
@@ -135,33 +135,33 @@ const AdminAnalytics = () => {
 
       {/* Specialization Breakdown: 3:9 Asymmetric Layout */}
       {specializations.length > 0 && (
-        <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left">
+        <div className="bg-white border-2 border-neutral-900 p-6 rounded-none shadow-none text-left">
           {/* Section Heading */}
-          <div className="pb-4 border-b border-swiss-gray-200 mb-6">
-            <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+          <div className="pb-4 border-b border-neutral-200 mb-6">
+            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
               MARKET PENETRATION INDEX
             </span>
-            <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+            <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
               SPECIALIZATION POPULARITY INDEX
             </h3>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left 3 Columns: Stacking specialization names as bordered rows */}
-            <div className="lg:col-span-3 border-r-0 lg:border-r-2 border-swiss-gray-200 pr-0 lg:pr-6 space-y-3">
-              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+            <div className="lg:col-span-3 border-r-0 lg:border-r-2 border-neutral-200 pr-0 lg:pr-6 space-y-3">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
                 SPECIALIZATION / FRACTION
               </span>
-              <div className="flex flex-col border border-swiss-black divide-y border-collapse">
+              <div className="flex flex-col border border-neutral-900 divide-y border-collapse">
                 {specsWithPercentages.map((spec) => (
                   <div 
                     key={spec.specialization} 
-                    className="flex justify-between items-center p-3 bg-swiss-gray-50 text-xs font-bold"
+                    className="flex justify-between items-center p-3 bg-neutral-50 text-xs font-bold"
                   >
-                    <span className="uppercase tracking-wider text-swiss-black truncate mr-2">
+                    <span className="uppercase tracking-wider text-neutral-900 truncate mr-2">
                       {spec.specialization || 'GENERAL'}
                     </span>
-                    <span className="text-swiss-red font-black shrink-0">
+                    <span className="text-accent font-black shrink-0">
                       {spec.pct}%
                     </span>
                   </div>
@@ -171,7 +171,7 @@ const AdminAnalytics = () => {
 
             {/* Right 9 Columns: Horizontal bar chart proportional block rects */}
             <div className="lg:col-span-9 space-y-4">
-              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
                 PROPORTIONAL SESSIONS DISTRIBUTION
               </span>
               <div className="space-y-4">
@@ -180,21 +180,21 @@ const AdminAnalytics = () => {
                   return (
                     <div key={specName} className="space-y-1 text-left">
                       {/* Label above */}
-                      <div className="flex justify-between items-center text-[10px] font-black uppercase text-swiss-gray-400 tracking-wider">
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase text-neutral-500 tracking-wider">
                         <span>{specName}</span>
                         <span className="font-mono">{spec.appointmentCount || 0} APPOINTMENTS</span>
                       </div>
 
                       {/* Proportional black rectangular bar on gray track */}
-                      <div className="w-full h-8 bg-swiss-gray-100 border border-swiss-black rounded-none overflow-hidden relative">
+                      <div className="w-full h-8 bg-neutral-100 border border-neutral-900 rounded-none overflow-hidden relative">
                         <div 
-                          className="h-full bg-swiss-black transition-all duration-fast rounded-none"
+                          className="h-full bg-neutral-900 transition-all duration-fast rounded-none"
                           style={{ width: `${Math.max(4, spec.pct)}%` }}
                         />
                       </div>
 
                       {/* Label below */}
-                      <div className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-widest pt-0.5">
+                      <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest pt-0.5">
                         {specName} INDEPENDENT PLATFORM SHARE ({spec.pct}%)
                       </div>
                     </div>

@@ -9,13 +9,13 @@ const FAQItem = ({ question, answer }) => {
   return (
     <Card 
       onClick={() => setIsOpen(!isOpen)}
-      className="border-2 border-swiss-black rounded-none shadow-none p-5 text-left bg-swiss-white hover:bg-swiss-gray-50 transition-all select-none cursor-pointer flex flex-col gap-3"
+      className="border-2 border-neutral-900 rounded-none shadow-none p-5 text-left bg-white hover:bg-neutral-50 transition-all select-none cursor-pointer flex flex-col gap-3"
     >
       <div className="flex justify-between items-center w-full">
-        <h4 className="text-xs font-black uppercase text-swiss-black tracking-wide pr-6">
+        <h4 className="text-xs font-black uppercase text-neutral-900 tracking-wide pr-6">
           {question}
         </h4>
-        <span className="text-swiss-black shrink-0">
+        <span className="text-neutral-900 shrink-0">
           {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </span>
       </div>
@@ -61,7 +61,7 @@ const HelpCenterPage = () => {
   ];
 
   return (
-    <div className="max-w-page mx-auto py-12 px-6 select-none text-swiss-black bg-swiss-white text-left space-y-12">
+    <div className="max-w-page mx-auto py-12 px-6 select-none text-neutral-900 bg-white text-left space-y-12">
       {/* Page Title */}
       <SectionHeader
         number="04."
@@ -73,7 +73,7 @@ const HelpCenterPage = () => {
         
         {/* Left Column: Patient FAQ Accordion */}
         <div className="space-y-6">
-          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
             PATIENT INQUIRY FAQS
           </span>
           <div className="space-y-4">
@@ -85,7 +85,7 @@ const HelpCenterPage = () => {
 
         {/* Right Column: Clinician FAQ Accordion */}
         <div className="space-y-6">
-          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
             CLINICIAN WORKSPACE FAQS
           </span>
           <div className="space-y-4">

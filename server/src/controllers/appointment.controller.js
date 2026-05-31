@@ -217,6 +217,7 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
       date: populatedAppt.date,
       startTime: populatedAppt.startTime,
       cancelledBy: role,
+      appointmentId: populatedAppt._id,
     });
   }
 

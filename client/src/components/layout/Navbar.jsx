@@ -32,50 +32,49 @@ const Navbar = () => {
   }, []);
 
   const publicLinks = [
-    { label: 'FIND DOCTORS', to: '/doctors' },
-    { label: 'FOR PHYSIOTHERAPISTS', to: '/register' },
+    { label: 'Find Doctors', to: '/doctors' },
+    { label: 'For Physiotherapists', to: '/register' },
   ];
 
   const roleLinks = {
     patient: [
-      { label: 'FIND DOCTORS', to: '/doctors' },
-      { label: 'MY APPOINTMENTS', to: '/patient/appointments' },
+      { label: 'Find Doctors', to: '/doctors' },
+      { label: 'My Appointments', to: '/patient/appointments' },
     ],
     doctor: [
-      { label: 'DASHBOARD', to: '/doctor/dashboard' },
-      { label: 'APPOINTMENTS', to: '/doctor/appointments' },
+      { label: 'Dashboard', to: '/doctor/dashboard' },
+      { label: 'Appointments', to: '/doctor/appointments' },
     ],
     admin: [
-      { label: 'ADMIN PANEL', to: '/admin/dashboard' },
+      { label: 'Admin Panel', to: '/admin/dashboard' },
     ],
   };
 
   const currentRoleLinks = user ? roleLinks[user.role] || [] : publicLinks;
 
-  // Reusable NavLink with the swiss vertical slide micro-interaction
   const SwissNavLink = ({ to, label }) => {
-    // For mobile menu or simple links where animation isn't needed, we just use standard text
-    // But Phase 2 spec asks for .swiss-nav-link micro-interaction
     return (
-      <Link to={to} className="swiss-nav-link swiss-label text-[17px]">
-        <span className="nav-text-default text-swiss-black">{label}</span>
-        <span className="nav-text-hover">{label}</span>
+      <Link
+        to={to}
+        className="text-sm font-medium text-neutral-500 hover:text-primary transition-colors duration-fast select-none"
+      >
+        {label}
       </Link>
     );
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-swiss-white border-b-4 border-swiss-black">
+    <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200 shadow-sm">
       <div className="max-w-[1440px] mx-auto px-6 sm:px-16">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16">
           
           {/* Logo */}
           <div className="flex">
-            <Link to="/" className="flex items-center gap-3 text-swiss-black">
-              <span className="font-black text-2xl tracking-tighter uppercase font-swiss">
+            <Link to="/" className="flex items-center gap-3 text-primary">
+              <span className="font-black text-xl tracking-tighter uppercase font-swiss">
                 THERALIGN
               </span>
-              <img src="/theralign-logo.svg" alt="Theralign Logo" className="w-10 h-10 object-contain" />
+              <img src="/theralign-logo.svg" alt="Theralign Logo" className="w-8 h-8 object-contain" />
             </Link>
           </div>
 
@@ -97,32 +96,32 @@ const Navbar = () => {
                   <div className="relative user-menu-container">
                     <button
                       onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                      className="flex items-center gap-2 px-2 py-1 bg-swiss-white border-2 border-transparent hover:border-swiss-black transition-all duration-fast"
+                      className="flex items-center gap-2 px-2 py-1 bg-white border border-transparent hover:border-neutral-200 rounded-md transition-all duration-fast"
                     >
-                      <div className="w-8 h-8 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center text-sm font-bold">
+                      <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
                         {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                       </div>
-                      <span className="text-sm font-bold text-swiss-black uppercase tracking-widest">{user.name}</span>
-                      <ChevronDown className="w-4 h-4 text-swiss-black" />
+                      <span className="text-sm font-semibold text-neutral-900 normal-case">{user.name}</span>
+                      <ChevronDown className="w-4 h-4 text-neutral-500" />
                     </button>
 
                     {userDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-swiss-white border-2 border-swiss-black py-1 z-50">
+                      <div className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 shadow-dropdown rounded-lg py-1 z-50">
                         <Link
                           to={`/${user.role}/profile`}
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-swiss-black hover:bg-swiss-gray-100 font-bold uppercase tracking-widest transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-100 font-medium normal-case transition-colors"
                         >
-                          <User className="w-4 h-4" />
-                          PROFILE
+                          <User className="w-4 h-4 text-neutral-500" />
+                          Profile
                         </Link>
-                        <div className="border-t-2 border-swiss-gray-200 my-1" />
+                        <div className="border-t border-neutral-200 my-1" />
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-swiss-red hover:bg-swiss-gray-100 font-bold uppercase tracking-widest text-left transition-colors"
+                          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-danger hover:bg-neutral-100 font-medium normal-case text-left transition-colors"
                         >
                           <LogOut className="w-4 h-4" />
-                          LOGOUT
+                          Logout
                         </button>
                       </div>
                     )}
@@ -131,7 +130,7 @@ const Navbar = () => {
               ) : (
                 <div className="flex items-center gap-4">
                   <Link to="/login">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" className="border-0 text-primary hover:bg-primary-light">
                       Log In
                     </Button>
                   </Link>
@@ -150,9 +149,9 @@ const Navbar = () => {
             {user && <NotificationBell />}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 border-2 border-swiss-black bg-swiss-white text-swiss-black font-bold uppercase tracking-widest text-xs hover:bg-swiss-black hover:text-swiss-white transition-colors duration-fast"
+              className="p-2 border border-neutral-200 bg-white text-neutral-900 rounded-md font-bold text-xs hover:bg-neutral-100 transition-colors duration-fast"
             >
-              {mobileMenuOpen ? 'CLOSE' : 'MENU'}
+              {mobileMenuOpen ? 'Close' : 'Menu'}
             </button>
           </div>
         </div>
@@ -160,45 +159,45 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Panel */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-swiss-white border-b-4 border-swiss-black px-6 py-4 space-y-4">
+        <div className="md:hidden bg-white border-b border-neutral-200 px-6 py-4 space-y-4 shadow-sm">
           {currentRoleLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-lg font-bold uppercase tracking-widest text-swiss-black border-l-4 border-transparent hover:border-swiss-red hover:text-swiss-red transition-all pl-2"
+              className="block py-2 text-base font-semibold text-neutral-700 hover:text-primary transition-all pl-2"
             >
               {link.label}
             </Link>
           ))}
 
-          <div className="border-t-2 border-swiss-gray-200 my-4" />
+          <div className="border-t border-neutral-200 my-4" />
 
           {user ? (
             <div className="space-y-4">
-              <div className="py-2 text-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
-                LOGGED IN AS {user.name}
+              <div className="py-1 text-xs font-semibold text-neutral-500 normal-case">
+                Logged in as {user.name}
               </div>
               <Link
                 to={`/${user.role}/profile`}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 py-2 font-bold uppercase tracking-widest text-swiss-black hover:text-swiss-red transition-colors"
+                className="flex items-center gap-2 py-2 font-medium text-neutral-900 hover:text-primary transition-colors"
               >
-                <User className="w-5 h-5" />
-                MY PROFILE
+                <User className="w-5 h-5 text-neutral-500" />
+                Profile
               </Link>
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 py-2 font-bold uppercase tracking-widest text-left text-swiss-red hover:text-swiss-black transition-colors"
+                className="w-full flex items-center gap-2 py-2 font-medium text-left text-danger hover:text-neutral-900 transition-colors"
               >
                 <LogOut className="w-5 h-5" />
-                LOGOUT
+                Logout
               </button>
             </div>
           ) : (
             <div className="flex flex-col gap-3 pt-2 pb-4">
               <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" fullWidth size="md">
+                <Button variant="ghost" fullWidth size="md" className="border-0 text-primary hover:bg-primary-light">
                   Log In
                 </Button>
               </Link>

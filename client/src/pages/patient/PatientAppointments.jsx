@@ -13,6 +13,11 @@ const PatientAppointments = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ALL APPOINTMENTS');
 
+  const formatINR = (value) => {
+    if (value === undefined || value === null) return '₹0';
+    return '₹' + new Intl.NumberFormat('en-IN').format(value);
+  };
+
   // Expanded row ID for inline details
   const [expandedRowId, setExpandedRowId] = useState(null);
 
@@ -147,7 +152,7 @@ const PatientAppointments = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+    <div className="flex flex-col gap-8 select-none text-left bg-white">
       
       {/* Page Header Section */}
       <SectionHeader
@@ -158,7 +163,7 @@ const PatientAppointments = () => {
       />
 
       {/* Segmented Tab Row */}
-      <div className="flex items-center gap-1.5 pt-2">
+      <div className="flex items-center gap-1.5 pt-2 flex-wrap">
         {['ALL APPOINTMENTS', 'UPCOMING', 'COMPLETED', 'CANCELLED'].map((tab) => {
           const isActive = activeTab === tab;
           return (
@@ -169,10 +174,10 @@ const PatientAppointments = () => {
                 setActiveTab(tab);
                 setExpandedRowId(null); // Reset expansion on tab swap
               }}
-              className={`px-4 py-2 border-2 border-swiss-black font-black text-[11px] uppercase tracking-widest transition-colors duration-fast rounded-none cursor-pointer select-none
+              className={`px-4 py-2 font-bold text-[11px] uppercase tracking-widest transition-all duration-150 rounded-md cursor-pointer select-none border
                 ${isActive 
-                  ? 'bg-swiss-black text-swiss-white' 
-                  : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                  ? 'bg-neutral-900 border-neutral-900 text-white shadow-level-1' 
+                  : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
                 }
               `}
             >
@@ -184,15 +189,15 @@ const PatientAppointments = () => {
 
       {/* Appointments Ledger Table */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING CLINIC TRANSACTION LEDGERS...
         </div>
       ) : activeAppts.length === 0 ? (
-        <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto">
-          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+        <div className="border border-neutral-200 border-dashed p-12 text-center rounded-lg flex flex-col items-center gap-4 max-w-lg mx-auto bg-neutral-50">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             NO SESSIONS FILED
           </span>
-          <p className="text-ui-md text-swiss-gray-600 font-bold max-w-sm">
+          <p className="text-ui-md text-neutral-700 font-bold max-w-sm">
             There are no booking entries recorded in this list status tab.
           </p>
           <Button variant="primary" onClick={() => navigate('/doctors')}>
@@ -200,7 +205,7 @@ const PatientAppointments = () => {
           </Button>
         </div>
       ) : (
-        <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none">
+        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1">
           <Table>
             <Table.Head>
               <tr>
@@ -241,15 +246,15 @@ const PatientAppointments = () => {
                       expanded={isExpanded}
                       onClick={() => toggleRowExpansion(appt._id)}
                     >
-                      <Table.Cell className="font-bold text-swiss-gray-400">
+                      <Table.Cell className="font-bold text-neutral-500">
                         {dateText}
                       </Table.Cell>
                       <Table.Cell>
                         <div className="flex flex-col text-left">
-                          <span className="font-black text-swiss-black uppercase">
+                          <span className="font-black text-neutral-900 uppercase">
                             DR. {docName.toUpperCase()}
                           </span>
-                          <span className="text-[10px] text-swiss-red font-black tracking-widest mt-0.5">
+                          <span className="text-[10px] text-accent font-black tracking-widest mt-0.5">
                             {specText.toUpperCase()}
                           </span>
                         </div>
@@ -257,11 +262,11 @@ const PatientAppointments = () => {
                       <Table.Cell className="font-bold">
                         {appt.startTime} – {appt.endTime}
                       </Table.Cell>
-                      <Table.Cell className="hidden md:table-cell text-swiss-gray-400 font-bold">
+                      <Table.Cell className="hidden md:table-cell text-neutral-500 font-bold">
                         30 MIN
                       </Table.Cell>
                       <Table.Cell numeric className="font-black">
-                        ₹{appt.consultationFee || appt.doctor?.consultationFee}
+                        {formatINR(appt.consultationFee || appt.doctor?.consultationFee)}
                       </Table.Cell>
                       <Table.Cell>
                         <Badge variant={appt.paymentStatus === 'paid' ? 'paid' : 'pending'} />
@@ -286,32 +291,32 @@ const PatientAppointments = () => {
 
                     {/* Inline Row Expansion (Indented, 4px black left accent border) */}
                     {isExpanded && (
-                      <Table.Row expanded={true} className="border-l-4 border-swiss-black">
-                        <td colSpan={8} className="bg-swiss-gray-100 p-6 text-left">
+                      <Table.Row expanded={true} className="border-l-4 border-neutral-900">
+                        <td colSpan={8} className="bg-neutral-100 p-6 text-left">
                           <div className="flex flex-col gap-6 w-full">
                             {/* Summary Details */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                               <div>
-                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
                                   CLINIC NAME
                                 </span>
-                                <span className="text-ui-md font-bold text-swiss-black uppercase block">
+                                <span className="text-ui-md font-bold text-neutral-900 uppercase block">
                                   {appt.doctor?.clinicName || 'Theralign Clinic Center'}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
                                   CLINIC LOCATION
                                 </span>
-                                <span className="text-ui-md font-bold text-swiss-black uppercase block">
+                                <span className="text-ui-md font-bold text-neutral-900 uppercase block">
                                   {appt.doctor?.clinicAddress || 'Pune, India'}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
                                   PATIENT NOTES
                                 </span>
-                                <span className="text-ui-md font-bold text-swiss-gray-600 uppercase block leading-relaxed italic">
+                                <span className="text-ui-md font-bold text-neutral-700 uppercase block leading-relaxed italic">
                                   "{appt.patientNotes || 'NO SYMPTOMS FILED ON TRANSACTION RECORD.'}"
                                 </span>
                               </div>
@@ -319,12 +324,12 @@ const PatientAppointments = () => {
 
                             {/* Session Document Attachment F3 */}
                             {appt.sessionDocument && (
-                              <div className="pt-4 border-t border-swiss-gray-200 flex items-center justify-between">
+                              <div className="pt-4 border-t border-neutral-200 flex items-center justify-between">
                                 <div>
-                                  <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block">
+                                  <span className="text-[10px] font-black text-success uppercase tracking-widest block">
                                     CLINICAL DOCUMENTS ATTACHED
                                   </span>
-                                  <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5">
+                                  <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
                                     Your physiotherapist has uploaded session recovery logs.
                                   </span>
                                 </div>
@@ -332,7 +337,7 @@ const PatientAppointments = () => {
                                   href={appt.sessionDocument}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="h-10 px-4 border-2 border-swiss-teal text-swiss-teal bg-swiss-white hover:bg-swiss-teal hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
+                                  className="h-10 px-4 border-2 border-success text-success bg-white hover:bg-success hover:text-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
                                 >
                                   DOWNLOAD NOTES →
                                 </a>
@@ -341,34 +346,34 @@ const PatientAppointments = () => {
 
                             {/* Cancellation Log */}
                             {appt.status === 'cancelled' && (
-                              <div className="p-4 bg-swiss-white border-2 border-swiss-gray-200 rounded-none text-left">
-                                <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                              <div className="p-4 bg-white border-2 border-neutral-200 rounded-none text-left">
+                                <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
                                   CANCELLATION SUMMARY
                                 </span>
-                                <p className="text-ui-sm text-swiss-gray-600 font-medium">
+                                <p className="text-ui-sm text-neutral-700 font-medium">
                                   Cancelled by {appt.cancelledBy || 'system'}. Reason: <b>{appt.cancellationReason || 'UNSPECIFIED'}</b>.
                                 </p>
                               </div>
                             )}
 
-                            {/* ── D3.7 Inline Review Form ── */}
+                             {/* ── D3.7 Inline Review Form ── */}
                             {appt.status === 'completed' && appt.paymentStatus === 'paid' && (
-                              <div className="pt-6 border-t border-swiss-gray-200 text-left">
+                              <div className="pt-6 border-t border-neutral-200 text-left">
                                 {!appt.reviewSubmitted && !submittedReviews[appt._id] ? (
-                                  <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none flex flex-col gap-4">
+                                  <div className="bg-white border border-neutral-200/60 p-6 rounded-lg shadow-level-1 flex flex-col gap-4">
                                     <div>
-                                      <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                                      <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
                                         LEAVE A REVIEW
                                       </span>
-                                      <h4 className="text-ui-lg font-black text-swiss-black uppercase tracking-tighter">
+                                      <h4 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tighter">
                                         SHARE YOUR SESSION EXPERIENCE WITH DR. {docName.toUpperCase()}
                                       </h4>
-                                      <div className="h-[1px] bg-swiss-gray-200 w-full mt-2" />
+                                      <div className="h-[1px] bg-neutral-200 w-full mt-2" />
                                     </div>
 
                                     {/* Number star rating selector */}
                                     <div className="flex flex-col gap-2">
-                                      <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                                      <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                                         RATING
                                       </span>
                                       <div className="flex items-center gap-1.5">
@@ -379,10 +384,10 @@ const PatientAppointments = () => {
                                               key={val}
                                               type="button"
                                               onClick={() => setRating(val)}
-                                              className={`w-10 h-10 border-2 font-black text-ui-sm flex items-center justify-center rounded-none select-none cursor-pointer transition-colors
+                                              className={`w-10 h-10 border font-bold text-ui-sm flex items-center justify-center rounded-md select-none cursor-pointer transition-all duration-150 active:scale-[0.93]
                                                 ${isSelected 
-                                                  ? 'bg-swiss-black border-swiss-black text-swiss-white' 
-                                                  : 'bg-swiss-white border-swiss-black text-swiss-black hover:bg-swiss-gray-100'
+                                                  ? 'bg-neutral-900 border-neutral-900 text-white shadow-level-1' 
+                                                  : 'bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'
                                                 }
                                               `}
                                             >
@@ -391,7 +396,7 @@ const PatientAppointments = () => {
                                           );
                                         })}
                                         {rating > 0 && (
-                                          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest ml-3">
+                                          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-3">
                                             {rating === 1 && '1 = POOR'}
                                             {rating === 2 && '2 = FAIR'}
                                             {rating === 3 && '3 = GOOD'}
@@ -404,7 +409,7 @@ const PatientAppointments = () => {
 
                                     {/* Review Text */}
                                     <div className="flex flex-col gap-2">
-                                      <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                                      <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                                         YOUR EXPERIENCE
                                       </span>
                                       <textarea
@@ -413,9 +418,9 @@ const PatientAppointments = () => {
                                         placeholder="Describe your session, the physiotherapist's approach, and your recovery progress..."
                                         maxLength={1000}
                                         rows={3}
-                                        className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+                                        className="w-full bg-white border border-neutral-200 focus:border-[#0A7E6E] px-4 py-3 text-ui-sm font-semibold text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-[#0A7E6E]/20 transition-all rounded-md resize-none transition-warm"
                                       />
-                                      <span className="text-[9px] font-black text-swiss-gray-400 text-right uppercase tracking-widest">
+                                      <span className="text-[9px] font-black text-neutral-500 text-right uppercase tracking-widest">
                                         {comment.length} / 1000 CHARACTERS (MIN 10 CHARACTERS)
                                       </span>
                                     </div>
@@ -434,21 +439,21 @@ const PatientAppointments = () => {
                                   </div>
                                 ) : (
                                   /* Post-submission confirmed card state */
-                                  <div className="bg-swiss-white border-2 border-swiss-teal p-6 rounded-none flex flex-col gap-3">
+                                  <div className="bg-white border border-[#0A7E6E]/20 p-6 rounded-lg shadow-level-1 flex flex-col gap-3">
                                     <div className="flex items-center gap-3">
-                                      <div className="w-8 h-8 border-2 border-swiss-teal flex items-center justify-center text-swiss-teal text-ui-sm font-black rounded-none">
+                                      <div className="w-8 h-8 border border-[#0A7E6E]/30 bg-[#0A7E6E]/5 flex items-center justify-center text-[#0A7E6E] text-ui-sm font-bold rounded-md">
                                         {submittedReviews[appt._id]?.rating || appt.rating || 5}
                                       </div>
                                       <div className="text-left">
-                                        <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block">
+                                        <span className="text-[10px] font-black text-success uppercase tracking-widest block">
                                           REVIEW SUBMITTED — THANK YOU.
                                         </span>
-                                        <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5">
+                                        <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
                                           Your feedback helps patient search indexes remain transparent.
                                         </span>
                                       </div>
                                     </div>
-                                    <p className="text-ui-md text-swiss-black italic font-medium leading-relaxed mt-2">
+                                    <p className="text-ui-md text-neutral-900 italic font-medium leading-relaxed mt-2">
                                       "{submittedReviews[appt._id]?.comment || appt.comment || 'YOUR REVIEW WAS RECORDED SUCCESSFULLY.'}"
                                     </p>
                                   </div>
@@ -476,21 +481,21 @@ const PatientAppointments = () => {
           title="CANCEL APPOINTMENT"
         >
           <div className="flex flex-col gap-5 text-left select-none">
-            <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide leading-relaxed">
+            <p className="text-ui-sm text-neutral-700 font-bold uppercase tracking-wide leading-relaxed">
               Are you sure you want to cancel your clinical consultation slot? Unlocked slots will immediately become available for other patients to book.
             </p>
             
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                 REASON FOR CANCELLATION (OPTIONAL)
               </label>
               <textarea
                 value={cancelModal.reason}
                 onChange={(e) => setCancelModal({ ...cancelModal, reason: e.target.value })}
-                placeholder="E.G. SCHEDULE CONFLICT, FEELING BETTER, BOOKED ANOTHER PRACTICE CLINIC..."
+                placeholder="E.g. Schedule conflict, feeling better, booked another practice clinic..."
                 rows={3}
                 maxLength={200}
-                className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+                className="w-full bg-white border border-neutral-200 focus:border-accent px-4 py-3 text-ui-sm font-semibold text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-accent/20 transition-all rounded-md resize-none transition-warm"
               />
             </div>
 

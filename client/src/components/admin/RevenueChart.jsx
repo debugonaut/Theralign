@@ -46,30 +46,30 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
   };
 
   return (
-    <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left flex flex-col gap-6 relative">
+    <div className="bg-white border-2 border-neutral-900 p-6 rounded-none shadow-none text-left flex flex-col gap-6 relative">
       {/* Chart Title and Period Control Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-swiss-gray-200">
+      <div className="flex items-center justify-between pb-4 border-b border-neutral-200">
         <div>
-          <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
             FINANCIAL INDEX
           </span>
-          <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+          <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
             REVENUE STREAM TREND
           </h3>
         </div>
         
         {/* Segmented Control Toggle */}
-        <div className="flex border-2 border-swiss-black rounded-none shadow-none">
+        <div className="flex border-2 border-neutral-900 rounded-none shadow-none">
           {PERIOD_OPTIONS.map((p) => {
             const isActive = period === p;
             return (
               <button
                 key={p}
                 onClick={() => onPeriodChange?.(p)}
-                className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all duration-fast border-r-2 last:border-r-0 border-swiss-black select-none cursor-pointer ${
+                className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest transition-all duration-fast border-r-2 last:border-r-0 border-neutral-900 select-none cursor-pointer ${
                   isActive 
-                    ? 'bg-swiss-black text-swiss-white' 
-                    : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-150'
+                    ? 'bg-neutral-900 text-white' 
+                    : 'bg-white text-neutral-900 hover:bg-swiss-gray-150'
                 }`}
               >
                 {p}
@@ -80,7 +80,7 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
       </div>
 
       {!hasData ? (
-        <div className="flex flex-col items-center justify-center h-[240px] text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+        <div className="flex flex-col items-center justify-center h-[240px] text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
           NO INDEX DATA AVAILABLE
         </div>
       ) : (
@@ -172,17 +172,17 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
           {/* Snappy Tooltip Box: 0px border-radius, no shadow, snappy 150ms hover */}
           {tooltip && (
             <div
-              className="absolute bg-swiss-white border-2 border-swiss-black p-3.5 z-20 pointer-events-none text-left select-none rounded-none shadow-none transition-all duration-fast"
+              className="absolute bg-white border-2 border-neutral-900 p-3.5 z-20 pointer-events-none text-left select-none rounded-none shadow-none transition-all duration-fast"
               style={{
                 left: `${Math.min(85, Math.max(15, (tooltip.index / (data.length - 1)) * 100))}%`,
                 top: '5%',
                 transform: 'translateX(-50%)',
               }}
             >
-              <p className="text-[10px] font-black text-swiss-red uppercase tracking-widest mb-1.5">{tooltip.data.date}</p>
-              <p className="text-ui-sm font-black text-swiss-black uppercase">REVENUE: <span className="swiss-numeric text-swiss-black">₹{(tooltip.data.revenue || 0).toLocaleString('en-IN')}</span></p>
-              <p className="text-ui-xs font-bold text-swiss-gray-600 uppercase mt-0.5">COMMISSION: <span className="swiss-numeric">₹{(tooltip.data.commission || 0).toLocaleString('en-IN')}</span></p>
-              <p className="text-[10px] font-bold text-swiss-gray-400 uppercase mt-1">{tooltip.data.appointments} SESSIONS COMPLETED</p>
+              <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1.5">{tooltip.data.date}</p>
+              <p className="text-ui-sm font-black text-neutral-900 uppercase">REVENUE: <span className="swiss-numeric text-neutral-900">₹{(tooltip.data.revenue || 0).toLocaleString('en-IN')}</span></p>
+              <p className="text-ui-xs font-bold text-neutral-700 uppercase mt-0.5">COMMISSION: <span className="swiss-numeric">₹{(tooltip.data.commission || 0).toLocaleString('en-IN')}</span></p>
+              <p className="text-[10px] font-bold text-neutral-500 uppercase mt-1">{tooltip.data.appointments} SESSIONS COMPLETED</p>
             </div>
           )}
         </div>

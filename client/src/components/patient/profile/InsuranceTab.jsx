@@ -54,7 +54,7 @@ const InsuranceTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
         />
       </div>
 
-      <div className="flex bg-swiss-gray-100 border-2 border-black p-4 mt-2">
+      <div className="flex bg-neutral-100 border-2 border-black p-4 mt-2">
         <div className="flex-shrink-0 mr-4">
           <div className="w-8 h-8 border-2 border-black bg-white flex items-center justify-center">
             <Info size={16} strokeWidth={1.5} className="text-black" />

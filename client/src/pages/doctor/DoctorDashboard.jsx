@@ -56,7 +56,7 @@ const DoctorDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="py-24 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest bg-swiss-white">
+      <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest bg-white">
         LOADING PRACTITIONER LEDGER PANELS...
       </div>
     );
@@ -119,36 +119,37 @@ const DoctorDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col gap-12 select-none text-left bg-swiss-white">
+    <div className="flex flex-col gap-12 select-none text-left bg-white">
       
       {/* ── Page Header ── */}
       <div>
-        <h1 className="font-black text-display-sm text-swiss-black uppercase leading-none tracking-tighter">
-          GOOD MORNING, DR. {surname}.
+        <h1 className="font-black text-display-sm text-neutral-900 uppercase leading-none tracking-tighter">
+          Good morning, DR. {surname}.
         </h1>
-        <p className="text-ui-lg text-swiss-gray-400 font-bold uppercase tracking-wider mt-2">
+        <p className="text-ui-lg text-neutral-500 font-bold uppercase tracking-wider mt-2">
           {currentFullDateStr}
         </p>
-        <div className="w-full h-1 bg-swiss-black mt-6" />
+        <div className="w-full h-1 bg-neutral-900 mt-6" />
       </div>
 
       {/* ── Verification Warning Banner (If Not Verified) ── */}
       {status !== 'verified' && (
-        <div className="w-full p-6 bg-swiss-white border-2 border-swiss-black border-l-4 border-l-swiss-amber rounded-none flex flex-col md:flex-row md:items-center justify-between gap-4 select-none">
+        <div className="w-full p-6 bg-white border border-neutral-200/50 border-l-4 border-l-warning rounded-lg shadow-level-1 flex flex-col md:flex-row md:items-center justify-between gap-4 select-none transition-warm">
           <div>
-            <span className="text-[10px] font-black text-swiss-amber tracking-widest uppercase block mb-1">
+            <span className="text-[10px] font-black text-warning tracking-widest uppercase block mb-1">
               PENDING VERIFICATION
             </span>
-            <p className="text-ui-md text-swiss-black font-bold uppercase tracking-wide">
+            <p className="text-ui-md text-neutral-900 font-bold uppercase tracking-wide">
               Your profile is awaiting admin review. Complete your profile to accelerate the process.
             </p>
           </div>
-          <Link
-            to="/doctor/profile"
-            className="h-10 px-4 border-2 border-swiss-black text-swiss-black hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none shrink-0 rounded-none cursor-pointer"
+          <Button
+            variant="secondary"
+            onClick={() => navigate('/doctor/profile')}
+            size="sm"
           >
             COMPLETE PROFILE →
-          </Link>
+          </Button>
         </div>
       )}
 
@@ -163,44 +164,44 @@ const DoctorDashboard = () => {
       {/* ── Metrics Cards Grid (4x1) ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Today's Appointments */}
-        <div className="p-6 bg-swiss-white border-2 border-swiss-black rounded-none transition-all duration-fast hover:border-4 flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+        <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
+          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
             TODAY'S APPOINTMENTS
           </span>
-          <span className="text-display-xs font-black text-swiss-black select-none leading-none block">
+          <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
             {todayAppts.length}
           </span>
         </div>
 
         {/* This Month's Earnings */}
-        <div className="p-6 bg-swiss-white border-2 border-swiss-black rounded-none transition-all duration-fast hover:border-4 flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+        <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
+          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
             THIS MONTH'S EARNINGS
           </span>
           <div className="flex items-baseline select-none">
-            <span className="text-ui-xl text-swiss-black font-medium mr-1 select-none">₹</span>
-            <span className="text-display-xs font-black text-swiss-black select-none leading-none block">
+            <span className="text-ui-xl text-neutral-900 font-medium mr-1 select-none">₹</span>
+            <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
               {thisMonthEarnings.toLocaleString('en-IN')}
             </span>
           </div>
         </div>
 
         {/* Total Patients */}
-        <div className="p-6 bg-swiss-white border-2 border-swiss-black rounded-none transition-all duration-fast hover:border-4 flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+        <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
+          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
             TOTAL PATIENTS
           </span>
-          <span className="text-display-xs font-black text-swiss-black select-none leading-none block">
+          <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
             {uniquePatients}
           </span>
         </div>
 
         {/* Your Rating */}
-        <div className="p-6 bg-swiss-white border-2 border-swiss-black rounded-none transition-all duration-fast hover:border-4 flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest block">
+        <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
+          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
             YOUR RATING
           </span>
-          <span className="text-display-xs font-black text-swiss-black select-none leading-none block">
+          <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
             {profile?.averageRating ? `${parseFloat(profile.averageRating).toFixed(1)}/5` : '0/5'}
           </span>
         </div>
@@ -212,14 +213,14 @@ const DoctorDashboard = () => {
         
         <div className="grid grid-cols-12 gap-8 items-start">
           {/* Left 2 Columns: Vertical Date Stack */}
-          <div className="col-span-12 md:col-span-2 flex md:flex-col items-baseline md:items-start justify-between md:justify-start gap-1 border-b-2 md:border-b-0 md:border-r-2 border-swiss-black pb-4 md:pb-0 md:pr-4">
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+          <div className="col-span-12 md:col-span-2 flex md:flex-col items-baseline md:items-start justify-between md:justify-start gap-1 border-b md:border-b-0 md:border-r border-neutral-200 pb-4 md:pb-0 md:pr-4">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
               {dayName}
             </span>
-            <span className="text-display-lg font-black text-swiss-black select-none leading-none block md:my-1">
+            <span className="text-display-lg font-black text-neutral-900 select-none leading-none block md:my-1">
               {dayNum}
             </span>
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
               {monthName}
             </span>
           </div>
@@ -228,37 +229,38 @@ const DoctorDashboard = () => {
           <div className="col-span-12 md:col-span-10 flex flex-col gap-4">
             {todaySchedule.length === 0 ? (
               <div className="py-8 flex flex-col gap-3">
-                <p className="text-ui-md text-swiss-gray-400 uppercase font-bold italic">
+                <p className="text-ui-md text-neutral-500 uppercase font-bold italic">
                   No appointments scheduled for today.
                 </p>
-                <Link
-                  to="/doctor/availability"
-                  className="h-10 px-4 border-2 border-swiss-black text-swiss-black hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none shrink-0 w-max rounded-none cursor-pointer"
+                <Button
+                  onClick={() => navigate('/doctor/availability')}
+                  variant="secondary"
+                  className="w-max"
                 >
                   MANAGE AVAILABILITY →
-                </Link>
+                </Button>
               </div>
             ) : (
-              <div className="flex flex-col border border-swiss-black divide-y divide-swiss-black rounded-none bg-swiss-white">
+              <div className="flex flex-col border border-neutral-200/50 divide-y divide-neutral-100 rounded-lg shadow-level-1 bg-white overflow-hidden">
                 {todaySchedule.map((appt) => (
                   <div
                     key={appt._id}
-                    className="flex items-center justify-between h-14 px-4 bg-swiss-white hover:bg-swiss-gray-50 transition-colors select-none"
+                    className="flex items-center justify-between h-14 px-4 bg-white hover:bg-neutral-50 transition-colors select-none"
                   >
                     {/* Time Column (far left of row) */}
                     <div className="flex items-center gap-4 min-w-0">
-                      <span className="text-ui-xs font-black text-swiss-black uppercase tracking-wider shrink-0 w-28">
+                      <span className="text-ui-xs font-black text-neutral-900 uppercase tracking-wider shrink-0 w-28">
                         {appt.startTime} – {appt.endTime}
                       </span>
                       {/* Thin vertical separator line inside the row */}
-                      <div className="h-6 w-[1px] bg-swiss-gray-200" />
+                      <div className="h-6 w-[1px] bg-neutral-200" />
                       
                       {/* Card Content block */}
                       <div className="flex items-center gap-3 truncate">
-                        <span className="text-ui-sm font-black text-swiss-black uppercase truncate">
+                        <span className="text-ui-sm font-black text-neutral-900 uppercase truncate">
                           {appt.patient?.name || 'Patient'}
                         </span>
-                        <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider">
+                        <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
                           (30 MIN)
                         </span>
                         <Badge variant={appt.status} />
@@ -272,7 +274,7 @@ const DoctorDashboard = () => {
                       </ActionLink>
                       <button
                         onClick={() => handleMarkComplete(appt._id)}
-                        className="h-8 px-3 border border-swiss-black text-swiss-black hover:bg-swiss-black hover:text-swiss-white font-black text-[10px] flex items-center uppercase tracking-wider transition-colors select-none rounded-none cursor-pointer"
+                        className="h-8 px-3 border border-neutral-300 hover:border-neutral-900 text-neutral-700 hover:text-neutral-900 font-bold text-[10px] flex items-center uppercase tracking-wider transition-all duration-150 select-none rounded-md cursor-pointer bg-white"
                       >
                         MARK COMPLETE →
                       </button>
@@ -291,12 +293,12 @@ const DoctorDashboard = () => {
         
         {recentBookings.length === 0 ? (
           <div className="py-8 flex flex-col gap-3">
-            <p className="text-ui-md text-swiss-gray-400 uppercase font-bold italic">
+            <p className="text-ui-md text-neutral-500 uppercase font-bold italic">
               No recent bookings registered in records.
             </p>
           </div>
         ) : (
-          <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none bg-swiss-white">
+          <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none">
             <Table>
               <Table.Head>
                 <tr>
@@ -314,10 +316,10 @@ const DoctorDashboard = () => {
                     .toUpperCase();
                   return (
                     <Table.Row key={appt._id} hoverable={true}>
-                      <Table.Cell className="font-bold text-swiss-gray-400">
+                      <Table.Cell className="font-bold text-neutral-500">
                         {dateText}
                       </Table.Cell>
-                      <Table.Cell className="font-black text-swiss-black uppercase">
+                      <Table.Cell className="font-black text-neutral-900 uppercase">
                         {appt.patient?.name || 'Patient'}
                       </Table.Cell>
                       <Table.Cell className="font-bold">
@@ -339,12 +341,13 @@ const DoctorDashboard = () => {
           </div>
         )}
 
-        <button
+        <Button
           onClick={() => navigate('/doctor/appointments')}
-          className="h-10 px-4 border-2 border-swiss-black text-swiss-black hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none shrink-0 w-max rounded-none cursor-pointer"
+          variant="secondary"
+          className="w-max"
         >
           VIEW ALL APPOINTMENTS →
-        </button>
+        </Button>
       </div>
 
     </div>

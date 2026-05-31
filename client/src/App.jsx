@@ -23,23 +23,21 @@ const App = () => {
             duration: 4000,
             style: {
               background: '#FFFFFF',
-              color: '#0F0F0F',
+              color: '#1C2B3A',
               fontFamily: 'Inter, sans-serif',
-              fontSize: '12px',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              fontWeight: '700',
-              borderRadius: '0',
-              border: '2px solid #0F0F0F',
-              boxShadow: 'none',
+              fontSize: '13px',
+              fontWeight: '600',
+              borderRadius: '12px',
+              border: '1px solid #DDE3EA',
+              boxShadow: '0px 4px 16px rgba(11, 79, 108, 0.10), 0px 2px 6px rgba(11, 79, 108, 0.07)',
             },
             success: {
-              style: { borderLeft: '6px solid #0D7377' },
-              iconTheme: { primary: '#0D7377', secondary: '#FFFFFF' },
+              style: { borderLeft: '6px solid #0A7E6E' },
+              iconTheme: { primary: '#0A7E6E', secondary: '#FFFFFF' },
             },
             error: {
-              style: { borderLeft: '6px solid #FF3000' },
-              iconTheme: { primary: '#FF3000', secondary: '#FFFFFF' },
+              style: { borderLeft: '6px solid #C0392B' },
+              iconTheme: { primary: '#C0392B', secondary: '#FFFFFF' },
               duration: Infinity,  // Error toasts never auto-dismiss
             },
           }}

@@ -29,28 +29,28 @@ const FeaturedDoctorsSection = () => {
   if (loading) {
     return (
       <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
-        <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-swiss-black pb-4 mb-12">
-          <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-swiss-red font-swiss">
+        <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-12">
+          <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
             03.
           </span>
-          <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-swiss-black font-swiss">
+          <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
             FEATURED SPECIALISTS
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div key={n} className="bg-swiss-white border-2 border-swiss-gray-200 h-64 animate-pulse p-6">
+            <div key={n} className="bg-white border-2 border-neutral-200 h-64 animate-pulse p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 bg-swiss-gray-200 rounded-full" />
+                <div className="w-14 h-14 bg-neutral-200 rounded-full" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-swiss-gray-200 w-2/3" />
-                  <div className="h-3 bg-swiss-gray-200 w-1/3" />
+                  <div className="h-4 bg-neutral-200 w-2/3" />
+                  <div className="h-3 bg-neutral-200 w-1/3" />
                 </div>
               </div>
-              <div className="h-px bg-swiss-gray-200 my-4" />
+              <div className="h-px bg-neutral-200 my-4" />
               <div className="space-y-2">
-                <div className="h-3 bg-swiss-gray-200 w-full" />
-                <div className="h-3 bg-swiss-gray-200 w-5/6" />
+                <div className="h-3 bg-neutral-200 w-full" />
+                <div className="h-3 bg-neutral-200 w-5/6" />
               </div>
             </div>
           ))}
@@ -65,11 +65,11 @@ const FeaturedDoctorsSection = () => {
 
   return (
     <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
-      <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-swiss-black pb-4 mb-12">
-        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-swiss-red font-swiss">
+      <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-12">
+        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
           03.
         </span>
-        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-swiss-black font-swiss">
+        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
           FEATURED SPECIALISTS
         </h2>
       </div>
@@ -82,7 +82,7 @@ const FeaturedDoctorsSection = () => {
         ))}
       </div>
 
-      <div className="mt-16 flex justify-center border-t-2 border-swiss-black pt-12">
+      <div className="mt-16 flex justify-center border-t-2 border-neutral-900 pt-12">
         <Link to="/doctors">
           <Button variant="secondary" size="lg">
             BROWSE ALL DOCTORS →

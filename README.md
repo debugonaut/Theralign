@@ -213,7 +213,8 @@ Client runs at: `http://localhost:5173`
 | Phase 9 | Admin Dashboard, Analytics & Platform Operations | ✅ Complete |
 | Phase 10 | Polish, Landing Page & Deployment | ✅ Complete |
 | Phase 11 | Patient Experience (Design Phase 3) | ✅ Complete |
+| Phase 12 | Universal Accessibility & UI/UX Humanization | ✅ Complete |
 
 ---
 
-*Built with engineering care during MVP sprint — Theralign v0.1.1*
+*Built with engineering care during MVP sprint — Theralign v0.1.2*

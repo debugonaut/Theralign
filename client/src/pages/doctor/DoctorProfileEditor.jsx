@@ -5,6 +5,7 @@ import { getDoctorProfileAPI, onboardDoctorAPI } from '../../api/doctor.api';
 import useAuthStore from '../../store/authStore';
 import SectionHeader from '../../components/common/SectionHeader';
 import Button from '../../components/common/Button';
+import Input from '../../components/common/Input';
 
 const DoctorProfileEditor = () => {
   const navigate = useNavigate();
@@ -268,7 +269,7 @@ const DoctorProfileEditor = () => {
 
   if (isLoading) {
     return (
-      <div className="py-24 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest bg-swiss-white">
+      <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest bg-white">
         LOADING PRACTITIONER SETTINGS PANELS...
       </div>
     );
@@ -276,62 +277,62 @@ const DoctorProfileEditor = () => {
 
   const isVerified = profile?.verificationStatus === 'verified';
 
+  const currentStatus = profile?.verificationStatus || 'pending';
+  // 0: SUBMITTED, 1: UNDER REVIEW, 2: APPROVED, 3: ACTIVE
+  let activeStep = 0;
+  if (currentStatus === 'pending') activeStep = 1;
+  if (currentStatus === 'verified') activeStep = 3;
+
+  const steps = [
+    { key: 'submitted', label: 'Submitted', desc: 'Application received and registered.' },
+    { key: 'review', label: 'Under Review', desc: 'Credential verification in progress.' },
+    { key: 'approved', label: 'Approved', desc: 'Credentials verified successfully.' },
+    { key: 'active', label: 'Active', desc: 'Profile live in search directory.' },
+  ];
+
   return (
-    <div className="flex flex-col gap-12 select-none text-left bg-swiss-white pb-32">
+    <div className="flex flex-col gap-12 select-none text-left bg-neutral-50 pb-32 px-6 py-8 page-fade-in">
       
       {/* ── Page Header ── */}
       <div>
-        <SectionHeader title="MY PROFILE" size="lg" ruled={true} className="mb-0" />
-        <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide mt-3">
+        <SectionHeader title="My Profile" size="lg" ruled={true} className="mb-0" />
+        <p className="text-ui-sm text-neutral-500 font-semibold uppercase tracking-wider mt-3">
           Configure your professional clinical parameters, update coordinates, set fee charts, and submit license files.
         </p>
       </div>
 
       {/* ── PERSONAL INFORMATION ── */}
       <div className="flex flex-col gap-6">
-        <SectionHeader title="PERSONAL INFORMATION" size="sm" ruled={true} className="mb-0" />
+        <SectionHeader title="Personal Information" size="sm" ruled={true} className="mb-0" />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Full Name */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-              FULL NAME *
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="bg-swiss-white border-2 border-swiss-black px-4 py-2.5 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
-              required
-            />
-          </div>
+          <Input
+            type="text"
+            label="Full Name *"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            placeholder="Jane Smith"
+          />
 
           {/* Email (Disabled, Read-only) */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
-              <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-                EMAIL ADDRESS
-              </label>
-              <span className="text-[9px] font-black text-swiss-gray-400 uppercase tracking-widest bg-swiss-gray-100 px-1 py-0.5 rounded-none select-none">
-                CANNOT BE CHANGED
-              </span>
-            </div>
-            <input
-              type="email"
-              value={profile?.user?.email || ''}
-              disabled
-              className="bg-swiss-gray-100 border-2 border-swiss-gray-200 px-4 py-2.5 text-ui-sm font-bold uppercase tracking-wider text-swiss-gray-400 cursor-not-allowed rounded-none"
-            />
-          </div>
+          <Input
+            type="email"
+            label="Email Address"
+            value={profile?.user?.email || ''}
+            disabled={true}
+            placeholder="you@example.com"
+          />
         </div>
 
         {/* Phone Input with Internal prefix line */}
         <div className="flex flex-col gap-1.5 w-full md:w-1/2">
-          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-            PHONE NUMBER *
+          <label className="text-[12px] font-semibold text-neutral-700">
+            Phone Number *
           </label>
-          <div className="flex border-2 border-swiss-black rounded-none bg-swiss-white focus-within:border-4 transition-all h-11">
-            <div className="bg-swiss-gray-100 px-3.5 border-r border-swiss-black font-black text-ui-sm text-swiss-black flex items-center select-none shrink-0">
+          <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
+            <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
               +91
             </div>
             <input
@@ -339,7 +340,7 @@ const DoctorProfileEditor = () => {
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
               placeholder="e.g. 9876543210"
-              className="flex-1 px-4 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:outline-none bg-transparent border-0"
+              className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
               required
             />
           </div>
@@ -348,131 +349,108 @@ const DoctorProfileEditor = () => {
 
       {/* ── PROFESSIONAL DETAILS ── */}
       <div className="flex flex-col gap-6">
-        <SectionHeader title="PROFESSIONAL DETAILS" size="sm" ruled={true} className="mb-0" />
+        <SectionHeader title="Professional Details" size="sm" ruled={true} className="mb-0" />
         
         {/* Specialization Comma field */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-            SPECIALIZATION (SEPARATE MULTIPLE WITH COMMAS) *
-          </label>
-          <input
-            type="text"
-            value={specializationText}
-            onChange={(e) => setSpecializationText(e.target.value)}
-            placeholder="E.G. SPORTS PHYSIOTHERAPY, MANUAL THERAPY, DRY NEEDLING"
-            className="bg-swiss-white border-2 border-swiss-black px-4 py-2.5 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
-            required
-          />
-        </div>
+        <Input
+          type="text"
+          label="Specialization (Separate multiple with commas) *"
+          value={specializationText}
+          onChange={(e) => setSpecializationText(e.target.value)}
+          placeholder="e.g. Sports Physiotherapy, Manual Therapy, Dry Needling"
+          required
+        />
 
         {/* Years experience narrow input */}
-        <div className="flex flex-col gap-1.5 w-[240px]">
-          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-            YEARS OF PRACTICE EXPERIENCE *
-          </label>
-          <input
+        <div className="w-[240px]">
+          <Input
             type="number"
+            label="Years of Practice Experience *"
             min="0"
             max="60"
             value={experience}
             onChange={(e) => setExperience(e.target.value.replace(/\D/g, ''))}
-            className="bg-swiss-white border-2 border-swiss-black px-4 py-2.5 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
             required
+            placeholder="e.g. 5"
           />
         </div>
 
         {/* Professional Bio with char counter */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-            PROFESSIONAL BIO *
-          </label>
-          <textarea
+          <Input
+            multiline={true}
+            rows={5}
+            label="Professional Bio *"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             maxLength={1000}
-            rows={5}
             placeholder="Describe your treatment philosophy, academic experience, and physiotherapist patient care methods..."
-            className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
             required
           />
-          <span className="text-[9px] font-black text-swiss-gray-400 text-right uppercase tracking-widest">
-            {bio.length} / 1000 CHARACTERS (MINIMUM 50 CHARS)
+          <span className="text-[10px] font-bold text-neutral-400 text-right uppercase tracking-wider">
+            {bio.length} / 1000 characters (minimum 50 chars)
           </span>
         </div>
       </div>
 
       {/* ── CLINIC DETAILS ── */}
       <div className="flex flex-col gap-6">
-        <SectionHeader title="CLINIC DETAILS" size="sm" ruled={true} className="mb-0" />
+        <SectionHeader title="Clinic Details" size="sm" ruled={true} className="mb-0" />
         
         {/* Clinic Name */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-            CLINIC NAME *
-          </label>
-          <input
-            type="text"
-            value={clinicName}
-            onChange={(e) => setClinicName(e.target.value)}
-            className="bg-swiss-white border-2 border-swiss-black px-4 py-2.5 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
-            required
-          />
-        </div>
+        <Input
+          type="text"
+          label="Clinic Name *"
+          value={clinicName}
+          onChange={(e) => setClinicName(e.target.value)}
+          placeholder="e.g. Metro Physio Clinic"
+          required
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* City */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-              CITY *
-            </label>
-            <input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="bg-swiss-white border-2 border-swiss-black px-4 py-2.5 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
-              required
-            />
-          </div>
+          <Input
+            type="text"
+            label="City *"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="e.g. Pune"
+            required
+          />
 
           {/* State */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-              STATE *
-            </label>
-            <input
-              type="text"
-              value={stateName}
-              onChange={(e) => setStateName(e.target.value)}
-              className="bg-swiss-white border-2 border-swiss-black px-4 py-2.5 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Address */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-            STREET ADDRESS *
-          </label>
-          <textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full h-20 bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+          <Input
+            type="text"
+            label="State *"
+            value={stateName}
+            onChange={(e) => setStateName(e.target.value)}
+            placeholder="e.g. Maharashtra"
             required
           />
         </div>
+
+        {/* Address */}
+        <Input
+          multiline={true}
+          rows={3}
+          label="Street Address *"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder="Enter complete clinic street address..."
+          required
+        />
       </div>
 
       {/* ── CONSULTATION FEE ── */}
       <div className="flex flex-col gap-6">
-        <SectionHeader title="CONSULTATION FEE" size="sm" ruled={true} className="mb-0" />
+        <SectionHeader title="Consultation Fee" size="sm" ruled={true} className="mb-0" />
         
         <div className="flex flex-col gap-1.5 w-[240px]">
-          <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
-            CONSULTATION FEE PER SESSION *
+          <label className="text-[12px] font-semibold text-neutral-700">
+            Consultation Fee Per Session *
           </label>
-          <div className="flex border-2 border-swiss-black rounded-none bg-swiss-white focus-within:border-4 transition-all h-11">
-            <div className="bg-swiss-gray-100 px-3.5 border-r border-swiss-black font-black text-ui-sm text-swiss-black flex items-center select-none shrink-0">
+          <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
+            <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
               ₹
             </div>
             <input
@@ -480,23 +458,23 @@ const DoctorProfileEditor = () => {
               min="0"
               value={consultationFee}
               onChange={(e) => setConsultationFee(e.target.value.replace(/\D/g, ''))}
-              className="flex-1 px-4 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:outline-none bg-transparent border-0"
+              className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
               required
             />
           </div>
         </div>
-        <p className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider">
+        <p className="text-[11px] text-neutral-500 font-medium">
           This amount is shown to patients on your profile and at booking. You can update it at any time.
         </p>
       </div>
 
       {/* ── PROFILE PHOTO ── */}
       <div className="flex flex-col gap-6">
-        <SectionHeader title="PROFILE PHOTO" size="sm" ruled={true} className="mb-0" />
+        <SectionHeader title="Profile Photo" size="sm" ruled={true} className="mb-0" />
         
         <div className="flex items-center gap-6">
           {/* Bordered Square Preview 120x120 */}
-          <div className="w-[120px] h-[120px] border-2 border-swiss-black rounded-none overflow-hidden shrink-0 bg-swiss-gray-100 flex items-center justify-center">
+          <div className="w-[120px] h-[120px] border border-neutral-200 rounded-lg overflow-hidden shrink-0 bg-white shadow-level-1 flex items-center justify-center">
             {profilePhotoPreview ? (
               <img
                 src={profilePhotoPreview}
@@ -504,13 +482,13 @@ const DoctorProfileEditor = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-ui-xs font-black text-swiss-gray-400 uppercase">NO PHOTO</span>
+              <span className="text-ui-xs font-bold text-neutral-400 uppercase">NO PHOTO</span>
             )}
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="h-10 px-4 border-2 border-swiss-black text-swiss-black hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs flex items-center justify-center uppercase tracking-widest transition-colors select-none rounded-none cursor-pointer w-max">
-              UPLOAD PHOTO →
+            <label className="h-10 px-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs flex items-center justify-center uppercase tracking-widest transition-all select-none rounded-md cursor-pointer w-max shadow-sm bg-white">
+              Upload Photo →
               <input
                 type="file"
                 accept="image/*"
@@ -518,7 +496,7 @@ const DoctorProfileEditor = () => {
                 className="hidden"
               />
             </label>
-            <span className="text-[9px] text-swiss-gray-400 font-bold uppercase tracking-widest block">
+            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">
               JPG or PNG · Max 5MB
             </span>
           </div>
@@ -527,85 +505,136 @@ const DoctorProfileEditor = () => {
 
       {/* ── VERIFICATION DOCUMENTS (Visible Only if NOT verified) ── */}
       {!isVerified && (
-        <div className="flex flex-col gap-6 select-none">
-          <SectionHeader title="VERIFICATION DOCUMENTS" size="sm" ruled={true} className="mb-0" />
-          
-          <div className="w-full p-6 bg-swiss-gray-100 border-2 border-swiss-black rounded-none swiss-diagonal select-none text-left flex flex-col gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 select-none">
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <SectionHeader title="Verification Documents" size="sm" ruled={true} className="mb-0" />
             
-            <div className="flex flex-col gap-3">
-              {/* Degree status */}
-              <div className="flex items-center justify-between bg-swiss-white border border-swiss-gray-200 p-4 rounded-none h-14">
-                <div className="flex flex-col">
-                  <span className="text-ui-xs font-black text-swiss-black uppercase">
-                    DEGREE CERTIFICATE
-                  </span>
-                  <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider mt-0.5">
-                    {profile?.degreeDocument ? 'DEGREE FILE SUBMITTED ✓' : 'NOT UPLOADED'}
-                  </span>
+            <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
+                {/* Degree status */}
+                <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 p-4 rounded-md h-16">
+                  <div className="flex flex-col">
+                    <span className="text-ui-xs font-bold text-neutral-900 uppercase">
+                      Degree Certificate
+                    </span>
+                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mt-1">
+                      {profile?.degreeDocument ? 'DEGREE FILE SUBMITTED ✓' : 'NOT UPLOADED'}
+                    </span>
+                  </div>
+                  <label className="text-[10px] font-bold text-neutral-700 border border-neutral-200 px-3 py-1.5 bg-white hover:bg-neutral-50 transition-all cursor-pointer select-none rounded-md shadow-sm">
+                    {profile?.degreeDocument ? 'RE-UPLOAD →' : 'UPLOAD →'}
+                    <input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={handleDegreeChange}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
-                <label className="text-[10px] font-black text-swiss-black border-2 border-swiss-black px-3 py-1 hover:bg-swiss-black hover:text-swiss-white transition-colors cursor-pointer select-none rounded-none">
-                  {profile?.degreeDocument ? 'RE-UPLOAD →' : 'UPLOAD →'}
-                  <input
-                    type="file"
-                    accept=".pdf,image/*"
-                    onChange={handleDegreeChange}
-                    className="hidden"
-                  />
-                </label>
+
+                {/* License status */}
+                <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 p-4 rounded-md h-16">
+                  <div className="flex flex-col">
+                    <span className="text-ui-xs font-bold text-neutral-900 uppercase">
+                      Practitioner License Document
+                    </span>
+                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mt-1">
+                      {profile?.licenseDocument ? 'LICENSE FILE SUBMITTED ✓' : 'NOT UPLOADED'}
+                    </span>
+                  </div>
+                  <label className="text-[10px] font-bold text-neutral-700 border border-neutral-200 px-3 py-1.5 bg-white hover:bg-neutral-50 transition-all cursor-pointer select-none rounded-md shadow-sm">
+                    {profile?.licenseDocument ? 'RE-UPLOAD →' : 'UPLOAD →'}
+                    <input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={handleLicenseChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
-              {/* License status */}
-              <div className="flex items-center justify-between bg-swiss-white border border-swiss-gray-200 p-4 rounded-none h-14">
-                <div className="flex flex-col">
-                  <span className="text-ui-xs font-black text-swiss-black uppercase">
-                    PRACTITIONER LICENSE DOCUMENT
+              {/* Pending uploads banner */}
+              {(degreeFile || licenseFile) && (
+                <div className="bg-[#FEF3E2]/40 border border-warning/30 p-4 rounded-md">
+                  <span className="text-[10px] font-black text-warning uppercase tracking-widest block mb-1">
+                    Pending Uploads Attached
                   </span>
-                  <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider mt-0.5">
-                    {profile?.licenseDocument ? 'LICENSE FILE SUBMITTED ✓' : 'NOT UPLOADED'}
-                  </span>
+                  <div className="space-y-1">
+                    {degreeFile && (
+                      <p className="text-ui-xs font-bold text-neutral-700 truncate">
+                        Degree: {degreeFile.name}
+                      </p>
+                    )}
+                    {licenseFile && (
+                      <p className="text-ui-xs font-bold text-neutral-700 truncate">
+                        License: {licenseFile.name}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <label className="text-[10px] font-black text-swiss-black border-2 border-swiss-black px-3 py-1 hover:bg-swiss-black hover:text-swiss-white transition-colors cursor-pointer select-none rounded-none">
-                  {profile?.licenseDocument ? 'RE-UPLOAD →' : 'UPLOAD →'}
-                  <input
-                    type="file"
-                    accept=".pdf,image/*"
-                    onChange={handleLicenseChange}
-                    className="hidden"
-                  />
-                </label>
+              )}
+            </div>
+          </div>
+
+          {/* Verification status timeline (Part 2) */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <SectionHeader title="Verification Status" size="sm" ruled={true} className="mb-0" />
+            <div className="flex flex-col gap-6 bg-white border border-neutral-200 rounded-lg p-6 shadow-level-1 select-none">
+              <div className="flex flex-col gap-0">
+                {steps.map((step, idx) => {
+                  const isCompleted = idx < activeStep;
+                  const isActive = idx === activeStep;
+                  const isFuture = idx > activeStep;
+                  
+                  return (
+                    <div key={step.key} className="flex gap-4 items-start relative pb-6 last:pb-0">
+                      {/* Left line segment */}
+                      {idx < steps.length - 1 && (
+                        <div className={`absolute left-2.5 top-5 bottom-0 w-0.5 border-l-2
+                          ${idx < activeStep ? 'border-success border-solid' : 'border-neutral-200 border-dashed'}
+                        `} />
+                      )}
+                      
+                      {/* Indicator dot */}
+                      <div className={`rounded-full border-2 flex items-center justify-center shrink-0 z-10
+                        ${isCompleted ? 'bg-[#E8F8F5] border-success text-success' : ''}
+                        ${isActive ? 'bg-[#E8F4F8] border-primary text-primary animate-pulse' : ''}
+                        ${isFuture ? 'bg-white border-neutral-200 text-neutral-400' : ''}
+                      `} style={{ width: '22px', height: '22px' }}>
+                        {isCompleted ? (
+                          <span className="text-[10px] font-black">✓</span>
+                        ) : (
+                          <span className="text-[9px] font-bold">{idx + 1}</span>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col text-left">
+                        <span className={`text-[10px] font-black tracking-wider uppercase leading-tight
+                          ${isActive ? 'text-primary' : ''}
+                          ${isCompleted ? 'text-success' : ''}
+                          ${isFuture ? 'text-neutral-400' : ''}
+                        `}>
+                          {step.label}
+                        </span>
+                        <span className="text-ui-xs text-neutral-500 mt-1">
+                          {step.desc}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-
-            {/* Uploaded state indicator */}
-            {(degreeFile || licenseFile) && (
-              <div className="bg-swiss-white border border-swiss-black p-3.5 select-none rounded-none">
-                <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block mb-1">
-                  PENDING UPLOADS ATTACHED
-                </span>
-                <div className="space-y-1">
-                  {degreeFile && (
-                    <p className="text-ui-xs font-bold text-swiss-black uppercase">
-                      DEGREE: {degreeFile.name} (READY TO SAVE)
-                    </p>
-                  )}
-                  {licenseFile && (
-                    <p className="text-ui-xs font-bold text-swiss-black uppercase">
-                      LICENSE: {licenseFile.name} (READY TO SAVE)
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-
           </div>
         </div>
       )}
 
       {/* ── Persistent Bottom Save Changes Bar ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-swiss-white border-t-2 border-swiss-black p-4 select-none shadow-none">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 p-4 select-none shadow-level-3">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 flex items-center justify-between">
-          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest hidden sm:inline-block">
-            {isDirty ? 'UNSAVED PROFILE CHANGES DETECTED.' : 'PROFILE IS IN SYNC.'}
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest hidden sm:inline-block">
+            {isDirty ? 'Unsaved profile changes detected.' : 'Profile settings are in sync.'}
           </span>
           
           <div className="flex items-center gap-3 ml-auto">
@@ -614,20 +643,20 @@ const DoctorProfileEditor = () => {
                 type="button"
                 onClick={handleDiscard}
                 disabled={isSaving}
-                className="px-4 py-2 border-2 border-transparent text-swiss-gray-400 hover:text-swiss-black font-black text-ui-xs uppercase tracking-widest transition-colors select-none rounded-none cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 border-0 text-neutral-500 hover:text-neutral-900 font-bold text-ui-xs uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50"
               >
-                DISCARD CHANGES
+                Discard Changes
               </button>
             )}
 
-            <button
-              type="button"
+            <Button
               onClick={handleSave}
               disabled={isSaving || !isDirty}
-              className="h-10 px-6 bg-swiss-black hover:bg-swiss-red border-2 border-swiss-black text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none shrink-0 rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="primary"
+              className="h-10 px-6 font-bold"
             >
-              {isSaving ? 'SAVING CHANGES...' : 'SAVE CHANGES →'}
-            </button>
+              {isSaving ? 'Saving changes...' : 'Save Changes →'}
+            </Button>
           </div>
         </div>
       </div>

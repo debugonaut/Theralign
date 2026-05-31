@@ -38,7 +38,7 @@ const AdminAITools = () => {
   };
 
   return (
-    <div className="space-y-8 select-none text-swiss-black bg-swiss-white">
+    <div className="space-y-8 select-none text-neutral-900 bg-white">
       {/* Page Title */}
       <SectionHeader
         title="AI TOOLS"
@@ -47,7 +47,7 @@ const AdminAITools = () => {
 
       {/* Main Container */}
       <div className="space-y-6 text-left">
-        <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
           DOCTOR PROFILE SUMMARIES
         </span>
 
@@ -55,17 +55,17 @@ const AdminAITools = () => {
         <Card
           surface="gray"
           pattern="diagonal"
-          className="border-2 border-swiss-black rounded-none shadow-none p-8"
+          className="border-2 border-neutral-900 rounded-none shadow-none p-8"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Left Description and Trigger (7 columns) */}
             <div className="lg:col-span-7 space-y-6">
               <div>
-                <span className="text-ui-xs font-black text-swiss-red uppercase tracking-widest block mb-2">
+                <span className="text-ui-xs font-black text-accent uppercase tracking-widest block mb-2">
                   GENERATE AI SUMMARIES
                 </span>
-                <p className="text-ui-lg text-swiss-black font-medium leading-relaxed">
+                <p className="text-ui-lg text-neutral-900 font-medium leading-relaxed">
                   Automatically generate high-quality clinical professional summaries for all verified doctors who do not yet have one. Processes up to 50 clinician profiles per sequential batch.
                 </p>
               </div>
@@ -74,7 +74,7 @@ const AdminAITools = () => {
                 <button
                   onClick={handleBatchGenerate}
                   disabled={generating}
-                  className="px-6 py-3.5 bg-swiss-black text-swiss-white border-2 border-swiss-black text-xs font-black uppercase tracking-widest hover:bg-swiss-gray-900 transition-all select-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-6 py-3.5 bg-neutral-900 text-white border-2 border-neutral-900 text-xs font-black uppercase tracking-widest hover:bg-neutral-900 transition-all select-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {generating ? 'PROCESSING PIPELINE...' : 'GENERATE SUMMARIES →'}
                 </button>
@@ -84,25 +84,25 @@ const AdminAITools = () => {
             {/* Right Execution Stats (5 columns) */}
             <div className="lg:col-span-5 w-full">
               {result ? (
-                <div className="border-2 border-swiss-black bg-swiss-white p-6 space-y-4 animate-fade-in">
-                  <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block pb-2 border-b border-swiss-gray-200">
+                <div className="border-2 border-neutral-900 bg-white p-6 space-y-4 animate-fade-in">
+                  <span className="text-[10px] font-black text-success uppercase tracking-widest block pb-2 border-b border-neutral-200">
                     ✓ PIPELINE RUN COMPLETE
                   </span>
                   
                   {/* Stats adjacent cells row */}
-                  <div className="flex border border-swiss-black divide-x border-collapse text-center">
-                    <div className="flex-1 p-4 bg-swiss-gray-50">
-                      <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-wider block">PROCESSED</span>
-                      <span className="text-2xl font-black text-swiss-black swiss-numeric block mt-1">{result.processed}</span>
+                  <div className="flex border border-neutral-900 divide-x border-collapse text-center">
+                    <div className="flex-1 p-4 bg-neutral-50">
+                      <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">PROCESSED</span>
+                      <span className="text-2xl font-black text-neutral-900 swiss-numeric block mt-1">{result.processed}</span>
                     </div>
-                    <div className="flex-1 p-4 bg-swiss-gray-50">
-                      <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-wider block">SUCCESSFUL</span>
-                      <span className="text-2xl font-black text-swiss-teal swiss-numeric block mt-1">{result.successful}</span>
+                    <div className="flex-1 p-4 bg-neutral-50">
+                      <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">SUCCESSFUL</span>
+                      <span className="text-2xl font-black text-success swiss-numeric block mt-1">{result.successful}</span>
                     </div>
-                    <div className="flex-1 p-4 bg-swiss-gray-50">
-                      <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-wider block">FAILED</span>
+                    <div className="flex-1 p-4 bg-neutral-50">
+                      <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">FAILED</span>
                       <span className={`text-2xl font-black swiss-numeric block mt-1 ${
-                        result.failed > 0 ? 'text-swiss-red' : 'text-swiss-black'
+                        result.failed > 0 ? 'text-accent' : 'text-neutral-900'
                       }`}>
                         {result.failed}
                       </span>
@@ -110,8 +110,8 @@ const AdminAITools = () => {
                   </div>
                 </div>
               ) : error ? (
-                <div className="border-2 border-swiss-red bg-swiss-white p-6 space-y-2 animate-fade-in">
-                  <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block pb-2 border-b border-swiss-gray-200">
+                <div className="border-2 border-accent bg-white p-6 space-y-2 animate-fade-in">
+                  <span className="text-[10px] font-black text-accent uppercase tracking-widest block pb-2 border-b border-neutral-200">
                     ⚠️ PIPELINE EXECUTION FAILED
                   </span>
                   <p className="text-xs text-swiss-gray-650 leading-relaxed font-bold">
@@ -119,7 +119,7 @@ const AdminAITools = () => {
                   </p>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-swiss-gray-400 p-8 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-widest h-full flex flex-col justify-center items-center">
+                <div className="border-2 border-dashed border-neutral-500 p-8 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest h-full flex flex-col justify-center items-center">
                   PIPELINE RUN STATISTICS WILL APPEAR UPON BATCH EXECUTION.
                 </div>
               )}

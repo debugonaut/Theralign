@@ -159,23 +159,23 @@ const DoctorAvailability = () => {
   const displayedSlots = getFilteredSlots();
 
   return (
-    <div className="flex flex-col gap-10 select-none text-left bg-swiss-white">
+    <div className="flex flex-col gap-10 select-none text-left bg-white">
       
       {/* ── Page Header Section ── */}
       <div>
         <SectionHeader title="MANAGE AVAILABILITY" size="lg" ruled={true} className="mb-0" />
-        <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide mt-3">
+        <p className="text-ui-sm text-neutral-700 font-bold uppercase tracking-wide mt-3">
           Create time slots to allow patients to book appointments. Slots you add here appear on your public profile.
         </p>
       </div>
 
       {/* ── Add Slot Form Card (Horizontal Density Single Row Layout) ── */}
-      <div className="w-full p-6 bg-swiss-white border-2 border-swiss-black rounded-none shadow-none">
+      <div className="w-full p-6 bg-white border border-neutral-200/50 rounded-lg shadow-level-1 transition-warm">
         <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-4 w-full">
           
           {/* Date Input */}
           <div className="flex flex-col gap-1.5 flex-1 min-w-[150px]">
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
               DATE
             </span>
             <input
@@ -184,14 +184,14 @@ const DoctorAvailability = () => {
               min={todayString}
               value={formData.date}
               onChange={handleChange}
-              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+              className="bg-white border border-neutral-300 focus:border-[#0A7E6E] px-4 py-2 text-ui-sm font-semibold text-neutral-900 focus:ring-2 focus:ring-[#0A7E6E]/20 transition-all rounded-md transition-warm"
               required
             />
           </div>
 
           {/* Start Time */}
           <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
               START TIME
             </span>
             <input
@@ -199,14 +199,14 @@ const DoctorAvailability = () => {
               name="startTime"
               value={formData.startTime}
               onChange={handleChange}
-              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+              className="bg-white border border-neutral-300 focus:border-[#0A7E6E] px-4 py-2 text-ui-sm font-semibold text-neutral-900 focus:ring-2 focus:ring-[#0A7E6E]/20 transition-all rounded-md transition-warm"
               required
             />
           </div>
 
           {/* End Time */}
           <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
               END TIME
             </span>
             <input
@@ -214,10 +214,10 @@ const DoctorAvailability = () => {
               name="endTime"
               value={formData.endTime}
               onChange={handleChange}
-              className={`bg-swiss-white border-2 px-4 py-2 text-ui-sm font-bold uppercase tracking-wider focus:border-4 focus:ring-0 transition-all duration-fast rounded-none
+              className={`bg-white border px-4 py-2 text-ui-sm font-semibold uppercase tracking-wider focus:ring-2 transition-all duration-fast rounded-md transition-warm
                 ${isTimeInvalid 
-                  ? 'border-swiss-amber text-swiss-amber' 
-                  : 'border-swiss-black text-swiss-black'
+                  ? 'border-warning text-warning focus:border-warning focus:ring-warning/20' 
+                  : 'border-neutral-300 text-neutral-900 focus:border-[#0A7E6E] focus:ring-[#0A7E6E]/20'
                 }
               `}
               required
@@ -225,14 +225,14 @@ const DoctorAvailability = () => {
           </div>
 
           {/* Repeat Weekly Toggle */}
-          <div className="flex items-center gap-3 bg-swiss-gray-100 border-2 border-swiss-black p-1.5 h-[42px] shrink-0 rounded-none">
+          <div className="flex items-center gap-3 bg-neutral-50 border border-neutral-200 p-1.5 h-[42px] shrink-0 rounded-md transition-warm">
             <button
               type="button"
               onClick={() => setIsRecurring(!isRecurring)}
-              className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors duration-fast rounded-none cursor-pointer
+              className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider transition-all duration-150 rounded-md cursor-pointer select-none
                 ${isRecurring 
-                  ? 'bg-swiss-black text-swiss-white' 
-                  : 'bg-swiss-white text-swiss-black border border-swiss-black hover:bg-swiss-gray-200'
+                  ? 'bg-neutral-900 text-white shadow-level-1' 
+                  : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100 hover:text-neutral-900'
                 }
               `}
             >
@@ -241,16 +241,16 @@ const DoctorAvailability = () => {
 
             {isRecurring && (
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">FOR</span>
+                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">FOR</span>
                 <input
                   type="number"
                   min="2"
                   max="12"
                   value={repeatWeeks}
                   onChange={(e) => setRepeatWeeks(parseInt(e.target.value) || 4)}
-                  className="w-12 bg-swiss-white border border-swiss-black text-center text-ui-xs font-black p-0.5 rounded-none"
+                  className="w-12 bg-white border border-neutral-300 focus:border-[#0A7E6E] focus:ring-2 focus:ring-[#0A7E6E]/20 text-center text-ui-xs font-semibold p-0.5 rounded-md transition-warm"
                 />
-                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">WEEKS</span>
+                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">WEEKS</span>
               </div>
             )}
           </div>
@@ -259,7 +259,7 @@ const DoctorAvailability = () => {
           <button
             type="submit"
             disabled={isFormIncomplete || submitting}
-            className="h-[42px] px-6 bg-swiss-red border-2 border-swiss-black hover:bg-swiss-black hover:text-swiss-white text-swiss-white font-black text-ui-sm uppercase tracking-wider transition-colors select-none shrink-0 rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-[42px] px-6 bg-accent hover:bg-accent/90 text-white font-bold text-ui-sm uppercase tracking-wider transition-all duration-150 active:scale-[0.97] select-none shrink-0 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-level-1"
           >
             {submitting ? 'ADDING...' : 'ADD SLOT →'}
           </button>
@@ -271,12 +271,12 @@ const DoctorAvailability = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {/* Heatmap picker (Left 5 columns) */}
-        <div className="lg:col-span-5 flex flex-col gap-4 border-2 border-swiss-black p-6 bg-swiss-white rounded-none select-none">
-          <div className="flex items-center justify-between pb-2 border-b border-swiss-gray-200">
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+        <div className="lg:col-span-5 flex flex-col gap-4 border border-neutral-200/50 p-6 bg-white rounded-lg shadow-level-1 select-none transition-warm">
+          <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
               AVAILABILITY HEATMAP
             </span>
-            <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-widest">
+            <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">
               28-DAY PLANNER
             </span>
           </div>
@@ -285,7 +285,7 @@ const DoctorAvailability = () => {
             {/* Days header */}
             <div className="grid grid-cols-7 gap-1.5 text-center">
               {daysHeader.map((day, idx) => (
-                <span key={idx} className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                <span key={idx} className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                   {day}
                 </span>
               ))}
@@ -313,21 +313,21 @@ const DoctorAvailability = () => {
                 }
 
                 // Decide cell styles based on state
-                let cellClass = 'bg-swiss-white border-swiss-gray-200 text-swiss-gray-200 border-[1px] hover:border-swiss-black cursor-pointer';
+                let cellClass = 'bg-white border-neutral-100 text-neutral-300 border hover:border-neutral-300 cursor-pointer rounded-md';
                 let countText = '—';
                 let isCountAmber = false;
 
                 if (cellState === 'available') {
-                  cellClass = 'bg-swiss-white border-swiss-black border-2 text-swiss-black hover:bg-swiss-gray-100 cursor-pointer';
+                  cellClass = 'bg-white border-[#0A7E6E]/40 border-2 text-neutral-900 hover:bg-[#0A7E6E]/5 hover:border-[#0A7E6E] cursor-pointer rounded-md shadow-level-1';
                   countText = `${availableSlots}`;
                 } else if (cellState === 'full') {
-                  cellClass = 'bg-swiss-gray-100 border-swiss-black border-2 text-swiss-gray-400 cursor-pointer';
+                  cellClass = 'bg-neutral-50 border-neutral-200 border text-neutral-500 cursor-pointer rounded-md';
                   countText = `0/${totalSlots}`;
                   isCountAmber = true;
                 }
 
                 if (isSelected) {
-                  cellClass = 'bg-swiss-black border-swiss-black border-2 text-swiss-white cursor-pointer';
+                  cellClass = 'bg-[#0A7E6E] border-[#0A7E6E] text-white cursor-pointer rounded-md shadow-level-1';
                 }
 
                 return (
@@ -338,14 +338,14 @@ const DoctorAvailability = () => {
                       setSelectedDate(selectedDate === dateStr ? '' : dateStr);
                       setDeletingSlotId(null);
                     }}
-                    className={`h-[48px] text-center flex flex-col items-center justify-center rounded-none transition-colors duration-fast ${cellClass}`}
+                    className={`h-[48px] text-center flex flex-col items-center justify-center rounded-md transition-colors duration-fast ${cellClass}`}
                   >
                     <span className="text-[11px] font-black block leading-none select-none">
                       {dayNum}
                     </span>
                     <span className={`text-[8px] font-black uppercase mt-1 block leading-none select-none
-                      ${isCountAmber && !isSelected ? 'text-swiss-amber' : ''}
-                      ${isSelected ? 'text-swiss-white' : ''}
+                      ${isCountAmber && !isSelected ? 'text-warning' : ''}
+                      ${isSelected ? 'text-white' : ''}
                     `}>
                       {countText}
                     </span>
@@ -356,14 +356,14 @@ const DoctorAvailability = () => {
           </div>
 
           {/* Heatmap Legend */}
-          <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-swiss-gray-200">
+          <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-neutral-200">
             {[
-              { style: 'bg-swiss-white border-2 border-swiss-black text-swiss-black', label: 'AVAILABLE' },
-              { style: 'bg-swiss-gray-100 border-2 border-swiss-black text-swiss-amber', label: '0/N BOOKED' },
-              { style: 'bg-swiss-white border border-swiss-gray-200 text-swiss-gray-200', label: 'NO SLOTS' },
+              { style: 'bg-white border-2 border-[#0A7E6E]/40 text-neutral-900 rounded-sm shadow-level-1', label: 'AVAILABLE' },
+              { style: 'bg-neutral-50 border border-neutral-200 text-neutral-500 rounded-sm', label: '0/N BOOKED' },
+              { style: 'bg-white border border-neutral-100 text-neutral-300 rounded-sm', label: 'NO SLOTS' },
             ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-1.5 text-[9px] text-swiss-gray-400 font-bold uppercase tracking-widest">
-                <span className={`w-4 h-4 rounded-none shrink-0 ${item.style.split(' ')[0]} ${item.style.split(' ')[1]} ${item.style.split(' ')[2]}`} />
+              <div key={idx} className="flex items-center gap-1.5 text-[9px] text-neutral-500 font-bold uppercase tracking-widest">
+                <span className={`w-4 h-4 rounded-sm shrink-0 ${item.style.split(' ')[0]} ${item.style.split(' ')[1]} ${item.style.split(' ')[2]}`} />
                 <span>{item.label}</span>
               </div>
             ))}
@@ -373,14 +373,14 @@ const DoctorAvailability = () => {
 
         {/* Slot list (Right 7 columns) */}
         <div className="lg:col-span-7 flex flex-col gap-4 select-none">
-          <div className="flex items-center justify-between pb-2 border-b-2 border-swiss-black">
-            <span className="text-ui-md font-black text-swiss-black uppercase tracking-tighter">
+          <div className="flex items-center justify-between pb-2 border-b-2 border-neutral-900">
+            <span className="text-ui-md font-black text-neutral-900 uppercase tracking-tighter">
               {selectedDate ? formatHumanDate(selectedDate) : 'ALL UPCOMING SLOTS'}
             </span>
             {selectedDate && (
               <button
                 onClick={() => setSelectedDate('')}
-                className="text-[9px] font-black text-swiss-red uppercase tracking-widest hover:underline cursor-pointer"
+                className="text-[9px] font-black text-accent uppercase tracking-widest hover:underline cursor-pointer"
               >
                 RESET DATE FILTER
               </button>
@@ -388,11 +388,11 @@ const DoctorAvailability = () => {
           </div>
 
           {displayedSlots.length === 0 ? (
-            <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none bg-swiss-white select-none flex flex-col items-center gap-2">
-              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            <div className="border border-neutral-200 border-dashed p-12 text-center rounded-lg bg-neutral-50 select-none flex flex-col items-center gap-2">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                 NO SLOTS LISTED
               </span>
-              <p className="text-ui-sm text-swiss-gray-600 font-bold max-w-sm uppercase">
+              <p className="text-ui-sm text-neutral-700 font-bold max-w-sm uppercase">
                 {selectedDate 
                   ? 'No slots created for this selected calendar date.' 
                   : 'Add slots using the form at the top to configure your clinic availability.'
@@ -400,18 +400,18 @@ const DoctorAvailability = () => {
               </p>
             </div>
           ) : (
-            <div className="w-full border-2 border-swiss-black rounded-none bg-swiss-white select-none">
+            <div className="w-full border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none overflow-hidden">
               <table className="w-full text-left border-collapse select-none">
                 <thead>
-                  <tr className="border-b-4 border-swiss-black bg-swiss-white">
-                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">START</th>
-                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">END</th>
-                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">DURATION</th>
-                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest">STATUS</th>
-                    <th className="px-6 py-3.5 text-swiss-gray-400 font-black uppercase text-[10px] tracking-widest text-right">DELETE</th>
+                  <tr className="border-b border-neutral-100 bg-neutral-50">
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">START</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">END</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">DURATION</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">STATUS</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest text-right">DELETE</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-swiss-gray-200">
+                <tbody className="divide-y divide-neutral-200">
                   {displayedSlots.map((slot) => {
                     const isBooked = slot.isBooked;
                     const isDeleting = deletingSlotId === slot._id;
@@ -429,21 +429,21 @@ const DoctorAvailability = () => {
                       <tr
                         key={slot._id}
                         className={`h-12 transition-colors duration-fast select-none
-                          ${isDeleting ? 'bg-[rgba(255,48,0,0.04)]' : 'hover:bg-swiss-gray-50'}
+                          ${isDeleting ? 'bg-[rgba(255,48,0,0.04)]' : 'hover:bg-neutral-50'}
                         `}
                       >
                         {/* Start Time */}
-                        <td className="px-6 py-3 text-ui-sm font-black text-swiss-black uppercase">
+                        <td className="px-6 py-3 text-ui-sm font-black text-neutral-900 uppercase">
                           {slot.startTime}
                         </td>
 
                         {/* End Time */}
-                        <td className="px-6 py-3 text-ui-sm font-black text-swiss-black uppercase">
+                        <td className="px-6 py-3 text-ui-sm font-black text-neutral-900 uppercase">
                           {slot.endTime}
                         </td>
 
                         {/* Duration */}
-                        <td className="px-6 py-3 text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+                        <td className="px-6 py-3 text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
                           {durationText}
                         </td>
 
@@ -454,7 +454,7 @@ const DoctorAvailability = () => {
                           ) : !slot.isActive ? (
                             <Badge variant="cancelled" label="INACTIVE" />
                           ) : (
-                            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                               AVAILABLE
                             </span>
                           )}
@@ -464,7 +464,7 @@ const DoctorAvailability = () => {
                         <td className="px-6 py-3 text-right">
                           {isBooked ? (
                             <span
-                              className="text-swiss-gray-400 text-sm font-black select-none block text-right pr-2 cursor-default"
+                              className="text-neutral-500 text-sm font-bold select-none block text-right pr-2 cursor-default"
                               title="CANNOT DELETE A BOOKED SLOT"
                             >
                               —
@@ -473,13 +473,13 @@ const DoctorAvailability = () => {
                             <div className="flex items-center justify-end gap-3 select-none">
                               <button
                                 onClick={() => handleDeleteConfirm(slot._id)}
-                                className="text-[9px] font-black text-swiss-red border border-swiss-red px-2 py-0.5 uppercase tracking-wider hover:bg-swiss-red hover:text-swiss-white transition-colors cursor-pointer rounded-none"
+                                className="text-[9px] font-bold text-[#E8341A] border border-[#E8341A] px-2 py-0.5 uppercase tracking-wider hover:bg-[#E8341A] hover:text-white transition-all duration-150 cursor-pointer rounded-md shadow-level-1"
                               >
                                 CONFIRM DELETE
                               </button>
                               <button
                                 onClick={() => setDeletingSlotId(null)}
-                                className="text-[9px] font-black text-swiss-gray-400 uppercase tracking-wider hover:text-swiss-black cursor-pointer bg-transparent border-0"
+                                className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider hover:text-neutral-900 cursor-pointer bg-transparent border-0"
                               >
                                 CANCEL
                               </button>
@@ -487,7 +487,7 @@ const DoctorAvailability = () => {
                           ) : (
                             <button
                               onClick={() => setDeletingSlotId(slot._id)}
-                              className="w-7 h-7 border border-swiss-black hover:border-swiss-red text-swiss-black hover:text-swiss-red flex items-center justify-center font-black transition-colors rounded-none cursor-pointer bg-swiss-white ml-auto"
+                              className="w-7 h-7 border border-neutral-200 hover:border-[#E8341A] text-neutral-600 hover:text-[#E8341A] flex items-center justify-center font-bold transition-all duration-150 rounded-md cursor-pointer bg-neutral-50 hover:bg-neutral-100 ml-auto"
                               title="Delete slot"
                             >
                               ✕

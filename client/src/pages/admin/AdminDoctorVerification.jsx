@@ -209,7 +209,7 @@ const AdminDoctorVerification = () => {
   };
 
   return (
-    <div className="space-y-12 select-none text-swiss-black">
+    <div className="space-y-12 select-none text-neutral-900">
       {/* Header */}
       <SectionHeader
         title="DOCTORS"
@@ -217,29 +217,29 @@ const AdminDoctorVerification = () => {
       />
 
       {/* Control bar - Search, filters, and Export action */}
-      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-2 border-swiss-black p-4 bg-swiss-white">
+      <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between border-2 border-neutral-900 p-4 bg-white">
         {/* Real-time search */}
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-swiss-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" />
           <input
             type="text"
             placeholder="FILTER BY NAME, EMAIL, REGISTRATION..."
             value={search}
             onChange={handleSearchChange}
-            className="w-full pl-9 pr-4 py-2 bg-swiss-white border-2 border-swiss-black text-xs font-bold uppercase placeholder-swiss-gray-400 focus:outline-none transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-white border-2 border-neutral-900 text-xs font-bold uppercase placeholder-neutral-500 focus:outline-none transition-colors"
           />
         </div>
 
         {/* Status segmented controls */}
-        <div className="flex border-2 border-swiss-black">
+        <div className="flex border-2 border-neutral-900">
           {['all', 'verified', 'pending', 'suspended'].map((status) => (
             <button
               key={status}
               onClick={() => handleStatusFilter(status)}
-              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors border-r-2 last:border-r-0 border-swiss-black cursor-pointer ${
+              className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors border-r-2 last:border-r-0 border-neutral-900 cursor-pointer ${
                 statusFilter === status
-                  ? 'bg-swiss-black text-swiss-white font-black'
-                  : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                  ? 'bg-neutral-900 text-white font-black'
+                  : 'bg-white text-neutral-900 hover:bg-neutral-100'
               }`}
             >
               {status}
@@ -250,7 +250,7 @@ const AdminDoctorVerification = () => {
         {/* Export secondary button */}
         <button
           onClick={handleExport}
-          className="px-6 py-2.5 bg-swiss-white border-2 border-swiss-black text-[11px] font-black uppercase tracking-widest text-swiss-black hover:bg-swiss-black hover:text-swiss-white transition-all cursor-pointer"
+          className="px-6 py-2.5 bg-white border-2 border-neutral-900 text-[11px] font-black uppercase tracking-widest text-neutral-900 hover:bg-neutral-900 hover:text-white transition-all cursor-pointer"
         >
           EXPORT →
         </button>
@@ -258,12 +258,12 @@ const AdminDoctorVerification = () => {
 
       {/* ─── 1. Verification Queue Section ─── */}
       {!loadingQueue && pendingQueue.length > 0 && (
-        <div className="border-t-4 border-swiss-amber border-2 border-swiss-black p-6 bg-swiss-white">
-          <div className="flex items-center gap-3 pb-4 border-b border-swiss-gray-200 mb-6">
-            <span className="text-[11px] font-bold text-swiss-amber uppercase tracking-widest block">
+        <div className="border-t-4 border-warning border-2 border-neutral-900 p-6 bg-white">
+          <div className="flex items-center gap-3 pb-4 border-b border-neutral-200 mb-6">
+            <span className="text-[11px] font-bold text-warning uppercase tracking-widest block">
               ⚠️ PENDING APPLICATIONS
             </span>
-            <span className="border border-swiss-amber bg-swiss-white text-swiss-amber text-[10px] px-1.5 py-0.5 font-bold">
+            <span className="border border-warning bg-white text-warning text-[10px] px-1.5 py-0.5 font-bold">
               {pendingQueue.length} WAITING
             </span>
           </div>
@@ -280,8 +280,8 @@ const AdminDoctorVerification = () => {
               return (
                 <div 
                   key={doc._id}
-                  className={`border-2 border-swiss-black transition-all ${
-                    isExpanded ? 'bg-swiss-gray-100' : 'bg-swiss-white hover:bg-swiss-gray-50'
+                  className={`border-2 border-neutral-900 transition-all ${
+                    isExpanded ? 'bg-neutral-100' : 'bg-white hover:bg-neutral-50'
                   }`}
                 >
                   {/* Row Summary — 80px tall layout */}
@@ -294,15 +294,15 @@ const AdminDoctorVerification = () => {
                   >
                     <div className="flex items-center gap-4">
                       {/* Name initial circle */}
-                      <div className="w-10 h-10 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-sm uppercase shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm uppercase shrink-0">
                         {docName[0]}
                       </div>
                       
                       <div className="text-left">
-                        <span className="font-black text-xs uppercase text-swiss-black tracking-wide block">
+                        <span className="font-black text-xs uppercase text-neutral-900 tracking-wide block">
                           Dr. {docName}
                         </span>
-                        <span className="text-[10px] text-swiss-gray-400 font-mono block mt-0.5">
+                        <span className="text-[10px] text-neutral-500 font-mono block mt-0.5">
                           {doc.user?.email} · REG: {doc.registrationNumber || 'N/A'}
                         </span>
                       </div>
@@ -310,16 +310,16 @@ const AdminDoctorVerification = () => {
 
                     <div className="flex items-center gap-8">
                       <div className="text-right hidden sm:block">
-                        <span className="text-[10px] text-swiss-gray-400 font-bold block uppercase tracking-wider">
+                        <span className="text-[10px] text-neutral-500 font-bold block uppercase tracking-wider">
                           EXPERIENCE / APPLIED
                         </span>
-                        <span className="text-xs font-bold text-swiss-black block uppercase mt-0.5">
+                        <span className="text-xs font-bold text-neutral-900 block uppercase mt-0.5">
                           {doc.experience} YEARS · {createdDate}
                         </span>
                       </div>
 
                       <button
-                        className="px-4 py-2 border-2 border-swiss-black text-[10px] font-black uppercase tracking-widest bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white transition-all shrink-0"
+                        className="px-4 py-2 border-2 border-neutral-900 text-[10px] font-black uppercase tracking-widest bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white transition-all shrink-0"
                       >
                         {isExpanded ? 'CLOSE' : 'REVIEW'}
                       </button>
@@ -328,21 +328,21 @@ const AdminDoctorVerification = () => {
 
                   {/* Expanded block */}
                   {isExpanded && (
-                    <div className="border-t border-swiss-black p-6 bg-swiss-white text-left space-y-6">
+                    <div className="border-t border-neutral-900 p-6 bg-white text-left space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                         {/* Profile Info (7 cols) */}
                         <div className="md:col-span-7 space-y-4">
                           <div>
-                            <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
                               CLINIC ADDRESS
                             </span>
-                            <span className="font-bold text-swiss-black text-xs uppercase">
+                            <span className="font-bold text-neutral-900 text-xs uppercase">
                               {doc.clinicName?.toUpperCase()} · {doc.clinicAddress?.toUpperCase()}
                             </span>
                           </div>
 
                           <div>
-                            <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
                               QUALIFICATIONS
                             </span>
                             <div className="flex flex-wrap gap-2">
@@ -353,10 +353,10 @@ const AdminDoctorVerification = () => {
                           </div>
 
                           <div>
-                            <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
                               PRACTITIONER BIOGRAPHY
                             </span>
-                            <p className="text-xs text-swiss-gray-600 leading-relaxed font-medium bg-swiss-gray-50 border p-4">
+                            <p className="text-xs text-neutral-700 leading-relaxed font-medium bg-neutral-50 border p-4">
                               {doc.bio || 'No biography uploaded.'}
                             </p>
                           </div>
@@ -364,7 +364,7 @@ const AdminDoctorVerification = () => {
 
                         {/* Documents Zoom list (5 cols) */}
                         <div className="md:col-span-5 space-y-3">
-                          <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                          <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
                             VERIFICATION FILES
                           </span>
                           
@@ -374,20 +374,20 @@ const AdminDoctorVerification = () => {
                               href={doc.degreeDocument}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="group flex items-center justify-between border-2 border-swiss-black p-4 hover:bg-swiss-gray-50 transition-colors"
+                              className="group flex items-center justify-between border-2 border-neutral-900 p-4 hover:bg-neutral-50 transition-colors"
                             >
                               <div className="text-left">
-                                <span className="font-bold text-xs uppercase tracking-wider block text-swiss-black">
+                                <span className="font-bold text-xs uppercase tracking-wider block text-neutral-900">
                                   DEGREE CERTIFICATE
                                 </span>
-                                <span className="text-[9px] text-swiss-gray-400 font-bold block mt-0.5">
+                                <span className="text-[9px] text-neutral-500 font-bold block mt-0.5">
                                   VERIFIED FILE ATTACHED
                                 </span>
                               </div>
-                              <ExternalLink size={14} className="text-swiss-gray-400 group-hover:text-swiss-red transition-colors" />
+                              <ExternalLink size={14} className="text-neutral-500 group-hover:text-accent transition-colors" />
                             </a>
                           ) : (
-                            <div className="border border-dashed p-4 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+                            <div className="border border-dashed p-4 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider">
                               DEGREE MISSING
                             </div>
                           )}
@@ -398,20 +398,20 @@ const AdminDoctorVerification = () => {
                               href={doc.licenseDocument}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="group flex items-center justify-between border-2 border-swiss-black p-4 hover:bg-swiss-gray-50 transition-colors"
+                              className="group flex items-center justify-between border-2 border-neutral-900 p-4 hover:bg-neutral-50 transition-colors"
                             >
                               <div className="text-left">
-                                <span className="font-bold text-xs uppercase tracking-wider block text-swiss-black">
+                                <span className="font-bold text-xs uppercase tracking-wider block text-neutral-900">
                                   PRACTITIONER LICENSE
                                 </span>
-                                <span className="text-[9px] text-swiss-gray-400 font-bold block mt-0.5">
+                                <span className="text-[9px] text-neutral-500 font-bold block mt-0.5">
                                   VERIFIED FILE ATTACHED
                                 </span>
                               </div>
-                              <ExternalLink size={14} className="text-swiss-gray-400 group-hover:text-swiss-red transition-colors" />
+                              <ExternalLink size={14} className="text-neutral-500 group-hover:text-accent transition-colors" />
                             </a>
                           ) : (
-                            <div className="border border-dashed p-4 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+                            <div className="border border-dashed p-4 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider">
                               LICENSE MISSING
                             </div>
                           )}
@@ -419,12 +419,12 @@ const AdminDoctorVerification = () => {
                       </div>
 
                       {/* Twin Action CTAs */}
-                      <div className="border-t border-swiss-gray-200 pt-6 flex flex-col gap-4">
+                      <div className="border-t border-neutral-200 pt-6 flex flex-col gap-4">
                         <div className="flex gap-4">
                           <button
                             onClick={() => handleApprove(doc._id)}
                             disabled={actionLoading}
-                            className="px-6 py-2.5 bg-swiss-white border-2 border-swiss-teal text-[11px] font-black uppercase tracking-widest text-swiss-teal hover:bg-swiss-teal hover:text-swiss-white transition-all cursor-pointer disabled:opacity-40"
+                            className="px-6 py-2.5 bg-white border-2 border-success text-[11px] font-black uppercase tracking-widest text-success hover:bg-success hover:text-white transition-all cursor-pointer disabled:opacity-40"
                           >
                             APPROVE VERIFICATION →
                           </button>
@@ -435,7 +435,7 @@ const AdminDoctorVerification = () => {
                               setRejectionReason('');
                             }}
                             disabled={actionLoading}
-                            className="px-6 py-2.5 bg-swiss-white border-2 border-swiss-red text-[11px] font-black uppercase tracking-widest text-swiss-red hover:bg-swiss-red hover:text-swiss-white transition-all cursor-pointer disabled:opacity-40"
+                            className="px-6 py-2.5 bg-white border-2 border-accent text-[11px] font-black uppercase tracking-widest text-accent hover:bg-accent hover:text-white transition-all cursor-pointer disabled:opacity-40"
                           >
                             {isRejecting ? 'CANCEL REJECTION' : 'REJECT APPLICATION →'}
                           </button>
@@ -445,10 +445,10 @@ const AdminDoctorVerification = () => {
                         {isRejecting && (
                           <form 
                             onSubmit={(e) => handleRejectSubmit(e, doc._id)}
-                            className="border-2 border-swiss-red p-6 bg-swiss-gray-50 flex flex-col gap-4 animate-fade-in text-left"
+                            className="border-2 border-accent p-6 bg-neutral-50 flex flex-col gap-4 animate-fade-in text-left"
                           >
                             <div>
-                              <label className="block text-[10px] font-black text-swiss-red uppercase tracking-widest mb-1.5">
+                              <label className="block text-[10px] font-black text-accent uppercase tracking-widest mb-1.5">
                                 REQUIRED REASON FOR REJECTION (MINIMUM 15 CHARACTERS)
                               </label>
                               <textarea
@@ -457,11 +457,11 @@ const AdminDoctorVerification = () => {
                                 rows={3}
                                 value={rejectionReason}
                                 onChange={(e) => setRejectionReason(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-swiss-white border-2 border-swiss-black rounded-none text-xs font-bold uppercase placeholder-swiss-gray-400 focus:outline-none focus:border-swiss-red transition-all"
+                                className="w-full px-4 py-2.5 bg-white border-2 border-neutral-900 rounded-none text-xs font-bold uppercase placeholder-neutral-500 focus:outline-none focus:border-accent transition-all"
                               />
                               <div className="flex justify-between items-center mt-2 text-[9px] font-bold">
-                                <span className="text-swiss-gray-400">PROVIDE CLEAR EXPLANATION</span>
-                                <span className={rejectionReason.trim().length < 15 ? 'text-swiss-red' : 'text-swiss-teal'}>
+                                <span className="text-neutral-500">PROVIDE CLEAR EXPLANATION</span>
+                                <span className={rejectionReason.trim().length < 15 ? 'text-accent' : 'text-success'}>
                                   {rejectionReason.trim().length} CHARACTERS
                                 </span>
                               </div>
@@ -470,7 +470,7 @@ const AdminDoctorVerification = () => {
                             <button
                               type="submit"
                               disabled={rejectionReason.trim().length < 15 || actionLoading}
-                              className="px-6 py-2 bg-swiss-red text-white text-[10px] font-black uppercase tracking-widest hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed select-none cursor-pointer self-start"
+                              className="px-6 py-2 bg-accent text-white text-[10px] font-black uppercase tracking-widest hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed select-none cursor-pointer self-start"
                             >
                               SUBMIT REJECTION →
                             </button>
@@ -487,12 +487,12 @@ const AdminDoctorVerification = () => {
       )}
 
       {/* ─── 2. Main Directory Table ─── */}
-      <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
-        <div className="p-6 border-b border-swiss-gray-200">
-          <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+      <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
+        <div className="p-6 border-b border-neutral-200">
+          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
             PLATFORM LEDGER
           </span>
-          <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+          <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
             PRACTITIONER DIRECTORY
           </h3>
         </div>
@@ -500,10 +500,10 @@ const AdminDoctorVerification = () => {
         {loadingDirectory ? (
           <div className="p-12 text-center">
             <span className="inline-block animate-spin mr-2">⏳</span>
-            <span className="text-xs font-bold uppercase tracking-wider text-swiss-gray-400">RETRIEVING DIRECTORY DATA...</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">RETRIEVING DIRECTORY DATA...</span>
           </div>
         ) : directory.length === 0 ? (
-          <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
             NO PRACTITIONERS MATCH FILTERS
           </div>
         ) : (
@@ -533,19 +533,19 @@ const AdminDoctorVerification = () => {
                 return (
                   <tr 
                     key={doc._id}
-                    className="border-b border-swiss-gray-200 hover:bg-swiss-gray-50 transition-colors"
+                    className="border-b border-neutral-200 hover:bg-neutral-50 transition-colors"
                   >
                     {/* Doctor with initial circle */}
                     <td className="px-4 py-4 align-middle">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
                           {docName[0]}
                         </div>
                         <div className="text-left">
-                          <span className="font-bold text-swiss-black uppercase tracking-wide text-xs block">
+                          <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs block">
                             Dr. {docName}
                           </span>
-                          <span className="text-[10px] text-swiss-gray-400 font-mono block">
+                          <span className="text-[10px] text-neutral-500 font-mono block">
                             {doc.user?.email}
                           </span>
                         </div>
@@ -553,7 +553,7 @@ const AdminDoctorVerification = () => {
                     </td>
 
                     {/* Specialization */}
-                    <td className="px-4 py-4 align-middle font-bold text-swiss-gray-600 text-xs uppercase tracking-wide">
+                    <td className="px-4 py-4 align-middle font-bold text-neutral-700 text-xs uppercase tracking-wide">
                       {Array.isArray(doc.specialization) ? doc.specialization[0] : doc.specialization || 'GENERAL'}
                     </td>
 
@@ -563,17 +563,17 @@ const AdminDoctorVerification = () => {
                     </td>
 
                     {/* Joined */}
-                    <td className="px-4 py-4 align-middle text-swiss-gray-500 font-mono text-xs">
+                    <td className="px-4 py-4 align-middle text-neutral-500 font-mono text-xs">
                       {createdDate}
                     </td>
 
                     {/* Appointments count */}
-                    <td className="px-4 py-4 align-middle text-right font-bold text-swiss-black swiss-numeric">
+                    <td className="px-4 py-4 align-middle text-right font-bold text-neutral-900 swiss-numeric">
                       {doc.appointmentsCount || 0}
                     </td>
 
                     {/* Earnings right-aligned monospace */}
-                    <td className="px-4 py-4 align-middle text-right font-black text-swiss-black swiss-numeric">
+                    <td className="px-4 py-4 align-middle text-right font-black text-neutral-900 swiss-numeric">
                       ₹{(doc.totalEarnings || 0).toLocaleString('en-IN')}
                     </td>
 
@@ -607,21 +607,21 @@ const AdminDoctorVerification = () => {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
-          <span className="text-swiss-gray-400">
+          <span className="text-neutral-500">
             PAGE {page} OF {totalPages} · {directoryTotal} TOTAL DOCTORS
           </span>
           <div className="flex gap-4">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+              className="px-4 py-2 border-2 border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-neutral-900 transition-all shrink-0 cursor-pointer"
             >
               ← PREV
             </button>
             <button
               disabled={page === totalPages}
               onClick={() => setPage(p => p + 1)}
-              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+              className="px-4 py-2 border-2 border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-neutral-900 transition-all shrink-0 cursor-pointer"
             >
               NEXT →
             </button>

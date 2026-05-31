@@ -133,14 +133,14 @@ const NotificationBell = () => {
       {/* Bell Icon Trigger Button */}
       <button
         onClick={handleToggleDropdown}
-        className="relative p-2 text-swiss-black hover:text-swiss-red transition-all duration-fast focus:outline-none bg-transparent border-0 cursor-pointer"
+        className="relative p-2 text-neutral-900 hover:text-accent transition-all duration-fast focus:outline-none bg-transparent border-0 cursor-pointer"
         aria-label="View notifications dropdown"
       >
-        <Bell className="h-5.5 w-5.5 text-swiss-black" strokeWidth={1.5} />
+        <Bell className="h-5.5 w-5.5 text-neutral-900" strokeWidth={1.5} />
         
         {/* Unread Count Rectangular Badge */}
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 border border-swiss-black bg-swiss-white text-swiss-black text-[9px] font-black px-1 py-0.5 leading-none select-none rounded-none">
+          <span className="absolute -top-0.5 -right-0.5 border border-neutral-900 bg-white text-neutral-900 text-[9px] font-black px-1 py-0.5 leading-none select-none rounded-none">
             {unreadCount}
           </span>
         )}
@@ -148,25 +148,25 @@ const NotificationBell = () => {
 
       {/* Dropdown Container: 280px wide, border-2 black, white bg, snappy */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-280 bg-swiss-white border-2 border-swiss-black z-50 overflow-hidden rounded-none shadow-none text-left">
+        <div className="absolute right-0 mt-3 w-280 bg-white border-2 border-neutral-900 z-50 overflow-hidden rounded-none shadow-none text-left">
           
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-swiss-gray-50 border-b-2 border-swiss-black select-none">
-            <span className="font-black text-swiss-black text-[10px] uppercase tracking-widest">
+          <div className="flex items-center justify-between px-4 py-3 bg-neutral-50 border-b-2 border-neutral-900 select-none">
+            <span className="font-black text-neutral-900 text-[10px] uppercase tracking-widest">
               NOTIFICATIONS
             </span>
             <button
               onClick={handleMarkAllRead}
-              className="text-[9px] font-black text-swiss-red uppercase tracking-widest bg-transparent border-0 hover:underline cursor-pointer select-none"
+              className="text-[9px] font-black text-accent uppercase tracking-widest bg-transparent border-0 hover:underline cursor-pointer select-none"
             >
               MARK ALL READ
             </button>
           </div>
 
           {/* List content */}
-          <div className="max-h-[360px] overflow-y-auto divide-y divide-swiss-gray-200">
+          <div className="max-h-[360px] overflow-y-auto divide-y divide-neutral-200">
             {isLoading && (
-              <div className="py-8 text-center text-xs font-bold uppercase tracking-wider text-swiss-gray-400">
+              <div className="py-8 text-center text-xs font-bold uppercase tracking-wider text-neutral-500">
                 <span className="inline-block animate-spin mr-2">⏳</span> LOADING...
               </div>
             )}
@@ -174,8 +174,8 @@ const NotificationBell = () => {
             {!isLoading && notifications.length === 0 && (
               <div className="py-10 px-4 text-center select-none">
                 <span className="text-2xl block mb-2">🔔</span>
-                <p className="text-xs font-black text-swiss-black uppercase tracking-wider">ALL CAUGHT UP!</p>
-                <p className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider mt-1">No notifications yet.</p>
+                <p className="text-xs font-black text-neutral-900 uppercase tracking-wider">ALL CAUGHT UP!</p>
+                <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mt-1">No notifications yet.</p>
               </div>
             )}
 
@@ -188,24 +188,24 @@ const NotificationBell = () => {
                   key={item._id}
                   onClick={() => handleNotificationClick(item)}
                   style={{ height: '72px' }}
-                  className={`flex flex-col justify-between p-3.5 hover:bg-swiss-gray-50 cursor-pointer transition-all duration-fast select-none relative ${
+                  className={`flex flex-col justify-between p-3.5 hover:bg-neutral-50 cursor-pointer transition-all duration-fast select-none relative ${
                     isUnread 
-                      ? 'border-l-4 border-swiss-black bg-swiss-gray-50/55' 
-                      : 'border-l-4 border-transparent bg-swiss-white'
+                      ? 'border-l-4 border-neutral-900 bg-neutral-50/55' 
+                      : 'border-l-4 border-transparent bg-white'
                   }`}
                 >
                   <div className="flex justify-between items-start gap-2">
-                    <span className="text-[9px] font-black text-swiss-red uppercase tracking-widest truncate max-w-[170px] block leading-none">
+                    <span className="text-[9px] font-black text-accent uppercase tracking-widest truncate max-w-[170px] block leading-none">
                       {category}
                     </span>
                   </div>
 
-                  <p className="text-[12px] font-bold text-swiss-black uppercase tracking-wide truncate mt-1 leading-none select-none">
+                  <p className="text-[12px] font-bold text-neutral-900 uppercase tracking-wide truncate mt-1 leading-none select-none">
                     {item.title || item.message}
                   </p>
 
                   <div className="text-right mt-1.5 leading-none">
-                    <span className="text-[9px] font-bold text-swiss-gray-400 font-mono tracking-wider block">
+                    <span className="text-[9px] font-bold text-neutral-500 font-mono tracking-wider block">
                       {formatTimeAgo(item.createdAt)}
                     </span>
                   </div>

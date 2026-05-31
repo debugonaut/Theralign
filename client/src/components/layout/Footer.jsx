@@ -34,23 +34,23 @@ const Footer = () => {
   ];
 
   const SwissNavLink = ({ to, label }) => (
-    <Link to={to} className="swiss-nav-link swiss-label !text-[12px] !font-medium">
-      <span className="nav-text-default text-swiss-gray-600">{label}</span>
+    <Link to={to} className="swiss-nav-link text-[12px] font-semibold text-neutral-700 normal-case !text-[12px] !font-medium">
+      <span className="nav-text-default text-neutral-700">{label}</span>
       <span className="nav-text-hover">{label}</span>
     </Link>
   );
 
   return (
-    <footer className="w-full bg-swiss-gray-100 border-t-2 border-swiss-black pt-16 pb-8">
+    <footer className="w-full bg-neutral-100 border-t-2 border-neutral-900 pt-16 pb-8">
       <div className="max-w-[1440px] mx-auto px-6 w-full">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           
           {/* Brand Column */}
           <div className="col-span-1 flex flex-col items-start gap-4">
-            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-swiss-black">
+            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-neutral-900">
               THERALIGN
             </span>
-            <p className="text-[12px] text-swiss-gray-600 font-medium">
+            <p className="text-[12px] text-neutral-700 font-medium">
               India's premier verified physiotherapy marketplace. Connect with clinical specialists.
             </p>
           </div>
@@ -58,7 +58,7 @@ const Footer = () => {
           {/* Link Columns */}
           {footerLinks.map((section, index) => (
             <div key={index} className="col-span-1 flex flex-col gap-4">
-              <h4 className="font-bold text-[12px] text-swiss-black uppercase tracking-[0.08em] mb-2 font-swiss">
+              <h4 className="font-bold text-[12px] text-neutral-900 uppercase tracking-[0.08em] mb-2 font-swiss">
                 {section.title}
               </h4>
               <ul className="flex flex-col gap-3">
@@ -73,11 +73,11 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t-2 border-swiss-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[12px] text-swiss-gray-400 font-medium">
+        <div className="border-t-2 border-neutral-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[12px] text-neutral-500 font-medium">
             &copy; {currentYear} Theralign Inc. All rights reserved.
           </p>
-          <p className="text-[12px] text-swiss-gray-400 font-medium uppercase tracking-[0.08em]">
+          <p className="text-[12px] text-neutral-500 font-medium uppercase tracking-[0.08em]">
             SYSTEM D1.2
           </p>
         </div>

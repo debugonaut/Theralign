@@ -48,6 +48,7 @@ export const initReminderJob = () => {
           date: appt.date,
           startTime: appt.startTime,
           endTime: appt.endTime,
+          appointmentId: appt._id,
         });
       }
 

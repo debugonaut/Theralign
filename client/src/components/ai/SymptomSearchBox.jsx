@@ -122,7 +122,7 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
               }}
             />
             {/* Length counter */}
-            <span className={`absolute bottom-3 right-4 text-[10px] font-bold ${remainingChars < 50 ? 'text-swiss-red' : 'text-swiss-gray-400'}`}>
+            <span className={`absolute bottom-3 right-4 text-[10px] font-bold ${remainingChars < 50 ? 'text-accent' : 'text-neutral-500'}`}>
               {remainingChars}
             </span>
           </div>
@@ -168,7 +168,7 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
             <button
               type="submit"
               disabled={loading || symptoms.trim().length < 5}
-              className="flex-1 bg-swiss-black hover:bg-swiss-red disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 px-6 rounded-none font-bold uppercase tracking-widest text-[12px] transition-all duration-fast inline-flex items-center justify-center gap-2 select-none cursor-pointer border border-transparent"
+              className="flex-1 bg-neutral-900 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 px-6 rounded-none font-bold uppercase tracking-widest text-[12px] transition-all duration-fast inline-flex items-center justify-center gap-2 select-none cursor-pointer border border-transparent"
             >
               {loading ? (
                 <>
@@ -186,17 +186,17 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
         </form>
 
         {error && (
-          <div className="mt-4 p-4 bg-swiss-red/5 border border-swiss-red flex gap-3 text-left">
-            <AlertCircle className="w-5 h-5 text-swiss-red shrink-0 mt-0.5" />
+          <div className="mt-4 p-4 bg-accent/5 border border-accent flex gap-3 text-left">
+            <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
             <div>
-              <h5 className="text-[11px] font-black text-swiss-red uppercase tracking-wider">Triage Query Warning</h5>
-              <p className="text-[12px] text-swiss-red font-medium mt-0.5">{error}</p>
+              <h5 className="text-[11px] font-black text-accent uppercase tracking-wider">Triage Query Warning</h5>
+              <p className="text-[12px] text-accent font-medium mt-0.5">{error}</p>
             </div>
           </div>
         )}
 
         {/* Small Legal Disclaimer */}
-        <p className="text-[10px] text-swiss-gray-400 mt-4 text-center leading-relaxed font-swiss">
+        <p className="text-[10px] text-neutral-500 mt-4 text-center leading-relaxed font-swiss">
           AI triage analysis is provided for educational advice only and is not a formal medical diagnosis.
         </p>
       </div>

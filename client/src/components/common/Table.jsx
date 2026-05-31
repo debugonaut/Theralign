@@ -2,22 +2,16 @@ import React, { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
 /**
- * D1.7 — Table Primitive Component System
+ * Structured Warmth — Table Primitive Component System
  *
- * Compound component pattern — all sub-components are attached to the
- * Table namespace: Table.Head, Table.Body, Table.Row, Table.Header, Table.Cell.
+ * All sub-components are attached to Table namespace: Head, Body, Row, Header, Cell.
  *
- * Visual rules:
- *   - No outer border — the table floats on its surface
- *   - Header bottom border: 4px solid swiss-black (heavy rule)
- *   - Row separators: 1px swiss-gray-200 (hairline — barely visible)
- *   - Column headers: uppercase, gray, small, tracked
- *   - Row hover (hoverable): swiss-gray-50 background fill — NOT inversion
- *     (data rows are not actions; inversion is reserved for action cards)
- *   - Numeric columns: right-aligned, tabular-nums
- *   - Destructive action links: swiss-red
- *   - No zebra striping
- *   - No rounded corners anywhere
+ * Rules:
+ *   - Header row: Background #F0F4F7, separator 1px solid #DDE3EA.
+ *   - Column headers: uppercase, tracked, neutral-500 (600 weight).
+ *   - Rows: Background #FFFFFF, separator 1px solid #F0F4F7, height 56px.
+ *   - Row hover: Subtle neutral-50 background.
+ *   - Action links: Medium weight (Inter 500), 13px, title-cased.
  */
 
 /* ── Table (Container) ──────────────────────────────────────── */
@@ -36,8 +30,8 @@ const Table = ({ children, className = '' }) => (
 Table.Head = function TableHead({ children }) {
   return (
     <thead
-      className="bg-swiss-white"
-      style={{ borderBottom: '4px solid #0F0F0F' }}
+      className="bg-neutral-100"
+      style={{ borderBottom: '1px solid #DDE3EA' }}
     >
       {children}
     </thead>
@@ -55,24 +49,37 @@ Table.Row = function TableRow({
   hoverable = false,
   onClick,
   expanded = false,
+  selected = false,
+  danger = false,
   className = '',
 }) {
+  const getBackgroundClass = () => {
+    if (selected) return 'bg-[#EFF6FF]'; // Light primary tint
+    if (danger) return 'bg-danger/[0.03]'; // Subliminal red tint
+    if (expanded) return 'bg-[#F7F9FB]'; // Continuation background
+    return 'bg-white';
+  };
+
+  const getBorderLeft = () => {
+    if (selected || expanded) return '4px solid #0B4F6C'; // 4px primary left border
+    return 'none';
+  };
+
   return (
     <tr
       onClick={onClick}
       className={[
-        'transition-colors duration-fast',
-        // Hairline row separator — 1px, barely visible. Not zebra.
-        'border-b border-1 border-swiss-gray-200',
-        // Hover: subtle gray fill — not an inversion (data rows are not actions)
-        hoverable && !expanded ? 'hover:bg-swiss-gray-50' : '',
-        // Expanded: gray background + left accent border
-        expanded ? 'bg-swiss-gray-100' : '',
-        // Cursor
+        'transition-all duration-fast ease-swiss',
+        'border-b border-neutral-100',
+        getBackgroundClass(),
+        hoverable && !selected && !expanded ? 'hover:bg-neutral-50' : '',
         onClick ? 'cursor-pointer' : '',
         className,
       ].filter(Boolean).join(' ')}
-      style={expanded ? { borderLeft: '4px solid #0F0F0F' } : {}}
+      style={{
+        height: '56px',
+        borderLeft: getBorderLeft(),
+      }}
     >
       {children}
     </tr>
@@ -97,10 +104,9 @@ Table.Header = function TableHeader({
       onClick={sortable ? handleClick : undefined}
       className={[
         'px-4 py-3',
-        'text-swiss-gray-400',
-        'font-bold uppercase',
-        // Tracking is applied inline due to custom value
-        sortable ? 'cursor-pointer hover:text-swiss-black' : '',
+        'text-neutral-500',
+        'font-semibold uppercase',
+        sortable ? 'cursor-pointer hover:text-neutral-900' : '',
         numeric ? 'text-right' : 'text-left',
         className,
       ].filter(Boolean).join(' ')}
@@ -113,8 +119,7 @@ Table.Header = function TableHeader({
       <span
         className={[
           'inline-flex items-center gap-1',
-          // Active sort: red underline
-          sortDirection ? 'border-b-2 border-swiss-red pb-0.5' : '',
+          sortDirection ? 'border-b-2 border-accent pb-0.5' : '',
         ].filter(Boolean).join(' ')}
       >
         {children}
@@ -123,12 +128,12 @@ Table.Header = function TableHeader({
             <ChevronUp
               size={10}
               strokeWidth={2}
-              className={sortDirection === 'asc' ? 'text-swiss-red' : 'text-swiss-gray-400'}
+              className={sortDirection === 'asc' ? 'text-accent' : 'text-neutral-300'}
             />
             <ChevronDown
               size={10}
               strokeWidth={2}
-              className={sortDirection === 'desc' ? 'text-swiss-red' : 'text-swiss-gray-400'}
+              className={sortDirection === 'desc' ? 'text-accent' : 'text-neutral-300'}
             />
           </span>
         )}
@@ -147,8 +152,8 @@ Table.Cell = function TableCell({
   return (
     <td
       className={[
-        'px-4 py-4',
-        'text-swiss-black',
+        'px-4 py-3',
+        'text-neutral-900',
         'align-middle',
         numeric ? 'text-right swiss-numeric' : '',
         actions ? 'text-right' : '',
@@ -174,17 +179,18 @@ export const ActionLink = ({ children, destructive = false, onClick, className =
   <button
     onClick={onClick}
     className={[
-      'font-bold uppercase cursor-pointer bg-transparent border-0',
-      'transition-colors duration-fast',
+      'font-medium cursor-pointer bg-transparent border-0',
+      'transition-colors duration-fast hover:underline',
       destructive
-        ? 'text-swiss-red hover:opacity-70'
-        : 'text-swiss-black hover:text-swiss-gray-600',
+        ? 'text-danger'
+        : 'text-primary',
       className,
     ].filter(Boolean).join(' ')}
-    style={{ fontSize: '11px', letterSpacing: '0.08em', fontFamily: 'Inter, sans-serif' }}
+    style={{ fontSize: '13px', fontFamily: 'Inter, sans-serif' }}
   >
     {children}
   </button>
 );
 
 export default Table;
+export { Table };

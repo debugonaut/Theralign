@@ -37,29 +37,29 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
   // Cell state style selectors
   const getCellClassName = (status, isSelected) => {
     if (isSelected) {
-      return 'bg-swiss-black text-swiss-white border-swiss-black';
+      return 'bg-[#E8F8F5] text-[#0A7E6E] border-[#0A7E6E] border-2 shadow-level-1';
     }
 
     switch (status) {
       case 'available':
-        return 'bg-swiss-gray-100 border-swiss-black text-swiss-black hover:bg-swiss-gray-200 cursor-pointer';
+        return 'bg-neutral-100 border-neutral-900 text-neutral-900 hover:bg-neutral-200 cursor-pointer';
       case 'limited':
-        return 'bg-swiss-amber/10 border-swiss-amber text-swiss-amber hover:bg-swiss-amber/20 cursor-pointer';
+        return 'bg-warning/10 border-warning text-warning hover:bg-warning/20 cursor-pointer';
       case 'full':
-        return 'bg-swiss-gray-50 border-swiss-gray-200 text-swiss-gray-400 cursor-not-allowed';
+        return 'bg-neutral-50 border-neutral-200 text-neutral-500 cursor-not-allowed';
       case 'unavailable':
       default:
-        return 'bg-swiss-white border-transparent text-swiss-gray-200 cursor-not-allowed';
+        return 'bg-white border-transparent text-neutral-200 cursor-not-allowed';
     }
   };
 
   return (
     <div className="flex flex-col gap-4 select-none">
-      <div className="flex items-center justify-between pb-2 border-b border-swiss-gray-200">
-        <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
+      <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
+        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
           AVAILABILITY HEATMAP
         </label>
-        <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-widest">
+        <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">
           28-DAY GRID
         </span>
       </div>
@@ -68,7 +68,7 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
         {/* Mon-Sun Day Titles */}
         <div className="grid grid-cols-7 gap-1 text-center mb-1">
           {daysHeader.map((day, idx) => (
-            <span key={idx} className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-widest">
+            <span key={idx} className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
               {day}
             </span>
           ))}
@@ -104,13 +104,13 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
       </div>
 
       {/* Legend utilizing bordered squares */}
-      <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-swiss-gray-200">
+      <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-neutral-200">
         {[
-          { color: 'bg-swiss-gray-100 border-swiss-black', label: 'AVAILABLE' },
-          { color: 'bg-swiss-amber/10 border-swiss-amber', label: 'LIMITED' },
-          { color: 'bg-swiss-gray-50 border-swiss-gray-200', label: 'FULL' },
+          { color: 'bg-neutral-100 border-neutral-900', label: 'AVAILABLE' },
+          { color: 'bg-warning/10 border-warning', label: 'LIMITED' },
+          { color: 'bg-neutral-50 border-neutral-200', label: 'FULL' },
         ].map((item) => (
-          <div key={item.label} className="flex items-center gap-1.5 text-[9px] text-swiss-gray-400 font-bold uppercase tracking-widest">
+          <div key={item.label} className="flex items-center gap-1.5 text-[9px] text-neutral-500 font-bold uppercase tracking-widest">
             <span className={`w-3.5 h-3.5 border-2 rounded-none shrink-0 ${item.color}`} />
             <span>{item.label}</span>
           </div>

@@ -13,14 +13,14 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
   const navigate = useNavigate();
 
   return (
-    <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+    <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
       {/* Header with Sort Controls */}
-      <div className="p-6 border-b border-swiss-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
             PERFORMANCE METRICS
           </span>
-          <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+          <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
             CLINICIAN LEADERBOARD
           </h3>
         </div>
@@ -35,8 +35,8 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
                 onClick={() => onMetricChange?.(opt.key)}
                 className={`text-[11px] font-black uppercase tracking-widest select-none cursor-pointer bg-transparent border-0 pb-1.5 transition-colors duration-fast ${
                   isActive 
-                    ? 'text-swiss-red border-b-2 border-swiss-red' 
-                    : 'text-swiss-gray-400 hover:text-swiss-black border-b-2 border-transparent'
+                    ? 'text-accent border-b-2 border-accent' 
+                    : 'text-neutral-500 hover:text-neutral-900 border-b-2 border-transparent'
                 }`}
               >
                 {opt.label}
@@ -47,7 +47,7 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
       </div>
 
       {doctors.length === 0 ? (
-        <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+        <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
           NO CLASSIFIED CLINICIAN RECORDS
         </div>
       ) : (
@@ -78,7 +78,7 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
                   className="group"
                 >
                   {/* Rank */}
-                  <Table.Cell className="font-bold text-swiss-black">
+                  <Table.Cell className="font-bold text-neutral-900">
                     {index < 3 ? (
                       <span className="text-lg leading-none" role="img" aria-label="medal">
                         {RANK_ICONS[index]}
@@ -91,17 +91,17 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
                   {/* Doctor Name and Initial circle */}
                   <Table.Cell>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-xs uppercase select-none shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase select-none shrink-0">
                         {docName[0]}
                       </div>
-                      <span className="font-bold text-swiss-black uppercase tracking-wide text-xs">
+                      <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
                         Dr. {docName}
                       </span>
                     </div>
                   </Table.Cell>
 
                   {/* Specialization tag */}
-                  <Table.Cell className="font-bold text-swiss-red uppercase tracking-widest text-[10px]">
+                  <Table.Cell className="font-bold text-accent uppercase tracking-widest text-[10px]">
                     {specText.toUpperCase()}
                   </Table.Cell>
 
@@ -111,14 +111,14 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
                   </Table.Cell>
 
                   {/* Total Earnings */}
-                  <Table.Cell numeric={true} className="font-black text-swiss-black">
+                  <Table.Cell numeric={true} className="font-black text-neutral-900">
                     ₹{(doc.totalEarnings || 0).toLocaleString('en-IN')}
                   </Table.Cell>
 
                   {/* Rating square with zero border radius */}
                   <Table.Cell numeric={true}>
                     <div className="flex justify-end">
-                      <div className="w-8 h-8 border-2 border-swiss-black bg-swiss-white flex items-center justify-center text-xs font-black text-swiss-black rounded-none">
+                      <div className="w-8 h-8 border-2 border-neutral-900 bg-white flex items-center justify-center text-xs font-black text-neutral-900 rounded-none">
                         {ratingVal}
                       </div>
                     </div>
@@ -129,7 +129,7 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
                     <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-fast">
                       <ActionLink
                         onClick={() => navigate(`/admin/doctors/${doc.doctorId || doc._id}`)}
-                        className="text-swiss-red hover:underline"
+                        className="text-accent hover:underline"
                       >
                         VIEW PROFILE →
                       </ActionLink>

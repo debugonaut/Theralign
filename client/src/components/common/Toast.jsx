@@ -4,29 +4,16 @@ import React, {
 import { X } from 'lucide-react';
 
 /**
- * D1.9 — Toast Notification System
+ * Structured Warmth — Toast Notification System
  *
- * Position: fixed bottom-right, 24px from edges
- * Slides in from right at 150ms — mechanical, not elastic.
- *
- * Left accent border communicates variant at a glance:
- *   success → swiss-teal  (#0D7377)
- *   error   → swiss-red   (#FF3000)  — does NOT auto-dismiss
- *   info    → swiss-black (#0F0F0F)
- *   warning → swiss-amber (#B45309)
- *
- * Rules:
- *   - Zero border-radius on container
- *   - 2px black outer border
- *   - 4px left accent border (inside outer border)
- *   - Error toasts do NOT auto-dismiss — patient must acknowledge
- *   - No icons other than the dismiss X
+ * Placed in the bottom-right corner. Incorporates rounded-lg (12px), soft Slate
+ * borders, shadow-dropdown, and brand semantic accents.
  */
 
 const VARIANT_CONFIG = {
-  success: { accentColor: '#0D7377', autoDismiss: true  },
-  error:   { accentColor: '#FF3000', autoDismiss: false },  // NEVER auto-dismiss errors
-  info:    { accentColor: '#0F0F0F', autoDismiss: true  },
+  success: { accentColor: '#0A7E6E', autoDismiss: true  },
+  error:   { accentColor: '#C0392B', autoDismiss: false },
+  info:    { accentColor: '#0B4F6C', autoDismiss: true  },
   warning: { accentColor: '#B45309', autoDismiss: true  },
 };
 
@@ -54,12 +41,11 @@ const ToastItem = ({ id, variant, title, message, onDismiss }) => {
 
   return (
     <div
-      className="relative flex items-start gap-3 bg-swiss-white"
+      className="relative flex items-start gap-3 bg-white rounded-md shadow-level-2"
       style={{
         width: '320px',
-        border: '2px solid #0F0F0F',
-        borderRadius: '0',
-        borderLeft: `6px solid ${config.accentColor}`,  // Accent: 4px visual, 6px rendered (2px outer + 4px accent)
+        border: '1px solid #DDE3EA',
+        borderLeft: `6px solid ${config.accentColor}`,
         padding: '16px 20px',
         animation: isLeaving
           ? 'swiss-slide-out 150ms cubic-bezier(0.4, 0, 0.2, 1) forwards'
@@ -72,15 +58,15 @@ const ToastItem = ({ id, variant, title, message, onDismiss }) => {
       <div className="flex-1 min-w-0">
         {title && (
           <p
-            className="font-bold uppercase text-swiss-black"
-            style={{ fontSize: '12px', letterSpacing: '0.06em', fontFamily: 'Inter, sans-serif', marginBottom: message ? '4px' : '0' }}
+            className="font-bold text-neutral-900 normal-case"
+            style={{ fontSize: '13px', fontFamily: 'Inter, sans-serif', marginBottom: message ? '4px' : '0' }}
           >
             {title}
           </p>
         )}
         {message && (
           <p
-            className="text-swiss-gray-600"
+            className="text-neutral-500"
             style={{ fontSize: '14px', lineHeight: '20px', fontFamily: 'Inter, sans-serif' }}
           >
             {message}
@@ -91,7 +77,7 @@ const ToastItem = ({ id, variant, title, message, onDismiss }) => {
       {/* Dismiss X */}
       <button
         onClick={dismiss}
-        className="text-swiss-gray-400 hover:text-swiss-red transition-colors duration-fast cursor-pointer bg-transparent border-0 p-0 flex-shrink-0"
+        className="text-neutral-300 hover:text-danger transition-colors duration-fast cursor-pointer bg-transparent border-0 p-0 flex-shrink-0"
         aria-label="Dismiss notification"
       >
         <X size={16} strokeWidth={2} />

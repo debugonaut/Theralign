@@ -75,11 +75,11 @@ function DoctorCard({ doctor, style, isTop, onClick }) {
 
   // Dynamic distance color styling: green if close (< 2.0 km), yellow if middle (2.0 - 4.0 km), red if far (> 4.0 km)
   const distVal = parseFloat(doctor.distance || 0);
-  let distColor = 'bg-[#10B981] text-swiss-white border-[#0F766E]'; // close -> green
+  let distColor = 'bg-[#10B981] text-white border-[#0F766E]'; // close -> green
   if (distVal > 4.0) {
-    distColor = 'bg-swiss-red text-swiss-white border-[#B91C1C]'; // far -> red
+    distColor = 'bg-accent text-white border-[#B91C1C]'; // far -> red
   } else if (distVal >= 2.0) {
-    distColor = 'bg-[#EAB308] text-swiss-black border-[#A16207]'; // middle -> yellow
+    distColor = 'bg-[#EAB308] text-neutral-900 border-[#A16207]'; // middle -> yellow
   }
 
   return (
@@ -92,13 +92,13 @@ function DoctorCard({ doctor, style, isTop, onClick }) {
     >
       {/* Polaroid Frame Container */}
       <div
-        className="bg-swiss-white border-2 border-swiss-black p-4 rounded-none text-left select-none relative flex flex-col justify-between"
+        className="bg-white border-2 border-neutral-900 p-4 rounded-none text-left select-none relative flex flex-col justify-between"
         style={{
           minHeight: '420px',
         }}
       >
         {/* Centered Image (Polaroid Photo Aspect) */}
-        <div className="relative w-full h-[260px] border-2 border-swiss-black bg-swiss-gray-50 flex items-center justify-center overflow-hidden mb-4">
+        <div className="relative w-full h-[260px] border-2 border-neutral-900 bg-neutral-50 flex items-center justify-center overflow-hidden mb-4">
           {doctor.avatar ? (
             <div className="relative w-full h-full">
               <img
@@ -109,12 +109,12 @@ function DoctorCard({ doctor, style, isTop, onClick }) {
                   e.target.style.opacity = '0';
                 }}
               />
-              <div className="w-full h-full bg-swiss-gray-100 flex items-center justify-center font-black text-3xl text-swiss-black select-none absolute inset-0 z-0">
+              <div className="w-full h-full bg-neutral-100 flex items-center justify-center font-black text-3xl text-neutral-900 select-none absolute inset-0 z-0">
                 {initial}
               </div>
             </div>
           ) : (
-            <div className="w-full h-full bg-swiss-gray-100 flex items-center justify-center font-black text-3xl text-swiss-black select-none">
+            <div className="w-full h-full bg-neutral-100 flex items-center justify-center font-black text-3xl text-neutral-900 select-none">
               {initial}
             </div>
           )}
@@ -124,25 +124,25 @@ function DoctorCard({ doctor, style, isTop, onClick }) {
         <div className="flex-1 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-start gap-2">
-              <p className="font-black text-swiss-black text-[16px] uppercase tracking-tight truncate leading-none">
+              <p className="font-black text-neutral-900 text-[16px] uppercase tracking-tight truncate leading-none">
                 {docName.startsWith('Dr. ') ? docName : `DR. ${docName}`}
               </p>
               {doctor.verificationStatus === 'verified' && (
                 <VerifiedBadge size="xs" className="shrink-0" />
               )}
             </div>
-            <p className="text-[10px] text-swiss-red font-black uppercase tracking-widest truncate mt-1.5">
+            <p className="text-[10px] text-accent font-black uppercase tracking-widest truncate mt-1.5">
               {specialtyText}
             </p>
           </div>
 
-          <div className="flex justify-between items-end mt-4 pt-2 border-t border-swiss-gray-200">
+          <div className="flex justify-between items-end mt-4 pt-2 border-t border-neutral-200">
             <p className="text-ui-xs font-bold text-swiss-gray-650 uppercase tracking-wider leading-none">
-              ★ {Number(doctor.rating || 0).toFixed(1)} <span className="text-swiss-gray-400">({doctor.reviewCount || 0} reviews)</span>
+              ★ {Number(doctor.rating || 0).toFixed(1)} <span className="text-neutral-500">({doctor.reviewCount || 0} reviews)</span>
             </p>
 
             {doctor.distance && (
-              <span className={`inline-block text-[9px] font-black uppercase tracking-widest px-2.5 py-1 border border-swiss-black leading-none ${distColor}`}>
+              <span className={`inline-block text-[9px] font-black uppercase tracking-widest px-2.5 py-1 border border-neutral-900 leading-none ${distColor}`}>
                 {doctor.distance} KM AWAY
               </span>
             )}
@@ -324,12 +324,12 @@ export default function DoctorCardDeck() {
           disabled={['requesting', 'loading'].includes(locationState)}
           className={`
             text-[11px] font-black uppercase tracking-widest py-2.5 px-4
-            border-2 border-swiss-black rounded-none transition-all duration-fast select-none
+            border-2 border-neutral-900 rounded-none transition-all duration-fast select-none
             ${locationState === 'success'
-              ? 'bg-swiss-black text-swiss-white cursor-default'
+              ? 'bg-neutral-900 text-white cursor-default'
               : ['requesting', 'loading'].includes(locationState)
-                ? 'bg-swiss-gray-100 text-swiss-gray-400 opacity-60 cursor-not-allowed'
-                : 'bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white cursor-pointer active:scale-[0.98]'
+                ? 'bg-neutral-100 text-neutral-500 opacity-60 cursor-not-allowed'
+                : 'bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white cursor-pointer active:scale-[0.98]'
             }
           `}
         >

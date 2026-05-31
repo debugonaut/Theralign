@@ -39,13 +39,13 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
   const getIcon = (type) => {
     switch (type) {
       case 'specialization':
-        return <Hospital className="h-4 w-4 text-swiss-black" />;
+        return <Hospital className="h-4 w-4 text-neutral-900" />;
       case 'doctor':
-        return <User className="h-4 w-4 text-swiss-black" />;
+        return <User className="h-4 w-4 text-neutral-900" />;
       case 'city':
-        return <MapPin className="h-4 w-4 text-swiss-black" />;
+        return <MapPin className="h-4 w-4 text-neutral-900" />;
       default:
-        return <Search className="h-4 w-4 text-swiss-black" />;
+        return <Search className="h-4 w-4 text-neutral-900" />;
     }
   };
 
@@ -58,9 +58,9 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
   };
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-1 bg-swiss-white border-2 border-swiss-black z-50 overflow-hidden max-h-80 overflow-y-auto rounded-none shadow-none animate-none">
+    <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-neutral-900 z-50 overflow-hidden max-h-80 overflow-y-auto rounded-none shadow-none animate-none">
       {isLoading && (
-        <div className="px-4 py-3 text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest flex items-center gap-2">
+        <div className="px-4 py-3 text-ui-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
           <span className="inline-block animate-swiss-spin">⏳</span> SEARCHING OPTIONS...
         </div>
       )}
@@ -76,16 +76,16 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
               e.preventDefault();
               handleRowClick(s, i);
             }}
-            className={`w-full flex items-center gap-4 px-4 py-3 text-left border-b border-swiss-gray-200 last:border-0 transition-colors duration-fast select-none cursor-pointer rounded-none
+            className={`w-full flex items-center gap-4 px-4 py-3 text-left border-b border-neutral-200 last:border-0 transition-colors duration-fast select-none cursor-pointer rounded-none
               ${isFlashing 
-                ? 'bg-swiss-black text-swiss-white' 
-                : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                ? 'bg-neutral-900 text-white' 
+                : 'bg-white text-neutral-900 hover:bg-neutral-100'
               }
             `}
           >
             {/* Bordered square category indicator on the left */}
             <div className={`w-8 h-8 border-2 shrink-0 flex items-center justify-center rounded-none
-              ${isFlashing ? 'border-swiss-white bg-swiss-white' : 'border-swiss-black bg-swiss-white'}
+              ${isFlashing ? 'border-white bg-white' : 'border-neutral-900 bg-white'}
             `}>
               {getIcon(s.type)}
             </div>
@@ -94,7 +94,7 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
               <p className="text-ui-sm font-black uppercase tracking-wider truncate">
                 {s.label}
               </p>
-              <p className="text-[10px] font-bold uppercase tracking-widest truncate mt-0.5 text-swiss-gray-400">
+              <p className="text-[10px] font-bold uppercase tracking-widest truncate mt-0.5 text-neutral-500">
                 {s.subLabel}
               </p>
             </div>

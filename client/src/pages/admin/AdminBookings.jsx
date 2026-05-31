@@ -59,7 +59,7 @@ const AdminBookings = () => {
   ];
 
   return (
-    <div className="space-y-8 select-none text-swiss-black bg-swiss-white">
+    <div className="space-y-8 select-none text-neutral-900 bg-white">
       {/* Page Title */}
       <SectionHeader
         title="APPOINTMENTS"
@@ -67,15 +67,15 @@ const AdminBookings = () => {
       />
 
       {/* Filter bar - Segmented status controls */}
-      <div className="flex border-2 border-swiss-black self-start inline-flex">
+      <div className="flex border-2 border-neutral-900 self-start inline-flex">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.value}
             onClick={() => { setStatusFilter(tab.value); setPage(1); }}
-            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-r-2 last:border-r-0 border-swiss-black cursor-pointer transition-colors duration-fast ${
+            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-r-2 last:border-r-0 border-neutral-900 cursor-pointer transition-colors duration-fast ${
               statusFilter === tab.value
-                ? 'bg-swiss-black text-swiss-white'
-                : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                ? 'bg-neutral-900 text-white'
+                : 'bg-white text-neutral-900 hover:bg-neutral-100'
             }`}
           >
             {tab.label}
@@ -84,13 +84,13 @@ const AdminBookings = () => {
       </div>
 
       {/* Bookings table */}
-      <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+      <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {loading ? (
-          <div className="p-12 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider">
             <span className="inline-block animate-spin mr-2">⏳</span> RETRIEVING SCHEDULER ENTRIES...
           </div>
         ) : appointments.length === 0 ? (
-          <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
             NO SCHEDULER RECORDS MATCH FILTERS
           </div>
         ) : (
@@ -123,25 +123,25 @@ const AdminBookings = () => {
                 return (
                   <React.Fragment key={appt._id}>
                     <tr
-                      className={`border-b border-swiss-gray-200 hover:bg-swiss-gray-50 transition-colors cursor-pointer ${
-                        isExpanded ? 'bg-swiss-gray-100' : ''
+                      className={`border-b border-neutral-200 hover:bg-neutral-50 transition-colors cursor-pointer ${
+                        isExpanded ? 'bg-neutral-100' : ''
                       }`}
                       onClick={() => setExpandedRow(isExpanded ? null : appt._id)}
                     >
                       {/* Row index */}
-                      <td className="px-4 py-4 align-middle text-swiss-gray-500 font-mono text-xs">
+                      <td className="px-4 py-4 align-middle text-neutral-500 font-mono text-xs">
                         {(page - 1) * LIMIT + i + 1}
                       </td>
 
                       {/* Patient */}
                       <td className="px-4 py-4 align-middle">
-                        <span className="font-bold text-swiss-black uppercase tracking-wide text-xs">
+                        <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
                           {appt.patient?.name || 'Patient Deleted'}
                         </span>
                       </td>
 
                       {/* Doctor */}
-                      <td className="px-4 py-4 align-middle font-bold text-swiss-black uppercase tracking-wide text-xs">
+                      <td className="px-4 py-4 align-middle font-bold text-neutral-900 uppercase tracking-wide text-xs">
                         Dr. {appt.doctor?.user?.name || 'Physio Deleted'}
                       </td>
 
@@ -151,12 +151,12 @@ const AdminBookings = () => {
                       </td>
 
                       {/* Fee */}
-                      <td className="px-4 py-4 align-middle text-right font-bold text-swiss-black swiss-numeric">
+                      <td className="px-4 py-4 align-middle text-right font-bold text-neutral-900 swiss-numeric">
                         ₹{feeVal.toLocaleString('en-IN')}
                       </td>
 
                       {/* Commission */}
-                      <td className="px-4 py-4 align-middle text-right font-bold text-swiss-gray-500 swiss-numeric">
+                      <td className="px-4 py-4 align-middle text-right font-bold text-neutral-500 swiss-numeric">
                         ₹{commVal.toLocaleString('en-IN')}
                       </td>
 
@@ -171,36 +171,36 @@ const AdminBookings = () => {
                       </td>
 
                       {/* Collapse indicator */}
-                      <td className="px-4 py-4 align-middle text-swiss-gray-400">
+                      <td className="px-4 py-4 align-middle text-neutral-500">
                         {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </td>
                     </tr>
 
                     {/* Collapsible Details Drawer */}
                     {isExpanded && (
-                      <tr className="bg-swiss-gray-50 border-b border-swiss-black">
+                      <tr className="bg-neutral-50 border-b border-neutral-900">
                         <td colSpan={9} className="px-8 py-6 text-left">
                           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs">
                             <div>
-                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">PATIENT EMAIL</span>
-                              <span className="text-swiss-black font-bold uppercase">{appt.patient?.email || '—'}</span>
+                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT EMAIL</span>
+                              <span className="text-neutral-900 font-bold uppercase">{appt.patient?.email || '—'}</span>
                             </div>
                             
                             <div>
-                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">CLINIC FACILITY</span>
-                              <span className="text-swiss-black font-bold uppercase">{appt.doctor?.clinicName || '—'}</span>
+                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">CLINIC FACILITY</span>
+                              <span className="text-neutral-900 font-bold uppercase">{appt.doctor?.clinicName || '—'}</span>
                             </div>
 
                             <div>
-                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">PATIENT NOTES</span>
-                              <span className="text-swiss-gray-600 font-bold uppercase italic">“{appt.patientNotes || 'NO ADDITIONAL NOTES'}”</span>
+                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT NOTES</span>
+                              <span className="text-neutral-700 font-bold uppercase italic">“{appt.patientNotes || 'NO ADDITIONAL NOTES'}”</span>
                             </div>
 
                             <div>
-                              <span className="text-swiss-gray-400 uppercase font-black tracking-widest block mb-1">
+                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">
                                 {appt.status === 'cancelled' ? 'CANCELLATION REASON' : 'TRANSACTION ID'}
                               </span>
-                              <span className="text-swiss-black font-bold uppercase font-mono text-[10px]">
+                              <span className="text-neutral-900 font-bold uppercase font-mono text-[10px]">
                                 {appt.status === 'cancelled'
                                   ? (appt.cancellationReason || 'NOT REGISTERED')
                                   : (appt.paymentId || '—')}
@@ -219,11 +219,11 @@ const AdminBookings = () => {
 
         {/* Totals aggregate row */}
         {!loading && appointments.length > 0 && (
-          <div className="px-6 py-4 border-t-2 border-swiss-black bg-swiss-gray-50 flex items-center justify-between text-xs font-bold uppercase tracking-wider">
-            <span className="text-swiss-gray-400">INDEXED {appointments.length} APPOINTMENTS SESSIONS</span>
-            <div className="flex gap-6 text-swiss-black">
-              <span>TOTAL FEES: <span className="text-swiss-black font-black swiss-numeric">₹{pageTotals.fees.toLocaleString('en-IN')}</span></span>
-              <span>COMMISSIONS (10%): <span className="text-swiss-teal font-black swiss-numeric">₹{pageTotals.commission.toLocaleString('en-IN')}</span></span>
+          <div className="px-6 py-4 border-t-2 border-neutral-900 bg-neutral-50 flex items-center justify-between text-xs font-bold uppercase tracking-wider">
+            <span className="text-neutral-500">INDEXED {appointments.length} APPOINTMENTS SESSIONS</span>
+            <div className="flex gap-6 text-neutral-900">
+              <span>TOTAL FEES: <span className="text-neutral-900 font-black swiss-numeric">₹{pageTotals.fees.toLocaleString('en-IN')}</span></span>
+              <span>COMMISSIONS (10%): <span className="text-success font-black swiss-numeric">₹{pageTotals.commission.toLocaleString('en-IN')}</span></span>
             </div>
           </div>
         )}
@@ -232,19 +232,19 @@ const AdminBookings = () => {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
-          <span className="text-swiss-gray-400">PAGE {page} OF {totalPages}</span>
+          <span className="text-neutral-500">PAGE {page} OF {totalPages}</span>
           <div className="flex gap-4">
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+              className="px-4 py-2 border-2 border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-neutral-900 transition-all shrink-0 cursor-pointer"
             >
               ← PREV
             </button>
             <button
               disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+              className="px-4 py-2 border-2 border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-neutral-900 transition-all shrink-0 cursor-pointer"
             >
               NEXT →
             </button>

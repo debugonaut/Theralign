@@ -111,17 +111,17 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
   return (
     <div className="space-y-6">
       {/* Date Range Inputs & Status Segmented Controls Filter Bar */}
-      <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between border-2 border-swiss-black p-4 bg-swiss-white">
+      <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center justify-between border-2 border-neutral-900 p-4 bg-white">
         
         {/* Search */}
         <div className="flex-1 relative min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-swiss-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 w-4 h-4" />
           <input
             type="text"
             placeholder="FILTER BY PATIENT, DOCTOR, OR PAYMENT ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-swiss-white border-2 border-swiss-black text-xs font-bold uppercase placeholder-swiss-gray-400 focus:outline-none transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-white border-2 border-neutral-900 text-xs font-bold uppercase placeholder-neutral-500 focus:outline-none transition-colors"
           />
         </div>
 
@@ -131,27 +131,27 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="px-3 py-1.5 border-2 border-swiss-black bg-swiss-white text-xs font-bold focus:outline-none uppercase"
+            className="px-3 py-1.5 border-2 border-neutral-900 bg-white text-xs font-bold focus:outline-none uppercase"
           />
-          <span className="text-xs font-bold text-swiss-black">—</span>
+          <span className="text-xs font-bold text-neutral-900">—</span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="px-3 py-1.5 border-2 border-swiss-black bg-swiss-white text-xs font-bold focus:outline-none uppercase"
+            className="px-3 py-1.5 border-2 border-neutral-900 bg-white text-xs font-bold focus:outline-none uppercase"
           />
         </div>
 
         {/* Status segmented controls */}
-        <div className="flex border-2 border-swiss-black">
+        <div className="flex border-2 border-neutral-900">
           {['all', 'paid'].map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
-              className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest border-r-2 last:border-r-0 border-swiss-black cursor-pointer ${
+              className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest border-r-2 last:border-r-0 border-neutral-900 cursor-pointer ${
                 statusFilter === status
-                  ? 'bg-swiss-black text-swiss-white'
-                  : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                  ? 'bg-neutral-900 text-white'
+                  : 'bg-white text-neutral-900 hover:bg-neutral-100'
               }`}
             >
               {status === 'all' ? 'ALL STATUS' : 'PAID ONLY'}
@@ -162,13 +162,13 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
       </div>
 
       {/* Bordered Table wrapper */}
-      <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+      <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {loading ? (
-          <div className="p-12 text-center text-swiss-gray-400 text-xs font-bold uppercase tracking-wider">
+          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider">
             <span className="inline-block animate-spin mr-2">⏳</span> RETRIEVING TRANSACTIONS...
           </div>
         ) : filteredPayments.length === 0 ? (
-          <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
             NO TRANSACTION RECORDS MATCH FILTERS
           </div>
         ) : (
@@ -199,46 +199,46 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
                 return (
                   <Table.Row key={payment._id}>
                     {/* Date */}
-                    <Table.Cell className="font-mono text-xs whitespace-nowrap text-swiss-gray-600">
+                    <Table.Cell className="font-mono text-xs whitespace-nowrap text-neutral-700">
                       {formatHumanDate(appt.date || payment.createdAt)}
                     </Table.Cell>
 
                     {/* Patient */}
                     <Table.Cell>
                       <div className="text-left">
-                        <span className="font-bold text-swiss-black uppercase tracking-wide text-xs block">
+                        <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs block">
                           {patName}
                         </span>
-                        <span className="text-[10px] text-swiss-gray-400 font-mono block">
+                        <span className="text-[10px] text-neutral-500 font-mono block">
                           {patEmail}
                         </span>
                       </div>
                     </Table.Cell>
 
                     {/* Doctor */}
-                    <Table.Cell className="font-bold text-swiss-black uppercase tracking-wide text-xs">
+                    <Table.Cell className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
                       Dr. {docName}
                     </Table.Cell>
 
                     {/* Amount */}
-                    <Table.Cell numeric={true} className="font-bold text-swiss-black">
+                    <Table.Cell numeric={true} className="font-bold text-neutral-900">
                       ₹{payment.amount}
                     </Table.Cell>
 
                     {/* Commission */}
-                    <Table.Cell numeric={true} className="font-bold text-swiss-gray-600">
+                    <Table.Cell numeric={true} className="font-bold text-neutral-700">
                       ₹{payment.platformCommission}
-                      <span className="text-[9px] text-swiss-gray-400 font-bold block">(10%)</span>
+                      <span className="text-[9px] text-neutral-500 font-bold block">(10%)</span>
                     </Table.Cell>
 
                     {/* Doctor net earnings */}
-                    <Table.Cell numeric={true} className="font-black text-swiss-black">
+                    <Table.Cell numeric={true} className="font-black text-neutral-900">
                       ₹{payment.doctorEarnings}
-                      <span className="text-[9px] text-swiss-gray-400 font-bold block">(90%)</span>
+                      <span className="text-[9px] text-neutral-500 font-bold block">(90%)</span>
                     </Table.Cell>
 
                     {/* Payment ID with tooltip */}
-                    <Table.Cell className="font-mono text-xs text-swiss-gray-500 whitespace-nowrap" title={paymentId}>
+                    <Table.Cell className="font-mono text-xs text-neutral-500 whitespace-nowrap" title={paymentId}>
                       {paymentIdShort}
                     </Table.Cell>
 
@@ -257,21 +257,21 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
       {/* Pagination */}
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
-          <span className="text-swiss-gray-400">
+          <span className="text-neutral-500">
             PAGE {page} OF {totalPages} · {filteredPayments.length} TRANSACTIONS
           </span>
           <div className="flex gap-4">
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+              className="px-4 py-2 border-2 border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-neutral-900 transition-all shrink-0 cursor-pointer"
             >
               ← PREV
             </button>
             <button
               disabled={page === totalPages}
               onClick={() => setPage(p => p + 1)}
-              className="px-4 py-2 border-2 border-swiss-black bg-swiss-white text-swiss-black hover:bg-swiss-black hover:text-swiss-white disabled:opacity-40 disabled:hover:bg-swiss-white disabled:hover:text-swiss-black transition-all shrink-0 cursor-pointer"
+              className="px-4 py-2 border-2 border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-neutral-900 transition-all shrink-0 cursor-pointer"
             >
               NEXT →
             </button>

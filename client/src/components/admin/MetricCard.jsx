@@ -6,26 +6,26 @@ const MetricCard = ({ title = '', value, subtitle, loading }) => {
   const cleanTitle = title.toUpperCase().trim();
   
   // Conditional border signals
-  let borderClass = 'hover:border-swiss-black';
-  let titleColorClass = 'text-swiss-gray-400';
-  let valueColorClass = 'text-swiss-black';
+  let borderClass = 'hover:border-neutral-900';
+  let titleColorClass = 'text-neutral-500';
+  let valueColorClass = 'text-neutral-900';
 
   if (cleanTitle === 'TOTAL REVENUE' || cleanTitle === 'PLATFORM COMMISSION' || cleanTitle === 'PLATFORM COMMISSION (10%)') {
-    borderClass = '!border-swiss-teal hover:!border-swiss-teal';
-    titleColorClass = 'text-swiss-teal';
-    valueColorClass = 'text-swiss-teal';
+    borderClass = '!border-success hover:!border-success';
+    titleColorClass = 'text-success';
+    valueColorClass = 'text-success';
   } else if (cleanTitle === 'PENDING VERIFICATION' || cleanTitle.includes('PENDING')) {
-    borderClass = '!border-swiss-amber hover:!border-swiss-amber';
-    titleColorClass = 'text-swiss-amber';
-    valueColorClass = 'text-swiss-amber';
+    borderClass = '!border-warning hover:!border-warning';
+    titleColorClass = 'text-warning';
+    valueColorClass = 'text-warning';
   }
 
   if (loading) {
     return (
-      <div className="border-2 border-swiss-black bg-swiss-gray-100 p-6 flex flex-col justify-between h-36">
+      <div className="border border-neutral-200/50 bg-neutral-50 p-6 flex flex-col justify-between h-36 rounded-lg shadow-level-1 transition-warm">
         <Skeleton className="h-4 w-2/3 mb-3 bg-swiss-gray-250" />
         <Skeleton className="h-8 w-1/2 mb-3 bg-swiss-gray-250" />
-        <div className="border-t border-swiss-gray-200 my-1" />
+        <div className="border-t border-neutral-200 my-1" />
         <Skeleton className="h-3 w-3/4 mt-2 bg-swiss-gray-250" />
       </div>
     );
@@ -46,9 +46,9 @@ const MetricCard = ({ title = '', value, subtitle, loading }) => {
       </div>
       
       <div>
-        <div className="border-t border-swiss-gray-200 my-1" />
+        <div className="border-t border-neutral-200 my-1" />
         {subtitle && (
-          <span className="text-[11px] text-swiss-gray-600 font-bold uppercase tracking-wider block mt-1.5 leading-none">
+          <span className="text-[11px] text-neutral-700 font-bold uppercase tracking-wider block mt-1.5 leading-none">
             {subtitle}
           </span>
         )}

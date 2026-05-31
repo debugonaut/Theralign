@@ -4,6 +4,9 @@ import { Eye, EyeOff, LogIn, HeartPulse } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { loginAPI } from '../../api/auth.api';
 import useAuthStore from '../../store/authStore';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
+import Card from '../../components/common/Card';
 
 const DASHBOARD_ROUTES = {
   patient: '/patient/dashboard',
@@ -49,22 +52,22 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-[85vh] bg-swiss-white flex items-center justify-center p-6 py-12">
+    <div className="min-h-[85vh] bg-neutral-50 flex items-center justify-center p-6 py-12 page-fade-in px-6 sm:px-6">
       {/* Card */}
       <div className="w-full max-w-[480px] mx-auto">
         {/* Logo / Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-swiss-black border-2 border-swiss-black rounded-none mb-4">
-            <HeartPulse className="w-7 h-7 text-swiss-white" />
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-lg shadow-level-1 mb-4 sm:mb-4">
+            <HeartPulse className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-[32px] leading-[1.1] font-black text-swiss-black uppercase tracking-tight font-swiss">Welcome back</h1>
-          <p className="text-swiss-gray-600 mt-2 text-ui-sm font-bold uppercase tracking-[0.06em]">Sign in to your Theralign account</p>
+          <h1 className="text-[32px] leading-[1.1] font-black text-neutral-900 tracking-tight font-swiss text-center">Theralign</h1>
+          <p className="text-neutral-500 mt-2 text-ui-sm font-semibold uppercase tracking-wider hidden sm:block">Sign in to your Theralign account</p>
         </div>
 
-        <div className="bg-[#F7F7F7] border-2 border-swiss-black p-8 rounded-none shadow-none">
+        <Card variant="default" className="p-6 sm:p-8 rounded-[12px] md:rounded-lg shadow-level-1">
           {/* Inline Error Banner */}
           {error && (
-            <div className="mb-5 bg-swiss-red/5 border-2 border-swiss-red text-swiss-red px-4 py-3 rounded-none text-ui-sm flex items-start gap-2">
+            <div className="mb-5 bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm flex items-start gap-2">
               <span className="mt-0.5 shrink-0">⚠️</span>
               <span className="font-bold">{error}</span>
             </div>
@@ -72,97 +75,70 @@ const LoginPage = () => {
 
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
             {/* Email */}
-            <div className="flex flex-col gap-1.5 text-left">
-              <label
-                htmlFor="login-email"
-                className="text-ui-xs font-black text-swiss-black uppercase tracking-[0.08em]"
-              >
-                Email address
-              </label>
-              <input
-                id="login-email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                required
-                autoComplete="email"
-                disabled={isLoading}
-                className="w-full px-4 py-3 border-2 border-swiss-black rounded-none bg-swiss-white text-swiss-black text-ui-md placeholder-swiss-gray-400 focus:outline-none focus:border-4 focus:border-swiss-black focus:px-[14px] focus:py-[10px] disabled:opacity-60 transition-all duration-fast"
-                style={{ minHeight: '48px' }}
-              />
-            </div>
+            <Input
+              id="login-email"
+              type="email"
+              name="email"
+              label="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="e.g. you@example.com"
+              required
+              autoComplete="email"
+              disabled={isLoading}
+            />
 
             {/* Password */}
-            <div className="flex flex-col gap-1.5 text-left">
-              <label
-                htmlFor="login-password"
-                className="text-ui-xs font-black text-swiss-black uppercase tracking-[0.08em]"
+            <div className="flex flex-col gap-1.5 text-left relative">
+              <Input
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                label="Password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                required
+                autoComplete="current-password"
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-4 top-[38px] text-neutral-400 hover:text-neutral-900 focus:outline-none"
+                tabIndex={-1}
               >
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="login-password"
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  required
-                  autoComplete="current-password"
-                  disabled={isLoading}
-                  className="w-full px-4 py-3 pr-12 border-2 border-swiss-black rounded-none bg-swiss-white text-swiss-black text-ui-md placeholder-swiss-gray-400 focus:outline-none focus:border-4 focus:border-swiss-black focus:px-[14px] focus:py-[10px] disabled:opacity-60 transition-all duration-fast"
-                  style={{ minHeight: '48px' }}
-                />
-                <button
-                  type="button"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-swiss-gray-400 hover:text-swiss-black focus:outline-none"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
 
             {/* Submit */}
-            <button
+            <Button
               id="login-submit-btn"
               type="submit"
-              disabled={isLoading || !formData.email || !formData.password}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-swiss-black hover:bg-swiss-red active:scale-[0.98] text-swiss-white font-bold uppercase tracking-widest rounded-none border-2 border-swiss-black disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-fast text-ui-sm mt-2 cursor-pointer"
+              variant="primary"
+              fullWidth
+              loading={isLoading}
+              loadingText="Signing in..."
+              disabled={!formData.email || !formData.password}
+              className="h-[56px] sm:h-10 mt-2"
             >
-              {isLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4 text-swiss-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                  Signing in…
-                </>
-              ) : (
-                <>
-                  <LogIn size={16} />
-                  Sign In
-                </>
-              )}
-            </button>
+              Sign In
+            </Button>
           </form>
 
           {/* Footer Link */}
-          <p className="mt-6 text-center text-ui-sm text-swiss-gray-600 font-medium">
+          <p className="mt-6 text-center text-ui-sm text-neutral-500 font-semibold">
             Don&apos;t have an account?{' '}
             <Link
               to="/register"
-              className="text-swiss-red font-bold hover:underline transition"
+              className="text-accent font-bold hover:underline transition"
             >
               Register here
             </Link>
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   );

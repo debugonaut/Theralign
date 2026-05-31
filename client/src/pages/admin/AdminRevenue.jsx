@@ -16,7 +16,7 @@ const AdminRevenue = () => {
   };
 
   return (
-    <div className="space-y-8 select-none text-swiss-black bg-swiss-white">
+    <div className="space-y-8 select-none text-neutral-900 bg-white">
       {/* Page Title */}
       <SectionHeader
         title="REVENUE"
@@ -46,7 +46,7 @@ const AdminRevenue = () => {
       </div>
 
       {/* Thin horizontal rule separator */}
-      <div className="w-full bg-swiss-gray-200" style={{ height: '2px' }} />
+      <div className="w-full bg-neutral-200" style={{ height: '2px' }} />
 
       {/* Payments Ledger Table with built-in filter controls */}
       <div>

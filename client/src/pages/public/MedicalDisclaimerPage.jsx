@@ -4,7 +4,7 @@ import Card from '../../components/common/Card';
 
 const MedicalDisclaimerPage = () => {
   return (
-    <div className="max-w-page mx-auto py-12 px-6 select-none text-swiss-black bg-swiss-white text-left space-y-12">
+    <div className="max-w-page mx-auto py-12 px-6 select-none text-neutral-900 bg-white text-left space-y-12">
       {/* Page Title */}
       <SectionHeader
         number="07."
@@ -15,16 +15,16 @@ const MedicalDisclaimerPage = () => {
       {/* High-urgency warning card (heavy 4px border) */}
       <Card 
         variant="highlight" 
-        className="p-8 bg-swiss-white flex flex-col gap-4 border-swiss-black hover:border-swiss-red"
+        className="p-8 bg-white flex flex-col gap-4 border-neutral-900 hover:border-accent"
       >
-        <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block">
+        <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
           CRITICAL SAFETY WARNING
         </span>
-        <h2 className="text-display-xs font-black uppercase text-swiss-black tracking-tight leading-none">
+        <h2 className="text-display-xs font-black uppercase text-neutral-900 tracking-tight leading-none">
           NOT A CLINICAL EMERGENCY GATEWAY
         </h2>
-        <div className="h-[2px] bg-swiss-black w-full my-2" />
-        <p className="text-ui-lg text-swiss-black font-semibold leading-relaxed uppercase">
+        <div className="h-[2px] bg-neutral-900 w-full my-2" />
+        <p className="text-ui-lg text-neutral-900 font-semibold leading-relaxed uppercase">
           THERALIGN IS AN ADMINISTRATIVE SEARCH MARKETPLACE DIRECTORY. WE DO NOT PROVIDE EMERGENCY HEALTH RESPONSE SERVICES. IF YOU EXPENSE AN EMERGENCY OR SUDDEN SEVERE PAIN, IMMEDIATELY CALL 108 OR PROCEED TO THE NEAREST TRAUMA FACILITY.
         </p>
       </Card>
@@ -34,8 +34,8 @@ const MedicalDisclaimerPage = () => {
         
         {/* Left Column */}
         <div className="space-y-6">
-          <div className="space-y-2 border-l-4 border-swiss-black pl-4">
-            <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block">
+          <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               01. PRACTICE RESPONSIBILITIES
             </span>
             <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
@@ -43,8 +43,8 @@ const MedicalDisclaimerPage = () => {
             </p>
           </div>
 
-          <div className="space-y-2 border-l-4 border-swiss-black pl-4">
-            <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block">
+          <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               02. SEARCH DIRECTORY LIMITATIONS
             </span>
             <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
@@ -55,8 +55,8 @@ const MedicalDisclaimerPage = () => {
 
         {/* Right Column */}
         <div className="space-y-6">
-          <div className="space-y-2 border-l-4 border-swiss-black pl-4">
-            <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block">
+          <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               03. CREDENTIAL VETTING SCOPE
             </span>
             <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
@@ -64,8 +64,8 @@ const MedicalDisclaimerPage = () => {
             </p>
           </div>
 
-          <div className="space-y-2 border-l-4 border-swiss-black pl-4">
-            <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block">
+          <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               04. NO PATIENT-DOCTOR Platform RELATION
             </span>
             <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">

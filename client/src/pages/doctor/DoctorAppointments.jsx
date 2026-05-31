@@ -14,6 +14,11 @@ const DoctorAppointments = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ALL');
 
+  const formatINR = (value) => {
+    if (value === undefined || value === null) return '₹0';
+    return '₹' + new Intl.NumberFormat('en-IN').format(value);
+  };
+
   // Date filters
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
@@ -194,13 +199,13 @@ const DoctorAppointments = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+    <div className="flex flex-col gap-8 select-none text-left bg-white">
       
       {/* ── Page Header Section ── */}
       <SectionHeader title="APPOINTMENTS" size="lg" ruled={true} className="mb-0" />
 
       {/* ── Filter and Control Row ── */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 border border-swiss-black p-6 bg-swiss-white rounded-none">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-6 border border-neutral-200/50 p-6 bg-white rounded-lg shadow-level-1 transition-warm">
         
         {/* Status segmented filters */}
         <div className="flex flex-wrap items-center gap-1.5 shrink-0">
@@ -214,10 +219,10 @@ const DoctorAppointments = () => {
                   setActiveTab(tab);
                   setExpandedRowId(null);
                 }}
-                className={`px-4 py-2 border-2 border-swiss-black font-black text-[11px] uppercase tracking-widest transition-colors duration-fast rounded-none cursor-pointer select-none
+                className={`px-4 py-2 font-bold text-[11px] uppercase tracking-widest transition-all duration-150 rounded-md cursor-pointer select-none border
                   ${isActive 
-                    ? 'bg-swiss-black text-swiss-white' 
-                    : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                    ? 'bg-neutral-900 border-neutral-900 text-white shadow-level-1' 
+                    : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
                   }
                 `}
               >
@@ -230,35 +235,35 @@ const DoctorAppointments = () => {
         {/* Date inputs date range selector */}
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
               FROM
             </span>
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+              className="bg-white border border-neutral-300 focus:border-[#0A7E6E] px-4 py-2 text-ui-sm font-semibold text-neutral-900 focus:ring-2 focus:ring-[#0A7E6E]/20 transition-all rounded-md transition-warm"
             />
           </div>
 
-          <span className="text-ui-md font-bold text-swiss-black select-none self-center mb-2">—</span>
+          <span className="text-ui-md font-bold text-neutral-900 select-none self-center mb-2">—</span>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
               TO
             </span>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="bg-swiss-white border-2 border-swiss-black px-4 py-2 text-ui-sm font-bold uppercase tracking-wider text-swiss-black focus:border-4 focus:ring-0 transition-all rounded-none"
+              className="bg-white border border-neutral-300 focus:border-[#0A7E6E] px-4 py-2 text-ui-sm font-semibold text-neutral-900 focus:ring-2 focus:ring-[#0A7E6E]/20 transition-all rounded-md transition-warm"
             />
           </div>
 
           {(fromDate || toDate) && (
             <button
               onClick={handleClearFilters}
-              className="h-10 px-4 text-ui-xs font-black uppercase tracking-widest text-swiss-red border-2 border-swiss-red hover:bg-swiss-red hover:text-swiss-white transition-colors rounded-none cursor-pointer self-end"
+              className="h-10 px-4 text-ui-xs font-bold uppercase tracking-widest text-accent border border-accent hover:bg-accent hover:text-white transition-all duration-150 rounded-md cursor-pointer self-end"
             >
               CLEAR
             </button>
@@ -269,20 +274,20 @@ const DoctorAppointments = () => {
 
       {/* ── Appointments Table Ledger ── */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING CLINIC TRANSACTION LEDGERS...
         </div>
       ) : activeAppts.length === 0 ? (
-        <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto w-full bg-swiss-white select-none">
-          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+        <div className="border-2 border-neutral-900 border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto w-full bg-white select-none">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             NO SESSIONS FILED
           </span>
-          <p className="text-ui-md text-swiss-gray-600 font-bold max-w-sm">
+          <p className="text-ui-md text-neutral-700 font-bold max-w-sm">
             There are no booking entries recorded in this ledger list.
           </p>
         </div>
       ) : (
-        <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none bg-swiss-white select-none">
+        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none">
           <Table>
             <Table.Head>
               <tr>
@@ -318,17 +323,17 @@ const DoctorAppointments = () => {
                       expanded={isExpanded}
                       onClick={() => toggleRowExpansion(appt._id)}
                     >
-                      <Table.Cell className="font-bold text-swiss-gray-400">
+                      <Table.Cell className="font-bold text-neutral-500">
                         {dateText}
                       </Table.Cell>
                       
                       <Table.Cell>
                         <div className="flex items-center gap-3">
                           {/* 24px initial circle */}
-                          <div className="w-6 h-6 rounded-full bg-swiss-black text-swiss-white flex items-center justify-center font-bold text-xs shrink-0 select-none">
+                          <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs shrink-0 select-none">
                             {initial}
                           </div>
-                          <span className="font-black text-swiss-black uppercase">
+                          <span className="font-black text-neutral-900 uppercase">
                             {patientName.toUpperCase()}
                           </span>
                         </div>
@@ -339,7 +344,7 @@ const DoctorAppointments = () => {
                       </Table.Cell>
 
                       <Table.Cell numeric className="font-black">
-                        ₹{appt.consultationFee}
+                        {formatINR(appt.consultationFee)}
                       </Table.Cell>
 
                       <Table.Cell>
@@ -355,13 +360,13 @@ const DoctorAppointments = () => {
                           <>
                             <button
                               onClick={(e) => handleMarkComplete(e, appt._id)}
-                              className="font-bold uppercase cursor-pointer text-swiss-black hover:text-swiss-gray-600 bg-transparent border-0 text-[11px] tracking-widest"
+                              className="font-bold uppercase cursor-pointer text-neutral-900 hover:text-neutral-700 bg-transparent border-0 text-[11px] tracking-widest"
                             >
                               MARK COMPLETE →
                             </button>
                             <button
                               onClick={(e) => handleOpenCancelModal(e, appt._id)}
-                              className="font-bold uppercase cursor-pointer text-swiss-red hover:opacity-75 bg-transparent border-0 text-[11px] tracking-widest"
+                              className="font-bold uppercase cursor-pointer text-accent hover:opacity-75 bg-transparent border-0 text-[11px] tracking-widest"
                             >
                               CANCEL →
                             </button>
@@ -390,25 +395,25 @@ const DoctorAppointments = () => {
 
                     {/* Inline Row Expansion */}
                     {isExpanded && (
-                      <Table.Row expanded={true} className="border-l-4 border-swiss-black">
-                        <td colSpan={7} className="bg-swiss-gray-100 p-6 text-left">
+                      <Table.Row expanded={true} className="border-l-4 border-neutral-900">
+                        <td colSpan={7} className="bg-neutral-100 p-6 text-left">
                           <div className="flex flex-col gap-6 w-full">
                             
                             {/* Grid Detail layout */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <div>
-                                <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
                                   PATIENT CONTACT EMAIL (PRIVACY COMPLIANT)
                                 </span>
-                                <span className="text-ui-md font-bold text-swiss-black uppercase block">
+                                <span className="text-ui-md font-bold text-neutral-900 uppercase block">
                                   {appt.patient?.email || 'N/A'}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
                                   PATIENT NOTES
                                 </span>
-                                <span className="text-ui-md font-bold text-swiss-gray-600 uppercase block leading-relaxed italic">
+                                <span className="text-ui-md font-bold text-neutral-700 uppercase block leading-relaxed italic">
                                   "{appt.patientNotes || 'NO SYMPTOMS FILED ON TRANSACTION RECORD.'}"
                                 </span>
                               </div>
@@ -416,11 +421,11 @@ const DoctorAppointments = () => {
 
                             {/* Cancellation Summary */}
                             {appt.status === 'cancelled' && (
-                              <div className="p-4 bg-swiss-white border-2 border-swiss-gray-200 rounded-none">
-                                <span className="text-[10px] font-black text-swiss-red uppercase tracking-widest block mb-1">
+                              <div className="p-4 bg-white border border-neutral-200/60 rounded-lg shadow-level-1">
+                                <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
                                   CANCELLATION REASON
                                 </span>
-                                <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide">
+                                <p className="text-ui-sm text-neutral-700 font-bold uppercase tracking-wide">
                                   Cancelled by {appt.cancelledBy || 'system'}. Reason: <b>{appt.cancellationReason || 'UNSPECIFIED'}</b>.
                                 </p>
                               </div>
@@ -428,22 +433,22 @@ const DoctorAppointments = () => {
 
                             {/* Session Document Upload/Download section */}
                             {isCompleted && (
-                              <div className="pt-4 border-t border-swiss-gray-200 flex flex-col gap-4">
+                              <div className="pt-4 border-t border-neutral-200 flex flex-col gap-4">
                                 <div>
-                                  <span className="text-[10px] font-black text-swiss-teal uppercase tracking-widest block">
+                                  <span className="text-[10px] font-black text-success uppercase tracking-widest block">
                                     CLINICAL SESSION DOCUMENTATION
                                   </span>
-                                  <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-0.5">
+                                  <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
                                     Upload session recovery logs or prescriptions in PDF format. Patients can download this from their portals.
                                   </span>
                                 </div>
 
                                 {appt.sessionDocument?.url ? (
-                                  <div className="flex items-center justify-between bg-swiss-white border-2 border-swiss-black p-4 rounded-none">
+                                  <div className="flex items-center justify-between bg-white border border-neutral-200/60 p-4 rounded-lg shadow-level-1">
                                     <div className="flex items-center gap-3">
                                       <span className="text-lg">📄</span>
                                       <div className="flex flex-col">
-                                        <span className="text-ui-sm font-black text-swiss-black uppercase">
+                                        <span className="text-ui-sm font-black text-neutral-900 uppercase">
                                           {appt.sessionDocument.fileName || 'SESSION_NOTES.PDF'}
                                         </span>
                                       </div>
@@ -453,21 +458,21 @@ const DoctorAppointments = () => {
                                         href={appt.sessionDocument.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-10 px-4 border-2 border-swiss-black text-swiss-black bg-swiss-white hover:bg-swiss-black hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
+                                        className="h-10 px-4 border border-neutral-300 hover:border-neutral-900 text-neutral-700 hover:text-neutral-900 bg-white font-bold text-ui-xs flex items-center uppercase tracking-widest transition-all duration-150 select-none rounded-md"
                                       >
                                         DOWNLOAD →
                                       </a>
                                       <button
                                         onClick={() => handleRemoveNotes(appt._id)}
                                         disabled={actionLoading[appt._id]}
-                                        className="h-10 px-4 border-2 border-swiss-red text-swiss-red bg-swiss-white hover:bg-swiss-red hover:text-swiss-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none cursor-pointer"
+                                        className="h-10 px-4 border border-accent text-accent bg-white hover:bg-accent hover:text-white font-bold text-ui-xs flex items-center uppercase tracking-widest transition-all duration-150 select-none rounded-md cursor-pointer"
                                       >
                                         {actionLoading[appt._id] ? 'REMOVING...' : 'REMOVE'}
                                       </button>
                                     </div>
                                   </div>
                                 ) : (
-                                  <div className="flex flex-col items-center justify-center border-2 border-dashed border-swiss-gray-400 bg-swiss-white p-6 rounded-none">
+                                  <div className="flex flex-col items-center justify-center border border-dashed border-neutral-300 bg-white p-6 rounded-lg">
                                     <label className="flex flex-col items-center justify-center gap-1.5 cursor-pointer text-center w-full">
                                       <input
                                         type="file"
@@ -480,15 +485,15 @@ const DoctorAppointments = () => {
                                         className="hidden"
                                       />
                                       {actionLoading[appt._id] ? (
-                                        <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest">
+                                        <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest">
                                           UPLOADING PDF FILE...
                                         </span>
                                       ) : (
                                         <>
-                                          <span className="text-ui-xs font-black text-swiss-black uppercase tracking-widest border-2 border-swiss-black px-4 py-2 hover:bg-swiss-black hover:text-swiss-white transition-colors">
+                                          <span className="text-ui-xs font-bold text-neutral-900 uppercase tracking-widest border border-neutral-300 rounded-md px-4 py-2 hover:bg-neutral-900 hover:text-white transition-all duration-150">
                                             UPLOAD SESSION NOTES (PDF ONLY)
                                           </span>
-                                          <span className="text-[10px] text-swiss-gray-400 font-bold uppercase tracking-wider block mt-1">
+                                          <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-1">
                                             MAXIMUM FILE SIZE 5MB.
                                           </span>
                                         </>
@@ -498,7 +503,6 @@ const DoctorAppointments = () => {
                                 )}
                               </div>
                             )}
-
                           </div>
                         </td>
                       </Table.Row>
@@ -519,21 +523,21 @@ const DoctorAppointments = () => {
           title="CANCEL APPOINTMENT"
         >
           <div className="flex flex-col gap-5 text-left select-none">
-            <p className="text-ui-sm text-swiss-gray-600 font-bold uppercase tracking-wide leading-relaxed">
+            <p className="text-ui-sm text-neutral-700 font-bold uppercase tracking-wide leading-relaxed">
               Are you sure you want to cancel this patient consultation slot? The slot will immediately unlock and become available for other patients to book.
             </p>
             
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                 REASON FOR CANCELLATION (OPTIONAL)
               </label>
               <textarea
                 value={cancelModal.reason}
                 onChange={(e) => setCancelModal({ ...cancelModal, reason: e.target.value })}
-                placeholder="E.G. CLINIC CLOSED, EMERGENCY CONFLICTS, RESCHEDULE PREFERENCE..."
+                placeholder="E.g. Clinic closed, emergency conflicts, reschedule preference..."
                 rows={3}
                 maxLength={200}
-                className="w-full bg-swiss-white border-2 border-swiss-black px-4 py-3 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-4 focus:ring-0 transition-all rounded-none resize-none"
+                className="w-full bg-white border border-neutral-200 focus:border-accent px-4 py-3 text-ui-sm font-semibold text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-accent/20 transition-all rounded-md resize-none transition-warm"
               />
             </div>
 

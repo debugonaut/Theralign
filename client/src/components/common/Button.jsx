@@ -1,33 +1,23 @@
 import React from 'react';
 
 /**
- * D1.3 — Button Primitive Component
+ * Structured Warmth — Button Primitive Component
  *
- * The primary conversion mechanism across the entire Theralign platform.
- * Four variants, three sizes, five states. All uppercase. Zero border-radius.
- * Hover states are mechanical color inversions — NOT subtle fades.
- *
- * Variants:
- *   primary  — black fill → red on hover  (default actions)
- *   secondary — white fill → black inversion (subordinate actions)
- *   accent   — red fill → darker red      (Confirm & Pay, Get Started ONLY)
- *   ghost    — transparent → gray fill    (tertiary options)
- *
- * DO NOT add border-radius, shadow, or duration above 150ms to any variant.
+ * All buttons use rounded-md (6px) and title case.
+ * Active states use scale transforms (.active-press) and subtle custom shadows.
+ * Supports a `loadingText` prop for status communication.
  */
 
-/** Rectangular spinner — consistent with zero-radius system geometry.
- *  A circular spinner would be the only non-avatar circle in the UI. */
 const Spinner = ({ color }) => (
   <span
-    className="inline-block"
+    className="inline-block shrink-0"
     style={{
-      width: '14px',
-      height: '14px',
-      border: `2px solid ${color}`,
+      width: '16px',
+      height: '16px',
+      border: '2px solid currentColor',
       borderRightColor: 'transparent',
-      borderRadius: '0',            // Rectangular. Always.
-      animation: 'swiss-spin 0.6s linear infinite',
+      borderRadius: '50%',
+      animation: 'swiss-spin 0.72s linear infinite',
     }}
     aria-hidden="true"
   />
@@ -35,37 +25,48 @@ const Spinner = ({ color }) => (
 
 const VARIANT_CLASSES = {
   primary: {
-    base:    'bg-swiss-black text-swiss-white border-swiss-black border-2',
-    hover:   'hover:bg-swiss-red hover:border-swiss-red',
-    spinner: '#FFFFFF',
+    base:    'bg-primary text-white border-2 border-transparent shadow-btn-primary',
+    hover:   'hover:bg-primary-dark',
+    focus:   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4',
   },
   secondary: {
-    base:    'bg-swiss-white text-swiss-black border-swiss-black border-2',
-    hover:   'hover:bg-swiss-black hover:text-swiss-white',
-    spinner: '#0F0F0F',
+    base:    'bg-transparent text-primary border-2 border-primary',
+    hover:   'hover:bg-primary-light hover:border-[3px]',
+    focus:   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4',
   },
   accent: {
-    base:    'bg-swiss-red text-swiss-white border-swiss-red border-2',
-    hover:   'hover:bg-[#CC2600] hover:border-[#CC2600]',
-    spinner: '#FFFFFF',
+    base:    'bg-accent text-white border-2 border-transparent shadow-btn-accent',
+    hover:   'hover:bg-accent-dark',
+    focus:   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4',
   },
   ghost: {
-    base:    'bg-transparent text-swiss-black border-swiss-black border-2',
-    hover:   'hover:bg-swiss-gray-100',
-    spinner: '#0F0F0F',
+    base:    'bg-transparent text-neutral-900 border-2 border-neutral-200',
+    hover:   'hover:bg-neutral-100 hover:border-[3px] hover:border-neutral-900',
+    focus:   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4',
+  },
+  danger: {
+    base:    'bg-transparent text-danger border-2 border-danger',
+    hover:   'hover:bg-[#FDF2F2] hover:border-[3px]',
+    focus:   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4',
+  },
+  destructive: {
+    base:    'bg-transparent text-swiss-black border-2 border-swiss-black',
+    hover:   'hover:text-danger hover:border-danger hover:bg-[#FDF2F2] hover:border-[3px]',
+    focus:   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4',
   },
 };
 
 const SIZE_CLASSES = {
-  sm: 'h-8  px-4  text-ui-sm  tracking-widest',
-  md: 'h-10 px-6  text-ui-md  tracking-widest',
-  lg: 'h-12 px-8  text-ui-lg  tracking-widest',
+  sm: 'h-8  px-4  text-ui-xs',
+  md: 'h-10 px-6  text-ui-sm',
+  lg: 'h-12 px-8  text-ui-md',
 };
 
 const Button = ({
   variant = 'primary',
   size = 'md',
   loading = false,
+  loadingText = '',
   disabled = false,
   fullWidth = false,
   onClick,
@@ -75,7 +76,14 @@ const Button = ({
   ...rest
 }) => {
   const isDisabled = disabled || loading;
-  const { base, hover, spinner } = VARIANT_CLASSES[variant] || VARIANT_CLASSES.primary;
+  const visualDisabled = disabled; // Loading state is visually active, not faded!
+  const { base, hover, focus } = VARIANT_CLASSES[variant] || VARIANT_CLASSES.primary;
+
+  const sizeClass = SIZE_CLASSES[size] || SIZE_CLASSES.md;
+  // If className overrides height, clean default height classes to prevent collisions
+  const filteredSizeClass = className.includes('h-') 
+    ? sizeClass.replace(/h-\d+|h-\[.*?\]/, '') 
+    : sizeClass;
 
   return (
     <button
@@ -85,30 +93,38 @@ const Button = ({
       className={[
         // Shape & layout
         'inline-flex items-center justify-center gap-2',
-        'font-bold uppercase tracking-widest',
-        'rounded-none',              // Zero border-radius. Always.
-        'border-0',                  // Reset browser default, borders declared per variant
-        'transition-all duration-fast',
+        'font-bold transition-all cubic-bezier(0.4, 0, 0.2, 1) transition-warm',
+        'active:scale-[0.97] active:duration-[80ms] active:shadow-none',
+        'rounded-md',                // 6px border-radius
         // Variant
         base,
-        // Hover (only when not disabled)
+        // Hover
         !isDisabled ? hover : '',
-        // Active
-        !isDisabled ? 'active:scale-[0.98]' : '',
+        // Focus state
+        focus,
+        'focus:outline-none',
         // Disabled / loading
-        isDisabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
+        visualDisabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
         // Full width
         fullWidth ? 'w-full' : '',
         // Size
-        SIZE_CLASSES[size] || SIZE_CLASSES.md,
-        // Escape hatch — positioning only, never visual overrides
+        filteredSizeClass,
+        // Touch target expansion for small size (32px height needs 6px top/bottom invisible padding to reach 44px)
+        size === 'sm' ? 'relative before:absolute before:-top-[6px] before:-bottom-[6px] before:left-0 before:right-0' : '',
+        // Override classes
         className,
       ].filter(Boolean).join(' ')}
       {...rest}
     >
-      {loading ? <Spinner color={spinner} /> : children}
+      {loading ? (
+        <>
+          <Spinner />
+          {loadingText && <span className="normal-case font-medium text-[13px]">{loadingText}</span>}
+        </>
+      ) : children}
     </button>
   );
 };
 
 export default Button;
+export { Button };

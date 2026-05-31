@@ -15,7 +15,7 @@ const AppointmentDonutChart = ({ data = [] }) => {
 
   if (total === 0) {
     return (
-      <div className="bg-swiss-white border-2 border-swiss-black p-6 flex flex-col items-center justify-center h-[280px] text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+      <div className="bg-white border-2 border-neutral-900 p-6 flex flex-col items-center justify-center h-[280px] text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
         NO BOOKING DATA AVAILABLE
       </div>
     );
@@ -58,13 +58,13 @@ const AppointmentDonutChart = ({ data = [] }) => {
   const hoveredSlice = hovered !== null ? slices[hovered] : null;
 
   return (
-    <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left flex flex-col gap-6">
+    <div className="bg-white border-2 border-neutral-900 p-6 rounded-none shadow-none text-left flex flex-col gap-6">
       {/* Header */}
-      <div className="pb-4 border-b border-swiss-gray-200">
-        <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+      <div className="pb-4 border-b border-neutral-200">
+        <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
           OPERATIONAL METRICS
         </span>
-        <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+        <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
           APPOINTMENT STATUS INDEX
         </h3>
       </div>
@@ -115,18 +115,18 @@ const AppointmentDonutChart = ({ data = [] }) => {
           {data.map((item) => {
             const color = STATUS_COLORS[item.status] || '#A3A3A3';
             return (
-              <div key={item.status} className="flex items-center justify-between border border-swiss-gray-200 p-2.5 bg-swiss-gray-50">
+              <div key={item.status} className="flex items-center justify-between border border-neutral-200 p-2.5 bg-neutral-50">
                 <div className="flex items-center gap-2.5">
                   {/* Square color swatch with 2px black border matching other rectangular shapes */}
                   <div
-                    className="w-3.5 h-3.5 border border-swiss-black shrink-0 rounded-none"
+                    className="w-3.5 h-3.5 border border-neutral-900 shrink-0 rounded-none"
                     style={{ backgroundColor: color }}
                   />
-                  <span className="text-[11px] font-black uppercase text-swiss-black tracking-widest">{item.status}</span>
+                  <span className="text-[11px] font-black uppercase text-neutral-900 tracking-widest">{item.status}</span>
                 </div>
                 <div className="text-right flex items-baseline gap-1">
-                  <span className="text-ui-sm font-black text-swiss-black swiss-numeric">{item.count}</span>
-                  <span className="text-[10px] font-bold text-swiss-gray-400 uppercase tracking-wider">({item.percentage}%)</span>
+                  <span className="text-ui-sm font-black text-neutral-900 swiss-numeric">{item.count}</span>
+                  <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">({item.percentage}%)</span>
                 </div>
               </div>
             );

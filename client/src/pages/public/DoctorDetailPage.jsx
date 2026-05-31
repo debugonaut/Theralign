@@ -9,6 +9,15 @@ import VerifiedBadge from '../../components/common/VerifiedBadge';
 import Button from '../../components/common/Button';
 import SlotPicker from '../../components/booking/SlotPicker';
 
+const toTitleCase = (str) => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 const DoctorDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,11 +31,9 @@ const DoctorDetailPage = () => {
   const [aiSummary, setAiSummary] = useState(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
 
-  // Read bio read-more state
   const [bioExpanded, setBioExpanded] = useState(false);
-
-  // Reviews expansion
   const [reviewsExpanded, setReviewsExpanded] = useState(false);
+  const [showMobileBooking, setShowMobileBooking] = useState(false);
 
   // Fetch Doctor Profile
   useEffect(() => {
@@ -70,22 +77,22 @@ const DoctorDetailPage = () => {
 
   useEffect(() => {
     if (profile) {
-      document.title = `DR. ${profile.user?.name || 'PHYSIOTHERAPIST'} — KINETIQ`;
+      document.title = `Dr. ${toTitleCase(profile.user?.name || 'Physiotherapist')} — Theralign`;
     }
   }, [profile]);
 
   if (loading) {
     return (
       <div className="max-w-page mx-auto py-12 px-6 animate-pulse space-y-8 select-none">
-        <div className="h-6 bg-swiss-gray-100 w-24 rounded-none" />
-        <div className="h-48 bg-swiss-gray-100 w-full rounded-none" />
+        <div className="h-6 bg-neutral-100 w-24 rounded-md" />
+        <div className="h-48 bg-neutral-100 w-full rounded-md" />
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-7 space-y-6">
-            <div className="h-10 bg-swiss-gray-100 w-3/4 rounded-none" />
-            <div className="h-6 bg-swiss-gray-100 w-1/2 rounded-none" />
-            <div className="h-32 bg-swiss-gray-100 w-full rounded-none" />
+            <div className="h-10 bg-neutral-100 w-3/4 rounded-md" />
+            <div className="h-6 bg-neutral-100 w-1/2 rounded-md" />
+            <div className="h-32 bg-neutral-100 w-full rounded-md" />
           </div>
-          <div className="col-span-5 h-64 bg-swiss-gray-100 rounded-none" />
+          <div className="col-span-5 h-64 bg-neutral-100 rounded-md" />
         </div>
       </div>
     );
@@ -94,23 +101,28 @@ const DoctorDetailPage = () => {
   if (error || !profile) {
     return (
       <div className="max-w-md mx-auto py-20 px-6 text-left flex flex-col gap-4 select-none">
-        <h2 className="text-display-sm font-black text-swiss-red uppercase tracking-tighter leading-none">
-          PROFILE UNAVAILABLE
+        <h2 className="text-display-sm font-black text-danger uppercase tracking-tighter leading-none">
+          Profile Unavailable
         </h2>
-        <p className="text-ui-md text-swiss-gray-600 font-medium">{error || 'This doctor profile is currently offline.'}</p>
+        <p className="text-ui-md text-neutral-700 font-medium">{error || 'This doctor profile is currently offline.'}</p>
         <Button onClick={() => navigate('/doctors')} variant="primary" className="self-start">
-          ← BACK TO SEARCH
+          ← Back To Search
         </Button>
       </div>
     );
   }
 
-  const doctorName = profile.user?.name || 'Physiotherapist';
+  const doctorName = toTitleCase(profile.user?.name || 'Physiotherapist');
+  const formattedDrName = doctorName.toLowerCase().startsWith('dr.')
+    ? doctorName
+    : `Dr. ${doctorName}`;
 
   // Format spec
   const specText = Array.isArray(profile.specialization)
     ? profile.specialization.join(', ')
-    : profile.specialization || 'GENERAL PHYSIOTHERAPY';
+    : profile.specialization || 'General Physiotherapy';
+
+  const formattedSpecText = toTitleCase(specText);
 
   // Biography truncation
   const bioText = profile.bio || '';
@@ -127,19 +139,19 @@ const DoctorDetailPage = () => {
   )}`;
 
   return (
-    <div className="max-w-page mx-auto py-12 px-6 flex flex-col select-none bg-swiss-white">
+    <div className="max-w-[1440px] mx-auto py-12 px-6 flex flex-col select-none bg-neutral-50 page-fade-in">
       {/* Back to Discovery */}
       <div className="mb-8">
         <button
           onClick={() => navigate('/doctors')}
-          className="inline-flex items-center gap-2 text-ui-xs font-black text-swiss-gray-400 hover:text-swiss-black uppercase tracking-widest cursor-pointer select-none bg-transparent border-0"
+          className="inline-flex items-center gap-2 text-ui-xs font-bold text-neutral-500 hover:text-neutral-900 uppercase tracking-widest cursor-pointer select-none bg-transparent border-0"
         >
           <ArrowLeft size={16} />
-          ← BACK TO DOCTOR DISCOVERY
+          ← Back To Doctor Discovery
         </button>
       </div>
 
-      {/* ─── D3.3 Asymmetric 7:5 layout split ─── */}
+      {/* Asymmetric 7:5 layout split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
         {/* Left Column (7 Columns) */}
@@ -147,39 +159,39 @@ const DoctorDetailPage = () => {
           
           {/* Identity Section */}
           <div className="flex flex-col gap-3">
-            <h1 className="text-display-md font-black text-swiss-black uppercase tracking-tighter leading-none mb-1">
-              DR. {doctorName}
+            <h1 className="text-display-md font-black text-neutral-900 tracking-tighter leading-none mb-1 normal-case">
+              {formattedDrName}
             </h1>
-            <span className="text-ui-xs font-black text-swiss-red tracking-widest uppercase block">
-              {specText}
+            <span className="text-ui-xs font-bold text-accent tracking-widest uppercase block">
+              {formattedSpecText}
             </span>
-            <div className="h-[1px] bg-swiss-gray-200 w-full mt-4" />
+            <div className="h-[1px] bg-neutral-200 w-full mt-4" />
           </div>
 
-          {/* Key Statistics row divided by thin vertical lines */}
-          <div className="grid grid-cols-3 gap-0 border-y-2 border-swiss-black py-6">
-            <div className="text-center border-r-2 border-swiss-gray-200">
-              <span className="text-display-xs font-black text-swiss-black block leading-none mb-2">
+          {/* Key Statistics row */}
+          <div className="grid grid-cols-3 gap-0 border-y border-neutral-200 py-6 bg-white rounded-lg shadow-level-1">
+            <div className="text-center border-r border-neutral-200">
+              <span className="text-display-xs font-black text-neutral-900 block leading-none mb-2">
                 {profile.experience}
               </span>
-              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
-                YEARS EXPERIENCE
+              <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">
+                Years Experience
               </span>
             </div>
-            <div className="text-center border-r-2 border-swiss-gray-200">
-              <span className="text-display-xs font-black text-swiss-black block leading-none mb-2">
+            <div className="text-center border-r border-neutral-200">
+              <span className="text-display-xs font-black text-neutral-900 block leading-none mb-2">
                 {profile.totalAppointmentsCount || '400+'}
               </span>
-              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
-                SESSIONS COMPLETED
+              <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">
+                Sessions Completed
               </span>
             </div>
             <div className="text-center">
-              <span className="text-display-xs font-black text-swiss-black block leading-none mb-2">
+              <span className="text-display-xs font-black text-neutral-900 block leading-none mb-2">
                 {(profile.averageRating || 0).toFixed(1)}
               </span>
-              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block">
-                PATIENT RATING
+              <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">
+                Patient Rating
               </span>
             </div>
           </div>
@@ -190,34 +202,34 @@ const DoctorDetailPage = () => {
               <VerifiedBadge size="sm" />
             )}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 border-2 border-swiss-black flex items-center justify-center rounded-none bg-swiss-white">
-                <MapPin className="h-4 w-4 text-swiss-black" />
+              <div className="w-8 h-8 border border-neutral-200 flex items-center justify-center rounded-md bg-white shadow-sm">
+                <MapPin className="h-4 w-4 text-primary" />
               </div>
-              <span className="text-ui-sm font-bold text-swiss-gray-600 uppercase tracking-wider">
-                {profile.clinicName.toUpperCase()} · {profile.clinicAddress.split(',').pop().trim().toUpperCase()}
+              <span className="text-ui-sm font-semibold text-neutral-700 normal-case tracking-normal">
+                {toTitleCase(profile.clinicName)} · {toTitleCase(profile.clinicAddress.split(',').pop().trim())}
               </span>
             </div>
           </div>
 
-          {/* AI Summary Section Card with diagonal pattern */}
+          {/* AI Summary Section Card */}
           {(summaryLoading || aiSummary) && (
-            <div className="p-6 bg-swiss-gray-100 border-2 border-swiss-black rounded-none shadow-none text-left flex flex-col gap-4 swiss-diagonal mt-4">
-              <div className="flex items-center justify-between pb-2 border-b border-swiss-gray-200">
-                <span className="text-ui-xs font-black text-swiss-red uppercase tracking-widest">
-                  ✨ AI SUMMARY
+            <div className="p-6 bg-white border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col gap-4 mt-4 transition-warm">
+              <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
+                <span className="text-ui-xs font-bold text-accent tracking-widest uppercase">
+                  ✨ AI Summary
                 </span>
-                <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-widest">
-                  SYNTHESIZED PROFILE
+                <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">
+                  Synthesized Profile
                 </span>
               </div>
               {summaryLoading ? (
-                <div className="h-12 w-full animate-pulse bg-swiss-gray-200 rounded-none" />
+                <div className="h-12 w-full animate-pulse bg-neutral-100 rounded-md" />
               ) : (
-                <p className="text-ui-lg text-swiss-black font-medium leading-relaxed italic">
+                <p className="text-ui-lg text-neutral-900 font-medium leading-relaxed italic">
                   "{aiSummary}"
                 </p>
               )}
-              <span className="text-[9px] font-bold text-swiss-gray-400 uppercase tracking-widest mt-2 block">
+              <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-2 block">
                 Generated from verified professional information
               </span>
             </div>
@@ -226,16 +238,16 @@ const DoctorDetailPage = () => {
           {/* Biography/About */}
           <div className="mt-4">
             <SectionHeader title="ABOUT" size="sm" ruled={true} className="mb-6" />
-            <p className="text-ui-lg text-swiss-gray-600 leading-relaxed font-medium whitespace-pre-line text-left">
+            <p className="text-ui-lg text-neutral-700 leading-relaxed font-medium whitespace-pre-line text-left">
               {displayedBio}
             </p>
             {showBioToggle && (
               <button
                 type="button"
                 onClick={() => setBioExpanded(!bioExpanded)}
-                className="text-ui-xs font-black text-swiss-black hover:text-swiss-red uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-3 block"
+                className="text-ui-xs font-bold text-neutral-900 hover:text-accent uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-3 block"
               >
-                {bioExpanded ? '— READ LESS' : 'READ MORE →'}
+                {bioExpanded ? '— Read Less' : 'Read More →'}
               </button>
             )}
           </div>
@@ -245,16 +257,16 @@ const DoctorDetailPage = () => {
             <SectionHeader title="PATIENT REVIEWS" size="sm" ruled={true} className="mb-6" />
 
             {/* Rating Summary Row */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-2 border-swiss-black p-6 rounded-none bg-swiss-white gap-6 mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border border-neutral-200/50 p-6 rounded-lg bg-white gap-6 mb-6 shadow-level-1 transition-warm">
               <div className="flex items-baseline gap-2">
-                <h2 className="text-display-sm font-black text-swiss-black tracking-tighter leading-none">
+                <h2 className="text-display-sm font-black text-neutral-900 tracking-tighter leading-none">
                   {(profile.averageRating || 0).toFixed(1)}
                 </h2>
-                <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest">
-                  OUT OF 5
+                <span className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wider">
+                  out of 5
                 </span>
-                <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest ml-2">
-                  ({profile.totalReviews || 0} REVIEWS)
+                <span className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wider ml-2">
+                  ({profile.totalReviews || 0} reviews)
                 </span>
               </div>
 
@@ -266,8 +278,8 @@ const DoctorDetailPage = () => {
                   return (
                     <div
                       key={idx}
-                      className={`w-8 h-4 border-2 border-swiss-black rounded-none
-                        ${isFilled ? 'bg-swiss-black' : 'bg-swiss-white'}
+                      className={`w-8 h-4 border border-neutral-200 rounded-sm
+                        ${isFilled ? 'bg-primary' : 'bg-neutral-50'}
                       `}
                     />
                   );
@@ -277,13 +289,13 @@ const DoctorDetailPage = () => {
 
             {/* Reviews Stack */}
             {reviews.length === 0 ? (
-              <div className="border-2 border-swiss-black border-dashed p-10 text-center rounded-none text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
-                NO PATIENT REVIEWS FILED YET.
+              <div className="border border-neutral-200 border-dashed p-10 text-center rounded-lg text-ui-xs font-bold text-neutral-500 uppercase tracking-wider">
+                No patient reviews filed yet.
               </div>
             ) : (
               <div className="flex flex-col gap-4">
                 {visibleReviews.map((rev) => {
-                  const reviewerName = rev.patient?.name || 'Anonymous';
+                  const reviewerName = toTitleCase(rev.patient?.name || 'Anonymous');
                   const revDate = new Date(rev.createdAt).toLocaleDateString('en-IN', {
                     month: 'short',
                     year: 'numeric',
@@ -291,21 +303,21 @@ const DoctorDetailPage = () => {
                   return (
                     <div
                       key={rev._id}
-                      className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none relative text-left"
+                      className="bg-white border border-neutral-200/50 p-6 rounded-lg relative text-left shadow-level-1 transition-warm"
                     >
-                      {/* Rating square in top-right corner */}
-                      <div className="absolute top-6 right-6 w-8 h-8 border-2 border-swiss-black flex items-center justify-center text-ui-sm font-black text-swiss-black bg-swiss-white rounded-none select-none">
+                      {/* Rating square */}
+                      <div className="absolute top-6 right-6 w-8 h-8 border border-neutral-100 flex items-center justify-center text-ui-sm font-bold text-neutral-900 bg-neutral-50 rounded-md select-none shadow-sm">
                         {rev.rating}
                       </div>
 
-                      <span className="text-display-sm text-swiss-red font-black block leading-none mb-1 select-none">
+                      <span className="text-display-sm text-accent font-black block leading-none mb-1 select-none">
                         “
                       </span>
-                      <p className="text-ui-lg text-swiss-black font-medium italic leading-relaxed mb-4 -mt-2">
+                      <p className="text-ui-lg text-neutral-900 font-medium italic leading-relaxed mb-4 -mt-2">
                         {rev.comment}
                       </p>
 
-                      <div className="flex items-center gap-2 text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
                         <span>{reviewerName}</span>
                         <span>·</span>
                         <span>{revDate}</span>
@@ -318,9 +330,9 @@ const DoctorDetailPage = () => {
                   <Button
                     onClick={() => setReviewsExpanded(!reviewsExpanded)}
                     variant="secondary"
-                    className="w-full font-black mt-2"
+                    className="w-full font-bold mt-2"
                   >
-                    {reviewsExpanded ? 'SHOW FEWER REVIEWS' : `SHOW ALL REVIEWS (${reviews.length}) →`}
+                    {reviewsExpanded ? 'Show Fewer Reviews' : `Show All Reviews (${reviews.length}) →`}
                   </Button>
                 )}
               </div>
@@ -329,8 +341,8 @@ const DoctorDetailPage = () => {
 
         </div>
 
-        {/* Right Sticky Booking Column (5 Columns) */}
-        <div className="lg:col-span-5 lg:sticky lg:top-24 border-t-2 border-swiss-black lg:border-t-0 lg:border-l-2 lg:border-swiss-black lg:pl-12 pt-8 lg:pt-0 z-10 flex flex-col gap-6">
+        {/* Right Sticky Booking Column (Desktop Only) */}
+        <div className="hidden lg:flex lg:col-span-5 lg:sticky lg:top-24 border-l border-neutral-200 pl-12 flex-col gap-6 z-10">
           <SlotPicker
             doctorId={profile._id}
             doctorName={profile.user?.name}
@@ -339,6 +351,61 @@ const DoctorDetailPage = () => {
         </div>
 
       </div>
+
+      {/* Mobile Fixed Bottom CTA Bar (lg:hidden) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-white border-t border-neutral-200 px-6 py-3 flex items-center justify-between z-40">
+        <div className="flex flex-col text-left">
+          <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-1">
+            CONSULTATION FEE
+          </span>
+          <span className="text-ui-md font-black text-neutral-900 leading-none">
+            ₹{new Intl.NumberFormat('en-IN').format(profile.consultationFee)} <span className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">/ session</span>
+          </span>
+        </div>
+        <Button 
+          variant="primary" 
+          onClick={() => setShowMobileBooking(true)}
+          className="h-10 px-6 font-black text-ui-xs tracking-widest"
+        >
+          BOOK NOW →
+        </Button>
+      </div>
+
+      {/* Mobile Bottom Booking Sheet */}
+      {showMobileBooking && (
+        <>
+          {/* Dark Backdrop overlay */}
+          <div 
+            className="lg:hidden fixed inset-0 bg-neutral-900/60 z-[9998] transition-opacity duration-200" 
+            onClick={() => setShowMobileBooking(false)}
+          />
+          {/* Bottom Sheet wrapper (covers lower 75% of view) */}
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 h-[75vh] bg-white rounded-t-[16px] border-t-2 border-neutral-900 z-[9999] flex flex-col transition-all duration-200 ease-swiss overflow-hidden shadow-level-3">
+            {/* Drawer pill/bar drag handle and header */}
+            <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] font-black text-accent tracking-widest uppercase">SELECT APPOINTMENT SLOT</span>
+                <h3 className="text-ui-md font-bold text-neutral-900 uppercase">{formattedDrName}</h3>
+              </div>
+              <button 
+                onClick={() => setShowMobileBooking(false)}
+                className="text-neutral-500 hover:text-danger p-1 cursor-pointer focus:outline-none text-ui-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+            {/* Scrollable SlotPicker body */}
+            <div className="flex-grow overflow-y-auto p-6">
+              <SlotPicker
+                doctorId={profile._id}
+                doctorName={profile.user?.name}
+                consultationFee={profile.consultationFee}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
     </div>
   );
 };

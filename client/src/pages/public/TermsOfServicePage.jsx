@@ -3,7 +3,7 @@ import SectionHeader from '../../components/common/SectionHeader';
 
 const TermsOfServicePage = () => {
   return (
-    <div className="max-w-page mx-auto py-12 px-6 select-none text-swiss-black bg-swiss-white text-left space-y-12">
+    <div className="max-w-page mx-auto py-12 px-6 select-none text-neutral-900 bg-white text-left space-y-12">
       {/* Page Title */}
       <SectionHeader
         number="06."
@@ -19,7 +19,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 1 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-swiss-red uppercase tracking-widest block">
+          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
             01. SCHEDULING & BOOKINGS REGULATION
           </span>
           <p className="text-ui-md text-swiss-gray-650">
@@ -29,7 +29,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 2 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-swiss-red uppercase tracking-widest block">
+          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
             02. CANCELLATIONS & REFUND PARAMETERS
           </span>
           <p className="text-ui-md text-swiss-gray-650">
@@ -39,7 +39,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 3 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-swiss-red uppercase tracking-widest block">
+          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
             03. REVENUE SPLITS & COMMISSION RULES
           </span>
           <p className="text-ui-md text-swiss-gray-650">
@@ -49,7 +49,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 4 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-swiss-red uppercase tracking-widest block">
+          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
             04. PROFESSIONAL INTEGRITY CHARTER
           </span>
           <p className="text-ui-md text-swiss-gray-650">

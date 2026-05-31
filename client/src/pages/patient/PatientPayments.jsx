@@ -11,6 +11,11 @@ const PatientPayments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const formatINR = (value) => {
+    if (value === undefined || value === null) return '₹0';
+    return '₹' + new Intl.NumberFormat('en-IN').format(value);
+  };
+
   const fetchPayments = async () => {
     setLoading(true);
     try {
@@ -76,7 +81,7 @@ Thank you for choosing Kinetiq clinical networks.
   };
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+    <div className="flex flex-col gap-8 select-none text-left bg-white">
       
       {/* Page Header */}
       <SectionHeader
@@ -89,17 +94,17 @@ Thank you for choosing Kinetiq clinical networks.
       {/* Metric Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
-          { label: 'TOTAL SPENT', val: `₹${totalSpent}` },
+          { label: 'TOTAL SPENT', val: formatINR(totalSpent) },
           { label: 'SESSIONS PAID', val: sessionsPaid },
         ].map((m) => (
           <div
             key={m.label}
-            className="group bg-swiss-white border-2 border-swiss-black hover:border-4 p-6 transition-all duration-fast select-none rounded-none text-left"
+            className="group bg-white border border-neutral-200/40 hover:shadow-level-2 shadow-level-1 p-6 transition-warm select-none rounded-lg text-left"
           >
-            <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest block mb-2">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-2">
               {m.label}
             </span>
-            <h2 className="text-display-sm font-black text-swiss-black uppercase tracking-tighter leading-none">
+            <h2 className="text-display-sm font-black text-neutral-900 uppercase tracking-tighter leading-none">
               {loading ? '—' : m.val}
             </h2>
           </div>
@@ -108,20 +113,20 @@ Thank you for choosing Kinetiq clinical networks.
 
       {/* Payments Ledger Table */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING TRANSACTIONS LEDGER...
         </div>
       ) : payments.length === 0 ? (
-        <div className="border-2 border-swiss-black border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto">
-          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+        <div className="border border-neutral-200 border-dashed p-12 text-center rounded-lg flex flex-col items-center gap-4 max-w-lg mx-auto bg-neutral-50 shadow-level-1">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             NO TRANSACTION ENTRIES
           </span>
-          <p className="text-ui-md text-swiss-gray-600 font-bold max-w-sm">
+          <p className="text-ui-md text-neutral-700 font-bold max-w-sm">
             Your billing receipts and clinical payouts history will appear automatically.
           </p>
         </div>
       ) : (
-        <div className="w-full overflow-hidden border-2 border-swiss-black rounded-none">
+        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1">
           <Table>
             <Table.Head>
               <tr>
@@ -151,23 +156,23 @@ Thank you for choosing Kinetiq clinical networks.
 
                 return (
                   <Table.Row key={payment._id} hoverable={true}>
-                    <Table.Cell className="font-bold text-swiss-gray-400">
+                    <Table.Cell className="font-bold text-neutral-500">
                       {payDateText}
                     </Table.Cell>
                     <Table.Cell>
                       <div className="flex flex-col text-left">
-                        <span className="font-black text-swiss-black uppercase">
+                        <span className="font-black text-neutral-900 uppercase">
                           DR. {docName.toUpperCase()}
                         </span>
-                        <span className="text-[10px] text-swiss-red font-black tracking-widest mt-0.5">
+                        <span className="text-[10px] text-accent font-black tracking-widest mt-0.5">
                           {specText.toUpperCase()}
                         </span>
                       </div>
                     </Table.Cell>
                     <Table.Cell numeric className="font-black">
-                      ₹{payment.amount}
+                      {formatINR(payment.amount)}
                     </Table.Cell>
-                    <Table.Cell className="font-mono text-ui-xs font-bold text-swiss-gray-400 swiss-numeric">
+                    <Table.Cell className="font-mono text-ui-xs font-bold text-neutral-500 swiss-numeric">
                       <span title={payment.razorpayPaymentId || 'N/A'}>
                         {shortId}
                       </span>

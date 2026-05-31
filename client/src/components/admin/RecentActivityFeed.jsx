@@ -38,10 +38,10 @@ const formatActorName = (name) => {
 const RecentActivityFeed = ({ activity = [], loading }) => {
   if (loading) {
     return (
-      <div className="bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left space-y-4">
-        <div className="pb-4 border-b border-swiss-gray-200">
-          <div className="h-3 w-20 bg-swiss-gray-100 animate-pulse mb-2" />
-          <div className="h-5 w-40 bg-swiss-gray-100 animate-pulse" />
+      <div className="bg-white border-2 border-neutral-900 p-6 rounded-none shadow-none text-left space-y-4">
+        <div className="pb-4 border-b border-neutral-200">
+          <div className="h-3 w-20 bg-neutral-100 animate-pulse mb-2" />
+          <div className="h-5 w-40 bg-neutral-100 animate-pulse" />
         </div>
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
@@ -53,19 +53,19 @@ const RecentActivityFeed = ({ activity = [], loading }) => {
   }
 
   return (
-    <div className="bg-swiss-white border-2 border-swiss-black rounded-none shadow-none text-left">
+    <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
       {/* Feed Header */}
-      <div className="p-6 border-b border-swiss-gray-200">
-        <span className="text-[11px] font-bold text-swiss-gray-400 uppercase tracking-widest block mb-1">
+      <div className="p-6 border-b border-neutral-200">
+        <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
           PLATFORM AUDIT LOG
         </span>
-        <h3 className="text-ui-lg font-black text-swiss-black uppercase tracking-tight">
+        <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
           RECENT ACTIVITY FEED
         </h3>
       </div>
 
       {activity.length === 0 ? (
-        <div className="p-12 text-center text-swiss-gray-400 text-ui-sm font-bold uppercase tracking-wider">
+        <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
           NO SYSTEM ACTIVITIES FILED
         </div>
       ) : (
@@ -89,16 +89,16 @@ const RecentActivityFeed = ({ activity = [], loading }) => {
 
               return (
                 <Table.Row key={index} hoverable={true}>
-                  <Table.Cell className="font-mono text-swiss-gray-600 text-xs whitespace-nowrap">
+                  <Table.Cell className="font-mono text-neutral-700 text-xs whitespace-nowrap">
                     {formatTimeAgo(item.timestamp || item.createdAt)}
                   </Table.Cell>
                   <Table.Cell>
                     <Badge variant="neutral" label={displayType} size="sm" />
                   </Table.Cell>
-                  <Table.Cell className="font-bold text-swiss-black uppercase tracking-wider text-xs">
+                  <Table.Cell className="font-bold text-neutral-900 uppercase tracking-wider text-xs">
                     {actorName}
                   </Table.Cell>
-                  <Table.Cell className="text-swiss-gray-600 font-medium" title={details}>
+                  <Table.Cell className="text-neutral-700 font-medium" title={details}>
                     {truncatedDetails}
                   </Table.Cell>
                 </Table.Row>

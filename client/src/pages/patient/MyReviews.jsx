@@ -31,7 +31,7 @@ const MyReviews = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-swiss-white">
+    <div className="flex flex-col gap-8 select-none text-left bg-white">
       {/* Page Header */}
       <SectionHeader
         title="MY REVIEWS"
@@ -42,7 +42,7 @@ const MyReviews = () => {
 
       {/* Reviews List */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-swiss-gray-400 uppercase tracking-widest">
+        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING SUBMITTED REVIEWS...
         </div>
       ) : reviews.length === 0 ? (
@@ -50,8 +50,7 @@ const MyReviews = () => {
           title="NO REVIEWS YET"
           description="Reviews help other patients find the right physiotherapist. Share your experience after a completed session."
           icon={Star}
-          actionLabel="VIEW MY APPOINTMENTS"
-          onAction={() => navigate('/patient/appointments')}
+          context="informational"
         />
       ) : (
         <div className="flex flex-col gap-6 max-w-content">
@@ -78,30 +77,30 @@ const MyReviews = () => {
             return (
               <div
                 key={rev._id}
-                className="relative bg-swiss-white border-2 border-swiss-black p-6 rounded-none shadow-none text-left"
+                className="relative bg-white border border-neutral-200/50 p-6 rounded-lg shadow-level-1 text-left transition-warm"
               >
                 {/* Rating square in top-right corner */}
-                <div className="absolute top-6 right-6 w-10 h-10 border-2 border-swiss-black flex items-center justify-center text-ui-md font-black text-swiss-black bg-swiss-white rounded-none select-none">
+                <div className="absolute top-6 right-6 w-10 h-10 border border-neutral-200 bg-neutral-50 flex items-center justify-center text-ui-md font-bold text-neutral-800 rounded-md select-none shadow-level-1">
                   {rev.rating}
                 </div>
 
                 <div className="flex flex-col gap-1 pr-16 mb-4">
-                  <h3 className="font-black text-swiss-black text-ui-xl uppercase tracking-tighter">
+                  <h3 className="font-black text-neutral-900 text-ui-xl uppercase tracking-tighter">
                     DR. {docName.toUpperCase()}
                   </h3>
-                  <span className="text-[10px] text-swiss-red font-black uppercase tracking-widest">
+                  <span className="text-[10px] text-accent font-black uppercase tracking-widest">
                     {specText.toUpperCase()}
                   </span>
-                  <span className="text-[9px] text-swiss-gray-400 font-bold uppercase tracking-widest mt-0.5">
+                  <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">
                     APPOINTMENT DATE: {apptDate}
                   </span>
                 </div>
 
-                <p className="text-ui-lg text-swiss-black italic font-medium leading-relaxed mb-4 pl-4 border-l-2 border-swiss-gray-200">
+                <p className="text-ui-lg text-neutral-900 italic font-medium leading-relaxed mb-4 pl-4 border-l-2 border-neutral-200">
                   "{rev.comment}"
                 </p>
 
-                <div className="text-[9px] font-black text-swiss-gray-400 uppercase tracking-widest">
+                <div className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">
                   FILED ON {submittedOn}
                 </div>
               </div>

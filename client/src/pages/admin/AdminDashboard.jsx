@@ -103,7 +103,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="space-y-12 select-none text-swiss-black">
+    <div className="space-y-12 select-none text-neutral-900">
       {/* Platform Header */}
       <SectionHeader
         title="SYSTEM OVERVIEW"

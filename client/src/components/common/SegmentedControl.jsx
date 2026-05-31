@@ -20,7 +20,7 @@ const SegmentedControl = ({ options, value, onChange, className = '', optionClas
             className={`
               flex-1 py-3 px-4 text-ui-xs font-bold uppercase transition-colors
               border-r-2 border-black focus:outline-none
-              ${isActive ? 'bg-black text-white' : 'bg-white text-black hover:bg-swiss-gray-100'}
+              ${isActive ? 'bg-black text-white' : 'bg-white text-black hover:bg-neutral-100'}
               ${optionClassName}
             `}
           >

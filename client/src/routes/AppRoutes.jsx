@@ -31,6 +31,7 @@ const MedicalDisclaimerPage = lazy(() => import('../pages/public/MedicalDisclaim
 // Patient Pages (Lazy Loaded)
 const PatientDashboard = lazy(() => import('../pages/patient/PatientDashboard'));
 const PatientAppointments = lazy(() => import('../pages/patient/PatientAppointments'));
+const AppointmentDetailsPage = lazy(() => import('../pages/patient/AppointmentDetailsPage'));
 const PatientPayments = lazy(() => import('../pages/patient/PatientPayments'));
 const PatientProfile = lazy(() => import('../pages/patient/PatientProfile'));
 const PatientMyReviews = lazy(() => import('../pages/patient/MyReviews'));
@@ -118,6 +119,18 @@ const AppRoutes = () => {
           <Route path="/patient/profile" element={<PatientProfile />} />
           <Route path="/patient/reviews" element={<PatientMyReviews />} />
         </Route>
+
+        {/* Lightweight Mobile-First Patient detail route (hides the dashboard sidebar layout shell) */}
+        <Route
+          path="/appointments/:id"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={['patient']}>
+                <AppointmentDetailsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
 
         {/* ─── Doctor Routes ──────────────────────────────────────────────── */}
         <Route

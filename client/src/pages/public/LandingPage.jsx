@@ -11,7 +11,7 @@ import CTABannerSection from '../../components/landing/CTABannerSection';
 
 const LandingPage = () => {
   return (
-    <main className="flex-1 bg-swiss-white">
+    <main className="flex-1 bg-white">
       <HeroSection />
       <TrustBar />
       <SpecializationsSection />

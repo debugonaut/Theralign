@@ -29,6 +29,7 @@ const DoctorListingPage = () => {
   // Local Search Input states
   const [localSearch, setLocalSearch] = useState(searchParams.get('q') || '');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // AI Symptom Search state
   const [aiSymptomQuery, setAiSymptomQuery] = useState('');
@@ -196,15 +197,15 @@ const DoctorListingPage = () => {
   if (currentFilters.maxFee) activeChips.push({ key: 'maxFee', label: `MAX FEE: ₹${currentFilters.maxFee}` });
 
   return (
-    <div className="max-w-page mx-auto px-6 py-12 flex flex-col select-none bg-swiss-white">
+    <div className="max-w-page mx-auto px-6 py-12 flex flex-col select-none bg-white">
       {/* ─── D3.2 Page Header / Search Bar ─── */}
       <div className="flex flex-col gap-6 w-full">
         {/* Main Search Bar frame with left square icon and right attached button */}
         <div className="w-full relative">
-          <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-swiss-white border-2 border-swiss-black rounded-none">
+          <form onSubmit={handleSearchSubmit} className="flex items-center w-full bg-white border-2 border-neutral-900 rounded-none">
             {/* Left Bordered Icon Square */}
-            <div className="w-12 h-12 shrink-0 border-r-2 border-swiss-black flex items-center justify-center rounded-none bg-swiss-white">
-              <Search className="h-5 w-5 text-swiss-black" />
+            <div className="w-12 h-12 shrink-0 border-r-2 border-neutral-900 flex items-center justify-center rounded-none bg-white">
+              <Search className="h-5 w-5 text-neutral-900" />
             </div>
 
             <input
@@ -217,14 +218,14 @@ const DoctorListingPage = () => {
               }}
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // delay to allow clicks
-              className="flex-grow h-12 px-4 bg-swiss-white text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:outline-none focus:ring-0 rounded-none border-0"
+              className="flex-grow h-12 px-4 bg-white text-ui-sm font-bold uppercase tracking-wider text-neutral-900 placeholder-neutral-500 focus:outline-none focus:ring-0 rounded-none border-0"
               autoComplete="off"
             />
 
             <Button
               type="submit"
               variant="primary"
-              className="h-12 border-0 border-l-2 border-swiss-black px-8 font-black shrink-0"
+              className="h-12 border-0 border-l-2 border-neutral-900 px-8 font-black shrink-0"
             >
               FIND CARE →
             </Button>
@@ -239,8 +240,8 @@ const DoctorListingPage = () => {
         </div>
 
         {/* AI Symptom Search secondary path below */}
-        <div className="flex flex-col md:flex-row items-center gap-4 py-2 border-t-2 border-swiss-black">
-          <span className="text-ui-xs font-black text-swiss-red tracking-widest uppercase shrink-0">
+        <div className="flex flex-col md:flex-row items-center gap-4 py-2 border-t-2 border-neutral-900">
+          <span className="text-ui-xs font-black text-accent tracking-widest uppercase shrink-0">
             OR DESCRIBE YOUR SYMPTOMS →
           </span>
           <form onSubmit={handleAISymptomSubmit} className="flex-grow w-full">
@@ -249,7 +250,7 @@ const DoctorListingPage = () => {
               value={aiSymptomQuery}
               onChange={(e) => setAiSymptomQuery(e.target.value)}
               placeholder="DESCRIBE HOW YOU FEEL (E.G. SHARP PAIN IN KNEE POST RUNNING)..."
-              className="w-full h-10 px-4 bg-swiss-white border border-swiss-gray-200 text-ui-sm font-bold uppercase tracking-wider text-swiss-black placeholder-swiss-gray-400 focus:border-swiss-black focus:border-2 focus:ring-0 transition-all rounded-none"
+              className="w-full h-10 px-4 bg-white border border-neutral-200 text-ui-sm font-bold uppercase tracking-wider text-neutral-900 placeholder-neutral-500 focus:border-neutral-900 focus:border-2 focus:ring-0 transition-all rounded-none"
               disabled={aiLoading}
             />
           </form>
@@ -257,7 +258,7 @@ const DoctorListingPage = () => {
 
         {/* AI Recommendation Amber Card */}
         {aiLoading && (
-          <div className="w-full p-6 border-2 border-swiss-amber bg-swiss-white rounded-none animate-pulse text-left font-black uppercase text-ui-xs text-swiss-amber tracking-wider">
+          <div className="w-full p-6 border-2 border-warning bg-white rounded-none animate-pulse text-left font-black uppercase text-ui-xs text-warning tracking-wider">
             🚨 ANALYZING SYMPTOM DATA WITH CLINICAL AI...
           </div>
         )}
@@ -275,19 +276,19 @@ const DoctorListingPage = () => {
       {/* Active Filter Chips */}
       {activeChips.length > 0 && (
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             ACTIVE FILTERS:
           </span>
           {activeChips.map((chip) => (
             <span
               key={chip.key}
-              className="inline-flex items-center gap-2 px-3 py-1 bg-swiss-white border-2 border-swiss-black text-[10px] font-black uppercase tracking-widest select-none rounded-none"
+              className="inline-flex items-center gap-2 px-3 py-1 bg-white border-2 border-neutral-900 text-[10px] font-black uppercase tracking-widest select-none rounded-none"
             >
               {chip.label}
               <button
                 type="button"
                 onClick={() => removeFilterChip(chip.key)}
-                className="text-swiss-black hover:text-swiss-red font-black"
+                className="text-neutral-900 hover:text-accent font-black"
               >
                 ×
               </button>
@@ -295,18 +296,55 @@ const DoctorListingPage = () => {
           ))}
           <button
             onClick={handleClearAll}
-            className="text-[10px] font-black text-swiss-red hover:underline uppercase tracking-widest"
+            className="text-[10px] font-black text-accent hover:underline uppercase tracking-widest"
           >
             CLEAR ALL
           </button>
         </div>
       )}
 
+      {/* Mobile Filters Trigger */}
+      <button
+        type="button"
+        onClick={() => setShowMobileFilters(true)}
+        className="lg:hidden w-full py-3 border-2 border-neutral-900 text-ui-xs font-black uppercase tracking-widest text-center mt-6 cursor-pointer hover:bg-neutral-100 transition-colors"
+      >
+        FILTERS →
+      </button>
+
+      {/* Mobile Full-Screen Filters Overlay */}
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-[9999] bg-white p-6 overflow-y-auto flex flex-col lg:hidden">
+          <div className="flex items-center justify-between border-b-2 border-neutral-900 pb-4 mb-6">
+            <h2 className="text-ui-lg font-black uppercase text-neutral-900">Filters</h2>
+            <button 
+              onClick={() => setShowMobileFilters(false)} 
+              className="text-neutral-500 hover:text-danger p-1 cursor-pointer focus:outline-none"
+            >
+              <X size={24} />
+            </button>
+          </div>
+          <div className="flex-1">
+            <FilterSidebar
+              initialFilters={currentFilters}
+              onApply={(f) => {
+                handleApplyFilters(f);
+                setShowMobileFilters(false);
+              }}
+              onClear={() => {
+                handleClearAll();
+                setShowMobileFilters(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Main split content: left filter panel, right results area */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mt-8 pt-8 border-t-2 border-swiss-black">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mt-8 pt-8 border-t-2 border-neutral-900">
         
-        {/* Left Filter Panel (Width 280px via layout classes) */}
-        <div className="lg:col-span-1 lg:sticky lg:top-24 z-10">
+        {/* Left Filter Panel (Width 280px via layout classes, hidden on mobile) */}
+        <div className="hidden lg:block lg:col-span-1 lg:sticky lg:top-24 z-10">
           <FilterSidebar
             initialFilters={currentFilters}
             onApply={handleApplyFilters}
@@ -318,14 +356,14 @@ const DoctorListingPage = () => {
         <div className="lg:col-span-3 flex flex-col gap-6">
           
           {/* Results Summary & Sort controls header bar */}
-          <div className="border-b-2 border-swiss-black pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <span className="text-ui-lg font-black text-swiss-black uppercase tracking-wider">
+          <div className="border-b-2 border-neutral-900 pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <span className="text-ui-lg font-black text-neutral-900 uppercase tracking-wider">
               {loading ? 'DISCOVERING CLINICIANS...' : `${pagination.total} SPECIALISTS FOUND`}
             </span>
 
-            {/* Segmented control sort */}
-            <div className="flex items-center gap-1 shrink-0">
-              <span className="text-[10px] font-black text-swiss-gray-400 uppercase tracking-widest mr-2">
+            {/* Desktop Segmented control sort */}
+            <div className="hidden md:flex items-center gap-1 shrink-0">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mr-2">
                 SORT BY:
               </span>
               {[
@@ -340,10 +378,10 @@ const DoctorListingPage = () => {
                     key={opt.val}
                     type="button"
                     onClick={() => updateSort(opt.val)}
-                    className={`px-3 py-1.5 border-2 border-swiss-black text-[10px] font-black uppercase tracking-widest transition-colors rounded-none cursor-pointer select-none
+                    className={`px-3 py-1.5 border-2 border-neutral-900 text-[10px] font-black uppercase tracking-widest transition-colors rounded-none cursor-pointer select-none
                       ${isActive 
-                        ? 'bg-swiss-black text-swiss-white' 
-                        : 'bg-swiss-white text-swiss-black hover:bg-swiss-gray-100'
+                        ? 'bg-neutral-900 text-white' 
+                        : 'bg-white text-neutral-900 hover:bg-neutral-100'
                       }
                     `}
                   >
@@ -351,6 +389,23 @@ const DoctorListingPage = () => {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Mobile Sort Dropdown select */}
+            <div className="flex md:hidden items-center gap-2 w-full mt-1">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest shrink-0">
+                SORT BY:
+              </span>
+              <select
+                value={currentFilters.sortBy}
+                onChange={(e) => updateSort(e.target.value)}
+                className="flex-grow h-10 px-3 border-2 border-neutral-900 bg-white text-[10px] font-black uppercase tracking-wider focus:outline-none"
+              >
+                <option value="relevance">RELEVANCE</option>
+                <option value="rating">RATING ↓</option>
+                <option value="fee_asc">FEE ↑</option>
+                <option value="fee_desc">FEE ↓</option>
+              </select>
             </div>
           </div>
 
@@ -362,11 +417,11 @@ const DoctorListingPage = () => {
               ))}
             </div>
           ) : error ? (
-            <div className="bg-swiss-white border-2 border-swiss-red p-8 text-left flex flex-col gap-3">
-              <h3 className="text-ui-xl font-black text-swiss-red uppercase tracking-tighter">
+            <div className="bg-white border-2 border-accent p-8 text-left flex flex-col gap-3">
+              <h3 className="text-ui-xl font-black text-accent uppercase tracking-tighter">
                 QUERY DISRUPTION
               </h3>
-              <p className="text-ui-md text-swiss-gray-600 font-medium">{error}</p>
+              <p className="text-ui-md text-neutral-700 font-medium">{error}</p>
               <Button size="sm" onClick={fetchDoctors} className="self-start">
                 RETRY SEARCH →
               </Button>
@@ -390,7 +445,7 @@ const DoctorListingPage = () => {
 
               {/* D3.6 Explicit Pagination row (Left-aligned) */}
               {pagination.totalPages > 1 && (
-                <div className="flex items-center gap-4 mt-8 pt-6 border-t border-swiss-gray-200">
+                <div className="flex items-center gap-4 mt-8 pt-6 border-t border-neutral-200">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -399,7 +454,7 @@ const DoctorListingPage = () => {
                   >
                     ← PREVIOUS
                   </Button>
-                  <span className="text-ui-xs font-black text-swiss-gray-400 uppercase tracking-widest">
+                  <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest">
                     PAGE {pagination.page} OF {pagination.totalPages}
                   </span>
                   <Button
