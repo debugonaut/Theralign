@@ -12,10 +12,16 @@ import AppError from '../utils/AppError.js';
  */
 export const uploadToCloudinary = async (localFilePath, folder) => {
   try {
-    const result = await cloudinary.uploader.upload(localFilePath, {
+    // Detect if file is a PDF to use correct resource_type
+    const isPdf = localFilePath.toLowerCase().endsWith('.pdf');
+    const uploadOptions = {
       folder: `theralign/${folder}`,
-      resource_type: 'auto', // Auto-detect PDF vs Image formats
-    });
+    };
+    if (isPdf) {
+      uploadOptions.resource_type = 'raw';
+    }
+
+    const result = await cloudinary.uploader.upload(localFilePath, uploadOptions);
 
     return result.secure_url;
   } catch (error) {
