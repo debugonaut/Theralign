@@ -2,7 +2,7 @@ import { getOpenAIClient } from '../config/openai.js';
 import logger from '../utils/logger.js';
 
 const AI_TIMEOUT_MS = 8000; // 8 second timeout before giving up
-const MODEL = 'gemini-1.5-flash';
+const MODEL = 'gemini-2.0-flash';
 
 // ─── Core helper ──────────────────────────────────────────────
 
