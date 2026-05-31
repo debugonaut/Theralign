@@ -1,6 +1,16 @@
 import axios from 'axios';
 
-const apiURL = import.meta.env.VITE_API_URL || 'https://physioconnect-api.onrender.com';
+let apiURL = import.meta.env.VITE_API_URL;
+
+if (!apiURL) {
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    // Dynamically fallback to secure production backend if running on deployed remote domains like Vercel
+    apiURL = 'https://physioconnect-api.onrender.com';
+  } else {
+    // Default local fallback
+    apiURL = 'http://localhost:5000';
+  }
+}
 
 const axiosInstance = axios.create({
   baseURL: `${apiURL}/api`,
