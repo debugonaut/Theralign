@@ -72,6 +72,14 @@ const DoctorProfileEditor = () => {
         }
 
         setProfilePhotoPreview(p.user?.profileImage || '');
+      } else {
+        setName(user?.name || '');
+        let rawPhone = user?.phone || '';
+        if (rawPhone.startsWith('+91')) {
+          rawPhone = rawPhone.replace('+91', '').trim();
+        }
+        setPhone(rawPhone);
+        setProfilePhotoPreview(user?.profileImage || '');
       }
     } catch (err) {
       console.error(err);
@@ -128,21 +136,32 @@ const DoctorProfileEditor = () => {
   const dbClinicAddress = profile?.clinicAddress || '';
   const currentClinicAddress = `${address}${city ? `, ${city}` : ''}${stateName ? `, ${stateName}` : ''}`;
   
-  const isDirty = !!(
-    profile && (
-      name !== (profile.user?.name || '') ||
-      phone !== (profile.user?.phone || '').replace('+91', '').trim() ||
-      bio !== (profile.bio || '') ||
-      experience !== (profile.experience?.toString() || '') ||
-      registrationNumber !== (profile.registrationNumber || '') ||
-      specializationText !== (profile.specialization?.join(', ') || '') ||
-      clinicName !== (profile.clinicName || '') ||
-      currentClinicAddress !== dbClinicAddress ||
-      consultationFee !== (profile.consultationFee?.toString() || '') ||
-      profilePhotoFile !== null ||
-      degreeFile !== null ||
-      licenseFile !== null
-    )
+  const isDirty = !profile ? (
+    name.trim() !== '' ||
+    phone.trim() !== '' ||
+    bio.trim() !== '' ||
+    experience.trim() !== '' ||
+    registrationNumber.trim() !== '' ||
+    specializationText.trim() !== '' ||
+    clinicName.trim() !== '' ||
+    currentClinicAddress.trim() !== '' ||
+    consultationFee.trim() !== '' ||
+    profilePhotoFile !== null ||
+    degreeFile !== null ||
+    licenseFile !== null
+  ) : (
+    name !== (profile.user?.name || '') ||
+    phone !== (profile.user?.phone || '').replace('+91', '').trim() ||
+    bio !== (profile.bio || '') ||
+    experience !== (profile.experience?.toString() || '') ||
+    registrationNumber !== (profile.registrationNumber || '') ||
+    specializationText !== (profile.specialization?.join(', ') || '') ||
+    clinicName !== (profile.clinicName || '') ||
+    currentClinicAddress !== dbClinicAddress ||
+    consultationFee !== (profile.consultationFee?.toString() || '') ||
+    profilePhotoFile !== null ||
+    degreeFile !== null ||
+    licenseFile !== null
   );
 
   const handlePhotoUploadChange = (e) => {

@@ -52,7 +52,9 @@ export const updateMyProfile = asyncHandler(async (req, res) => {
   // 2. Update or Create PatientProfile using partial updates
   // For nested fields like medicalHistory, if the frontend sends the whole object for that tab, 
   // it overwrites that specific object.
-  const updatePayload = {};
+  const updatePayload = {
+    user: req.user.id
+  };
   
   // Basic info fields
   if (profileData.dateOfBirth !== undefined) updatePayload.dateOfBirth = profileData.dateOfBirth;

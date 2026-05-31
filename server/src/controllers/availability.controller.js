@@ -163,7 +163,7 @@ export const getMySlots = asyncHandler(async (req, res) => {
   // Step 1: Find DoctorProfile where user === req.user.id
   const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
   if (!doctorProfile) {
-    throw new AppError('Doctor profile not found.', 404);
+    return successResponse(res, 200, 'Your availability slots retrieved successfully', []);
   }
 
   // Step 2: Query slots and sort chronologically

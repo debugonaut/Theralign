@@ -131,7 +131,7 @@ export const getDoctorAppointments = asyncHandler(async (req, res) => {
   // Step 1: Find DoctorProfile where user === req.user.id
   const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
   if (!doctorProfile) {
-    throw new AppError('Doctor profile not found.', 404);
+    return successResponse(res, 200, 'Doctor patient appointments retrieved successfully', []);
   }
 
   // Step 2: Fetch appointments
