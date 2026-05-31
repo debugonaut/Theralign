@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Search, MapPin, X } from 'lucide-react';
 import { getDiscoveryListingAPI, searchDoctorsAPI } from '../../api/discovery.api';
@@ -31,6 +31,8 @@ const DoctorListingPage = () => {
   const [localSearch, setLocalSearch] = useState(searchParams.get('q') || '');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [selectedMapDoctor, setSelectedMapDoctor] = useState(null);
+  const listingRef = useRef(null);
 
   // Read filters from URL
   const currentFilters = {
@@ -147,8 +149,16 @@ const DoctorListingPage = () => {
   const handleClearAll = () => {
     setSearchParams({ page: '1' });
     setLocalSearch('');
-    setAiSymptomQuery('');
-    setAiResult(null);
+    setSelectedMapDoctor(null);
+  };
+
+  const handleMapDoctorSelect = (doc) => {
+    setSelectedMapDoctor(doc);
+    if (doc && listingRef.current) {
+      setTimeout(() => {
+        listingRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
   };
 
   const removeFilterChip = (key) => {
@@ -224,7 +234,11 @@ const DoctorListingPage = () => {
 
           {/* Right: Live Interactive Doctor Heatmap */}
           <div className="lg:col-span-6 flex">
-            <LiveDoctorMap doctors={doctors} city={currentFilters.city} />
+            <LiveDoctorMap
+              city={currentFilters.city}
+              onDoctorSelect={handleMapDoctorSelect}
+              selectedDoctorId={selectedMapDoctor?._id}
+            />
           </div>
         </div>
       </div>
@@ -296,8 +310,26 @@ const DoctorListingPage = () => {
         </div>
       )}
 
+      {/* Selected doctor from map — highlight banner */}
+      {selectedMapDoctor && (
+        <div ref={listingRef} className="mt-6 flex items-center justify-between bg-primary/5 border-2 border-primary px-5 py-3">
+          <div>
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">MAP SELECTION: </span>
+            <span className="text-[11px] font-black text-primary uppercase tracking-wider">
+              Dr. {selectedMapDoctor.user?.name?.replace(/^Dr\.\s+/i, '') || 'Physiotherapist'} · {selectedMapDoctor.city}
+            </span>
+          </div>
+          <button
+            onClick={() => setSelectedMapDoctor(null)}
+            className="text-[10px] font-black text-neutral-500 hover:text-accent uppercase tracking-wider cursor-pointer flex items-center gap-1"
+          >
+            CANCEL PREFERENCE <X size={12} />
+          </button>
+        </div>
+      )}
+
       {/* Main split content: left filter panel, right results area */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mt-8 pt-8 border-t-2 border-neutral-900">
+      <div ref={selectedMapDoctor ? undefined : listingRef} className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mt-8 pt-8 border-t-2 border-neutral-900">
         
         {/* Left Filter Panel (Width 280px via layout classes, hidden on mobile) */}
         <div className="hidden lg:block lg:col-span-1 lg:sticky lg:top-24 z-10">
@@ -394,8 +426,16 @@ const DoctorListingPage = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {doctors.map((doc) => (
-                  <DoctorCard key={doc._id} doctor={doc} />
+                {(selectedMapDoctor
+                  ? [selectedMapDoctor, ...doctors.filter((d) => d._id !== selectedMapDoctor._id)]
+                  : doctors
+                ).map((doc) => (
+                  <div
+                    key={doc._id}
+                    className={selectedMapDoctor?._id === doc._id ? 'ring-2 ring-primary ring-offset-2 rounded-lg' : ''}
+                  >
+                    <DoctorCard doctor={doc} />
+                  </div>
                 ))}
               </div>
 
