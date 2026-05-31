@@ -2,7 +2,7 @@ import { getOpenAIClient } from '../config/openai.js';
 import logger from '../utils/logger.js';
 
 const AI_TIMEOUT_MS = 8000; // 8 second timeout before giving up
-const MODEL = 'gemini-2.0-flash-lite';
+const MODEL = 'llama-3.1-8b-instant';
 
 // ─── Core helper ──────────────────────────────────────────────
 
@@ -17,29 +17,19 @@ const callAI = async (messages, options = {}, retries = 2) => {
   }
 
   try {
-    const model = client.getGenerativeModel({
-      model: MODEL,
-      generationConfig: {
-        temperature: options.temperature ?? 0.3,
-        maxOutputTokens: options.maxTokens ?? 300,
-      },
-    });
-
-    // Convert OpenAI-style messages to Gemini format
-    const systemMsg = messages.find(m => m.role === 'system');
-    const userMsg = messages.find(m => m.role === 'user');
-    const prompt = systemMsg
-      ? `${systemMsg.content}\n\n${userMsg.content}`
-      : userMsg.content;
-
     const result = await Promise.race([
-      model.generateContent(prompt),
+      client.chat.completions.create({
+        model: MODEL,
+        messages,
+        temperature: options.temperature ?? 0.3,
+        max_tokens: options.maxTokens ?? 300,
+      }),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('AI request timed out')), AI_TIMEOUT_MS)
       )
     ]);
 
-    return result.response.text()?.trim() || null;
+    return result.choices[0]?.message?.content?.trim() || null;
 
   } catch (err) {
     if (retries > 0 && err.message?.includes('429')) {

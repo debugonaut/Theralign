@@ -1,14 +1,14 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 import config from './env.js';
 
-let geminiClient = null;
+let groqClient = null;
 
 export const getOpenAIClient = () => {
   if (!config.ai.openaiKey) return null;
 
-  if (!geminiClient) {
-    geminiClient = new GoogleGenerativeAI(config.ai.openaiKey);
+  if (!groqClient) {
+    groqClient = new Groq({ apiKey: config.ai.openaiKey });
   }
 
-  return geminiClient;
+  return groqClient;
 };
