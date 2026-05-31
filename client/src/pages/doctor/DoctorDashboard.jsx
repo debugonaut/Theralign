@@ -22,7 +22,7 @@ const DoctorDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       const [profileRes, apptRes, slotsRes] = await Promise.all([
-        getDoctorProfileAPI(),
+        getDoctorProfileAPI().catch(() => ({ success: true, data: { profile: null } })),
         getDoctorAppointments().catch(() => ({ success: true, data: [] })),
         getMySlots().catch(() => ({ success: true, data: [] })),
       ]);
