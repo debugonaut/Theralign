@@ -58,61 +58,55 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
       )}
 
       {contacts.map((contact, index) => (
-        <div key={index} className="border-2 border-black border-t-[4px] p-8">
+        <div key={index} className="border border-neutral-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-all duration-300">
           <div className="flex justify-between items-center mb-4">
-            <div className="text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest">
-              EMERGENCY CONTACT {contacts.length > 1 ? index + 1 : ''}
+            <div className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest">
+              Emergency Contact {contacts.length > 1 ? index + 1 : ''}
             </div>
             <button 
               type="button" 
               onClick={() => handleRemoveContact(index)} 
-              className="text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest hover:underline"
+              className="text-ui-xs text-danger font-bold uppercase tracking-widest hover:underline select-none"
             >
-              REMOVE
+              Remove
             </button>
           </div>
-          <div className="h-[1px] bg-neutral-100 mb-6 w-full"></div>
-          <div className="flex gap-4">
-            <div className="w-[40%]">
-              <Input label="CONTACT NAME" value={contact.name} onChange={(e) => handleChange(index, 'name', e.target.value)} />
-            </div>
-            <div className="w-[25%]">
-              <Input label="RELATIONSHIP" value={contact.relationship} onChange={(e) => handleChange(index, 'relationship', e.target.value)} />
-            </div>
-            <div className="w-[35%]">
-              <Input label="PHONE NUMBER" value={contact.phone} onChange={(e) => handleChange(index, 'phone', e.target.value)} />
-            </div>
+          <div className="h-[1px] bg-neutral-200 mb-6 w-full"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Input label="CONTACT NAME" value={contact.name} onChange={(e) => handleChange(index, 'name', e.target.value)} />
+            <Input label="RELATIONSHIP" value={contact.relationship} onChange={(e) => handleChange(index, 'relationship', e.target.value)} />
+            <Input label="PHONE NUMBER" value={contact.phone} onChange={(e) => handleChange(index, 'phone', e.target.value)} />
           </div>
         </div>
       ))}
 
       {contacts.length === 1 && (
-        <div className="border-2 border-dashed border-neutral-100 p-8 flex items-center justify-center">
-          <div className="text-ui-xs text-gray-500 font-bold uppercase tracking-widest">
-            + ADD SECOND CONTACT &rarr;
+        <div className="border border-dashed border-neutral-200 rounded-lg p-6 flex items-center justify-center bg-neutral-50/50">
+          <div className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest">
+            + Add Second Contact
           </div>
         </div>
       )}
 
       {contacts.length < 2 && (
         <div className="pt-2">
-          <Button variant="ghost" onClick={handleAddContact}>+ ADD EMERGENCY CONTACT &rarr;</Button>
+          <Button variant="ghost" onClick={handleAddContact} className="border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-bold text-ui-xs uppercase tracking-widest transition-all rounded-md shadow-sm">+ Add Emergency Contact &rarr;</Button>
         </div>
       )}
 
-      <div className="border-t-2 border-black pt-8 mt-4">
+      <div className="border-t border-neutral-200 pt-8 mt-4">
         {saveStatus === 'success' ? (
-          <div className="inline-flex items-center px-4 py-3 border-2 border-[#0D7377] text-[#0D7377] font-bold text-ui-sm uppercase tracking-widest bg-white">
-            ✓ EMERGENCY CONTACTS SAVED
+          <div className="inline-flex items-center px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
+            ✓ Emergency Contacts Saved
           </div>
         ) : (
           <Button
             variant="primary"
             onClick={handleSave}
             disabled={isSaving}
-            className={saveStatus === 'error' ? 'border-[#FF3000] text-[#FF3000]' : ''}
+            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
           >
-            {isSaving ? 'SAVING...' : saveStatus === 'error' ? 'SAVE FAILED — TRY AGAIN' : 'SAVE EMERGENCY CONTACTS →'}
+            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Emergency Contacts →'}
           </Button>
         )}
       </div>

@@ -58,8 +58,8 @@ const AdminLayout = () => {
 
   const renderNavGroup = (title, items) => {
     return (
-      <div className="border-b border-white/15 pb-4 mb-4 last:border-b-0 last:pb-0 last:mb-0">
-        <span className="block px-6 mb-2 text-[9px] uppercase tracking-wider text-white/40 font-bold">
+      <div className="border-b border-white/15 pb-4 mb-4 last:border-b-0 last:pb-0 last:mb-0 overflow-x-hidden">
+        <span className="block px-6 mb-2 text-[9px] uppercase tracking-wider text-white/40 font-bold md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
           {title}
         </span>
         <div className="space-y-1">
@@ -72,19 +72,19 @@ const AdminLayout = () => {
                 to={item.href}
                 onClick={() => setSidebarOpen(false)}
                 className={`
-                  flex items-center justify-between h-11 px-4 mx-2 rounded-md text-sm font-semibold transition-all duration-fast border-l-[3px]
+                  flex items-center justify-between h-11 px-4 mx-2 rounded-md text-sm font-semibold transition-all duration-300 border-l-[3px] overflow-hidden relative
                   ${isActive 
                     ? 'border-white bg-white/15 text-white font-bold' 
                     : 'text-white/65 bg-transparent border-transparent hover:bg-white/10 hover:text-white'
                   }
                 `}
               >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-4 h-4" />
-                  <span>{item.name}</span>
+                <div className="flex items-center gap-3 min-w-[200px]">
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">{item.name}</span>
                 </div>
                 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 shrink-0">
                   {item.showBadge && pendingCount > 0 && (
                     <span className="bg-accent text-white font-bold text-[10px] px-1.5 py-0.5 rounded-sm leading-none border-0 shadow-sm">
                       {pendingCount}
@@ -112,14 +112,15 @@ const AdminLayout = () => {
 
       {/* Admin Sidebar Navigation */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-primary text-white transition-transform duration-fast transform
+        fixed inset-y-0 left-0 z-50 flex flex-col bg-primary text-white transition-[width] duration-300 ease-in-out transform group/sidebar
         md:translate-x-0 md:static md:h-screen shrink-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 md:w-[72px] md:hover:w-64'}
       `}>
         {/* Sidebar Brand header */}
-        <div className="flex items-center justify-between py-5 px-6 border-b border-white/15 bg-primary-dark">
-          <Link to="/" className="flex items-center">
-            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-white">
+        <div className="flex items-center justify-between py-5 px-5 border-b border-white/15 bg-primary-dark overflow-hidden h-[73px]">
+          <Link to="/admin/dashboard" className="flex items-center gap-3 shrink-0">
+            <img src="/theralign-logo.svg" alt="Theralign" className="w-8 h-8 object-contain shrink-0 brightness-0 invert" />
+            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-white md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
               THERALIGN
             </span>
           </Link>
@@ -132,19 +133,19 @@ const AdminLayout = () => {
         </div>
 
         {/* Sidebar Nav Links */}
-        <nav className="flex-1 py-4 overflow-y-auto bg-primary">
+        <nav className="flex-1 py-4 overflow-y-auto bg-primary overflow-x-hidden">
           {renderNavGroup('MONITOR', monitorGroup)}
           {renderNavGroup('MANAGE', manageGroup)}
           {renderNavGroup('FINANCE', financeGroup)}
         </nav>
 
         {/* Sidebar Footer User Info & Logout */}
-        <div className="border-t border-white/15 p-4 bg-primary-dark flex flex-col gap-3">
-          <div className="flex items-center gap-3">
+        <div className="border-t border-white/15 p-4 bg-primary-dark flex flex-col gap-3 overflow-hidden">
+          <div className="flex items-center gap-3 min-w-[200px]">
             <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center font-bold text-sm select-none shrink-0 border border-white/15">
               {user?.name ? user.name[0].toUpperCase() : 'A'}
             </div>
-            <div className="overflow-hidden flex-1 text-left">
+            <div className="overflow-hidden flex-1 text-left md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">
               <h4 className="text-sm font-semibold truncate text-white normal-case">
                 {user?.name || 'Admin'}
               </h4>
@@ -155,10 +156,10 @@ const AdminLayout = () => {
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center justify-center gap-2 h-10 w-full text-sm font-semibold text-white/75 border border-white/30 rounded-md hover:border-white hover:text-white hover:bg-white/10 transition-all duration-fast select-none cursor-pointer"
+            className="flex items-center justify-start gap-3 h-10 px-3 w-full text-sm font-semibold text-white/75 border border-white/30 rounded-md hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 select-none cursor-pointer overflow-hidden min-w-[200px]"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
+            <LogOut className="w-4 h-4 shrink-0" />
+            <span className="md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">Logout</span>
           </button>
         </div>
       </aside>

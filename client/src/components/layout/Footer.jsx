@@ -34,9 +34,8 @@ const Footer = () => {
   ];
 
   const SwissNavLink = ({ to, label }) => (
-    <Link to={to} className="swiss-nav-link text-[12px] font-semibold text-neutral-700 normal-case !text-[12px] !font-medium">
-      <span className="nav-text-default text-neutral-700">{label}</span>
-      <span className="nav-text-hover">{label}</span>
+    <Link to={to} className="swiss-nav-link text-[12px] font-semibold text-neutral-700 normal-case !text-[12px] !font-medium hover:text-primary transition-colors">
+      {label}
     </Link>
   );
 

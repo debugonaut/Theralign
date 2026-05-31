@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 // Guards
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
+import HomeRedirect from './HomeRedirect';
 
 // Layouts
 import PublicLayout from '../components/layout/PublicLayout';
@@ -79,7 +80,7 @@ const AppRoutes = () => {
       <Routes>
         {/* ─── Public Routes ──────────────────────────────────────────────── */}
         <Route element={<PublicLayout />}>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<HomeRedirect><LandingPage /></HomeRedirect>} />
 
           {/* Redirect authenticated users away from auth pages */}
           <Route

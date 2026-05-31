@@ -63,53 +63,103 @@ const LifestyleTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
       </div>
 
       <div>
-        <label className="block text-ui-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-          ACTIVITY LEVEL
+        <label className="block text-ui-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">
+          Activity Level
         </label>
-        <SegmentedControl
-          options={activityLevelOptions}
-          value={formData.activityLevel}
-          onChange={(val) => handleChange('activityLevel', val)}
-          optionClassName="text-[10px] md:text-ui-xs"
-        />
-      </div>
-
-      <div className="flex gap-8">
-        <div className="w-1/2 flex items-center">
-          <div className="w-1/2 text-ui-md font-bold uppercase tracking-widest">SMOKING</div>
-          <div className="w-1/2">
-            <SegmentedControl
-              options={booleanOptions}
-              value={formData.smoking}
-              onChange={(val) => handleChange('smoking', val)}
-            />
-          </div>
-        </div>
-        <div className="w-1/2 flex items-center">
-          <div className="w-1/2 text-ui-md font-bold uppercase tracking-widest">ALCOHOL</div>
-          <div className="w-1/2">
-            <SegmentedControl
-              options={booleanOptions}
-              value={formData.alcohol}
-              onChange={(val) => handleChange('alcohol', val)}
-            />
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {activityLevelOptions.map((opt) => {
+            const isSelected = formData.activityLevel === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => handleChange('activityLevel', opt.value)}
+                className={`
+                  py-2.5 text-center font-bold text-sm transition-all duration-300 rounded-lg border select-none
+                  ${isSelected
+                    ? 'bg-neutral-900 border-neutral-900 text-white shadow-sm'
+                    : 'bg-white border-neutral-200 text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50'
+                  }
+                `}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="border-t-2 border-black pt-8 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex items-center justify-between border border-neutral-200 rounded-lg p-4 bg-white shadow-sm">
+          <div className="text-ui-md font-bold text-neutral-700 uppercase tracking-wide">Smoking</div>
+          <div className="flex gap-2">
+            {[
+              { value: true, label: 'Yes' },
+              { value: false, label: 'No' },
+            ].map((opt) => {
+              const isSelected = formData.smoking === opt.value;
+              return (
+                <button
+                  key={String(opt.value)}
+                  type="button"
+                  onClick={() => handleChange('smoking', opt.value)}
+                  className={`
+                    px-4 py-1.5 font-bold text-xs rounded-full border select-none transition-all duration-300
+                    ${isSelected
+                      ? 'bg-neutral-900 border-neutral-900 text-white'
+                      : 'bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400'
+                    }
+                  `}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between border border-neutral-200 rounded-lg p-4 bg-white shadow-sm">
+          <div className="text-ui-md font-bold text-neutral-700 uppercase tracking-wide">Alcohol</div>
+          <div className="flex gap-2">
+            {[
+              { value: true, label: 'Yes' },
+              { value: false, label: 'No' },
+            ].map((opt) => {
+              const isSelected = formData.alcohol === opt.value;
+              return (
+                <button
+                  key={String(opt.value)}
+                  type="button"
+                  onClick={() => handleChange('alcohol', opt.value)}
+                  className={`
+                    px-4 py-1.5 font-bold text-xs rounded-full border select-none transition-all duration-300
+                    ${isSelected
+                      ? 'bg-neutral-900 border-neutral-900 text-white'
+                      : 'bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400'
+                    }
+                  `}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-neutral-200 pt-8 mt-4">
         {saveStatus === 'success' ? (
-          <div className="inline-flex items-center px-4 py-3 border-2 border-[#0D7377] text-[#0D7377] font-bold text-ui-sm uppercase tracking-widest bg-white">
-            ✓ LIFESTYLE SAVED
+          <div className="inline-flex items-center px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
+            ✓ Lifestyle Saved
           </div>
         ) : (
           <Button
             variant="primary"
             onClick={handleSave}
             disabled={isSaving}
-            className={saveStatus === 'error' ? 'border-[#FF3000] text-[#FF3000]' : ''}
+            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
           >
-            {isSaving ? 'SAVING...' : saveStatus === 'error' ? 'SAVE FAILED — TRY AGAIN' : 'SAVE LIFESTYLE →'}
+            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Lifestyle →'}
           </Button>
         )}
       </div>

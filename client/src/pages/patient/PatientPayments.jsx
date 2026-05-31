@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { jsPDF } from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { getMyPayments } from '../../api/payment.api';
@@ -41,43 +42,98 @@ const PatientPayments = () => {
   const sessionsPaid = payments.length;
 
   const downloadReceipt = (payment) => {
-    // If appointment has a clinical document F3, we can download that
     if (payment.appointment?.sessionDocument?.url) {
       window.open(payment.appointment.sessionDocument.url, '_blank');
       return;
     }
 
-    // Generate lightweight browser-native text receipt
     const docName = payment.doctor?.user?.name || 'Physiotherapist';
     const apptDate = payment.appointment?.date || 'N/A';
     const apptTime = payment.appointment?.startTime || 'N/A';
     const paymentId = payment.razorpayPaymentId || 'OFFLINE_TXN';
+    const receiptDate = new Date(payment.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
-    const content = `
-==================================================
-              Theralign CLINICAL RECEIPT
-==================================================
-RECEIPT DATE:      ${new Date(payment.createdAt).toLocaleDateString('en-IN')}
-TRANSACTION ID:    ${paymentId}
-APPOINTMENT DATE:  ${apptDate}
-APPOINTMENT TIME:  ${apptTime}
-CLINICIAN:         DR. ${docName.toUpperCase()}
-FEE CHARGED:       ₹${payment.amount}
-COMMISSION (10%):  ₹${(payment.amount * 0.1).toFixed(0)}
-PAYMENT SYSTEM:    SECURED BY RAZORPAY GATEWAY
-STATUS:            CONFIRMED / PAID
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+    const pad = 48;
 
-Thank you for choosing Theralign clinical networks.
-==================================================
-`;
-    const element = document.createElement("a");
-    const file = new Blob([content], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = `Theralign-RECEIPT-${paymentId.slice(-8)}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-    toast.success('RECEIPT GENERATED.');
+    // Header bar
+    doc.setFillColor(15, 15, 15);
+    doc.rect(0, 0, W, 72, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('THERALIGN', pad, 38);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text('CLINICAL PAYMENT RECEIPT', pad, 54);
+
+    // Receipt ID top-right
+    doc.setFontSize(7);
+    doc.text(`RECEIPT: ${paymentId.slice(-8).toUpperCase()}`, W - pad, 38, { align: 'right' });
+    doc.text(receiptDate.toUpperCase(), W - pad, 54, { align: 'right' });
+
+    // Divider
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.5);
+    doc.line(pad, 100, W - pad, 100);
+
+    // Section: Clinician
+    let y = 128;
+    const label = (text, x, yPos) => {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(140, 140, 140);
+      doc.text(text, x, yPos);
+    };
+    const value = (text, x, yPos, bold = false) => {
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(15, 15, 15);
+      doc.text(text, x, yPos);
+    };
+
+    const rows = [
+      ['CLINICIAN',       `DR. ${docName.toUpperCase()}`],
+      ['APPOINTMENT DATE', String(apptDate)],
+      ['APPOINTMENT TIME', String(apptTime)],
+      ['TRANSACTION ID',  paymentId],
+      ['PAYMENT GATEWAY', 'SECURED BY RAZORPAY'],
+      ['STATUS',          'CONFIRMED / PAID'],
+    ];
+
+    rows.forEach(([lbl, val]) => {
+      label(lbl, pad, y);
+      value(val, pad, y + 14);
+      y += 40;
+    });
+
+    // Amount box
+    y += 8;
+    doc.setFillColor(245, 245, 245);
+    doc.roundedRect(pad, y, W - pad * 2, 56, 4, 4, 'F');
+    label('FEE CHARGED', pad + 16, y + 18);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(15, 15, 15);
+    doc.text(`Rs. ${payment.amount}`, pad + 16, y + 40);
+    label('PLATFORM COMMISSION (10%)', W - pad - 16, y + 18, );
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(15, 15, 15);
+    doc.text(`Rs. ${(payment.amount * 0.1).toFixed(0)}`, W - pad - 16, y + 40, { align: 'right' });
+
+    // Footer
+    doc.setDrawColor(220, 220, 220);
+    doc.line(pad, 780, W - pad, 780);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(160, 160, 160);
+    doc.text('Thank you for choosing Theralign clinical networks.', W / 2, 796, { align: 'center' });
+    doc.text('This is a system-generated receipt and does not require a signature.', W / 2, 808, { align: 'center' });
+
+    doc.save(`Theralign-RECEIPT-${paymentId.slice(-8)}.pdf`);
+    toast.success('RECEIPT DOWNLOADED.');
   };
 
   return (

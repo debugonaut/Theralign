@@ -10,7 +10,7 @@ import { DoctorCardSkeleton } from '../../components/common/Skeleton';
 import EmptyState from '../../components/common/EmptyState';
 import Button from '../../components/common/Button';
 import SearchSuggestions from '../../components/search/SearchSuggestions';
-import AIRecommendationCard from '../../components/ai/AIRecommendationCard';
+import SymptomSearchBox from '../../components/ai/SymptomSearchBox';
 
 const DoctorListingPage = () => {
   const navigate = useNavigate();
@@ -30,11 +30,6 @@ const DoctorListingPage = () => {
   const [localSearch, setLocalSearch] = useState(searchParams.get('q') || '');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-
-  // AI Symptom Search state
-  const [aiSymptomQuery, setAiSymptomQuery] = useState('');
-  const [aiResult, setAiResult] = useState(null);
-  const [aiLoading, setAiLoading] = useState(false);
 
   // Read filters from URL
   const currentFilters = {
@@ -134,30 +129,6 @@ const DoctorListingPage = () => {
     setSearchParams(params);
   };
 
-  // Handle AI Symptom Search submit
-  const handleAISymptomSubmit = async (e) => {
-    if (e) e.preventDefault();
-    const trimmed = aiSymptomQuery.trim();
-    if (trimmed.length < 5) {
-      toast.error('PLEASE DESCRIBE SYMPTOMS IN GREATER DETAIL.');
-      return;
-    }
-    setAiLoading(true);
-    setAiResult(null);
-    try {
-      const res = await interpretSymptomsAPI(trimmed);
-      if (res.success && res.data?.aiAvailable) {
-        setAiResult(res.data);
-      } else {
-        setError('AI recommendation temporarily unavailable.');
-      }
-    } catch (err) {
-      console.error('AI symptom search failed:', err);
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
   const handleApplyFilters = (filters) => {
     const params = new URLSearchParams(searchParams);
     Object.keys(filters).forEach((key) => {
@@ -243,38 +214,10 @@ const DoctorListingPage = () => {
           />
         </div>
 
-        {/* AI Symptom Search secondary path below */}
-        <div className="flex flex-col md:flex-row items-center gap-4 py-2 border-t-2 border-neutral-900">
-          <span className="text-ui-xs font-black text-accent tracking-widest uppercase shrink-0">
-            OR DESCRIBE YOUR SYMPTOMS →
-          </span>
-          <form onSubmit={handleAISymptomSubmit} className="flex-grow w-full">
-            <input
-              type="text"
-              value={aiSymptomQuery}
-              onChange={(e) => setAiSymptomQuery(e.target.value)}
-              placeholder="DESCRIBE HOW YOU FEEL (E.G. SHARP PAIN IN KNEE POST RUNNING)..."
-              className="w-full h-10 px-4 bg-white border border-neutral-200 text-ui-sm font-bold uppercase tracking-wider text-neutral-900 placeholder-neutral-500 focus:border-neutral-900 focus:border-2 focus:ring-0 transition-all rounded-none"
-              disabled={aiLoading}
-            />
-          </form>
+        {/* AI Symptom Triage Box */}
+        <div className="border-t border-neutral-200 pt-8 mt-4">
+          <SymptomSearchBox onSpecializationFound={(spec) => handleApplyFilters({ specialization: spec })} />
         </div>
-
-        {/* AI Recommendation Amber Card */}
-        {aiLoading && (
-          <div className="w-full p-6 border-2 border-warning bg-white rounded-none animate-pulse text-left font-black uppercase text-ui-xs text-warning tracking-wider">
-            🚨 ANALYZING SYMPTOM DATA WITH CLINICAL AI...
-          </div>
-        )}
-        {!aiLoading && aiResult && (
-          <AIRecommendationCard
-            result={aiResult}
-            onViewDoctors={() => {
-              handleApplyFilters({ specialization: aiResult.suggestedSpecialization });
-              setAiResult(null);
-            }}
-          />
-        )}
       </div>
 
       {/* Active Filter Chips */}

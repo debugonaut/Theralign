@@ -13,6 +13,13 @@ const Navbar = () => {
 
   const { user, clearCredentials } = useAuthStore();
 
+  const getLogoRedirectPath = () => {
+    if (!user) return '/';
+    if (user.role === 'admin') return '/admin/dashboard';
+    if (user.role === 'doctor') return '/doctor/dashboard';
+    return '/patient/dashboard';
+  };
+
   const handleLogout = () => {
     clearCredentials();
     setMobileMenuOpen(false);
@@ -70,7 +77,7 @@ const Navbar = () => {
           
           {/* Logo */}
           <div className="flex">
-            <Link to="/" className="flex items-center gap-3 text-primary">
+            <Link to={getLogoRedirectPath()} className="flex items-center gap-3 text-primary">
               <span className="font-black text-xl tracking-tighter uppercase font-swiss">
                 THERALIGN
               </span>

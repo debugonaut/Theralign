@@ -79,30 +79,46 @@ const BasicInfoTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
         />
       </div>
 
-      <div className="mb-8 w-1/2">
-        <label className="block text-ui-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-          BLOOD GROUP
+      <div className="mb-8 w-full">
+        <label className="block text-ui-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">
+          Blood Group
         </label>
-        <SegmentedControl
-          options={bloodGroupOptions}
-          value={formData.bloodGroup}
-          onChange={(val) => handleChange('bloodGroup', val)}
-        />
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 max-w-2xl">
+          {bloodGroupOptions.map((opt) => {
+            const isSelected = formData.bloodGroup === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => handleChange('bloodGroup', opt.value)}
+                className={`
+                  py-2.5 text-center font-bold text-sm transition-all duration-300 rounded-lg border select-none
+                  ${isSelected
+                    ? 'bg-neutral-900 border-neutral-900 text-white shadow-sm'
+                    : 'bg-white border-neutral-200 text-neutral-700 hover:border-neutral-400 hover:bg-neutral-50'
+                  }
+                `}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="border-t-2 border-black pt-8 mt-4">
+      <div className="border-t border-neutral-200 pt-8 mt-4">
         {saveStatus === 'success' ? (
-          <div className="inline-flex items-center px-4 py-3 border-2 border-[#0D7377] text-[#0D7377] font-bold text-ui-sm uppercase tracking-widest bg-white">
-            ✓ BASIC INFO SAVED
+          <div className="inline-flex items-center px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
+            ✓ Basic Info Saved
           </div>
         ) : (
           <Button
             variant="primary"
             onClick={handleSave}
             disabled={isSaving}
-            className={saveStatus === 'error' ? 'border-[#FF3000] text-[#FF3000]' : ''}
+            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
           >
-            {isSaving ? 'SAVING...' : saveStatus === 'error' ? 'SAVE FAILED — TRY AGAIN' : 'SAVE BASIC INFO →'}
+            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Basic Info →'}
           </Button>
         )}
       </div>

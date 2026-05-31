@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut } from 'lucide-react';
+import { 
+  Menu, X, LogOut, LayoutDashboard, Calendar, Search, 
+  CreditCard, Star, Clock, DollarSign, User 
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 import { getDoctorProfileAPI } from '../../api/doctor.api';
@@ -51,20 +54,20 @@ const DashboardLayout = () => {
   }, [user, location.pathname]);
 
   const patientNavigation = [
-    { name: 'Dashboard', href: '/patient/dashboard' },
-    { name: 'My Appointments', href: '/patient/appointments' },
-    { name: 'Find Doctors', href: '/doctors' },
-    { name: 'Payment History', href: '/patient/payments' },
-    { name: 'My Reviews', href: '/patient/reviews' },
+    { name: 'Dashboard', href: '/patient/dashboard', icon: LayoutDashboard },
+    { name: 'My Appointments', href: '/patient/appointments', icon: Calendar },
+    { name: 'Find Doctors', href: '/doctors', icon: Search },
+    { name: 'Payment History', href: '/patient/payments', icon: CreditCard },
+    { name: 'My Reviews', href: '/patient/reviews', icon: Star },
   ];
 
   const doctorNavigation = [
-    { name: 'Overview', href: '/doctor/dashboard' },
-    { name: 'Appointments', href: '/doctor/appointments', showBadge: true },
-    { name: 'Availability', href: '/doctor/availability' },
-    { name: 'Earnings', href: '/doctor/earnings' },
-    { name: 'My Profile', href: '/doctor/profile' },
-    { name: 'My Reviews', href: '/doctor/reviews' },
+    { name: 'Overview', href: '/doctor/dashboard', icon: LayoutDashboard },
+    { name: 'Appointments', href: '/doctor/appointments', icon: Calendar, showBadge: true },
+    { name: 'Availability', href: '/doctor/availability', icon: Clock },
+    { name: 'Earnings', href: '/doctor/earnings', icon: DollarSign },
+    { name: 'My Profile', href: '/doctor/profile', icon: User },
+    { name: 'My Reviews', href: '/doctor/reviews', icon: Star },
   ];
 
   const navigation = user?.role === 'doctor' ? doctorNavigation : patientNavigation;
@@ -81,14 +84,16 @@ const DashboardLayout = () => {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 flex flex-col w-[240px] bg-white text-neutral-900 border-r-2 border-neutral-200 transition-transform duration-fast transform
+        fixed inset-y-0 left-0 z-50 flex flex-col bg-white text-neutral-900 border-r-2 border-neutral-200 
+        transition-[width] duration-300 ease-in-out transform group/sidebar
         md:translate-x-0 md:static md:h-screen shrink-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${sidebarOpen ? 'translate-x-0 w-[240px]' : '-translate-x-full w-[240px] md:w-[72px] md:hover:w-[240px]'}
       `}>
         {/* Sidebar Brand header */}
-        <div className="flex items-center justify-between py-5 px-6 border-b border-neutral-200">
-          <Link to="/" className="flex items-center">
-            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-primary">
+        <div className="flex items-center justify-between py-5 px-5 border-b border-neutral-200 overflow-hidden h-[73px]">
+          <Link to={user?.role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard'} className="flex items-center gap-3 shrink-0">
+            <img src="/theralign-logo.svg" alt="Theralign" className="w-8 h-8 object-contain shrink-0" />
+            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-primary md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
               THERALIGN
             </span>
           </Link>
@@ -101,25 +106,31 @@ const DashboardLayout = () => {
         </div>
 
         {/* Sidebar Nav Links */}
-        <nav className="flex-1 py-4 overflow-y-auto space-y-1">
+        <nav className="flex-1 py-4 overflow-y-auto space-y-1 overflow-x-hidden">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
+            const Icon = item.icon;
             return (
               <NavLink
                 key={item.name}
                 to={item.href}
                 onClick={() => setSidebarOpen(false)}
                 className={`
-                  flex items-center justify-between h-12 px-4 mx-2 rounded-md text-sm font-semibold transition-all duration-fast border-l-4
+                  flex items-center h-12 px-4 mx-2 rounded-md text-sm font-semibold transition-all duration-300 border-l-4 overflow-hidden relative
                   ${isActive 
                     ? 'border-neutral-900 bg-neutral-900 text-white font-bold' 
                     : 'text-neutral-500 bg-white border-transparent hover:bg-neutral-100 hover:text-neutral-900'
                   }
                 `}
               >
-                <span>{item.name}</span>
+                <div className="flex items-center gap-3 min-w-[200px]">
+                  {Icon && <Icon className="w-5 h-5 shrink-0" />}
+                  <span className="md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
+                    {item.name}
+                  </span>
+                </div>
                 {item.showBadge && pendingCount > 0 && (
-                  <span className={`ml-2 px-1.5 py-0.5 text-[10px] font-bold rounded-sm ${
+                  <span className={`ml-auto px-1.5 py-0.5 text-[10px] font-bold rounded-sm shrink-0 md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 ${
                     isActive ? 'bg-white/20 text-white' : 'bg-primary-light text-primary'
                   }`}>
                     {pendingCount}
@@ -131,12 +142,12 @@ const DashboardLayout = () => {
         </nav>
 
         {/* Sidebar Footer User & Logout */}
-        <div className="border-t border-neutral-200 p-4 bg-neutral-50 flex flex-col gap-3">
-          <div className="flex items-center gap-3">
+        <div className="border-t border-neutral-200 p-4 bg-neutral-50 flex flex-col gap-3 overflow-hidden">
+          <div className="flex items-center gap-3 min-w-[200px]">
             <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm select-none shrink-0">
               {user?.name ? user.name[0].toUpperCase() : 'U'}
             </div>
-            <div className="overflow-hidden flex-1 text-left">
+            <div className="overflow-hidden flex-1 text-left md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">
               <h4 className="text-sm font-semibold truncate text-neutral-900 normal-case">
                 {user?.name || 'User'}
               </h4>
@@ -159,10 +170,10 @@ const DashboardLayout = () => {
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center justify-center gap-2 h-10 w-full text-sm font-semibold text-neutral-900 border border-neutral-300 rounded-md hover:border-danger hover:text-danger hover:bg-danger/5 transition-all duration-fast select-none cursor-pointer"
+            className="flex items-center justify-start gap-3 h-10 px-3 w-full text-sm font-semibold text-neutral-900 border border-neutral-300 rounded-md hover:border-danger hover:text-danger hover:bg-danger/5 transition-all duration-300 select-none cursor-pointer overflow-hidden min-w-[200px]"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
+            <LogOut className="w-4 h-4 shrink-0" />
+            <span className="md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">Logout</span>
           </button>
         </div>
       </aside>

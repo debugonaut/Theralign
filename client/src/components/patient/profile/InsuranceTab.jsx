@@ -54,30 +54,30 @@ const InsuranceTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
         />
       </div>
 
-      <div className="flex bg-neutral-100 border-2 border-black p-4 mt-2">
+      <div className="flex bg-neutral-50 border border-neutral-200 p-4 rounded-lg shadow-sm mt-2">
         <div className="flex-shrink-0 mr-4">
-          <div className="w-8 h-8 border-2 border-black bg-white flex items-center justify-center">
-            <Info size={16} strokeWidth={1.5} className="text-black" />
+          <div className="w-8 h-8 border border-neutral-200 bg-white flex items-center justify-center rounded-full shadow-sm">
+            <Info size={16} strokeWidth={1.5} className="text-neutral-500" />
           </div>
         </div>
-        <div className="text-ui-sm text-gray-700 flex items-center">
+        <div className="text-ui-sm text-neutral-500 flex items-center font-medium">
           This information is shared with your physiotherapist before your appointment. It is never shared publicly.
         </div>
       </div>
 
-      <div className="border-t-2 border-black pt-8 mt-4">
+      <div className="border-t border-neutral-200 pt-8 mt-4">
         {saveStatus === 'success' ? (
-          <div className="inline-flex items-center px-4 py-3 border-2 border-[#0D7377] text-[#0D7377] font-bold text-ui-sm uppercase tracking-widest bg-white">
-            ✓ INSURANCE SAVED
+          <div className="inline-flex items-center px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
+            ✓ Insurance Saved
           </div>
         ) : (
           <Button
             variant="primary"
             onClick={handleSave}
             disabled={isSaving}
-            className={saveStatus === 'error' ? 'border-[#FF3000] text-[#FF3000]' : ''}
+            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
           >
-            {isSaving ? 'SAVING...' : saveStatus === 'error' ? 'SAVE FAILED — TRY AGAIN' : 'SAVE INSURANCE →'}
+            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Insurance →'}
           </Button>
         )}
       </div>

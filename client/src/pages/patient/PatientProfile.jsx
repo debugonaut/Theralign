@@ -105,22 +105,22 @@ const PatientProfile = () => {
   return (
     <div className="flex h-full min-h-[calc(100vh-64px)]">
       {/* LEFT COLUMN: Profile Card */}
-      <div className="w-[280px] flex-shrink-0 border-r-2 border-black flex flex-col p-8">
+      <div className="w-[280px] flex-shrink-0 border-r border-neutral-200 flex flex-col p-8 bg-white">
         
         {/* Avatar Section */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-[120px] h-[120px] border-2 border-black bg-neutral-100 flex items-center justify-center overflow-hidden relative">
+          <div className="w-[120px] h-[120px] border border-neutral-200 bg-neutral-100 flex items-center justify-center overflow-hidden relative rounded-full shadow-sm">
             {profile?.user?.profileImage ? (
               <img src={profile.user.profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-display-sm font-bold text-black uppercase">
+              <span className="text-display-sm font-bold text-neutral-400 uppercase">
                 {profile?.user?.name ? profile.user.name.charAt(0) : 'U'}
               </span>
             )}
             {isUploading && (
               <div className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center">
                 <LoadingSpinner size="sm" />
-                <span className="text-[10px] font-bold uppercase mt-2 text-black tracking-widest">UPLOADING...</span>
+                <span className="text-[10px] font-bold uppercase mt-2 text-black tracking-widest">Uploading...</span>
               </div>
             )}
           </div>
@@ -135,43 +135,43 @@ const PatientProfile = () => {
           <Button 
             variant="ghost" 
             onClick={() => fileInputRef.current?.click()}
-            className="mt-4"
+            className="mt-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-bold text-ui-xs uppercase tracking-widest transition-all rounded-md shadow-sm"
             disabled={isUploading}
           >
-            UPLOAD PHOTO &rarr;
+            Upload Photo →
           </Button>
         </div>
 
-        <div className="h-[1px] bg-neutral-100 w-full mb-6"></div>
+        <div className="h-[1px] bg-neutral-200 w-full mb-6"></div>
 
         {/* Identity */}
         <div className="flex flex-col mb-8">
-          <h1 className="text-ui-xl font-bold uppercase truncate mb-2">{profile?.user?.name}</h1>
-          <div className="inline-flex px-3 py-1 bg-white border-2 border-[#0D7377] text-[#0D7377] font-bold text-ui-xs uppercase tracking-widest self-start mb-2">
+          <h1 className="text-ui-xl font-bold uppercase truncate mb-2 text-neutral-900">{profile?.user?.name}</h1>
+          <div className="inline-flex px-3 py-1 bg-primary-light text-primary font-bold text-ui-xs uppercase tracking-widest self-start rounded-sm select-none">
             PATIENT PORTAL
           </div>
-          <div className="text-ui-xs uppercase text-gray-500 font-bold tracking-widest mt-2">
+          <div className="text-ui-xs uppercase text-neutral-400 font-bold tracking-widest mt-2">
             MEMBER SINCE {joinDate}
           </div>
         </div>
 
-        <div className="h-[1px] bg-neutral-100 w-full mb-6"></div>
+        <div className="h-[1px] bg-neutral-200 w-full mb-6"></div>
 
         {/* Completion */}
         <div className="flex flex-col">
-          <div className="text-ui-xs uppercase text-gray-500 font-bold tracking-widest mb-1">
+          <div className="text-ui-xs uppercase text-neutral-400 font-bold tracking-widest mb-1">
             PROFILE COMPLETE
           </div>
-          <div className="text-display-xs font-bold text-black mb-3">
+          <div className="text-display-xs font-bold text-neutral-900 mb-3">
             {completionScore}%
           </div>
-          <div className="w-full h-4 bg-neutral-100 mb-4 border-2 border-black overflow-hidden relative p-[1px]">
+          <div className="w-full h-2 bg-neutral-100 mb-4 rounded-full overflow-hidden relative">
             <div 
-              className="h-full bg-black transition-all duration-200" 
+              className="h-full bg-primary transition-all duration-300 rounded-full" 
               style={{ width: `${completionScore}%` }}
             ></div>
           </div>
-          <div className="text-ui-xs text-gray-600">
+          <div className="text-ui-xs text-neutral-500 font-medium">
             Complete your profile so physiotherapists can prepare for your session.
           </div>
         </div>
@@ -180,13 +180,28 @@ const PatientProfile = () => {
 
       {/* RIGHT COLUMN: Tabs Content */}
       <div className="flex-1 flex flex-col p-8 bg-white overflow-y-auto relative">
-        <div className="mb-8 w-full max-w-4xl mx-auto">
-          <SegmentedControl
-            options={TABS}
-            value={activeTab}
-            onChange={handleTabChange}
-          />
-          <div className="h-[4px] bg-black w-full mt-[-2px] relative z-10"></div>
+        <div className="mb-8 w-full max-w-4xl mx-auto flex gap-2 border-b border-neutral-200 pb-px overflow-x-auto">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.value;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => handleTabChange(tab.value)}
+                className={`
+                  pb-3 px-4 font-semibold text-sm transition-all duration-300 relative whitespace-nowrap normal-case focus:outline-none select-none
+                  ${isActive 
+                    ? 'text-primary font-bold' 
+                    : 'text-neutral-500 hover:text-neutral-900'
+                  }
+                `}
+              >
+                {tab.label}
+                {isActive && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-t-full transition-all duration-300" />
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Unsaved Changes Warning */}

@@ -84,8 +84,8 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
       {/* CONDITIONS */}
       <section>
         <div className="flex flex-col mb-4">
-          <span className="text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest mb-2">CONDITIONS</span>
-          <div className="h-[2px] bg-black w-full"></div>
+          <span className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest mb-2">Conditions</span>
+          <div className="h-[1px] bg-neutral-200 w-full"></div>
         </div>
         
         {/* Add Form */}
@@ -100,22 +100,22 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
             <Input label="NOTES" value={newCondition.notes} onChange={(e) => setNewCondition({...newCondition, notes: e.target.value})} />
           </div>
           <div className="pb-1">
-            <Button variant="ghost" onClick={handleAddCondition}>ADD CONDITION →</Button>
+            <Button variant="ghost" onClick={handleAddCondition} className="border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-bold text-ui-xs uppercase tracking-widest transition-all rounded-md shadow-sm">Add Condition →</Button>
           </div>
         </div>
 
         {/* List */}
         {conditions.length === 0 ? (
-          <EmptyState title="NO CONDITIONS ADDED" description="Add any existing conditions so your physiotherapist can prepare." />
+          <EmptyState title="No conditions added" description="Add any existing conditions so your physiotherapist can prepare." />
         ) : (
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col gap-3">
             {conditions.map((cond, idx) => (
-              <div key={idx} className="h-16 border-2 border-black px-4 flex items-center">
-                <div className="w-1/2 font-bold text-ui-md uppercase truncate pr-4">{cond.conditionName}</div>
-                <div className="w-[15%] text-ui-sm text-gray-500">{cond.year}</div>
-                <div className="w-[30%] text-ui-sm text-gray-500 italic truncate pr-4" title={cond.notes}>{cond.notes}</div>
-                <button type="button" onClick={() => handleRemoveCondition(idx)} className="w-[5%] text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest hover:underline text-right">
-                  REMOVE
+              <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-white flex items-center shadow-sm hover:bg-neutral-50/50 transition-all">
+                <div className="w-1/2 font-bold text-ui-md uppercase truncate pr-4 text-neutral-800">{cond.conditionName}</div>
+                <div className="w-[15%] text-ui-sm text-neutral-400 font-bold">{cond.year}</div>
+                <div className="w-[30%] text-ui-sm text-neutral-500 italic truncate pr-4" title={cond.notes}>{cond.notes}</div>
+                <button type="button" onClick={() => handleRemoveCondition(idx)} className="w-[5%] text-ui-xs text-danger font-bold uppercase tracking-widest hover:underline text-right select-none">
+                  Remove
                 </button>
               </div>
             ))}
@@ -126,8 +126,8 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
       {/* MEDICATIONS */}
       <section>
         <div className="flex flex-col mb-4">
-          <span className="text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest mb-2">MEDICATIONS</span>
-          <div className="h-[2px] bg-black w-full"></div>
+          <span className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest mb-2">Medications</span>
+          <div className="h-[1px] bg-neutral-200 w-full"></div>
         </div>
 
         <div className="flex items-end gap-4 mb-6">
@@ -135,17 +135,17 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
             <Input label="MEDICATION NAME" value={newMedication} onChange={(e) => setNewMedication(e.target.value)} />
           </div>
           <div className="pb-1">
-            <Button variant="ghost" onClick={handleAddMedication}>ADD →</Button>
+            <Button variant="ghost" onClick={handleAddMedication} className="border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-bold text-ui-xs uppercase tracking-widest transition-all rounded-md shadow-sm">Add →</Button>
           </div>
         </div>
 
         {medications.length > 0 && (
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col gap-3">
             {medications.map((med, idx) => (
-              <div key={idx} className="h-12 border-2 border-black px-4 flex items-center justify-between">
-                <div className="font-bold text-ui-md uppercase truncate">{med}</div>
-                <button type="button" onClick={() => handleRemoveMedication(idx)} className="text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest hover:underline">
-                  REMOVE
+              <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-white flex items-center justify-between shadow-sm hover:bg-neutral-50/50 transition-all">
+                <div className="font-bold text-ui-md uppercase truncate text-neutral-800">{med}</div>
+                <button type="button" onClick={() => handleRemoveMedication(idx)} className="text-ui-xs text-danger font-bold uppercase tracking-widest hover:underline select-none">
+                  Remove
                 </button>
               </div>
             ))}
@@ -156,8 +156,8 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
       {/* SURGERIES */}
       <section>
         <div className="flex flex-col mb-4">
-          <span className="text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest mb-2">PAST SURGERIES</span>
-          <div className="h-[2px] bg-black w-full"></div>
+          <span className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest mb-2">Past Surgeries</span>
+          <div className="h-[1px] bg-neutral-200 w-full"></div>
         </div>
 
         <div className="flex items-end gap-4 mb-6">
@@ -171,19 +171,19 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
             <Input label="BRIEF DESCRIPTION" value={newSurgery.description} onChange={(e) => setNewSurgery({...newSurgery, description: e.target.value})} />
           </div>
           <div className="pb-1">
-            <Button variant="ghost" onClick={handleAddSurgery}>ADD SURGERY →</Button>
+            <Button variant="ghost" onClick={handleAddSurgery} className="border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-bold text-ui-xs uppercase tracking-widest transition-all rounded-md shadow-sm">Add Surgery →</Button>
           </div>
         </div>
 
         {surgeries.length > 0 && (
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col gap-3">
             {surgeries.map((surg, idx) => (
-              <div key={idx} className="h-16 border-2 border-black px-4 flex items-center">
-                <div className="w-1/2 font-bold text-ui-md uppercase truncate pr-4">{surg.surgeryName}</div>
-                <div className="w-[15%] text-ui-sm text-gray-500">{surg.year}</div>
-                <div className="w-[30%] text-ui-sm text-gray-500 italic truncate pr-4" title={surg.description}>{surg.description}</div>
-                <button type="button" onClick={() => handleRemoveSurgery(idx)} className="w-[5%] text-ui-xs text-[#FF3000] font-bold uppercase tracking-widest hover:underline text-right">
-                  REMOVE
+              <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-white flex items-center shadow-sm hover:bg-neutral-50/50 transition-all">
+                <div className="w-1/2 font-bold text-ui-md uppercase truncate pr-4 text-neutral-800">{surg.surgeryName}</div>
+                <div className="w-[15%] text-ui-sm text-neutral-400 font-bold">{surg.year}</div>
+                <div className="w-[30%] text-ui-sm text-neutral-500 italic truncate pr-4" title={surg.description}>{surg.description}</div>
+                <button type="button" onClick={() => handleRemoveSurgery(idx)} className="w-[5%] text-ui-xs text-danger font-bold uppercase tracking-widest hover:underline text-right select-none">
+                  Remove
                 </button>
               </div>
             ))}
@@ -191,19 +191,19 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
         )}
       </section>
 
-      <div className="border-t-2 border-black pt-8 mt-4">
+      <div className="border-t border-neutral-200 pt-8 mt-4">
         {saveStatus === 'success' ? (
-          <div className="inline-flex items-center px-4 py-3 border-2 border-[#0D7377] text-[#0D7377] font-bold text-ui-sm uppercase tracking-widest bg-white">
-            ✓ MEDICAL HISTORY SAVED
+          <div className="inline-flex items-center px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
+            ✓ Medical History Saved
           </div>
         ) : (
           <Button
             variant="primary"
             onClick={handleSave}
             disabled={isSaving}
-            className={saveStatus === 'error' ? 'border-[#FF3000] text-[#FF3000]' : ''}
+            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
           >
-            {isSaving ? 'SAVING...' : saveStatus === 'error' ? 'SAVE FAILED — TRY AGAIN' : 'SAVE MEDICAL HISTORY →'}
+            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Medical History →'}
           </Button>
         )}
       </div>
