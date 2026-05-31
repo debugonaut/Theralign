@@ -33,6 +33,19 @@ const DoctorProfileEditor = () => {
   const [degreeFile, setDegreeFile] = useState(null);
   const [licenseFile, setLicenseFile] = useState(null);
 
+  // ─── City coordinate lookup ───
+  const CITY_COORDS = {
+    pune:      { lat: '18.5204', lng: '73.8567' },
+    mumbai:    { lat: '19.0760', lng: '72.8777' },
+    bangalore: { lat: '12.9716', lng: '77.5946' },
+    delhi:     { lat: '28.6139', lng: '77.2090' },
+    hyderabad: { lat: '17.3850', lng: '78.4867' },
+  };
+  const getCityCoords = (cityVal) => {
+    const key = (cityVal || 'pune').toLowerCase();
+    return CITY_COORDS[key] || CITY_COORDS.pune;
+  };
+
   const fetchProfileData = async () => {
     setIsLoading(true);
     try {
@@ -295,19 +308,7 @@ const DoctorProfileEditor = () => {
     );
   }
 
-  const CITY_COORDS = {
-    pune:      { lat: '18.5204', lng: '73.8567' },
-    mumbai:    { lat: '19.0760', lng: '72.8777' },
-    bangalore: { lat: '12.9716', lng: '77.5946' },
-    delhi:     { lat: '28.6139', lng: '77.2090' },
-    hyderabad: { lat: '17.3850', lng: '78.4867' },
-  };
-
-  const getCityCoords = (cityVal) => {
-    const key = (cityVal || 'pune').toLowerCase();
-    return CITY_COORDS[key] || CITY_COORDS.pune;
-  };
-
+  const isVerified = profile?.verificationStatus === 'verified';
   const currentStatus = profile?.verificationStatus || 'pending';
   // 0: SUBMITTED, 1: UNDER REVIEW, 2: APPROVED, 3: ACTIVE
   let activeStep = 0;
