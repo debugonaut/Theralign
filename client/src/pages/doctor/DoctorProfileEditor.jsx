@@ -249,9 +249,10 @@ const DoctorProfileEditor = () => {
       formData.append('clinicName', clinicName.trim());
       formData.append('clinicAddress', currentClinicAddress);
       
-      // Keep default coordinates or parse if needed
-      formData.append('latitude', '12.9716');
-      formData.append('longitude', '77.5946');
+      // Use actual city coordinates instead of hardcoded defaults
+      const coords = getCityCoords(city);
+      formData.append('latitude', coords.lat);
+      formData.append('longitude', coords.lng);
 
       formData.append('consultationFee', parseFloat(consultationFee));
 
@@ -294,7 +295,18 @@ const DoctorProfileEditor = () => {
     );
   }
 
-  const isVerified = profile?.verificationStatus === 'verified';
+  const CITY_COORDS = {
+    pune:      { lat: '18.5204', lng: '73.8567' },
+    mumbai:    { lat: '19.0760', lng: '72.8777' },
+    bangalore: { lat: '12.9716', lng: '77.5946' },
+    delhi:     { lat: '28.6139', lng: '77.2090' },
+    hyderabad: { lat: '17.3850', lng: '78.4867' },
+  };
+
+  const getCityCoords = (cityVal) => {
+    const key = (cityVal || 'pune').toLowerCase();
+    return CITY_COORDS[key] || CITY_COORDS.pune;
+  };
 
   const currentStatus = profile?.verificationStatus || 'pending';
   // 0: SUBMITTED, 1: UNDER REVIEW, 2: APPROVED, 3: ACTIVE

@@ -115,11 +115,13 @@ export const onboardDoctor = async (userId, profileData, files) => {
   };
 
   if (profile) {
-    // Update existing profile
-    profile = await DoctorProfile.findOneAndUpdate({ user: userId }, updatePayload, {
-      new: true,
-      runValidators: true,
-    });
+    // Update existing profile — use $set to avoid re-triggering unique index validation
+    // on fields like registrationNumber that haven't changed
+    profile = await DoctorProfile.findOneAndUpdate(
+      { user: userId },
+      { $set: updatePayload },
+      { new: true, runValidators: false }
+    );
   } else {
     // Create new profile
     profile = await DoctorProfile.create(updatePayload);
