@@ -323,7 +323,7 @@ const PatientAppointments = () => {
                             </div>
 
                             {/* Session Document Attachment F3 */}
-                            {appt.sessionDocument && (
+                            {appt.sessionDocument?.url && (
                               <div className="pt-4 border-t border-neutral-200 flex items-center justify-between">
                                 <div>
                                   <span className="text-[10px] font-black text-success uppercase tracking-widest block">
@@ -334,7 +334,7 @@ const PatientAppointments = () => {
                                   </span>
                                 </div>
                                 <a
-                                  href={appt.sessionDocument}
+                                  href={appt.sessionDocument.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="h-10 px-4 border-2 border-success text-success bg-white hover:bg-success hover:text-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"

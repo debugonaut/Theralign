@@ -42,8 +42,8 @@ const PatientPayments = () => {
 
   const downloadReceipt = (payment) => {
     // If appointment has a clinical document F3, we can download that
-    if (payment.appointment?.sessionDocument) {
-      window.open(payment.appointment.sessionDocument, '_blank');
+    if (payment.appointment?.sessionDocument?.url) {
+      window.open(payment.appointment.sessionDocument.url, '_blank');
       return;
     }
 

@@ -202,7 +202,7 @@ const AppointmentDetailsPage = () => {
           </div>
 
           {/* Recovery Documents F3 */}
-          {appointment.sessionDocument && (
+          {appointment.sessionDocument?.url && (
             <div className="py-6 border-b border-neutral-100 text-left flex flex-col gap-3">
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-success" />
@@ -212,7 +212,7 @@ const AppointmentDetailsPage = () => {
                 Your therapist uploaded active session logs and recovery programs.
               </p>
               <a
-                href={appointment.sessionDocument}
+                href={appointment.sessionDocument.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-2 w-full"
