@@ -37,7 +37,11 @@ app.use(helmet());
 
 // Layer 2: CORS Setup (Environment-Aware & Strict)
 const allowedOrigins = config.nodeEnv === 'production'
-  ? [config.clientUrl].filter(Boolean)
+  ? [
+      config.clientUrl,
+      'https://physioconnect.vercel.app',
+      'https://theralign.vercel.app',
+    ].filter(Boolean)
   : ['http://localhost:5173', 'http://localhost:3000', config.clientUrl].filter(Boolean);
 
 app.use(cors({

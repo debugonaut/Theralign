@@ -159,15 +159,15 @@ const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
 
       const popupHtml = `
         <div style="font-family:system-ui,sans-serif;width:185px;padding:4px;">
-          <h5 style="margin:0 0 2px;font-size:12px;font-weight:800;color:#171717;text-transform:uppercase;">Dr. ${name}</h5>
-          <p style="margin:0 0 4px;font-size:9px;font-weight:800;color:#FF3000;text-transform:uppercase;">${spec}</p>
-          ${distKm ? `<p style="margin:0 0 4px;font-size:9px;color:#666;">${distKm} km away · ${doc.city || ''}</p>` : `<p style="margin:0 0 4px;font-size:9px;color:#666;">${doc.city || ''}</p>`}
+          <h5 style="margin:0 0 2px;font-size:15.6px;font-weight:800;color:#171717;text-transform:uppercase;">Dr. ${name}</h5>
+          <p style="margin:0 0 4px;font-size:11.7px;font-weight:800;color:#FF3000;text-transform:uppercase;">${spec}</p>
+          ${distKm ? `<p style="margin:0 0 4px;font-size:11.7px;color:#666;">${distKm} km away · ${doc.city || ''}</p>` : `<p style="margin:0 0 4px;font-size:11.7px;color:#666;">${doc.city || ''}</p>`}
           <div style="height:1px;background:#f5f5f5;margin-bottom:6px;"></div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#525252;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#525252;">
             <span>★ ${(doc.averageRating || 5).toFixed(1)}</span>
             <span>₹${doc.consultationFee}/session</span>
           </div>
-          <button onclick="window.__theralignSelectDoctor('${doc._id}')" style="margin-top:8px;width:100%;padding:5px 0;background:#0c4a6e;color:white;border:none;font-size:10px;font-weight:800;text-transform:uppercase;cursor:pointer;border-radius:3px;">
+          <button onclick="window.__theralignSelectDoctor('${doc._id}')" style="margin-top:8px;width:100%;padding:5px 0;background:#0c4a6e;color:white;border:none;font-size:13px;font-weight:800;text-transform:uppercase;cursor:pointer;border-radius:3px;">
             VIEW & BOOK →
           </button>
         </div>`;
@@ -206,18 +206,18 @@ const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
       <div className="flex items-center justify-between border-b border-neutral-100 pb-3 mb-3 shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse" />
-          <span className="text-[10px] font-black text-neutral-900 uppercase tracking-widest">
+          <span className="text-[13px] font-black text-neutral-900 uppercase tracking-widest">
             Realtime Specialist Radar
           </span>
         </div>
-        <div className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+        <div className="text-[13px] text-neutral-400 font-bold uppercase tracking-wider">
           {visibleDoctors.length} / {allDoctors.length} clinics
         </div>
       </div>
 
       {/* Radius Filter */}
       <div className="flex items-center gap-3 mb-3 shrink-0">
-        <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest whitespace-nowrap">
+        <span className="text-[11.7px] font-black text-neutral-500 uppercase tracking-widest whitespace-nowrap">
           RADIUS:
         </span>
         <input
@@ -228,7 +228,7 @@ const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
           onChange={(e) => setRadiusIdx(Number(e.target.value))}
           className="flex-1 h-1.5 accent-teal-500 cursor-pointer"
         />
-        <span className="text-[10px] font-black text-teal-600 uppercase tracking-wider whitespace-nowrap min-w-[80px] text-right">
+        <span className="text-[13px] font-black text-teal-600 uppercase tracking-wider whitespace-nowrap min-w-[80px] text-right">
           {radiusLabel}
         </span>
       </div>
@@ -236,12 +236,12 @@ const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
       {/* Selected doctor banner */}
       {selectedDoctorId && (
         <div className="flex items-center justify-between bg-accent/5 border border-accent/20 rounded px-3 py-1.5 mb-3 shrink-0">
-          <span className="text-[10px] font-black text-accent uppercase tracking-wider">
+          <span className="text-[13px] font-black text-accent uppercase tracking-wider">
             1 DOCTOR SELECTED — SCROLL DOWN TO BOOK
           </span>
           <button
             onClick={() => onDoctorSelect && onDoctorSelect(null)}
-            className="text-[9px] font-black text-neutral-500 hover:text-accent uppercase tracking-wider ml-3 cursor-pointer"
+            className="text-[11.7px] font-black text-neutral-500 hover:text-accent uppercase tracking-wider ml-3 cursor-pointer"
           >
             CANCEL ×
           </button>
@@ -256,20 +256,20 @@ const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
         {!mapLoaded && (
           <div className="absolute inset-0 bg-white flex flex-col items-center justify-center p-6 text-center z-10">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-2" />
-            <h5 className="text-[10px] font-black text-neutral-500 uppercase tracking-wider">Acquiring Satellites...</h5>
+            <h5 className="text-[13px] font-black text-neutral-500 uppercase tracking-wider">Acquiring Satellites...</h5>
           </div>
         )}
         {mapLoaded && visibleDoctors.length === 0 && (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
             <ShieldAlert className="w-8 h-8 text-neutral-400 mb-2" />
-            <h5 className="text-xs font-black text-neutral-700 uppercase tracking-wider">No Clinics in Radius</h5>
-            <p className="text-[10px] text-neutral-500 mt-1 max-w-[200px]">Increase the radius slider to discover more specialists.</p>
+            <h5 className="text-[15.6px] font-black text-neutral-700 uppercase tracking-wider">No Clinics in Radius</h5>
+            <p className="text-[13px] text-neutral-500 mt-1 max-w-[200px]">Increase the radius slider to discover more specialists.</p>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="mt-3 shrink-0 flex items-center justify-between text-[9px] text-neutral-400 font-bold uppercase tracking-wider border-t border-neutral-100 pt-2.5">
+      <div className="mt-3 shrink-0 flex items-center justify-between text-[11.7px] text-neutral-400 font-bold uppercase tracking-wider border-t border-neutral-100 pt-2.5">
         <span>GPS Active · {center.name}</span>
         <span>{visibleDoctors.length} clinics in {radiusLabel} radius</span>
       </div>
