@@ -336,13 +336,19 @@ const DoctorProfileEditor = () => {
           />
 
           {/* Email (Disabled, Read-only) */}
-          <Input
-            type="email"
-            label="Email Address"
-            value={profile?.user?.email || ''}
-            disabled={true}
-            placeholder="you@example.com"
-          />
+          <div className="flex flex-col gap-1.5">
+            <Input
+              type="email"
+              label="Email Address"
+              value={profile?.user?.email || user?.email || ''}
+              disabled={true}
+              showLock={true}
+              placeholder="you@example.com"
+            />
+            <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
+              Email cannot be changed. Contact support if needed.
+            </span>
+          </div>
         </div>
 
         {/* Phone Input with Internal prefix line */}

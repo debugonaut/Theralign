@@ -12,12 +12,12 @@ import { X } from 'lucide-react';
 
 const VARIANT_CONFIG = {
   success: { accentColor: '#0A7E6E', autoDismiss: true  },
-  error:   { accentColor: '#C0392B', autoDismiss: false },
+  error:   { accentColor: '#C0392B', autoDismiss: true  },
   info:    { accentColor: '#0B4F6C', autoDismiss: true  },
   warning: { accentColor: '#B45309', autoDismiss: true  },
 };
 
-const AUTO_DISMISS_MS = 4000;
+const AUTO_DISMISS_MS = 5000;
 
 /* ── Context ──────────────────────────────────────────────── */
 const ToastContext = createContext(null);
