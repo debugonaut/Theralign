@@ -10,6 +10,7 @@ import Badge from '../../components/common/Badge';
 import Table, { ActionLink } from '../../components/common/Table';
 import OnboardingCard from '../../components/doctor/OnboardingCard';
 import ProfileCompletionCard from '../../components/doctor/ProfileCompletionCard';
+import Button from '../../components/common/Button';
 
 const DoctorDashboard = () => {
   const navigate = useNavigate();

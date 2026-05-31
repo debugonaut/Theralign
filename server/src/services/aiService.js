@@ -2,7 +2,7 @@ import { getOpenAIClient } from '../config/openai.js';
 import logger from '../utils/logger.js';
 
 const AI_TIMEOUT_MS = 8000; // 8 second timeout before giving up
-const MODEL = 'gpt-4o-mini';
+const MODEL = 'gemini-1.5-flash';
 
 // ─── Core helper ──────────────────────────────────────────────
 
@@ -10,28 +10,38 @@ const callAI = async (messages, options = {}) => {
   const client = getOpenAIClient();
 
   if (!client) {
-    logger.warn('AI service unavailable — OpenAI client not initialized');
+    logger.warn('AI service unavailable — Gemini client not initialized');
     return null;
   }
 
   try {
-    const completion = await Promise.race([
-      client.chat.completions.create({
-        model: MODEL,
-        messages,
+    const model = client.getGenerativeModel({
+      model: MODEL,
+      generationConfig: {
         temperature: options.temperature ?? 0.3,
-        max_tokens: options.maxTokens ?? 300,
-      }),
+        maxOutputTokens: options.maxTokens ?? 300,
+      },
+    });
+
+    // Convert OpenAI-style messages to Gemini format
+    const systemMsg = messages.find(m => m.role === 'system');
+    const userMsg = messages.find(m => m.role === 'user');
+    const prompt = systemMsg
+      ? `${systemMsg.content}\n\n${userMsg.content}`
+      : userMsg.content;
+
+    const result = await Promise.race([
+      model.generateContent(prompt),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('AI request timed out')), AI_TIMEOUT_MS)
       )
     ]);
 
-    return completion.choices[0]?.message?.content?.trim() || null;
+    return result.response.text()?.trim() || null;
 
   } catch (err) {
     logger.error(`AI service error: ${err.message}`);
-    return null; // Always return null on failure — never throw
+    return null;
   }
 };
 

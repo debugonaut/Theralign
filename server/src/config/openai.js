@@ -1,16 +1,14 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import config from './env.js';
 
-let openaiClient = null;
+let geminiClient = null;
 
 export const getOpenAIClient = () => {
-  if (!config.ai.openaiKey) {
-    return null; // Caller must handle null gracefully
+  if (!config.ai.openaiKey) return null;
+
+  if (!geminiClient) {
+    geminiClient = new GoogleGenerativeAI(config.ai.openaiKey);
   }
 
-  if (!openaiClient) {
-    openaiClient = new OpenAI({ apiKey: config.ai.openaiKey });
-  }
-
-  return openaiClient;
+  return geminiClient;
 };
