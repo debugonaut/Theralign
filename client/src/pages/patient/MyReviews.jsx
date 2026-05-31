@@ -11,7 +11,7 @@ const MyReviews = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'MY REVIEWS — KINETIQ';
+    document.title = 'MY REVIEWS — Theralign';
     const fetch = async () => {
       setLoading(true);
       try {

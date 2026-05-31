@@ -42,7 +42,7 @@ const DoctorAvailability = () => {
   };
 
   useEffect(() => {
-    document.title = 'MANAGE AVAILABILITY — KINETIQ';
+    document.title = 'MANAGE AVAILABILITY — Theralign';
     fetchSlots();
   }, []);
 

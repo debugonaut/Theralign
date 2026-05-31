@@ -14,7 +14,7 @@ const DoctorEarnings = () => {
   const limit = 10;
 
   useEffect(() => {
-    document.title = 'EARNINGS — KINETIQ';
+    document.title = 'EARNINGS — Theralign';
     const fetchData = async () => {
       try {
         const res = await getDoctorAppointments();

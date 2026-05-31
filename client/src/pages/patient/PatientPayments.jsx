@@ -32,7 +32,7 @@ const PatientPayments = () => {
   };
 
   useEffect(() => {
-    document.title = 'PAYMENT HISTORY — KINETIQ';
+    document.title = 'PAYMENT HISTORY — Theralign';
     fetchPayments();
   }, []);
 
@@ -55,7 +55,7 @@ const PatientPayments = () => {
 
     const content = `
 ==================================================
-              KINETIQ CLINICAL RECEIPT
+              Theralign CLINICAL RECEIPT
 ==================================================
 RECEIPT DATE:      ${new Date(payment.createdAt).toLocaleDateString('en-IN')}
 TRANSACTION ID:    ${paymentId}
@@ -67,13 +67,13 @@ COMMISSION (10%):  ₹${(payment.amount * 0.1).toFixed(0)}
 PAYMENT SYSTEM:    SECURED BY RAZORPAY GATEWAY
 STATUS:            CONFIRMED / PAID
 
-Thank you for choosing Kinetiq clinical networks.
+Thank you for choosing Theralign clinical networks.
 ==================================================
 `;
     const element = document.createElement("a");
     const file = new Blob([content], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = `KINETIQ-RECEIPT-${paymentId.slice(-8)}.txt`;
+    element.download = `Theralign-RECEIPT-${paymentId.slice(-8)}.txt`;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);

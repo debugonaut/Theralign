@@ -90,7 +90,7 @@ const DoctorProfileEditor = () => {
   };
 
   useEffect(() => {
-    document.title = 'MY PROFILE — KINETIQ';
+    document.title = 'MY PROFILE — Theralign';
     fetchProfileData();
   }, []);
 

@@ -50,7 +50,7 @@ const DoctorDashboard = () => {
   };
 
   useEffect(() => {
-    document.title = 'DOCTOR DASHBOARD — KINETIQ';
+    document.title = 'DOCTOR DASHBOARD — Theralign';
     fetchDashboardData();
   }, []);
 

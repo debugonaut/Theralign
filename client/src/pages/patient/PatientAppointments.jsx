@@ -47,7 +47,7 @@ const PatientAppointments = () => {
   };
 
   useEffect(() => {
-    document.title = 'MY APPOINTMENTS — KINETIQ';
+    document.title = 'MY APPOINTMENTS — Theralign';
     fetchAppointments();
   }, []);
 

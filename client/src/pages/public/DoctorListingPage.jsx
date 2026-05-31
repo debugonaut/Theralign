@@ -49,7 +49,7 @@ const DoctorListingPage = () => {
 
   // Sync title
   useEffect(() => {
-    document.title = 'FIND DOCTORS — KINETIQ';
+    document.title = 'FIND DOCTORS — Theralign';
   }, []);
 
   // Fetch listing data
