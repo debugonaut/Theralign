@@ -2,14 +2,11 @@ import axios from 'axios';
 
 let apiURL = import.meta.env.VITE_API_URL;
 
-if (!apiURL) {
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    // Dynamically fallback to secure production backend if running on deployed remote domains like Vercel
-    apiURL = 'https://physioconnect-api.onrender.com';
-  } else {
-    // Default local fallback
-    apiURL = 'http://localhost:5000';
-  }
+if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+  // Force local development server (configured on port 5001 in server env)
+  apiURL = 'http://localhost:5001';
+} else if (!apiURL) {
+  apiURL = 'https://physioconnect-api.onrender.com';
 }
 
 const axiosInstance = axios.create({
