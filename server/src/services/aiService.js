@@ -6,7 +6,9 @@ const MODEL = 'gemini-2.0-flash-lite';
 
 // ─── Core helper ──────────────────────────────────────────────
 
-const callAI = async (messages, options = {}) => {
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const callAI = async (messages, options = {}, retries = 2) => {
   const client = getOpenAIClient();
 
   if (!client) {
@@ -40,6 +42,13 @@ const callAI = async (messages, options = {}) => {
     return result.response.text()?.trim() || null;
 
   } catch (err) {
+    if (retries > 0 && err.message?.includes('429')) {
+      const match = err.message.match(/(\d+)s/);
+      const waitMs = match ? (parseInt(match[1]) + 1) * 1000 : 20000;
+      logger.warn(`AI rate limited. Retrying in ${waitMs / 1000}s...`);
+      await sleep(waitMs);
+      return callAI(messages, options, retries - 1);
+    }
     logger.error(`AI service error: ${err.message}`);
     return null;
   }
