@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 /**
  * Structured Warmth — Toast Notification System
  *
- * Placed in the bottom-right corner. Incorporates rounded-lg (12px), soft Slate
+ * Placed in the top-right corner. Incorporates rounded-lg (12px), soft Slate
  * borders, shadow-dropdown, and brand semantic accents.
  */
 
@@ -112,10 +112,10 @@ export const ToastProvider = ({ children }) => {
     <ToastContext.Provider value={toast}>
       {children}
 
-      {/* Toast Container — fixed bottom-right */}
+      {/* Toast Container — fixed top-right */}
       <div
         className="fixed flex flex-col gap-3"
-        style={{ bottom: '24px', right: '24px', zIndex: '10000' }}
+        style={{ top: '24px', right: '24px', zIndex: '10000' }}
         aria-label="Notifications"
       >
         {toasts.map((t) => (

@@ -18,7 +18,7 @@ const App = () => {
       <BrowserRouter>
         {/* Legacy toaster — kept during migration, styled to Swiss system */}
         <Toaster
-          position="bottom-right"
+          position="top-right"
           toastOptions={{
             duration: 4000,
             style: {
