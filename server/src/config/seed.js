@@ -5,6 +5,7 @@ import DoctorProfile from '../models/DoctorProfile.model.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import Appointment from '../models/Appointment.model.js';
 import Payment from '../models/Payment.model.js';
+import Review from '../models/Review.model.js';
 import logger from '../utils/logger.js';
 import { ROLES, APPOINTMENT_STATUS, DOCTOR_STATUS } from '../utils/constants.js';
 
@@ -18,24 +19,31 @@ const getOffsetDateString = (offsetDays) => {
   return `${year}-${month}-${day}`;
 };
 
-const runSeed = async () => {
+export const runSeed = async (shouldCloseConnection = true) => {
   try {
-    logger.info('[Seed] Initializing Phase 5 database seed...');
-    await connectDB();
+    logger.info('[Seed] Initializing high-fidelity demo database seed...');
+    
+    // Only connect if not already connected
+    if (mongoose.connection.readyState === 0) {
+      await connectDB();
+    }
 
     // ─── 1. Find or Create Demo Patient ──────────────────────────────────────
-    let patient = await User.findOne({ role: ROLES.PATIENT });
+    let patient = await User.findOne({ email: 'patient@demo.com' });
     if (!patient) {
       patient = await User.create({
         name: 'Demo Patient',
         email: 'patient@demo.com',
-        password: 'Patient@123', // Hashed automatically by schema hook
+        password: 'Demo@1234', // Updated to match README
         role: ROLES.PATIENT,
         phone: '9876543210',
       });
       logger.info(`[Seed] Created demo patient account: ${patient.email}`);
     } else {
-      logger.info(`[Seed] Found existing patient account: ${patient.email}`);
+      // Ensure password is aligned with README
+      patient.password = 'Demo@1234';
+      await patient.save();
+      logger.info(`[Seed] Found and verified patient account: ${patient.email}`);
     }
 
     // ─── 2. Retrieve Verified Doctors ────────────────────────────────────────
@@ -44,14 +52,23 @@ const runSeed = async () => {
       logger.warn('[Seed] No verified doctor profiles found in the database. Please run seedDoctors first!');
       return;
     }
-    logger.info(`[Seed] Found ${doctors.length} verified doctors to populate slots.`);
+    logger.info(`[Seed] Found ${doctors.length} verified doctors to seed data for.`);
 
-    // ─── 3. Seed Availability Slots ──────────────────────────────────────────
+    // ─── 3. Clear existing transaction/slot records ───────────────────────────
+    logger.info('[Seed] Clearing all existing slots, appointments, payments, and reviews for a clean demo slate...');
+    await AvailabilitySlot.deleteMany({});
+    await Appointment.deleteMany({});
+    await Payment.deleteMany({});
+    await Review.deleteMany({});
+
+    // ─── 4. Seed Availability Slots ──────────────────────────────────────────
     const timeSlots = [
       { start: '09:00', end: '09:30' },
       { start: '10:00', end: '10:30' },
+      { start: '11:00', end: '11:30' },
       { start: '14:00', end: '14:30' },
       { start: '15:00', end: '15:30' },
+      { start: '16:00', end: '16:30' },
     ];
 
     let slotsCreated = 0;
@@ -63,26 +80,16 @@ const runSeed = async () => {
         
         for (const slotTime of timeSlots) {
           try {
-            // Idempotent slot creation: check if exists or use try-catch for compound unique key error
-            const exists = await AvailabilitySlot.findOne({
+            await AvailabilitySlot.create({
               doctor: doctor._id,
               date: dateStr,
               startTime: slotTime.start,
+              endTime: slotTime.end,
+              isBooked: false,
+              isActive: true,
             });
-
-            if (!exists) {
-              await AvailabilitySlot.create({
-                doctor: doctor._id,
-                date: dateStr,
-                startTime: slotTime.start,
-                endTime: slotTime.end,
-                isBooked: false,
-                isActive: true,
-              });
-              slotsCreated++;
-            }
+            slotsCreated++;
           } catch (slotError) {
-            // Skip unique conflicts if duplicates arise during parallel seeding
             if (slotError.code !== 11000) {
               throw slotError;
             }
@@ -92,28 +99,98 @@ const runSeed = async () => {
     }
     logger.info(`[Seed] Availability slot seeding complete. Created ${slotsCreated} slots.`);
 
-    // ─── 4. Seed 3 Sample Bookings ───────────────────────────────────────────
-    logger.info('[Seed] Seeding sample appointment bookings...');
+    // ─── 5. Seed Realistic Reviews ───────────────────────────────────────────
+    logger.info('[Seed] Seeding patient reviews and updating rating averages...');
+    
+    const reviewComments = [
+      "Excellent treatment! My shoulder pain is completely gone after 3 sessions.",
+      "Very professional and knowledgeable physiotherapist. Highly recommended!",
+      "Great experience. The clinic is clean and they follow all hygiene standards.",
+      "The exercises suggested were very effective. Feeling much better now.",
+      "Very patient and listens to all symptoms carefully. Exceptional care.",
+      "Highly skilled. Explained the anatomy of my injury and recovery plan clearly.",
+      "Excellent hands-on manual therapy. Had instant relief from back lock.",
+      "Very polite staff and the doctor is extremely experienced. Outstanding!",
+      "I was struggling with chronic knee pain for months, but the sports rehab was a lifesaver.",
+      "Great posture correction routines. Already seeing improvements in my neck strain."
+    ];
+    
+    let reviewsCreated = 0;
+    
+    // Seed 2 reviews per doctor to trigger post-save hook aggregations
+    for (let i = 0; i < doctors.length; i++) {
+      const doctor = doctors[i];
+      const fee = doctor.consultationFee || 800;
+      const comm = parseFloat((fee * 0.10).toFixed(2));
+      const earn = parseFloat((fee * 0.90).toFixed(2));
+      
+      for (let j = 0; j < 2; j++) {
+        const offsetDays = -(j * 3 + 2); // -2, -5 days ago
+        const dateStr = getOffsetDateString(offsetDays);
+        const seedTimestamp = new Date(dateStr);
+        const demoPaymentId = `pay_review_${i}_${j}_${Date.now()}`;
+        
+        const appt = await Appointment.create({
+          patient: patient._id,
+          doctor: doctor._id,
+          slot: null,
+          date: dateStr,
+          startTime: j === 0 ? '10:00' : '15:00',
+          endTime: j === 0 ? '10:30' : '15:30',
+          status: APPOINTMENT_STATUS.COMPLETED,
+          consultationFee: fee,
+          platformCommission: comm,
+          doctorEarnings: earn,
+          patientNotes: `[Review Seed] Completed session ${j + 1}`,
+          paymentStatus: 'paid',
+          paymentId: demoPaymentId,
+          createdAt: seedTimestamp,
+          updatedAt: seedTimestamp,
+        });
+        
+        await Payment.create({
+          appointment: appt._id,
+          patient: patient._id,
+          doctor: doctor._id,
+          razorpayOrderId: `order_review_${i}_${j}_${Date.now()}`,
+          razorpayPaymentId: demoPaymentId,
+          razorpaySignature: 'demo_review_sig_hash',
+          amount: fee,
+          currency: 'INR',
+          status: 'paid',
+          platformCommission: comm,
+          doctorEarnings: earn,
+          createdAt: seedTimestamp,
+          updatedAt: seedTimestamp,
+        });
+        
+        const rating = i % 2 === 0 ? (j === 0 ? 5 : 4) : 5; // Give alternating 5 and 4.5 star ratings
+        const comment = reviewComments[(i * 2 + j) % reviewComments.length];
+        
+        await Review.create({
+          appointment: appt._id,
+          patient: patient._id,
+          doctor: doctor._id,
+          rating,
+          comment,
+          isVisible: true,
+          createdAt: seedTimestamp,
+          updatedAt: seedTimestamp,
+        });
+        
+        reviewsCreated++;
+      }
+    }
+    logger.info(`[Seed] Seeded ${reviewsCreated} realistic patient reviews and updated ratings.`);
+
+    // ─── 6. Seed Sample Live Bookings ─────────────────────────────────────────
+    logger.info('[Seed] Seeding sample upcoming bookings...');
     const firstDoctor = doctors[0];
-    const fee = firstDoctor.consultationFee || 500;
+    const fee = firstDoctor.consultationFee || 800;
     const comm = parseFloat((fee * 0.10).toFixed(2));
     const earn = parseFloat((fee * 0.90).toFixed(2));
 
-    // Clear existing appointments to prevent database bloat
-    await Appointment.deleteMany({
-      $or: [
-        { patientNotes: '[Demo] Upcoming confirmed visit' },
-        { patientNotes: '[Demo] Past completed visit' },
-        { patientNotes: '[Demo] Cancelled schedule conflict' }
-      ]
-    });
-
-    // Clear existing demo payments
-    await Payment.deleteMany({
-      razorpayOrderId: { $regex: /^order_demo_/ }
-    });
-
-    // A) 1 Upcoming Confirmed Appointment (Tomorrow, 09:00 slot)
+    // Upcoming Confirmed Appointment (Tomorrow, 09:00 slot)
     const dateTomorrow = getOffsetDateString(1);
     let slotA = await AvailabilitySlot.findOne({
       doctor: firstDoctor._id,
@@ -141,86 +218,7 @@ const runSeed = async () => {
       logger.info(`[Seed] Created confirmed booking: ${apptA._id} on ${apptA.date}`);
     }
 
-    // B) 1 Past Completed Appointment (Yesterday, 14:00 slot)
-    const dateYesterday = getOffsetDateString(-1);
-    let slotB = await AvailabilitySlot.findOne({
-      doctor: firstDoctor._id,
-      date: dateYesterday,
-      startTime: '14:00',
-    });
-
-    if (slotB) {
-      slotB.isBooked = true;
-      await slotB.save();
-
-      const demoPaymentId = 'pay_demo_' + Date.now();
-
-      const apptB = await Appointment.create({
-        patient: patient._id,
-        doctor: firstDoctor._id,
-        slot: slotB._id,
-        date: slotB.date,
-        startTime: slotB.startTime,
-        endTime: slotB.endTime,
-        status: APPOINTMENT_STATUS.COMPLETED,
-        consultationFee: fee,
-        platformCommission: comm,
-        doctorEarnings: earn,
-        patientNotes: '[Demo] Past completed visit',
-        paymentStatus: 'paid',
-        paymentId: demoPaymentId,
-      });
-
-      // Create a corresponding Payment document
-      await Payment.create({
-        appointment: apptB._id,
-        patient: patient._id,
-        doctor: firstDoctor._id,
-        razorpayOrderId: 'order_demo_' + Date.now(),
-        razorpayPaymentId: demoPaymentId,
-        razorpaySignature: 'demo_signature_hash',
-        amount: fee,
-        currency: 'INR',
-        status: 'paid',
-        platformCommission: comm,
-        doctorEarnings: earn,
-      });
-
-      logger.info(`[Seed] Created completed past booking: ${apptB._id} on ${apptB.date}`);
-      logger.info('[Seed] Payment seed: 1 demo payment record created');
-    }
-
-    // C) 1 Cancelled Appointment (Yesterday, 15:00 slot)
-    let slotC = await AvailabilitySlot.findOne({
-      doctor: firstDoctor._id,
-      date: dateYesterday,
-      startTime: '15:00',
-    });
-
-    if (slotC) {
-      // Cancelled slot should remain isBooked: false in DB so it can be re-booked!
-      slotC.isBooked = false;
-      await slotC.save();
-
-      const apptC = await Appointment.create({
-        patient: patient._id,
-        doctor: firstDoctor._id,
-        slot: slotC._id,
-        date: slotC.date,
-        startTime: slotC.startTime,
-        endTime: slotC.endTime,
-        status: APPOINTMENT_STATUS.CANCELLED,
-        consultationFee: fee,
-        platformCommission: comm,
-        doctorEarnings: earn,
-        patientNotes: '[Demo] Cancelled schedule conflict',
-        cancellationReason: 'Doctor had an emergency surgery.',
-        cancelledBy: 'doctor',
-      });
-      logger.info(`[Seed] Created cancelled past booking: ${apptC._id} on ${apptC.date}`);
-    }
-
-    // ─── 5. Seed 30-Day Historical Data for Analytics Charts ─────────────────
+    // ─── 7. Seed 30-Day Historical Data for Analytics Charts ─────────────────
     logger.info('[Seed] Seeding 30-day historical data for analytics...');
 
     // Build the list of past dates (30 days ago → yesterday)
@@ -237,17 +235,12 @@ const runSeed = async () => {
     let historicalCount = 0;
 
     for (const dateStr of pastDates) {
-      // Check if historical appointments already exist for this date to ensure idempotency
-      const existingCount = await Appointment.countDocuments({
-        date: dateStr,
-        patientNotes: { $regex: /\[Historical\]/ },
-      });
-      if (existingCount > 0) continue;
-
       const appointmentsForDay = Math.floor(Math.random() * 3) + 2; // 2-4 per day
       for (let i = 0; i < appointmentsForDay; i++) {
-        const doctor = doctors[i % doctors.length];
-        const fee = doctor.consultationFee || 600;
+        // Choose doctors in a round-robin style to distribute earnings
+        const doctorIndex = historicalCount % doctors.length;
+        const doctor = doctors[doctorIndex];
+        const fee = doctor.consultationFee || 800;
         const commission = parseFloat((fee * 0.10).toFixed(2));
         const earnings = parseFloat((fee * 0.90).toFixed(2));
 
@@ -266,7 +259,7 @@ const runSeed = async () => {
             platformCommission: commission,
             doctorEarnings: earnings,
             paymentStatus: 'paid',
-            reviewSubmitted: true,
+            reviewSubmitted: false,
             patientNotes: `[Historical] Demo session ${i + 1}`,
             createdAt: seedTimestamp,
             updatedAt: seedTimestamp,
@@ -298,14 +291,23 @@ const runSeed = async () => {
     }
 
     logger.info(`[Seed] Historical seeding complete. Created ${historicalCount} historical records.`);
-
     logger.info('[Seed] Database seeding run finished successfully.');
   } catch (err) {
     logger.error('[Seed] Database seeding run failed:', err);
   } finally {
-    await mongoose.connection.close();
-    logger.info('[Seed] Database connection closed.');
+    if (shouldCloseConnection && mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
+      logger.info('[Seed] Database connection closed.');
+    }
   }
 };
 
-runSeed();
+// Check if run directly
+const isDirectRun = process.argv[1] && (
+  process.argv[1].endsWith('seed.js') || 
+  process.argv[1].endsWith('seed')
+);
+
+if (isDirectRun) {
+  runSeed(true);
+}

@@ -41,6 +41,12 @@ const doctorProfileSchema = new Schema(
       trim: true,
     },
 
+    city: {
+      type: String,
+      required: [true, 'City is required'],
+      trim: true,
+    },
+
     clinicLocation: {
       type: {
         type: String,
@@ -161,6 +167,7 @@ const doctorProfileSchema = new Schema(
 doctorProfileSchema.index({ clinicLocation: '2dsphere' });
 doctorProfileSchema.index({ verificationStatus: 1 });
 doctorProfileSchema.index({ experience: -1 });
+doctorProfileSchema.index({ city: 1 });
 
 const DoctorProfile = mongoose.model('DoctorProfile', doctorProfileSchema);
 

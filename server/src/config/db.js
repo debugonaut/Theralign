@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import config from './env.js';
 import seedAdmin from './seedAdmin.js';
 import seedDoctors from './seedDoctors.js';
+import { runSeed } from './seed.js';
+import Appointment from '../models/Appointment.model.js';
 
 // Setup connection event listeners
 mongoose.connection.on('connected', () => {
@@ -25,6 +27,13 @@ export const connectDB = async () => {
     // Run idempotent seed — safe on every startup
     await seedAdmin();
     await seedDoctors();
+
+    // Dynamically check if full transaction & analytics data should be seeded
+    const apptCount = await Appointment.countDocuments();
+    if (apptCount < 50) {
+      console.log(`[INFO] Low transaction count (${apptCount} records) detected. Seeding full analytics and slots...`);
+      await runSeed(false); // Pass false so it does NOT close the database connection
+    }
   } catch (error) {
     console.error(`[FATAL ERROR] MongoDB connection failed on initial startup:`, error);
     process.exit(1);

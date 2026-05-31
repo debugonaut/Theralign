@@ -56,9 +56,9 @@ export const getSuggestions = asyncHandler(async (req, res) => {
     ),
 
     // 3. Match distinct cities
-    DoctorProfile.distinct('location.city', {
+    DoctorProfile.distinct('city', {
       verificationStatus: 'verified',
-      'location.city': regex,
+      city: regex,
     }).then(cities => 
       cities
         .filter(Boolean)

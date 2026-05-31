@@ -17,6 +17,7 @@ export const buildDiscoveryQuery = (filters = {}) => {
 
   const {
     specialization,
+    city,
     minFee,
     maxFee,
     minRating,
@@ -34,6 +35,10 @@ export const buildDiscoveryQuery = (filters = {}) => {
     };
     const mapped = specMapping[specialization] || specialization;
     query.specialization = mapped;
+  }
+
+  if (city) {
+    query.city = { $regex: new RegExp(`^${city.trim()}$`, 'i') };
   }
 
   if (minFee !== undefined || maxFee !== undefined) {

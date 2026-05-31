@@ -103,6 +103,7 @@ export const onboardDoctor = async (userId, profileData, files) => {
     experience,
     clinicName: profileData.clinicName,
     clinicAddress: profileData.clinicAddress,
+    city: profileData.city || 'Pune',
     clinicLocation,
     consultationFee,
     bio: profileData.bio,

@@ -4,11 +4,12 @@ import { ROLES, DOCTOR_STATUS } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 
 const doctorSeeds = [
+  // ─── PUNE (6 Doctors) ───────────────────────────────────────────────────────
   {
     user: {
       name: 'Priya Sharma',
-      email: 'priya.sharma@demo.com',
-      password: 'Doctor@123',
+      email: 'doctor@demo.com', // Map README demo doctor email
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
@@ -19,6 +20,7 @@ const doctorSeeds = [
       qualifications: ['BPT', 'MPT - Sports Medicine', 'CSCS'],
       clinicName: 'ActiveCare Physiotherapy & Sports Rehab',
       clinicAddress: 'Koregaon Park Road, Koregaon Park, Pune, Maharashtra 411001',
+      city: 'Pune',
       languages: ['English', 'Hindi', 'Marathi'],
       clinicLocation: { type: 'Point', coordinates: [73.8935, 18.5362] },
       registrationNumber: 'MCI-PT-98271',
@@ -34,7 +36,7 @@ const doctorSeeds = [
     user: {
       name: 'Amit Patel',
       email: 'amit.patel@demo.com',
-      password: 'Doctor@123',
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
@@ -45,6 +47,7 @@ const doctorSeeds = [
       qualifications: ['BPT', 'MPT - Ortho', 'MIAP'],
       clinicName: 'OrthoFit Physiotherapy Clinic',
       clinicAddress: 'Baner-Balewadi Road, Baner, Pune, Maharashtra 411045',
+      city: 'Pune',
       languages: ['English', 'Hindi', 'Gujarati'],
       clinicLocation: { type: 'Point', coordinates: [73.7898, 18.5590] },
       registrationNumber: 'MCI-PT-12495',
@@ -60,7 +63,7 @@ const doctorSeeds = [
     user: {
       name: 'Sneha Kulkarni',
       email: 'sneha.kulkarni@demo.com',
-      password: 'Doctor@123',
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
@@ -71,6 +74,7 @@ const doctorSeeds = [
       qualifications: ['BPT', 'MPT - Neuro-Physiotherapy'],
       clinicName: 'NeuroRehab Centre of Excellence',
       clinicAddress: 'Paud Road, Rambaug Colony, Kothrud, Pune, Maharashtra 411038',
+      city: 'Pune',
       languages: ['English', 'Marathi'],
       clinicLocation: { type: 'Point', coordinates: [73.8087, 18.5074] },
       registrationNumber: 'MCI-PT-45912',
@@ -86,7 +90,7 @@ const doctorSeeds = [
     user: {
       name: 'Rohan Mehta',
       email: 'rohan.mehta@demo.com',
-      password: 'Doctor@123',
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
@@ -97,6 +101,7 @@ const doctorSeeds = [
       qualifications: ['BPT', 'CSCS', 'Dry Needling Practitioner'],
       clinicName: 'Apex Physio and Sports Medicine',
       clinicAddress: 'Viman Nagar Road, Datta Mandir Chowk, Viman Nagar, Pune, Maharashtra 411014',
+      city: 'Pune',
       languages: ['English', 'Hindi'],
       clinicLocation: { type: 'Point', coordinates: [73.9167, 18.5679] },
       registrationNumber: 'MCI-PT-32811',
@@ -112,7 +117,7 @@ const doctorSeeds = [
     user: {
       name: 'Anjali Deshmukh',
       email: 'anjali.deshmukh@demo.com',
-      password: 'Doctor@123',
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
@@ -123,6 +128,7 @@ const doctorSeeds = [
       qualifications: ['BPT', 'MPT - Geriatrics', 'MIAP'],
       clinicName: 'Golden Age Physiotherapy Centre',
       clinicAddress: 'Solapur Road, Gadital, Hadapsar, Pune, Maharashtra 411028',
+      city: 'Pune',
       languages: ['English', 'Hindi', 'Marathi'],
       clinicLocation: { type: 'Point', coordinates: [73.9343, 18.5089] },
       registrationNumber: 'MCI-PT-20938',
@@ -136,35 +142,9 @@ const doctorSeeds = [
   },
   {
     user: {
-      name: 'Vikram Singh',
-      email: 'vikram.singh@demo.com',
-      password: 'Doctor@123',
-      role: ROLES.DOCTOR,
-    },
-    profile: {
-      specialization: ['Manual Therapy', 'Orthopedic Physiotherapy'],
-      experience: 9,
-      consultationFee: 800,
-      bio: 'Dr. Vikram Singh is a certified manual therapist. He combines osteopathic manipulations, spinal mobilization, and dry needling to manage acute joint locks, slip discs, sciatica, and mechanical joint disorders. His clinical treatments are highly hands-on and customized for long-term recovery.',
-      qualifications: ['BPT', 'MPT - Orthopedic Physiotherapy', 'COMT'],
-      clinicName: 'Spine & Joint Manual Therapy Clinic',
-      clinicAddress: 'Wakad-Dange Chowk Road, Wakad, Pune, Maharashtra 411057',
-      languages: ['English', 'Hindi', 'Punjabi'],
-      clinicLocation: { type: 'Point', coordinates: [73.7613, 18.5986] },
-      registrationNumber: 'MCI-PT-87261',
-      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
-      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
-      verificationStatus: DOCTOR_STATUS.VERIFIED,
-      averageRating: 4.6,
-      totalReviews: 22,
-      aiSummary: 'Dr. Vikram Singh is a manual therapy and orthopedic specialist with 9 years of experience. He uses hands-on spinal mobilization and chiropractic techniques to treat acute joint pain, slip discs, and sciatica.',
-    }
-  },
-  {
-    user: {
       name: 'Neha Joshi',
       email: 'neha.joshi@demo.com',
-      password: 'Doctor@123',
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
@@ -175,6 +155,7 @@ const doctorSeeds = [
       qualifications: ['BPT', 'MPT - Pediatrics'],
       clinicName: 'Happy Steps Pediatric Physio',
       clinicAddress: 'DP Road, Aundh, Pune, Maharashtra 411007',
+      city: 'Pune',
       languages: ['English', 'Hindi', 'Gujarati'],
       clinicLocation: { type: 'Point', coordinates: [73.8077, 18.5586] },
       registrationNumber: 'MCI-PT-39182',
@@ -186,134 +167,714 @@ const doctorSeeds = [
       aiSummary: 'Dr. Neha Joshi is a pediatric physiotherapist with 7 years of experience helping children with physical development challenges. She provides gentle, specialized care for cerebral palsy and developmental delays in a welcoming environment.',
     }
   },
+
+  // ─── MUMBAI (7 Doctors) ─────────────────────────────────────────────────────
   {
     user: {
-      name: 'Sandeep Patil',
-      email: 'sandeep.patil@demo.com',
-      password: 'Doctor@123',
+      name: 'Karan Malhotra',
+      email: 'karan.malhotra@demo.com',
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
-      specialization: ['Cardiopulmonary Rehab'],
-      experience: 11,
-      consultationFee: 700,
-      bio: 'Dr. Sandeep Patil is an expert in pulmonary and cardiac rehabilitation. He manages asthma, COPD, and post-bypass patients through systematic progressive aerobic training, breathing retraining, and cardiac safety monitoring to restore vital lung capacities.',
-      qualifications: ['BPT', 'MPT - Cardiopulmonary Sciences'],
-      clinicName: 'Pulse Cardio-Pulmonary Rehab Clinic',
-      clinicAddress: 'MG Road, Camp, Pune, Maharashtra 411001',
-      languages: ['English', 'Marathi'],
-      clinicLocation: { type: 'Point', coordinates: [73.8777, 18.5176] },
-      registrationNumber: 'MCI-PT-11029',
-      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
-      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
-      verificationStatus: DOCTOR_STATUS.VERIFIED,
-      averageRating: 4.6,
-      totalReviews: 15,
-      aiSummary: 'Dr. Sandeep Patil is a cardiopulmonary specialist with 11 years of experience in cardiac and respiratory rehabilitation. He designs personalized progressive exercise programs to restore lung capacity and heart health.',
-    }
-  },
-  {
-    user: {
-      name: 'Meera Nair',
-      email: 'meera.nair@demo.com',
-      password: 'Doctor@123',
-      role: ROLES.DOCTOR,
-    },
-    profile: {
-      specialization: ['Vestibular Rehabilitation', 'Neurological Rehabilitation'],
-      experience: 6,
-      consultationFee: 850,
-      bio: 'Dr. Meera Nair focuses on balance, dizziness, and neurological retraining. She has deep clinical experience in vestibular rehab, benign paroxysmal positional vertigo (BPPV) canalith repositioning, and gait correction for elderly and post-trauma patients.',
-      qualifications: ['BPT', 'MPT - Neuro-Sciences'],
-      clinicName: 'Equilibrium Vestibular Clinic',
-      clinicAddress: 'Deccan Gymkhana, Pune, Maharashtra 411004',
-      languages: ['English', 'Malayalam', 'Tamil'],
-      clinicLocation: { type: 'Point', coordinates: [73.8476, 18.5089] },
-      registrationNumber: 'MCI-PT-45920',
-      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
-      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
-      verificationStatus: DOCTOR_STATUS.VERIFIED,
-      averageRating: 4.8,
-      totalReviews: 19,
-      aiSummary: 'Dr. Meera Nair focuses on balance, dizziness, and neurological retraining. She has deep clinical experience in vestibular rehab, benign paroxysmal positional vertigo (BPPV) canalith repositioning, and gait correction for elderly and post-trauma patients.',
-    }
-  },
-  {
-    user: {
-      name: 'Rajesh Kumar',
-      email: 'rajesh.kumar@demo.com',
-      password: 'Doctor@123',
-      role: ROLES.DOCTOR,
-    },
-    profile: {
-      specialization: ['Orthopedic Physiotherapy', 'Manual Therapy'],
-      experience: 18,
-      consultationFee: 950,
-      bio: 'Dr. Rajesh Kumar is a veteran physiotherapist with over 18 years of experience. He is an authority on non-surgical spine treatment, spinal decompression, sciatica, and advanced orthopedic manual therapy. He has successfully treated thousands of complicated chronic cases.',
-      qualifications: ['BPT', 'MPT - Ortho', 'COMT', 'FIAOM'],
-      clinicName: 'Spine & Musculoskeletal Expert Centre',
-      clinicAddress: 'Hinjewadi Phase 1, Near IT Park, Hinjewadi, Pune, Maharashtra 411057',
-      languages: ['English', 'Hindi'],
-      clinicLocation: { type: 'Point', coordinates: [73.7375, 18.5914] },
-      registrationNumber: 'MCI-PT-77291',
+      specialization: ['Sports Injury Rehab', 'Dry Needling'],
+      experience: 9,
+      consultationFee: 1000,
+      bio: 'Dr. Karan Malhotra is a premium sports physiotherapist in South Mumbai. He provides physical therapy, muscular assessment, dry needling, and athletic tape support to professional marathoners, footballers, and active corporate athletes.',
+      qualifications: ['BPT', 'MPT - Sports Injury', 'Dry Needling Cert'],
+      clinicName: 'ProStrike Sports Rehab & Fitness',
+      clinicAddress: 'Colaba Causeway, Near Gateway, Mumbai, Maharashtra 400001',
+      city: 'Mumbai',
+      languages: ['English', 'Hindi', 'Punjabi'],
+      clinicLocation: { type: 'Point', coordinates: [72.8276, 18.9102] },
+      registrationNumber: 'MCI-PT-77182',
       degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
       licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
       verificationStatus: DOCTOR_STATUS.VERIFIED,
       averageRating: 4.9,
-      totalReviews: 45,
-      aiSummary: 'Dr. Rajesh Kumar is a veteran physiotherapist with over 18 years of experience. He is an authority on non-surgical spine treatment, spinal decompression, sciatica, and advanced orthopedic manual therapy. He has successfully treated thousands of complicated chronic cases.',
+      totalReviews: 35,
+      aiSummary: 'Dr. Karan Malhotra has 9 years of experience in high-performance sports injury rehabilitation and dry needling. He works extensively with competitive athletes in Mumbai to prevent and recover from major muscle and joint injuries.',
     }
   },
   {
     user: {
-      name: 'Pooja Hegde',
-      email: 'pooja.hegde@demo.com',
-      password: 'Doctor@123',
+      name: 'Shalini Sen',
+      email: 'shalini.sen@demo.com',
+      password: 'Demo@1234',
       role: ROLES.DOCTOR,
     },
     profile: {
-      specialization: ['Dry Needling', 'Sports Injury Rehab'],
-      experience: 4,
-      consultationFee: 500,
-      bio: 'Dr. Pooja Hegde is a certified dry needling practitioner and clinical sports physical therapist. She specializes in myofascial trigger point release, chronic muscle spasms, shoulder impingements, and post-workout muscle restoration for active adults.',
-      qualifications: ['BPT', 'Certified Dry Needling Specialist'],
-      clinicName: 'Pooja Hegde Physiotherapy Clinic',
-      clinicAddress: 'Shivajinagar Road, Near FC Road, Shivajinagar, Pune, Maharashtra 411005',
-      languages: ['English', 'Kannada', 'Hindi'],
-      clinicLocation: { type: 'Point', coordinates: [73.8252, 18.5284] },
-      registrationNumber: 'MCI-PT-90182',
-      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
-      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
-      verificationStatus: DOCTOR_STATUS.VERIFIED,
-      averageRating: 4.4,
-      totalReviews: 8,
-      aiSummary: 'Dr. Pooja Hegde is a certified dry needling practitioner and clinical sports physical therapist. She specializes in myofascial trigger point release, chronic muscle spasms, shoulder impingements, and post-workout muscle restoration for active adults.',
-    }
-  },
-  {
-    user: {
-      name: 'Rahul Verma',
-      email: 'rahul.verma@demo.com',
-      password: 'Doctor@123',
-      role: ROLES.DOCTOR,
-    },
-    profile: {
-      specialization: ['Neurological Rehabilitation', 'Geriatric Care'],
+      specialization: ['Neurological Rehabilitation', 'Vestibular Rehabilitation'],
       experience: 14,
-      consultationFee: 850,
-      bio: 'Dr. Rahul Verma possesses 14 years of clinical experience in neurological and age-related physical rehabilitation. He treats stroke survivors, Parkinson’s cases, balancing disorders, and handles fall-prevention exercise programs for geriatric populations.',
-      qualifications: ['BPT', 'MPT - Neuro', 'MIAP'],
-      clinicName: 'CarePlus Neuro & Geriatric Care',
-      clinicAddress: 'Wanowrie Main Road, Near Kedari Petrol Pump, Wanowrie, Pune, Maharashtra 411040',
-      languages: ['English', 'Hindi'],
-      clinicLocation: { type: 'Point', coordinates: [73.9015, 18.5152] },
-      registrationNumber: 'MCI-PT-28938',
+      consultationFee: 1200,
+      bio: 'Dr. Shalini Sen is a highly acclaimed neurological therapist. She specializes in motor control recovery for post-stroke hemiplegia, vestibular neuronitis balance training, and chronic neuropathic pain management using neuro-developmental techniques (NDT).',
+      qualifications: ['BPT', 'MPT - Neurology', 'NDT Certified'],
+      clinicName: 'NeuroAction Rehabilitation Clinic',
+      clinicAddress: 'Linking Road, Bandra West, Mumbai, Maharashtra 400050',
+      city: 'Mumbai',
+      languages: ['English', 'Bengali', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [72.8339, 19.0600] },
+      registrationNumber: 'MCI-PT-33291',
       degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
       licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
       verificationStatus: DOCTOR_STATUS.VERIFIED,
       averageRating: 4.8,
-      totalReviews: 20,
-      aiSummary: 'Dr. Rahul Verma possesses 14 years of clinical experience in neurological and age-related physical rehabilitation. He treats stroke survivors, Parkinson’s cases, balancing disorders, and handles fall-prevention exercise programs for geriatric populations.',
+      totalReviews: 27,
+      aiSummary: 'Dr. Shalini Sen is an NDT-certified neurological physical therapist with 14 years of experience. She focuses on complex stroke recovery and vestibular balance rehabilitation in South-Central Mumbai.',
+    }
+  },
+  {
+    user: {
+      name: 'Aditya Roy',
+      email: 'aditya.roy@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Orthopedic Physiotherapy', 'Manual Therapy'],
+      experience: 11,
+      consultationFee: 950,
+      bio: 'Dr. Aditya Roy is a passionate joint mobilization expert specializing in non-surgical relief for lumbar disc herniation, cervical spondylosis, and knee arthritis. His hands-on manual adjustment techniques are supported by modern postural correction routines.',
+      qualifications: ['BPT', 'MPT - Orthopedics', 'COMT'],
+      clinicName: 'SpineAlign Joint & Manual Clinic',
+      clinicAddress: 'Gokhale Road, Dadar West, Mumbai, Maharashtra 400028',
+      city: 'Mumbai',
+      languages: ['English', 'Hindi', 'Bengali'],
+      clinicLocation: { type: 'Point', coordinates: [72.8362, 19.0178] },
+      registrationNumber: 'MCI-PT-82711',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.6,
+      totalReviews: 19,
+      aiSummary: 'Dr. Aditya Roy is an orthopedic manual physical therapist with 11 years of experience in Mumbai. He is widely recognized for his expertise in spinal alignments and postural muscle retraining.',
+    }
+  },
+  {
+    user: {
+      name: 'Riddhi Shah',
+      email: 'riddhi.shah@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Geriatric Care', 'Orthopedic Physiotherapy'],
+      experience: 16,
+      consultationFee: 850,
+      bio: 'Dr. Riddhi Shah has spent 16 years focusing on musculoskeletal conditions in elderly populations. She assists seniors with osteoporosis, rheumatoid arthritis, osteoarthritis, and age-related balance instabilities to reduce fall risks and sustain daily living comfort.',
+      qualifications: ['BPT', 'MPT - Geriatrics'],
+      clinicName: 'Healthy Aging Physiotherapy',
+      clinicAddress: 'SV Road, Andheri West, Mumbai, Maharashtra 400058',
+      city: 'Mumbai',
+      languages: ['English', 'Hindi', 'Gujarati'],
+      clinicLocation: { type: 'Point', coordinates: [72.8479, 19.1197] },
+      registrationNumber: 'MCI-PT-11028',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.8,
+      totalReviews: 24,
+      aiSummary: 'Dr. Riddhi Shah specializes in geriatric care and orthopedic physiotherapy with 16 years of clinical experience. She helps senior patients in Mumbai manage arthritis, regain balance, and preserve independence.',
+    }
+  },
+  {
+    user: {
+      name: 'Sameer Kazi',
+      email: 'sameer.kazi@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Cardiopulmonary Rehab'],
+      experience: 13,
+      consultationFee: 900,
+      bio: 'Dr. Sameer Kazi provides clinical cardiopulmonary physical therapy, focusing on exercise prescription for post-bypass surgery recovery, asthma control, COPD management, and strengthening vital chest expansion muscles.',
+      qualifications: ['BPT', 'MPT - Cardiopulmonary Sciences', 'MIAP'],
+      clinicName: 'Pulse Cardio Lung Rehab',
+      clinicAddress: 'LBS Marg, Ghatkopar West, Mumbai, Maharashtra 400086',
+      city: 'Mumbai',
+      languages: ['English', 'Hindi', 'Marathi'],
+      clinicLocation: { type: 'Point', coordinates: [72.9102, 19.0864] },
+      registrationNumber: 'MCI-PT-92081',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 16,
+      aiSummary: 'Dr. Sameer Kazi is an expert in cardiopulmonary rehabilitation with 13 years of clinical practice. He specializes in post-cardiac surgery recovery and lung volume optimization.',
+    }
+  },
+  {
+    user: {
+      name: 'Tanvi Joshi',
+      email: 'tanvi.joshi@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Pediatric Physiotherapy'],
+      experience: 6,
+      consultationFee: 800,
+      bio: 'Dr. Tanvi Joshi specializes in compassionate pediatric therapy. She works with babies and kids experiencing sensory integration issues, cerebral palsy, torticollis, developmental milestone delays, and hypermobility.',
+      qualifications: ['BPT', 'MPT - Pediatrics'],
+      clinicName: 'Little Steps Pediatric Care',
+      clinicAddress: 'Eastern Express Hwy, Thane West, Mumbai, Maharashtra 400601',
+      city: 'Mumbai',
+      languages: ['English', 'Hindi', 'Marathi'],
+      clinicLocation: { type: 'Point', coordinates: [72.9781, 19.2183] },
+      registrationNumber: 'MCI-PT-48291',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.5,
+      totalReviews: 11,
+      aiSummary: 'Dr. Tanvi Joshi has 6 years of experience specializing in pediatric developmental physical therapy. She designs play-based exercises to help children achieve critical mobility milestones.',
+    }
+  },
+  {
+    user: {
+      name: 'Vikram Seth',
+      email: 'vikram.seth@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Manual Therapy', 'Dry Needling'],
+      experience: 10,
+      consultationFee: 1100,
+      bio: 'Dr. Vikram Seth is a renowned osteopathic and chiropractic manual therapist in South Mumbai. He applies targeted spinal adjustments, dry needling, and myofascial triggers release to eliminate severe back locks, neck strain, and tension headaches.',
+      qualifications: ['BPT', 'MPT - Ortho', 'COMT', 'Dry Needling Cert'],
+      clinicName: 'Seth Osteo & Manual Clinic',
+      clinicAddress: 'Pedder Road, Kemps Corner, Mumbai, Maharashtra 400026',
+      city: 'Mumbai',
+      languages: ['English', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [72.8089, 18.9702] },
+      registrationNumber: 'MCI-PT-88273',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 22,
+      aiSummary: 'Dr. Vikram Seth combines advanced joint manual therapy and dry needling with 10 years of experience. He is dedicated to chronic postural correction and immediate spine pain relief.',
+    }
+  },
+
+  // ─── BANGALORE (7 Doctors) ──────────────────────────────────────────────────
+  {
+    user: {
+      name: 'Rohan Kapoor',
+      email: 'rohan.kapoor@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Sports Injury Rehab', 'Manual Therapy'],
+      experience: 10,
+      consultationFee: 1100,
+      bio: 'Dr. Rohan Kapoor is an elite sports and manual therapist in Bangalore. He manages acute ligament sprains, tennis elbow, ACL tears, and provides customized biomechanical alignment corrections for running enthusiasts.',
+      qualifications: ['BPT', 'MPT - Sports Physio', 'Cert Manual Therapist'],
+      clinicName: 'Elite Sports Science Clinic',
+      clinicAddress: '100 Feet Road, Indiranagar, Bangalore, Karnataka 560038',
+      city: 'Bangalore',
+      languages: ['English', 'Hindi', 'Kannada'],
+      clinicLocation: { type: 'Point', coordinates: [77.6409, 12.9719] },
+      registrationNumber: 'MCI-PT-90281',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 42,
+      aiSummary: 'Dr. Rohan Kapoor is a highly experienced sports Injury rehab and manual therapist based in Indiranagar, Bangalore. He specializes in athletic assessment, runners knee rehabilitation, and pre/post-operative sports surgeries recovery.',
+    }
+  },
+  {
+    user: {
+      name: 'Deepika Iyer',
+      email: 'deepika.iyer@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Neurological Rehabilitation', 'Vestibular Rehabilitation'],
+      experience: 8,
+      consultationFee: 950,
+      bio: 'Dr. Deepika Iyer is a clinical neuro-physiotherapist specializing in balance control, multiple sclerosis rehab, stroke recovery, and vestibular canalith repositioning for benign paroxysmal positional vertigo (BPPV).',
+      qualifications: ['BPT', 'MPT - Neurological Sciences'],
+      clinicName: 'Equilibrium Neuro Balance Lab',
+      clinicAddress: '80 Feet Road, Koramangala, Bangalore, Karnataka 560034',
+      city: 'Bangalore',
+      languages: ['English', 'Tamil', 'Kannada'],
+      clinicLocation: { type: 'Point', coordinates: [77.6186, 12.9352] },
+      registrationNumber: 'MCI-PT-45911',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 15,
+      aiSummary: 'Dr. Deepika Iyer has 8 years of neurological and vestibular rehabilitation expertise in Bangalore. She implements motor sensory retraining and balance training loops to re-establish coordination.',
+    }
+  },
+  {
+    user: {
+      name: 'Karthik Rao',
+      email: 'karthik.rao@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Orthopedic Physiotherapy', 'Dry Needling'],
+      experience: 13,
+      consultationFee: 900,
+      bio: 'Dr. Karthik Rao is a certified dry needling therapist. He manages osteoarthritis knee pain, frozen shoulder, chronic plantar fasciitis, and lumbar muscle trigger points through highly systematic and painless dry needle therapy.',
+      qualifications: ['BPT', 'MPT - Ortho', 'Dry Needling Cert'],
+      clinicName: 'Rao Ortho & Muscle Rehab',
+      clinicAddress: 'Outer Ring Road, HSR Layout, Bangalore, Karnataka 560102',
+      city: 'Bangalore',
+      languages: ['English', 'Kannada', 'Telugu'],
+      clinicLocation: { type: 'Point', coordinates: [77.6412, 12.9116] },
+      registrationNumber: 'MCI-PT-28919',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.8,
+      totalReviews: 28,
+      aiSummary: 'Dr. Karthik Rao specializes in orthopedic conditions and dry needling in South Bangalore with 13 years of experience. He is dedicated to relieving chronic myofascial pain and improving joint range.',
+    }
+  },
+  {
+    user: {
+      name: 'Kavitha Swamy',
+      email: 'kavitha.swamy@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Geriatric Care', 'Cardiopulmonary Rehab'],
+      experience: 18,
+      consultationFee: 1000,
+      bio: 'Dr. Kavitha Swamy has spent nearly two decades assisting elderly individuals in regaining movement. She specializes in cardiac post-surgical rehab, geriatric balance stabilization, arthritis management, and custom safe home exercise program coaching.',
+      qualifications: ['BPT', 'MPT - Geriatrics', 'MIAP'],
+      clinicName: 'Aria Senior Physiotherapy Center',
+      clinicAddress: 'Bannerghatta Main Road, JP Nagar, Bangalore, Karnataka 560078',
+      city: 'Bangalore',
+      languages: ['English', 'Kannada', 'Tamil'],
+      clinicLocation: { type: 'Point', coordinates: [77.5960, 12.9074] },
+      registrationNumber: 'MCI-PT-18290',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 33,
+      aiSummary: 'Dr. Kavitha Swamy is a veteran senior care and cardiopulmonary physiotherapist with 18 years of experience. She focuses on cardiac reconditioning and longevity enhancement for active elders.',
+    }
+  },
+  {
+    user: {
+      name: 'Siddharth Hegde',
+      email: 'siddharth.hegde@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Manual Therapy', 'Orthopedic Physiotherapy'],
+      experience: 7,
+      consultationFee: 850,
+      bio: 'Dr. Siddharth Hegde is a certified spinal manual therapist. He specializes in osteopathic adjustments, lumbar traction, mechanical traction, active release techniques (ART), and deep friction massage for acute muscle locks.',
+      qualifications: ['BPT', 'MPT - Ortho', 'COMT'],
+      clinicName: 'Hegde Spine & Joint Care',
+      clinicAddress: 'CMH Road, Halasuru, Bangalore, Karnataka 560008',
+      city: 'Bangalore',
+      languages: ['English', 'Kannada', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [77.6264, 12.9778] },
+      registrationNumber: 'MCI-PT-98282',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.6,
+      totalReviews: 14,
+      aiSummary: 'Dr. Siddharth Hegde is an orthopedic manual physical therapist with 7 years of clinical experience. He applies targeted chiropractic and manual spinal techniques to restore range of motion.',
+    }
+  },
+  {
+    user: {
+      name: 'Namrata Reddy',
+      email: 'namrata.reddy@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Pediatric Physiotherapy'],
+      experience: 9,
+      consultationFee: 800,
+      bio: 'Dr. Namrata Reddy is a pediatric motor development physical therapist. She designs developmental exercises for children with congenital neuromuscular conditions, cerebral palsy, and muscular dystrophies.',
+      qualifications: ['BPT', 'MPT - Pediatric Physiotherapy'],
+      clinicName: 'First Steps Pediatric Clinic',
+      clinicAddress: '100 Feet Road, HAL 2nd Stage, Bangalore, Karnataka 560008',
+      city: 'Bangalore',
+      languages: ['English', 'Telugu', 'Kannada'],
+      clinicLocation: { type: 'Point', coordinates: [77.6398, 12.9698] },
+      registrationNumber: 'MCI-PT-49281',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.8,
+      totalReviews: 21,
+      aiSummary: 'Dr. Namrata Reddy specializes in developmental delay and pediatric conditions. She provides playful and supportive physical therapy to help children improve their walking and core motor stability.',
+    }
+  },
+  {
+    user: {
+      name: 'Abhishek Gowda',
+      email: 'abhishek.gowda@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Cardiopulmonary Rehab', 'Sports Injury Rehab'],
+      experience: 11,
+      consultationFee: 900,
+      bio: 'Dr. Abhishek Gowda specializes in respiratory care and progressive endurance reconditioning. He assists elite sports athletes, post-surgical lung patients, and post-COVID survivors in increasing metabolic stamina and lung vital capacity.',
+      qualifications: ['BPT', 'MPT - Cardiopulmonary Sciences'],
+      clinicName: 'CardioFit Endurance Care',
+      clinicAddress: 'Sarjapur Main Road, Bellandur, Bangalore, Karnataka 560103',
+      city: 'Bangalore',
+      languages: ['English', 'Kannada', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [77.6749, 12.9284] },
+      registrationNumber: 'MCI-PT-28394',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 18,
+      aiSummary: 'Dr. Abhishek Gowda is a cardiopulmonary specialist with 11 years of experience in Bangalore. He integrates pulmonary health with progressive load-bearing exercise programs to speed recovery.',
+    }
+  },
+
+  // ─── DELHI (6 Doctors) ──────────────────────────────────────────────────────
+  {
+    user: {
+      name: 'Vikrant Chaudhary',
+      email: 'vikrant.chaudhary@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Sports Injury Rehab', 'Manual Therapy'],
+      experience: 11,
+      consultationFee: 1000,
+      bio: 'Dr. Vikrant Chaudhary is a highly respected sports physical therapist in Delhi NCR. He focuses on muscle tear healing, dry needling, active release techniques, and functional movement screens for professional and collegiate athletes.',
+      qualifications: ['BPT', 'MPT - Sports Medicine', 'CSCS'],
+      clinicName: 'National Sports Injury & Manual Centre',
+      clinicAddress: 'Pusa Road, Karol Bagh, New Delhi, Delhi 110005',
+      city: 'Delhi',
+      languages: ['English', 'Hindi', 'Punjabi'],
+      clinicLocation: { type: 'Point', coordinates: [77.1902, 28.6441] },
+      registrationNumber: 'MCI-PT-82713',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 38,
+      aiSummary: 'Dr. Vikrant Chaudhary is an elite sports physiotherapist with 11 years of experience in Central Delhi. He specializes in athletic muscle reconditioning, joint mechanics, and return-to-sport protocols.',
+    }
+  },
+  {
+    user: {
+      name: 'Ritu Verma',
+      email: 'ritu.verma@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Neurological Rehabilitation', 'Vestibular Rehabilitation'],
+      experience: 12,
+      consultationFee: 950,
+      bio: 'Dr. Ritu Verma is a dedicated neuro-rehab clinician. She implements neuroplasticity training programs for patients recovering from traumatic brain injuries, stroke, balance loss, and chronic vestibular vertigo.',
+      qualifications: ['BPT', 'MPT - Neurology', 'NDT Cert'],
+      clinicName: 'Cognitive & Neuro-Rehab Center',
+      clinicAddress: 'Ring Road, Lajpat Nagar III, New Delhi, Delhi 110024',
+      city: 'Delhi',
+      languages: ['English', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [77.2435, 28.5694] },
+      registrationNumber: 'MCI-PT-39281',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.8,
+      totalReviews: 24,
+      aiSummary: 'Dr. Ritu Verma specializes in neurological and vestibular rehab in Delhi with 12 years of experience. She focuses on motor control learning and coordination training.',
+    }
+  },
+  {
+    user: {
+      name: 'Manish Gupta',
+      email: 'manish.gupta@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Orthopedic Physiotherapy', 'Dry Needling'],
+      experience: 15,
+      consultationFee: 900,
+      bio: 'Dr. Manish Gupta has extensive clinical practice in spinal decompression, knee osteoarthritis therapies, and post-fracture joint stiffening treatments. He is a certified dry needling expert.',
+      qualifications: ['BPT', 'MPT - Orthopedics', 'Dry Needling Spec'],
+      clinicName: 'Apex Spine & Orthopedic Care',
+      clinicAddress: 'Connaught Place, Radial Road 3, New Delhi, Delhi 110001',
+      city: 'Delhi',
+      languages: ['English', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [77.2197, 28.6304] },
+      registrationNumber: 'MCI-PT-11928',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 29,
+      aiSummary: 'Dr. Manish Gupta has 15 years of experience specializing in orthopedic care and dry needling in Central Delhi. He handles non-surgical disk pain management and joint mobilization.',
+    }
+  },
+  {
+    user: {
+      name: 'Sneh Lata',
+      email: 'sneh.lata@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Geriatric Care', 'Orthopedic Physiotherapy'],
+      experience: 19,
+      consultationFee: 850,
+      bio: 'Dr. Sneh Lata is a senior geriatric movement physical therapist. She supports senior citizens managing rheumatoid arthritis, gait problems, spinal stenosis, and designs safe physical conditioning routines.',
+      qualifications: ['BPT', 'MPT - Geriatric Physio', 'MIAP'],
+      clinicName: 'Golden Years Active Living Clinic',
+      clinicAddress: 'Saket District Centre, Saket, New Delhi, Delhi 110017',
+      city: 'Delhi',
+      languages: ['English', 'Hindi', 'Punjabi'],
+      clinicLocation: { type: 'Point', coordinates: [77.2084, 28.5221] },
+      registrationNumber: 'MCI-PT-11029',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 31,
+      aiSummary: 'Dr. Sneh Lata specializes in senior physical therapy and age-related orthopedic issues in South Delhi. She has 19 years of clinical expertise focused on functional motor independence.',
+    }
+  },
+  {
+    user: {
+      name: 'Kunal Kapoor',
+      email: 'kunal.kapoor@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Cardiopulmonary Rehab'],
+      experience: 10,
+      consultationFee: 800,
+      bio: 'Dr. Kunal Kapoor specializes in respiratory physiotherapy and active cardiovascular reconditioning. He assists asthma, bronchitis, and post-infarct cardiac patients in strengthening respiratory stamina.',
+      qualifications: ['BPT', 'MPT - Cardiopulmonary Rehab'],
+      clinicName: 'Stamina Cardio-Pulmonary Care',
+      clinicAddress: 'Vikas Marg, Laxmi Nagar, New Delhi, Delhi 110092',
+      city: 'Delhi',
+      languages: ['English', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [77.2798, 28.6360] },
+      registrationNumber: 'MCI-PT-38194',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.6,
+      totalReviews: 17,
+      aiSummary: 'Dr. Kunal Kapoor is a cardiopulmonary physical therapist with 10 years of experience in East Delhi. He focuses on chest clearance, breathing exercises, and aerobic endurance training.',
+    }
+  },
+  {
+    user: {
+      name: 'Preeti Bansal',
+      email: 'preeti.bansal@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Pediatric Physiotherapy'],
+      experience: 8,
+      consultationFee: 750,
+      bio: 'Dr. Preeti Bansal provides pediatric physical therapy. She designs play-based developmental exercises for infants and kids experiencing torticollis, cerebral palsy, and mild motor delay coordinates.',
+      qualifications: ['BPT', 'MPT - Pediatrics'],
+      clinicName: 'Happy Kids Motor Clinic',
+      clinicAddress: 'Netaji Subhash Place, Pitampura, New Delhi, Delhi 110034',
+      city: 'Delhi',
+      languages: ['English', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [77.1512, 28.6948] },
+      registrationNumber: 'MCI-PT-49201',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 12,
+      aiSummary: 'Dr. Preeti Bansal is a dedicated pediatric physical therapist with 8 years of clinical experience in North Delhi. She designs child-friendly motor milestone progress guides.',
+    }
+  },
+
+  // ─── HYDERABAD (6 Doctors) ──────────────────────────────────────────────────
+  {
+    user: {
+      name: 'Srinivas Murthy',
+      email: 'srinivas.murthy@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Sports Injury Rehab', 'Dry Needling'],
+      experience: 10,
+      consultationFee: 950,
+      bio: 'Dr. Srinivas Murthy is a premier sports physiotherapist in Hyderabad. He handles athletic groin strains, hamstring tears, knee patellofemoral pain, and dry needling trigger point releases.',
+      qualifications: ['BPT', 'MPT - Sports Medicine', 'Dry Needling Practitioner'],
+      clinicName: 'Murthy Sports Fitness Rehab',
+      clinicAddress: 'Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033',
+      city: 'Hyderabad',
+      languages: ['English', 'Telugu', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [78.4067, 17.4320] },
+      registrationNumber: 'MCI-PT-90184',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 31,
+      aiSummary: 'Dr. Srinivas Murthy has 10 years of experience in high-performance sports injury rehabilitation and dry needling in Jubilee Hills, Hyderabad.',
+    }
+  },
+  {
+    user: {
+      name: 'Deepthi Rao',
+      email: 'deepthi.rao@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Neurological Rehabilitation', 'Vestibular Rehabilitation'],
+      experience: 11,
+      consultationFee: 1000,
+      bio: 'Dr. Deepthi Rao specializes in neurological balance recovery, stroke paralysis retraining, parkinsonian movement support, and benign positional vertigo vestibular correction.',
+      qualifications: ['BPT', 'MPT - Neuro Sciences', 'NDT Spec'],
+      clinicName: 'Rao Neuro Movement Lab',
+      clinicAddress: 'Hitech City Road, Madhapur, Hyderabad, Telangana 500081',
+      city: 'Hyderabad',
+      languages: ['English', 'Telugu', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [78.3842, 17.4484] },
+      registrationNumber: 'MCI-PT-39185',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.8,
+      totalReviews: 22,
+      aiSummary: 'Dr. Deepthi Rao is a specialized neurological and vestibular therapist with 11 years of experience in Hyderabads tech corridor.',
+    }
+  },
+  {
+    user: {
+      name: 'Rajesh Yarlagadda',
+      email: 'rajesh.yarlagadda@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Orthopedic Physiotherapy', 'Manual Therapy'],
+      experience: 14,
+      consultationFee: 900,
+      bio: 'Dr. Rajesh Yarlagadda is a senior spinal decompression specialist. He treats lumbar disc pain, sciatica, frozen shoulder, and mechanical joint locks with hands-on manipulation techniques.',
+      qualifications: ['BPT', 'MPT - Ortho', 'COMT'],
+      clinicName: 'Spine & Joint Manual Rehab',
+      clinicAddress: 'Gachibowli Stadium Road, Gachibowli, Hyderabad, Telangana 500032',
+      city: 'Hyderabad',
+      languages: ['English', 'Telugu'],
+      clinicLocation: { type: 'Point', coordinates: [78.3489, 17.4402] },
+      registrationNumber: 'MCI-PT-28913',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 25,
+      aiSummary: 'Dr. Rajesh Yarlagadda has 14 years of orthopedic physical therapy experience. He specializes in spinal decompression and pain-reducing manual adjustments.',
+    }
+  },
+  {
+    user: {
+      name: 'Venkata Reddy',
+      email: 'venkata.reddy@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Geriatric Care', 'Orthopedic Physiotherapy'],
+      experience: 17,
+      consultationFee: 850,
+      bio: 'Dr. Venkata Reddy is a dedicated geriatric physical therapist. He helps senior citizens manage osteoarthritis knee pain, age-related gait changes, and implements post-fall safety conditioning programs.',
+      qualifications: ['BPT', 'MPT - Geriatrics', 'MIAP'],
+      clinicName: 'Seniors Active Mobility Lab',
+      clinicAddress: 'Himayatnagar Main Road, Himayatnagar, Hyderabad, Telangana 500029',
+      city: 'Hyderabad',
+      languages: ['English', 'Telugu', 'Hindi'],
+      clinicLocation: { type: 'Point', coordinates: [78.4842, 17.4021] },
+      registrationNumber: 'MCI-PT-11030',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.9,
+      totalReviews: 29,
+      aiSummary: 'Dr. Venkata Reddy is a geriatric care specialist with 17 years of experience in Hyderabad. He focus on maintaining senior motor stamina and bone strength.',
+    }
+  },
+  {
+    user: {
+      name: 'Harika Chennupati',
+      email: 'harika.chennupati@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Cardiopulmonary Rehab'],
+      experience: 9,
+      consultationFee: 800,
+      bio: 'Dr. Harika Chennupati is an expert in pulmonary chest clearance and cardiac conditioning. She provides deep breathing reconditioning, progressive cardiopulmonary exercises, and posture releases.',
+      qualifications: ['BPT', 'MPT - Cardiopulmonary Science'],
+      clinicName: 'Pulse Cardiopulmonary Health',
+      clinicAddress: 'Begumpet Main Road, Begumpet, Hyderabad, Telangana 500016',
+      city: 'Hyderabad',
+      languages: ['English', 'Telugu'],
+      clinicLocation: { type: 'Point', coordinates: [78.4589, 17.4412] },
+      registrationNumber: 'MCI-PT-38102',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.6,
+      totalReviews: 14,
+      aiSummary: 'Dr. Harika Chennupati is a cardiopulmonary specialist with 9 years of experience in Hyderabad. She designs progressive chest re-expansion programs.',
+    }
+  },
+  {
+    user: {
+      name: 'Kiran Goud',
+      email: 'kiran.goud@demo.com',
+      password: 'Demo@1234',
+      role: ROLES.DOCTOR,
+    },
+    profile: {
+      specialization: ['Pediatric Physiotherapy', 'Neurological Rehabilitation'],
+      experience: 7,
+      consultationFee: 750,
+      bio: 'Dr. Kiran Goud focuses on sensory-motor developmental correction in infants and children. He supports cerebral palsy children, handles milestone delays, and runs kid posture games.',
+      qualifications: ['BPT', 'MPT - Pediatrics'],
+      clinicName: 'Happy Child Pediatric Care',
+      clinicAddress: 'KPHB Colony Road, Kukatpally, Hyderabad, Telangana 500072',
+      city: 'Hyderabad',
+      languages: ['English', 'Telugu'],
+      clinicLocation: { type: 'Point', coordinates: [78.3912, 17.4948] },
+      registrationNumber: 'MCI-PT-49102',
+      degreeDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/degree_sample.pdf',
+      licenseDocument: 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/license_sample.pdf',
+      verificationStatus: DOCTOR_STATUS.VERIFIED,
+      averageRating: 4.7,
+      totalReviews: 11,
+      aiSummary: 'Dr. Kiran Goud specializes in pediatric movement physical therapy and childhood neuro developmental delay in Hyderabad Kukatpally.',
     }
   }
 ];
@@ -321,12 +882,22 @@ const doctorSeeds = [
 export const seedDoctors = async () => {
   try {
     const existingCount = await DoctorProfile.countDocuments();
-    if (existingCount >= 10) {
-      logger.info('[Seed] Doctors already seeded — skipping.');
+    // If we have less than 30 doctors, we assume we need to upgrade database to our premium 32-doctor set.
+    if (existingCount >= 30) {
+      logger.info('[Seed] High-fidelity multi-city doctors are already seeded — skipping.');
       return;
     }
 
-    logger.info(`[Seed] Starting seed of ${doctorSeeds.length} doctor profiles...`);
+    logger.info('[Seed] Cleaning up old doctor user accounts and profiles to prevent conflicts...');
+    
+    // Find all doctors registered with emails in our list or who have doctor role
+    const oldDoctors = await User.find({ role: ROLES.DOCTOR });
+    const oldDoctorIds = oldDoctors.map(d => d._id);
+    
+    await DoctorProfile.deleteMany({ user: { $in: oldDoctorIds } });
+    await User.deleteMany({ role: ROLES.DOCTOR });
+
+    logger.info(`[Seed] Starting seed of ${doctorSeeds.length} high-fidelity doctor profiles...`);
 
     for (const seed of doctorSeeds) {
       // Find or create User
@@ -343,11 +914,11 @@ export const seedDoctors = async () => {
           ...seed.profile,
           user: user._id,
         });
-        logger.info(`[Seed] Created profile for: Dr. ${seed.user.name}`);
+        logger.info(`[Seed] Created profile for: Dr. ${seed.user.name} in ${seed.profile.city}`);
       }
     }
 
-    logger.info(`[Seed] Successfully seeded ${doctorSeeds.length} doctor profiles.`);
+    logger.info(`[Seed] Successfully seeded ${doctorSeeds.length} doctor profiles across multiple cities.`);
   } catch (err) {
     logger.error('[Seed] Failed to seed doctor profiles:', err.message);
   }

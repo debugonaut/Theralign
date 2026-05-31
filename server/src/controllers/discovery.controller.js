@@ -25,6 +25,7 @@ const SPECIALIZATIONS = [
 export const getDiscoveryListing = asyncHandler(async (req, res) => {
   const {
     specialization,
+    city,
     minFee,
     maxFee,
     minRating,
@@ -37,6 +38,7 @@ export const getDiscoveryListing = asyncHandler(async (req, res) => {
   // Sanitize and structure filters
   const filters = {
     specialization,
+    city,
     minFee: minFee !== undefined ? Number(minFee) : undefined,
     maxFee: maxFee !== undefined ? Number(maxFee) : undefined,
     minRating: minRating !== undefined ? Number(minRating) : undefined,
