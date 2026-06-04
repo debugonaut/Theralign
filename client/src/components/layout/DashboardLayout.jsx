@@ -58,6 +58,7 @@ const DashboardLayout = () => {
     { name: 'My Appointments', href: '/patient/appointments', icon: Calendar },
     { name: 'Find Doctors', href: '/doctors', icon: Search },
     { name: 'Payment History', href: '/patient/payments', icon: CreditCard },
+    { name: 'My Profile', href: '/patient/profile', icon: User },
     { name: 'My Reviews', href: '/patient/reviews', icon: Star },
   ];
 
