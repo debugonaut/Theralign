@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { MapPin, Check } from 'lucide-react';
 import { getNearbyDoctorsAPI } from '../../api/discovery.api';
 import VerifiedBadge from '../common/VerifiedBadge';
 
@@ -241,10 +242,10 @@ export default function DoctorCardDeck() {
   };
 
   const labels = {
-    idle:       '📍 Show doctors near me',
+    idle:       'Show doctors near me',
     requesting: 'Waiting for location...',
     loading:    'Finding nearby doctors...',
-    success:    '✓ Showing doctors near you',
+    success:    'Showing doctors near you',
     denied:     'Location access denied',
     error:      'Could not get location',
   };
@@ -325,6 +326,7 @@ export default function DoctorCardDeck() {
           className={`
             text-[11px] font-black uppercase tracking-widest py-2.5 px-4
             border-2 border-neutral-900 rounded-none transition-all duration-fast select-none
+            flex items-center justify-center gap-1.5
             ${locationState === 'success'
               ? 'bg-neutral-900 text-white cursor-default'
               : ['requesting', 'loading'].includes(locationState)
@@ -333,6 +335,8 @@ export default function DoctorCardDeck() {
             }
           `}
         >
+          {locationState === 'idle' && <MapPin className="w-3.5 h-3.5" />}
+          {locationState === 'success' && <Check className="w-3.5 h-3.5" />}
           {labels[locationState]}
         </button>
       </div>

@@ -78,7 +78,7 @@ const DoctorReviewsSection = ({ doctorId, averageRating = 0, totalReviews = 0 })
         </div>
       ) : reviews.length === 0 ? (
         <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-8 text-center flex flex-col items-center gap-2">
-          <span className="text-3xl">⭐</span>
+          <Star className="w-8 h-8 text-amber-400 fill-amber-400" />
           <p className="text-sm font-bold text-slate-700">No reviews yet</p>
           <p className="text-xs text-slate-400 max-w-sm">
             No reviews yet. Be the first to share your experience.

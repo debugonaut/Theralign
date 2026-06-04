@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck, Mail, Phone } from 'lucide-react';
+import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck, Mail, Phone, FileText, Paperclip } from 'lucide-react';
 import axiosInstance from '../../api/axiosInstance';
 import { toast } from 'react-hot-toast';
 
@@ -132,8 +132,8 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
       {/* Clinical Notes/Prescription Upload (Feature F3) */}
       {appointment.status === 'completed' && (
         <div className="p-4 bg-slate-50/70 border border-slate-200/50 rounded-2xl space-y-3">
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-            📄 Clinical Session Notes
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            <FileText size={13} className="text-slate-400 shrink-0" /> Clinical Session Notes
           </p>
 
           {appointment.sessionDocument?.url ? (
@@ -144,7 +144,7 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-primary hover:text-primary-dark truncate flex items-center gap-1.5"
               >
-                <span>📄</span>
+                <FileText size={13} className="shrink-0" />
                 <span className="truncate">{appointment.sessionDocument.fileName || 'View Notes PDF'}</span>
               </a>
               <button
@@ -222,7 +222,7 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
                   </div>
                 ) : (
                   <>
-                    <span className="text-base">📎</span>
+                    <Paperclip className="h-4 w-4 text-slate-400 shrink-0" />
                     <span className="text-xs text-primary hover:text-primary-dark font-bold">
                       Upload Session PDF
                     </span>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Search, Eye, ExternalLink, ShieldAlert, Award } from 'lucide-react';
+import { Search, Eye, ExternalLink, ShieldAlert, Award, AlertTriangle, Hourglass } from 'lucide-react';
 
 import {
   getPendingDoctorsAPI,
@@ -260,8 +260,8 @@ const AdminDoctorVerification = () => {
       {!loadingQueue && pendingQueue.length > 0 && (
         <div className="border-t-4 border-warning border-2 border-neutral-900 p-6 bg-white">
           <div className="flex items-center gap-3 pb-4 border-b border-neutral-200 mb-6">
-            <span className="text-[11px] font-bold text-warning uppercase tracking-widest block">
-              ⚠️ PENDING APPLICATIONS
+            <span className="text-[11px] font-bold text-warning uppercase tracking-widest flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4" /> PENDING APPLICATIONS
             </span>
             <span className="border border-warning bg-white text-warning text-[10px] px-1.5 py-0.5 font-bold">
               {pendingQueue.length} WAITING
@@ -498,8 +498,8 @@ const AdminDoctorVerification = () => {
         </div>
 
         {loadingDirectory ? (
-          <div className="p-12 text-center">
-            <span className="inline-block animate-spin mr-2">⏳</span>
+          <div className="p-12 text-center flex items-center justify-center gap-2">
+            <Hourglass className="w-4 h-4 animate-spin text-neutral-500" />
             <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">RETRIEVING DIRECTORY DATA...</span>
           </div>
         ) : directory.length === 0 ? (

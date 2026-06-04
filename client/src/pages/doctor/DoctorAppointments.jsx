@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { AlertTriangle, X, Check } from 'lucide-react';
+import { AlertTriangle, X, Check, FileText } from 'lucide-react';
 import { getDoctorAppointments, cancelAppointment, completeAppointment } from '../../api/appointment.api';
 import axiosInstance from '../../api/axiosInstance';
 import SectionHeader from '../../components/common/SectionHeader';
@@ -446,7 +446,7 @@ const DoctorAppointments = () => {
                                 {appt.sessionDocument?.url ? (
                                   <div className="flex items-center justify-between bg-white border border-neutral-200/60 p-4 rounded-lg shadow-level-1">
                                     <div className="flex items-center gap-3">
-                                      <span className="text-lg">📄</span>
+                                      <FileText className="w-5 h-5 text-neutral-500 shrink-0" />
                                       <div className="flex flex-col">
                                         <span className="text-ui-sm font-black text-neutral-900 uppercase">
                                           {appt.sessionDocument.fileName || 'SESSION_NOTES.PDF'}

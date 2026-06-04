@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { getAllAppointments } from '../../api/admin.api';
 import SectionHeader from '../../components/common/SectionHeader';
 import Table from '../../components/common/Table';
@@ -86,8 +86,8 @@ const AdminBookings = () => {
       {/* Bookings table */}
       <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {loading ? (
-          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider">
-            <span className="inline-block animate-spin mr-2">⏳</span> RETRIEVING SCHEDULER ENTRIES...
+          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+            <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING SCHEDULER ENTRIES...
           </div>
         ) : appointments.length === 0 ? (
           <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">

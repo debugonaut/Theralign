@@ -150,7 +150,7 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
             </div>
           ) : availability.length === 0 ? (
             <div className="py-12 text-center flex flex-col items-center gap-2">
-              <span className="text-3xl">🗓️</span>
+              <Calendar className="h-8 w-8 text-neutral-400 mx-auto" strokeWidth={1.5} />
               <p className="text-xs font-bold text-slate-700">No Other Slots Available</p>
               <p className="text-[10px] text-slate-400 max-w-xs">
                 This doctor doesn't have any other open availability slots at the moment. Keep your current booking or try again later.

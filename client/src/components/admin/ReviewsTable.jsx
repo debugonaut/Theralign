@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 import { getAllReviewsAdmin, toggleReviewVisibilityAPI } from '../../api/review.api';
 import Table, { ActionLink } from '../common/Table';
 import Badge from '../common/Badge';
@@ -73,8 +74,8 @@ const ReviewsTable = () => {
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider">
-            <span className="inline-block animate-spin mr-2">⏳</span> RETRIEVING REVIEWS LEDGER...
+          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+            <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING REVIEWS LEDGER...
           </div>
         ) : reviews.length === 0 ? (
           <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">

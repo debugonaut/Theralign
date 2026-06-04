@@ -3,6 +3,7 @@ import { triggerBatchSummariesAPI } from '../../api/ai.api';
 import toast from 'react-hot-toast';
 import SectionHeader from '../../components/common/SectionHeader';
 import Card from '../../components/common/Card';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 const AdminAITools = () => {
   const [generating, setGenerating] = useState(false);
@@ -85,8 +86,8 @@ const AdminAITools = () => {
             <div className="lg:col-span-5 w-full">
               {result ? (
                 <div className="border-2 border-neutral-900 bg-white p-6 space-y-4 animate-fade-in">
-                  <span className="text-[10px] font-black text-success uppercase tracking-widest block pb-2 border-b border-neutral-200">
-                    ✓ PIPELINE RUN COMPLETE
+                  <span className="text-[10px] font-black text-success uppercase tracking-widest flex items-center gap-1.5 pb-2 border-b border-neutral-200">
+                    <CheckCircle2 className="w-4 h-4" /> PIPELINE RUN COMPLETE
                   </span>
                   
                   {/* Stats adjacent cells row */}
@@ -111,8 +112,8 @@ const AdminAITools = () => {
                 </div>
               ) : error ? (
                 <div className="border-2 border-accent bg-white p-6 space-y-2 animate-fade-in">
-                  <span className="text-[10px] font-black text-accent uppercase tracking-widest block pb-2 border-b border-neutral-200">
-                    ⚠️ PIPELINE EXECUTION FAILED
+                  <span className="text-[10px] font-black text-accent uppercase tracking-widest flex items-center gap-1.5 pb-2 border-b border-neutral-200">
+                    <AlertTriangle className="w-4 h-4" /> PIPELINE EXECUTION FAILED
                   </span>
                   <p className="text-xs text-swiss-gray-650 leading-relaxed font-bold">
                     {error}

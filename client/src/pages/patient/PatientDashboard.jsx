@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 import { getMyAppointments } from '../../api/appointment.api';
 import useAuthStore from '../../store/authStore';
 import SectionHeader from '../../components/common/SectionHeader';
@@ -109,7 +110,7 @@ const PatientDashboard = () => {
       {!isOnline && (
         <div className="w-full bg-white border-2 border-warning rounded-lg p-5 flex items-start gap-4 shadow-level-1 animate-pulse">
           <div className="w-10 h-10 border-2 border-warning flex items-center justify-center text-warning font-bold rounded bg-warning/5 text-ui-lg select-none shrink-0">
-            ⚠️
+            <AlertTriangle className="w-5 h-5" />
           </div>
           <div className="text-left flex-grow">
             <h4 className="text-ui-md font-bold text-neutral-900 uppercase">You're currently offline</h4>

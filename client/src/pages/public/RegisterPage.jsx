@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, UserPlus, HeartPulse, Stethoscope, User } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, HeartPulse, Stethoscope, User, AlertTriangle, PartyPopper } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { registerAPI } from '../../api/auth.api';
 import useAuthStore from '../../store/authStore';
@@ -87,7 +87,9 @@ const RegisterPage = () => {
       const { name, email, password, role } = formData;
       const result = await registerAPI({ name, email, password, role });
       setCredentials(result.data.user, result.data.token);
-      toast.success('Account created! Welcome to Theralign 🎉');
+      toast.success('Account created! Welcome to Theralign', {
+        icon: <PartyPopper className="w-5 h-5 text-accent" />
+      });
       navigate(DASHBOARD_ROUTES[result.data.user.role] || '/');
     } catch (err) {
       // Show API error inline; do NOT clear the form
@@ -115,7 +117,7 @@ const RegisterPage = () => {
           {/* API Error Banner */}
           {error && (
             <div className="mb-5 bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm flex items-start gap-2">
-              <span className="mt-0.5 shrink-0">⚠️</span>
+              <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
               <span className="font-bold">{error}</span>
             </div>
           )}
@@ -157,7 +159,7 @@ const RegisterPage = () => {
                 }`}
               >
                 <div className="mt-2 flex items-start gap-2 bg-primary/5 border border-primary/20 rounded-md px-3 py-2.5">
-                  <span className="text-[14px] mt-0.5 shrink-0">🩺</span>
+                  <Stethoscope className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                   <p className="text-[11px] font-semibold text-primary/90 leading-relaxed">
                     After registration, complete your clinical profile and submit your license documents.
                     Your profile will be reviewed and activated within 24 hours.

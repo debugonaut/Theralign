@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck, Star } from 'lucide-react';
+import { Calendar, Clock, IndianRupee, MessageSquare, AlertTriangle, ShieldCheck, Star, Check, Loader2, FileText, RotateCcw } from 'lucide-react';
 import ReviewForm from '../reviews/ReviewForm';
 
 const PatientAppointmentCard = ({ appointment, onCancel, onReschedule }) => {
@@ -95,15 +95,15 @@ const PatientAppointmentCard = ({ appointment, onCancel, onReschedule }) => {
             </p>
             {appointment.status === 'cancelled' && appointment.paymentStatus === 'paid' ? (
               <span className="text-blue-500 text-[10px] font-extrabold flex items-center gap-1 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full w-max uppercase tracking-wider">
-                ↩ Refund eligible
+                <RotateCcw size={10} className="shrink-0" /> Refund eligible
               </span>
             ) : appointment.paymentStatus === 'paid' ? (
               <span className="text-emerald-600 text-[10px] font-extrabold flex items-center gap-1 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full w-max uppercase tracking-wider">
-                ✓ Payment confirmed
+                <Check size={10} className="shrink-0" /> Payment confirmed
               </span>
             ) : (
               <span className="text-amber-600 text-[10px] font-extrabold flex items-center gap-1 bg-amber-50 border border-amber-100 px-2.5 py-0.5 rounded-full w-max uppercase tracking-wider">
-                ⏳ Payment pending
+                <Loader2 size={10} className="animate-spin shrink-0" /> Payment pending
               </span>
             )}
           </div>
@@ -138,8 +138,8 @@ const PatientAppointmentCard = ({ appointment, onCancel, onReschedule }) => {
       {appointment.status === 'completed' && appointment.sessionDocument?.url && (
         <div className="p-3.5 bg-blue-50/50 border border-blue-100/60 rounded-2xl flex items-center justify-between gap-3 animate-fadeIn">
           <div className="min-w-0">
-            <p className="text-[9px] font-bold text-blue-700 uppercase tracking-wide">
-              📄 Clinical Session Notes
+            <p className="text-[9px] font-bold text-blue-700 uppercase tracking-wide flex items-center gap-1">
+              <FileText size={11} className="text-blue-500 shrink-0" /> Clinical Session Notes
             </p>
             <p className="text-[10px] text-slate-500 font-medium truncate mt-0.5">
               {appointment.sessionDocument.fileName || 'prescription.pdf'}
@@ -183,7 +183,7 @@ const PatientAppointmentCard = ({ appointment, onCancel, onReschedule }) => {
         <div className="flex items-center gap-2 p-2.5 bg-emerald-50/70 border border-emerald-100 rounded-xl">
           <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
           <p className="text-[11px] text-emerald-700 font-bold">
-            ✓ Review submitted. Thank you!
+            Review submitted. Thank you!
           </p>
         </div>
       )}

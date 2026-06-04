@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertTriangle } from 'lucide-react';
 import Button from '../common/Button';
 
 const AIRecommendationCard = ({ result, onViewDoctors }) => {
@@ -7,8 +8,8 @@ const AIRecommendationCard = ({ result, onViewDoctors }) => {
   return (
     <div className="mt-6 p-6 bg-white border-2 border-warning text-neutral-900 rounded-none shadow-none text-left flex flex-col gap-4">
       <div className="flex items-center justify-between pb-3 border-b border-neutral-200">
-        <span className="text-ui-xs font-black text-warning uppercase tracking-widest">
-          ⚠️ AI RECOMMENDATION
+        <span className="text-ui-xs font-black text-warning uppercase tracking-widest flex items-center gap-1.5">
+          <AlertTriangle className="w-4 h-4 text-warning shrink-0" /> AI RECOMMENDATION
         </span>
         <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
           {result.confidence ? `${result.confidence} confidence` : 'moderate confidence'}
@@ -41,7 +42,7 @@ const AIRecommendationCard = ({ result, onViewDoctors }) => {
 
       {result.disclaimer && (
         <p className="text-[10px] text-neutral-500 leading-relaxed flex gap-1.5 items-start mt-2">
-          <span className="shrink-0 text-warning">⚠️</span>
+          <AlertTriangle className="w-3.5 h-3.5 text-warning shrink-0 mt-0.5" />
           <span>{result.disclaimer}</span>
         </p>
       )}

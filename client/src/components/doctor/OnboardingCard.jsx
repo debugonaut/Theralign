@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Check } from 'lucide-react';
 
 const OnboardingCard = ({ profile, slotCount }) => {
   if (!profile) return null;
@@ -96,7 +97,7 @@ const OnboardingCard = ({ profile, slotCount }) => {
                   }`}
                 >
                   {step.isComplete && (
-                    <span className="text-white font-black text-xs">✓</span>
+                    <Check className="h-4.5 w-4.5 text-white" />
                   )}
                 </div>
 
@@ -117,8 +118,8 @@ const OnboardingCard = ({ profile, slotCount }) => {
               {/* Action Link / Confirmation */}
               <div className="shrink-0 font-black text-ui-xs tracking-widest">
                 {step.isComplete ? (
-                  <span className="text-success font-black uppercase select-none">
-                    ✓ DONE
+                  <span className="text-success font-black uppercase select-none flex items-center gap-1">
+                    <Check size={12} className="inline text-success" /> DONE
                   </span>
                 ) : isPendingVerificationStep ? (
                   <span className="text-warning font-black uppercase select-none">

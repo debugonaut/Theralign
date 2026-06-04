@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, HeartPulse, ChevronLeft, Copy, Check } from 'lucide-react';
+import { Eye, EyeOff, HeartPulse, ChevronLeft, Copy, Check, AlertTriangle, UserCheck, Stethoscope, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { loginAPI, forgotPasswordAPI, resetPasswordAPI } from '../../api/auth.api';
 import useAuthStore from '../../store/authStore';
@@ -318,7 +318,7 @@ const LoginPage = () => {
                 {/* Inline Error Banner */}
                 {error && (
                   <div className="mb-5 bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm flex items-start gap-2">
-                    <span className="mt-0.5 shrink-0">⚠️</span>
+                    <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
                     <span className="font-bold">{error}</span>
                   </div>
                 )}
@@ -403,8 +403,14 @@ const LoginPage = () => {
                         onClick={() => handleDemoLogin(account)}
                         className="flex flex-col items-center gap-1 py-3 px-2 border border-neutral-200 rounded-lg hover:border-primary hover:bg-primary/5 transition-all duration-150 text-center group disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <span className="text-[18px]">
-                          {account.role === 'patient' ? '🧑‍⚕️' : account.role === 'doctor' ? '👨‍⚕️' : '🔐'}
+                        <span className="h-6 flex items-center justify-center">
+                          {account.role === 'patient' ? (
+                            <UserCheck className="w-5 h-5 text-primary group-hover:scale-110 transition-transform duration-200" />
+                          ) : account.role === 'doctor' ? (
+                            <Stethoscope className="w-5 h-5 text-success group-hover:scale-110 transition-transform duration-200" />
+                          ) : (
+                            <Lock className="w-5 h-5 text-accent group-hover:scale-110 transition-transform duration-200" />
+                          )}
                         </span>
                         <span className="text-[9px] font-black text-neutral-600 uppercase tracking-widest group-hover:text-primary transition-colors">
                           {account.label}

@@ -113,8 +113,8 @@ const AdminLayout = () => {
       {/* Admin Sidebar Navigation */}
       <aside className={`
         fixed inset-y-0 left-0 z-50 flex flex-col bg-primary text-white transition-[width] duration-300 ease-in-out transform group/sidebar
-        md:translate-x-0 md:static md:h-screen shrink-0
-        ${sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64 md:w-[72px] md:hover:w-64'}
+        md:translate-x-0 md:static md:h-screen shrink-0 overflow-x-hidden
+        ${sidebarOpen ? 'translate-x-0 w-[240px]' : '-translate-x-full w-[240px] md:w-[72px] md:hover:w-[240px]'}
       `}>
         {/* Sidebar Brand header */}
         <div className="flex items-center justify-between py-5 px-5 border-b border-white/15 bg-primary-dark overflow-hidden h-[73px]">

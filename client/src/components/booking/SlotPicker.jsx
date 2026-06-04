@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getDoctorAvailability, bookAppointment } from '../../api/appointment.api';
 import { joinWaitlist, leaveWaitlist, checkWaitlistStatus } from '../../api/waitlist.api';
@@ -182,8 +183,8 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
         {onWaitlist ? (
           <div className="flex flex-col gap-2 bg-[#F8F8F6] border border-success p-4 rounded-md">
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 border border-success flex items-center justify-center text-success text-xs font-black shrink-0 rounded-md bg-white">
-                ✓
+              <div className="w-6 h-6 border border-success flex items-center justify-center text-success shrink-0 rounded-md bg-white">
+                <Check className="h-4 w-4" />
               </div>
               <div className="text-left">
                 <span className="text-[10px] font-black text-success uppercase tracking-widest block">

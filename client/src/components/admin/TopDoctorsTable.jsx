@@ -1,8 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Trophy } from 'lucide-react';
 import Table, { ActionLink } from '../common/Table';
 
-const RANK_ICONS = ['🥇', '🥈', '🥉'];
+const RANK_ICONS = [
+  <Trophy className="w-5 h-5 text-amber-500 fill-amber-500 inline-block" />,
+  <Trophy className="w-5 h-5 text-slate-400 fill-slate-400 inline-block" />,
+  <Trophy className="w-5 h-5 text-amber-700 fill-amber-700 inline-block" />
+];
 const METRIC_OPTIONS = [
   { key: 'earnings',     label: 'BY EARNINGS' },
   { key: 'appointments', label: 'BY APPOINTMENTS' },

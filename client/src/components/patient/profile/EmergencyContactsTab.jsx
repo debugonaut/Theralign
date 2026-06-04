@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Check } from 'lucide-react';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
 import EmptyState from '../../common/EmptyState';
@@ -96,8 +97,8 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
 
       <div className="border-t border-neutral-200 pt-8 mt-4">
         {saveStatus === 'success' ? (
-          <div className="inline-flex items-center px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
-            ✓ Emergency Contacts Saved
+          <div className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
+            <Check size={14} /> Emergency Contacts Saved
           </div>
         ) : (
           <Button

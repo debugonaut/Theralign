@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Check } from 'lucide-react';
 
 const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
   if (!doctorProfile) return null;
@@ -73,7 +74,7 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
                       item.met ? 'bg-neutral-900' : 'bg-white'
                     }`}
                   >
-                    {item.met && <span className="text-white font-black text-[10px]">✓</span>}
+                    {item.met && <Check className="h-3.5 w-3.5 text-white" />}
                   </div>
                   
                   <span

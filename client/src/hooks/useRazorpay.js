@@ -44,7 +44,7 @@ export const useRazorpay = () => {
           theme: { color: '#0EA5E9' },
           modal: {
             ondismiss: () => {
-              toast('Payment cancelled.', { icon: 'ℹ️' });
+              toast('Payment cancelled.');
               setLoading(false);
               onFailure?.();
             },
@@ -63,7 +63,7 @@ export const useRazorpay = () => {
           <div class="bg-slate-900 border border-slate-800 text-slate-100 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl p-6 space-y-6 text-left relative select-none" style="font-family: 'Inter', sans-serif;">
             <div class="flex items-center justify-between pb-4 border-b border-slate-800">
               <div class="flex items-center gap-2">
-                <span class="text-2xl">💳</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-400 shrink-0"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                 <div>
                   <h4 class="font-extrabold text-sm text-slate-200">Razorpay Checkout</h4>
                   <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Offline Sandbox Mode</p>
@@ -82,12 +82,12 @@ export const useRazorpay = () => {
               </div>
 
               <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[10px] text-amber-400 leading-relaxed flex items-start gap-2 font-medium">
-                <span class="text-amber-400 shrink-0">⚠️</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400 shrink-0 mt-0.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12" y1="17" y2="17"/></svg>
                 <p>TEST MODE — Use card 4111 1111 1111 1111</p>
               </div>
 
               <div class="p-3 bg-sky-500/5 border border-sky-500/10 rounded-xl text-[10px] text-slate-400 leading-relaxed flex items-start gap-2 font-medium">
-                <span class="text-sky-400 shrink-0">ℹ️</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-400 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                 <p>This is a simulated Razorpay payment container. Click 'Proceed & Pay' to finalize the scheduling transaction securely using browser-native Web Crypto hashing.</p>
               </div>
 
@@ -151,7 +151,7 @@ export const useRazorpay = () => {
         // Cancel simulation handler
         document.getElementById('rzp-btn-cancel').onclick = () => {
           document.body.removeChild(container);
-          toast('Payment cancelled.', { icon: 'ℹ️' });
+          toast('Payment cancelled.');
           setLoading(false);
           onFailure?.();
         };
