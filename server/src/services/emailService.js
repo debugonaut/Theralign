@@ -40,45 +40,49 @@ export const sendBookingConfirmation = async ({
   appointmentId,
 }) => {
   const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
-  const subject = `Your Appointment with Dr. ${cleanDrName} is Confirmed — ${date} at ${startTime}`;
+  const subject = `Confirmed: Dr. ${cleanDrName} — ${date} at ${startTime}`;
   
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
   const detailLink = appointmentId ? `${clientUrl}/appointments/${appointmentId}` : `${clientUrl}/patient/appointments`;
   const firstName = patientName.split(' ')[0];
 
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
-      <div style="background: #0B4F6C; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0f0f0f; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0f0f0f; padding: 24px; text-align: center; border-bottom: 2px solid #0f0f0f;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
       </div>
-      <div style="padding: 32px; background: #ffffff; text-align: left;">
-        <h2 style="color: #1C2B3A; margin-top: 0; font-size: 20px; font-weight: 700;">Appointment Confirmed</h2>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
-          Your appointment has been successfully booked. Here are your booking details:
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0f0f0f; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0f0f0f; padding-bottom: 8px;">
+          Appointment Confirmed
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          YOUR CLINICAL APPOINTMENT HAS BEEN SCHEDULED. HERE ARE YOUR BOOKING DETAILS:
         </p>
-        <div style="background: #F7F9FB; border-left: 4px solid #0A7E6E; padding: 20px; margin: 24px 0; border-radius: 6px; border-right: 1px solid #DDE3EA; border-top: 1px solid #DDE3EA; border-bottom: 1px solid #DDE3EA;">
-          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Doctor: <span style="font-weight: normal; color: #3D5166;">Dr. ${cleanDrName}</span></p>
-          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Date: <span style="font-weight: normal; color: #3D5166;">${date}</span></p>
-          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Time: <span style="font-weight: normal; color: #3D5166;">${startTime} – ${endTime}</span></p>
-          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Consultation Fee: <span style="font-weight: normal; color: #3D5166;">₹${consultationFee} / session</span></p>
-          <p style="margin: 12px 0 0 0; color: #A8B8C8; font-size: 11px; font-weight: bold; uppercase tracking: 0.05em;">
-            Appointment ID: ${appointmentId}
+        
+        <div style="background: #fafafa; border: 2px solid #0f0f0f; padding: 20px; margin: 24px 0;">
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900; uppercase; tracking-wider;">DOCTOR: <span style="font-weight: 500; color: #555555;">DR. ${cleanDrName.toUpperCase()}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900; uppercase; tracking-wider;">DATE: <span style="font-weight: 500; color: #555555;">${date}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900; uppercase; tracking-wider;">TIME: <span style="font-weight: 500; color: #555555;">${startTime} – ${endTime}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900; uppercase; tracking-wider;">FEE: <span style="font-weight: 500; color: #555555;">₹${consultationFee} / SESSION</span></p>
+          <p style="margin: 12px 0 0 0; color: #888888; font-size: 10px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">
+            APPOINTMENT ID: ${appointmentId}
           </p>
         </div>
-        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-          Arrive 5 minutes early. If you need to cancel or reschedule, do so directly from your Theralign dashboard.
+        
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * PLEASE ARRIVE 5 MINUTES PRIOR. TO RESCHEDULE OR CANCEL, MANAGE DIRECTLY FROM YOUR THERALIGN APPOINTMENTS LEDGER.
         </p>
-        <div style="text-align: center; margin: 32px 0 16px 0;">
-          <a href="${detailLink}" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">VIEW APPOINTMENT DETAILS</a>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${detailLink}" style="background-color: #0f0f0f; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; border: 2px solid #0f0f0f; display: inline-block;">VIEW APPOINTMENT DETAILS →</a>
         </div>
       </div>
-      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
-        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0f0f0f;">
+        <p style="color: #0f0f0f; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
           The Theralign Team
         </p>
-        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
-          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+          Automated system dispatch — do not reply. Support: support@theralign.com.
         </p>
       </div>
     </div>
@@ -100,41 +104,45 @@ export const sendAppointmentReminder = async ({
   appointmentId,
 }) => {
   const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
-  const subject = `Reminder: Your Appointment with Dr. ${cleanDrName} Tomorrow at ${startTime}`;
+  const subject = `Reminder: Dr. ${cleanDrName} Tomorrow at ${startTime}`;
   
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
   const detailLink = appointmentId ? `${clientUrl}/appointments/${appointmentId}` : `${clientUrl}/patient/appointments`;
   const firstName = patientName.split(' ')[0];
 
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
-      <div style="background: #0B4F6C; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0f0f0f; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0f0f0f; padding: 24px; text-align: center; border-bottom: 2px solid #0f0f0f;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
       </div>
-      <div style="padding: 32px; background: #ffffff; text-align: left;">
-        <h2 style="color: #1C2B3A; margin-top: 0; font-size: 20px; font-weight: 700;">Appointment Tomorrow</h2>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
-          This is a friendly reminder that you have an appointment scheduled for tomorrow:
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0f0f0f; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0f0f0f; padding-bottom: 8px;">
+          Appointment Tomorrow
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          THIS IS A FRIENDLY REMINDER THAT YOU HAVE A CLINICAL APPOINTMENT SCHEDULED FOR TOMORROW:
         </p>
-        <div style="background: #F7F9FB; border-left: 4px solid #0A7E6E; padding: 20px; margin: 24px 0; border-radius: 6px; border-right: 1px solid #DDE3EA; border-top: 1px solid #DDE3EA; border-bottom: 1px solid #DDE3EA;">
-          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Doctor: <span style="font-weight: normal; color: #3D5166;">Dr. ${cleanDrName}</span></p>
-          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Date: <span style="font-weight: normal; color: #3D5166;">${date}</span></p>
-          <p style="margin: 6px 0; color: #1C2B3A; font-size: 14px; font-weight: bold;">Time: <span style="font-weight: normal; color: #3D5166;">${startTime} – ${endTime}</span></p>
+        
+        <div style="background: #fafafa; border: 2px solid #0f0f0f; padding: 20px; margin: 24px 0;">
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900; uppercase; tracking-wider;">DOCTOR: <span style="font-weight: 500; color: #555555;">DR. ${cleanDrName.toUpperCase()}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900; uppercase; tracking-wider;">DATE: <span style="font-weight: 500; color: #555555;">${date}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900; uppercase; tracking-wider;">TIME: <span style="font-weight: 500; color: #555555;">${startTime} – ${endTime}</span></p>
         </div>
-        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-          See you tomorrow. Contact support at support@theralign.com if you have any questions.
+        
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * PLEASE LET US KNOW IF YOU NEED TO MAKE ADJUSTMENTS TO THIS BOOKING.
         </p>
-        <div style="text-align: center; margin: 32px 0 16px 0;">
-          <a href="${detailLink}" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">VIEW APPOINTMENT DETAILS</a>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${detailLink}" style="background-color: #0f0f0f; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; border: 2px solid #0f0f0f; display: inline-block;">VIEW APPOINTMENT DETAILS →</a>
         </div>
       </div>
-      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
-        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0f0f0f;">
+        <p style="color: #0f0f0f; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
           The Theralign Team
         </p>
-        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
-          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+          Automated system dispatch — do not reply. Support: support@theralign.com.
         </p>
       </div>
     </div>
@@ -156,35 +164,37 @@ export const sendCancellationNotice = async ({
   appointmentId,
 }) => {
   const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
-  const subject = `Appointment Cancelled — Dr. ${cleanDrName} on ${date} at ${startTime}`;
+  const subject = `Cancelled: Dr. ${cleanDrName} on ${date} at ${startTime}`;
   
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
   const firstName = patientName.split(' ')[0];
 
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
-      <div style="background: #C0392B; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #FF3000; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #FF3000; padding: 24px; text-align: center; border-bottom: 2px solid #FF3000;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
       </div>
-      <div style="padding: 32px; background: #ffffff; text-align: left;">
-        <h2 style="color: #C0392B; margin-top: 0; font-size: 20px; font-weight: 700;">Appointment Cancelled</h2>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
-          Your scheduled appointment with Dr. ${cleanDrName} on ${date} at ${startTime} has been cancelled${cancelledBy === 'doctor' ? ' by the doctor' : ''}.
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #FF3000; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #FF3000; padding-bottom: 8px;">
+          Appointment Cancelled
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          YOUR SCHEDULED CONSULTATION WITH DR. ${cleanDrName.toUpperCase()} ON ${date} AT ${startTime} HAS BEEN CANCELLED${cancelledBy === 'doctor' ? ' BY THE DOCTOR' : ''}.
         </p>
-        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-          If you wish to schedule a new visit, you can explore other active slots on our discovery page at any time.
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * UNLOCKED TIME SLOTS ARE IMMEDIATELY RELEASED TO THE BOOKINGS DIRECTORY.
         </p>
-        <div style="text-align: center; margin: 32px 0 16px 0;">
-          <a href="${clientUrl}/doctors" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">EXPLORE ACTIVE SLOTS</a>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${clientUrl}/doctors" style="background-color: #FF3000; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; border: 2px solid #FF3000; display: inline-block;">EXPLORE ACTIVE SLOTS →</a>
         </div>
       </div>
-      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
-        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #FF3000;">
+        <p style="color: #FF3000; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
           The Theralign Team
         </p>
-        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
-          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+          Automated system dispatch — do not reply. Support: support@theralign.com.
         </p>
       </div>
     </div>
@@ -207,32 +217,36 @@ export const sendPasswordResetEmail = async ({
   const firstName = name.split(' ')[0];
 
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
-      <div style="background: #0B4F6C; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0f0f0f; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0f0f0f; padding: 24px; text-align: center; border-bottom: 2px solid #0f0f0f;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
       </div>
-      <div style="padding: 32px; background: #ffffff; text-align: left;">
-        <h2 style="color: #1C2B3A; margin-top: 0; font-size: 20px; font-weight: 700;">Password Reset Request</h2>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
-        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
-          We received a request to reset your password. Use the verification token below in the password reset form:
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0f0f0f; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0f0f0f; padding-bottom: 8px;">
+          Password Reset Request
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          WE RECEIVED A REQUEST TO RESET YOUR PASSWORD. USE THE VERIFICATION TOKEN BELOW IN THE PASSWORD RESET FORM:
         </p>
-        <div style="background: #F7F9FB; border: 2px dashed #0A7E6E; padding: 16px; margin: 24px 0; border-radius: 6px; text-align: center;">
-          <code style="font-family: monospace; font-size: 18px; font-weight: bold; color: #0A7E6E; letter-spacing: 1px;">${token}</code>
+        
+        <div style="background: #fafafa; border: 2px dashed #0f0f0f; padding: 20px; margin: 24px 0; text-align: center;">
+          <code style="font-family: monospace; font-size: 24px; font-weight: 900; color: #FF3000; letter-spacing: 2px;">${token}</code>
         </div>
-        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-          This token will expire in 15 minutes. If you did not request a password reset, please ignore this email.
+        
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * THIS TOKEN WILL EXPIRE IN 15 MINUTES. IF YOU DID NOT INITIATE THIS ACTION, YOU CAN SAFELY IGNORE THIS CORRESPONDENCE.
         </p>
-        <div style="text-align: center; margin: 32px 0 16px 0;">
-          <a href="${loginLink}" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">GO TO LOGIN PAGE</a>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${loginLink}" style="background-color: #0f0f0f; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; border: 2px solid #0f0f0f; display: inline-block;">GO TO LOGIN PAGE →</a>
         </div>
       </div>
-      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
-        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0f0f0f;">
+        <p style="color: #0f0f0f; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
           The Theralign Team
         </p>
-        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
-          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+          Automated system dispatch — do not reply. Support: support@theralign.com.
         </p>
       </div>
     </div>
