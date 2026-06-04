@@ -201,3 +201,33 @@ export const toggleUserStatus = asyncHandler(async (req, res) => {
     { user: { id: user._id, name: user.name, isActive: user.isActive } }
   );
 });
+
+/**
+ * POST /api/admin/reset-demo
+ * Resets the demo doctor back to pending state and clears their notifications.
+ */
+import Notification from '../models/Notification.model.js';
+export const resetDemoFlow = asyncHandler(async (req, res) => {
+  const demoEmail = 'doctor@demo.com'; // Match the seed email exactly
+  
+  const user = await User.findOne({ email: demoEmail });
+  if (!user) {
+    throw new AppError('Demo user not found in the system', 404);
+  }
+
+  const profile = await DoctorProfile.findOne({ user: user._id });
+  if (!profile) {
+    throw new AppError('Demo doctor profile not found', 404);
+  }
+
+  // Reset status
+  profile.verificationStatus = 'pending';
+  profile.rejectionReason = null;
+  profile.verificationNote = null;
+  await profile.save();
+
+  // Wipe notifications related to the demo doctor receiving verification update
+  await Notification.deleteMany({ recipient: user._id });
+
+  return successResponse(res, 200, 'Demo flow has been successfully reset', { profile });
+});

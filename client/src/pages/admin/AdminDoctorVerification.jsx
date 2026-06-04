@@ -7,6 +7,7 @@ import {
   getPendingDoctorsAPI,
   verifyDoctorAPI,
   rejectDoctorAPI,
+  resetDemoFlowAPI,
 } from '../../api/admin.api';
 
 import {
@@ -123,6 +124,19 @@ const AdminDoctorVerification = () => {
     link.click();
     document.body.removeChild(link);
     toast.success('Doctor ledger exported to CSV successfully');
+  };
+
+  // Reset Demo Flow
+  const handleResetDemo = async () => {
+    if (!window.confirm('Reset demo doctor back to pending state?')) return;
+    const toastId = toast.loading('Resetting demo flow...');
+    try {
+      await resetDemoFlowAPI();
+      toast.success('Demo flow reset successfully', { id: toastId });
+      await Promise.all([fetchQueue(), fetchDirectory()]);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to reset demo flow', { id: toastId });
+    }
   };
 
   // ─── Actions ───────────────────────────────────────────────────────────────
@@ -247,13 +261,21 @@ const AdminDoctorVerification = () => {
           ))}
         </div>
 
-        {/* Export secondary button */}
-        <button
-          onClick={handleExport}
-          className="px-6 py-2.5 bg-white border-2 border-neutral-900 text-[11px] font-black uppercase tracking-widest text-neutral-900 hover:bg-neutral-900 hover:text-white transition-all cursor-pointer"
-        >
-          EXPORT →
-        </button>
+        {/* Export & Reset Demo buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={handleResetDemo}
+            className="px-6 py-2.5 bg-white border-2 border-accent text-[11px] font-black uppercase tracking-widest text-accent hover:bg-accent hover:text-white transition-all cursor-pointer"
+          >
+            RESET DEMO
+          </button>
+          <button
+            onClick={handleExport}
+            className="px-6 py-2.5 bg-white border-2 border-neutral-900 text-[11px] font-black uppercase tracking-widest text-neutral-900 hover:bg-neutral-900 hover:text-white transition-all cursor-pointer"
+          >
+            EXPORT →
+          </button>
+        </div>
       </div>
 
       {/* ─── 1. Verification Queue Section ─── */}

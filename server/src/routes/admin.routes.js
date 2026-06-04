@@ -8,6 +8,7 @@ import {
   getAllDoctors,
   getAllUsersAdmin,
   toggleUserStatus,
+  resetDemoFlow,
 } from '../controllers/admin.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
@@ -53,5 +54,8 @@ router.get('/users', getAllUsersAdminValidation, validate, getAllUsersAdmin);
 
 /** PATCH /api/admin/users/:id/status — Toggle user isActive */
 router.patch('/users/:id/status', toggleUserStatusValidation, validate, toggleUserStatus);
+
+/** POST /api/admin/reset-demo — Reset the demo doctor flow (Admin Only) */
+router.post('/reset-demo', resetDemoFlow);
 
 export default router;

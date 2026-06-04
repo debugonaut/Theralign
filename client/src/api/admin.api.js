@@ -51,3 +51,10 @@ export const getAllPayments = async (page = 1, limit = 10) => {
   return response.data;
 };
 
+/**
+ * Admin: Reset demo doctor flow to pending
+ */
+export const resetDemoFlowAPI = async () => {
+  const response = await axiosInstance.post(`/admin/reset-demo`);
+  return response.data;
+};
