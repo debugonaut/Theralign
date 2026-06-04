@@ -192,3 +192,51 @@ export const sendCancellationNotice = async ({
 
   return sendMail({ to: patientEmail, subject, html });
 };
+
+/**
+ * Send password reset email with the verification token.
+ */
+export const sendPasswordResetEmail = async ({
+  email,
+  name,
+  token,
+}) => {
+  const subject = 'Reset Your Theralign Password';
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const loginLink = `${clientUrl}/login`;
+  const firstName = name.split(' ')[0];
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 2px solid #DDE3EA; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(11,79,108,0.06);">
+      <div style="background: #0B4F6C; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff; text-align: left;">
+        <h2 style="color: #1C2B3A; margin-top: 0; font-size: 20px; font-weight: 700;">Password Reset Request</h2>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">Hi ${firstName},</p>
+        <p style="color: #6B7C93; font-size: 15px; line-height: 1.6;">
+          We received a request to reset your password. Use the verification token below in the password reset form:
+        </p>
+        <div style="background: #F7F9FB; border: 2px dashed #0A7E6E; padding: 16px; margin: 24px 0; border-radius: 6px; text-align: center;">
+          <code style="font-family: monospace; font-size: 18px; font-weight: bold; color: #0A7E6E; letter-spacing: 1px;">${token}</code>
+        </div>
+        <p style="color: #6B7C93; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+          This token will expire in 15 minutes. If you did not request a password reset, please ignore this email.
+        </p>
+        <div style="text-align: center; margin: 32px 0 16px 0;">
+          <a href="${loginLink}" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 14px; font-weight: bold; border-radius: 6px; display: inline-block;">GO TO LOGIN PAGE</a>
+        </div>
+      </div>
+      <div style="padding: 20px; background: #F7F9FB; text-align: center; border-top: 2px solid #DDE3EA;">
+        <p style="color: #6B7C93; font-size: 12px; margin: 0 0 8px 0; font-weight: bold;">
+          The Theralign Team
+        </p>
+        <p style="color: #A8B8C8; font-size: 11px; margin: 0;">
+          This is an automated message — please do not reply to this email. For support, contact support@theralign.com.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: email, subject, html });
+};

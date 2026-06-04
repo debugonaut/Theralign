@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import User from '../models/User.model.js';
 import AppError from '../utils/AppError.js';
+import { sendPasswordResetEmail } from './emailService.js';
 
 /**
  * Register a new user.
@@ -110,11 +111,26 @@ export const forgotPassword = async ({ email }) => {
   user.passwordResetExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
   await user.save({ validateBeforeSave: false });
 
-  // TODO: Replace with email send in production (SendGrid/Nodemailer)
-  // For demo: return raw token directly in API response
+  // Check if SMTP is configured
+  const isMailConfigured = process.env.EMAIL_USER && process.env.EMAIL_PASS;
+
+  if (isMailConfigured) {
+    // Send real email in production
+    await sendPasswordResetEmail({
+      email: user.email,
+      name: user.name,
+      token: rawToken,
+    });
+
+    return {
+      message: 'If this email exists, a reset link has been sent.',
+    };
+  }
+
+  // Graceful fallback: return token directly in the API response (Demo Mode)
   return {
     message: 'If this email exists, a reset link has been sent.',
-    resetToken: rawToken, // Demo only — remove in production
+    resetToken: rawToken, // Demo only — fallback when credentials are not configured
   };
 };
 
