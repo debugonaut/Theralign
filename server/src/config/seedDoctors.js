@@ -992,7 +992,17 @@ export const seedDoctors = async () => {
     const existingCount = await DoctorProfile.countDocuments();
     // If we have less than 36 doctors, we assume we need to upgrade database to our premium 36-doctor set (with 10 Pune doctors).
     if (existingCount >= 36) {
-      logger.info('[Seed] High-fidelity multi-city doctors are already seeded — skipping.');
+      logger.info('[Seed] High-fidelity multi-city doctors are already seeded — skipping full seed.');
+      // Verify demo doctor user password
+      let demoDoc = await User.findOne({ email: 'doctor@demo.com' });
+      if (demoDoc) {
+        demoDoc.password = 'Demo@123456';
+        demoDoc.isActive = true;
+        await demoDoc.save();
+        logger.info('[Seed] Demo doctor account password and active state verified.');
+      } else {
+        logger.warn('[Seed] Demo doctor doctor@demo.com not found. Proceeding to seed.');
+      }
       return;
     }
 
@@ -1013,6 +1023,11 @@ export const seedDoctors = async () => {
       if (!user) {
         user = await User.create(seed.user);
         logger.info(`[Seed] Created doctor user: ${seed.user.email}`);
+      } else {
+        // Force-verify/update doctor user password to match seed
+        user.password = seed.user.password;
+        user.isActive = true;
+        await user.save();
       }
 
       // Check if profile exists

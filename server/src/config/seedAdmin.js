@@ -24,7 +24,10 @@ const seedAdmin = async () => {
       });
       logger.info('[Seed] Admin account admin@theralign.com created successfully.');
     } else {
-      logger.info('[Seed] Admin account admin@theralign.com already exists.');
+      existingTheralign.password = 'Admin@Theralign1';
+      existingTheralign.isActive = true;
+      await existingTheralign.save();
+      logger.info('[Seed] Admin account admin@theralign.com password and active state verified.');
     }
 
     // 2. Seed admin@physioconnect.com
@@ -38,7 +41,10 @@ const seedAdmin = async () => {
       });
       logger.info('[Seed] Admin account admin@physioconnect.com created successfully.');
     } else {
-      logger.info('[Seed] Admin account admin@physioconnect.com already exists.');
+      existingPhysio.password = 'Admin@123456';
+      existingPhysio.isActive = true;
+      await existingPhysio.save();
+      logger.info('[Seed] Admin account admin@physioconnect.com password and active state verified.');
     }
   } catch (err) {
     logger.error('[Seed] Failed to seed admin accounts:', err.message);

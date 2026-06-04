@@ -40,8 +40,9 @@ export const runSeed = async (shouldCloseConnection = true) => {
       });
       logger.info(`[Seed] Created demo patient account: ${patient.email}`);
     } else {
-      // Ensure password is aligned with README
+    // Ensure password is aligned with README
       patient.password = 'Demo@123456';
+      patient.isActive = true;
       await patient.save();
       logger.info(`[Seed] Found and verified patient account: ${patient.email}`);
     }

@@ -15,9 +15,9 @@ To test different journeys end-to-end, use these pre-configured accounts:
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Patient** | `patient@demo.com` | `Demo@1234` |
-| **Doctor** | `doctor@demo.com` | `Demo@1234` |
-| **Admin** | `admin@demo.com` | `Demo@1234` |
+| **Patient** | `patient@demo.com` | `Demo@123456` |
+| **Doctor** | `doctor@demo.com` | `Demo@123456` |
+| **Admin** | `admin@physioconnect.com` | `Admin@123456` |
 
 ---
 
