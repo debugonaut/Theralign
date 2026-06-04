@@ -120,7 +120,7 @@ export const onboardDoctor = async (userId, profileData, files) => {
     profile = await DoctorProfile.findOneAndUpdate(
       { user: userId },
       { $set: updatePayload },
-      { new: true, runValidators: false }
+      { new: true, runValidators: true }
     );
   } else {
     // Create new profile

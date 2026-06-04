@@ -38,7 +38,8 @@ export const buildDiscoveryQuery = (filters = {}) => {
   }
 
   if (city) {
-    query.city = { $regex: new RegExp(`^${city.trim()}$`, 'i') };
+    const escapedCity = city.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    query.city = { $regex: new RegExp(`^${escapedCity}$`, 'i') };
   }
 
   if (minFee !== undefined || maxFee !== undefined) {
@@ -60,10 +61,11 @@ export const buildDiscoveryQuery = (filters = {}) => {
   }
 
   if (search) {
+    const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     query.$or = [
-      { specialization: { $regex: search, $options: 'i' } },
-      { clinicName: { $regex: search, $options: 'i' } },
-      { clinicAddress: { $regex: search, $options: 'i' } },
+      { specialization: { $regex: escapedSearch, $options: 'i' } },
+      { clinicName: { $regex: escapedSearch, $options: 'i' } },
+      { clinicAddress: { $regex: escapedSearch, $options: 'i' } },
     ];
   }
 
@@ -213,12 +215,13 @@ export const searchDoctors = async ({ query, filters = {}, page = 1, limit = 12 
   }
 
   const cleanQuery = query.trim();
+  const escapedQuery = cleanQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   // Phase 1: Search User collection for matching doctor names
   const matchingUsers = await User.find({
     role: ROLES.DOCTOR,
     isActive: true,
-    name: { $regex: cleanQuery, $options: 'i' },
+    name: { $regex: escapedQuery, $options: 'i' },
   }).select('_id');
 
   const matchingUserIds = matchingUsers.map((u) => u._id);
@@ -230,9 +233,9 @@ export const searchDoctors = async ({ query, filters = {}, page = 1, limit = 12 
     ...baseFilters,
     $or: [
       { user: { $in: matchingUserIds } },
-      { specialization: { $regex: cleanQuery, $options: 'i' } },
-      { clinicName: { $regex: cleanQuery, $options: 'i' } },
-      { bio: { $regex: cleanQuery, $options: 'i' } },
+      { specialization: { $regex: escapedQuery, $options: 'i' } },
+      { clinicName: { $regex: escapedQuery, $options: 'i' } },
+      { bio: { $regex: escapedQuery, $options: 'i' } },
     ],
   };
 

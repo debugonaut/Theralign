@@ -40,3 +40,28 @@ export const loginValidation = [
   body('password')
     .notEmpty().withMessage('Password is required'),
 ];
+
+/**
+ * Validation chain for POST /api/auth/forgot-password
+ */
+export const forgotPasswordValidation = [
+  body('email')
+    .notEmpty().withMessage('Email is required')
+    .isEmail().withMessage('Please provide a valid email address')
+    .normalizeEmail(),
+];
+
+/**
+ * Validation chain for POST /api/auth/reset-password
+ */
+export const resetPasswordValidation = [
+  body('token')
+    .notEmpty().withMessage('Reset token is required')
+    .trim(),
+  body('newPassword')
+    .notEmpty().withMessage('New password is required')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number'),
+];
+

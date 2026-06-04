@@ -162,6 +162,16 @@ const aiLimiter = rateLimit({
   message: { message: 'Too many AI requests. Please try again later.' },
 });
 
+// Dedicated File Upload Rate Limiter (Rule 6)
+// Max 5 file uploads per minute per IP
+const uploadLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many file uploads. Please try again in a minute.' },
+});
+
 // Apply rate limiting to appropriate namespaces
 app.use('/api', apiLimiter);
 app.use('/api/auth/login', authLimiter);
@@ -169,6 +179,9 @@ app.use('/api/auth/register', authLimiter);
 app.use('/api/auth/forgot-password', passwordResetLimiter);
 app.use('/api/auth/reset-password', passwordResetLimiter);
 app.use('/api/ai', aiLimiter);
+app.use('/api/doctors/profile/onboard', uploadLimiter);
+app.use('/api/patients/profile/avatar', uploadLimiter);
+app.use('/api/documents/upload', uploadLimiter);
 
 // ==========================================
 // 3. SYSTEM HEALTH CHECKS

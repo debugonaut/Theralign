@@ -15,7 +15,8 @@ export const getSuggestions = asyncHandler(async (req, res) => {
   }
 
   const query = q.trim().slice(0, 50); // Prevent regex performance exploitation
-  const regex = new RegExp(query, 'i'); // Case-insensitive matching
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escapedQuery, 'i'); // Case-insensitive matching
 
   // Run Mongoose distinct & populate queries concurrently
   const [nameMatches, specializationMatches, cityMatches] = await Promise.all([

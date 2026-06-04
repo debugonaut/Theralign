@@ -4,6 +4,7 @@ import { successResponse } from '../utils/apiResponse.js';
 import AppError from '../utils/AppError.js';
 import Appointment from '../models/Appointment.model.js';
 import Payment from '../models/Payment.model.js';
+import DoctorProfile from '../models/DoctorProfile.model.js';
 import razorpayInstance from '../config/razorpay.js';
 import config from '../config/env.js';
 

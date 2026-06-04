@@ -160,9 +160,10 @@ export const getAllUsersAdmin = asyncHandler(async (req, res) => {
   if (role) query.role = role;
   if (isActive !== undefined) query.isActive = isActive === 'true';
   if (search) {
+    const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     query.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
+      { name: { $regex: escapedSearch, $options: 'i' } },
+      { email: { $regex: escapedSearch, $options: 'i' } },
     ];
   }
 
