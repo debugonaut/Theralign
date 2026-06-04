@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from './env.js';
 import seedAdmin from './seedAdmin.js';
 import seedDoctors from './seedDoctors.js';
+import seedPatient from './seedPatient.js';
 import { runSeed } from './seed.js';
 import Appointment from '../models/Appointment.model.js';
 
@@ -24,8 +25,9 @@ export const connectDB = async () => {
     const conn = await mongoose.connect(config.mongoUri);
     console.log(`[INFO] MongoDB Connected: ${conn.connection.host}`);
 
-    // Run idempotent seed — safe on every startup
+    // Run idempotent seeds — safe on every startup
     await seedAdmin();
+    await seedPatient();
     await seedDoctors();
 
     // Dynamically check if full transaction & analytics data should be seeded
