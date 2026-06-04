@@ -12,12 +12,38 @@ const USER_KEY = 'theralign_user';
  * selective subscription model means only components that explicitly subscribe
  * to a specific slice re-render when that slice changes. Context would
  * re-render the entire component tree on every auth state change.
+ *
+ * Auth Hydration Strategy:
+ * We read localStorage synchronously here (at module evaluation time) so that
+ * the very first render of ProtectedRoute already has the correct isAuthenticated
+ * value. Calling hydration inside a useEffect (after render) caused a race where
+ * ProtectedRoute redirected to /login before initializeAuth ran, triggering a
+ * double-mount of all dashboard components and cascading "Failed to load" toasts.
  */
+
+// Synchronously read persisted session before store creation
+const _readPersistedAuth = () => {
+  try {
+    const token = localStorage.getItem('theralign_token');
+    const userRaw = localStorage.getItem('theralign_user');
+    if (token && userRaw) {
+      return { user: JSON.parse(userRaw), token, isAuthenticated: true };
+    }
+  } catch {
+    localStorage.removeItem('theralign_token');
+    localStorage.removeItem('theralign_user');
+  }
+  return { user: null, token: null, isAuthenticated: false };
+};
+
+const _persistedAuth = _readPersistedAuth();
+
 const useAuthStore = create((set) => ({
   // ─── State ────────────────────────────────────────────────────────────────
-  user: null,            // { _id, name, email, role, profileImage, phone, isActive }
-  token: null,           // JWT string
-  isAuthenticated: false,
+  // Hydrated synchronously from localStorage — correct on the very first render
+  user: _persistedAuth.user,
+  token: _persistedAuth.token,
+  isAuthenticated: _persistedAuth.isAuthenticated,
   isLoading: false,      // true while login/register API call is in flight
   error: null,           // last auth error message
 
@@ -44,24 +70,11 @@ const useAuthStore = create((set) => ({
   },
 
   /**
-   * Hydrate auth state from localStorage on app load.
-   * Called once in main.jsx to restore the session across page refreshes.
+   * @deprecated Auth is now hydrated synchronously at module load time.
+   * This function is kept as a no-op to avoid breaking any call-sites
+   * that haven't been updated yet.
    */
-  initializeAuth: () => {
-    try {
-      const token = localStorage.getItem(TOKEN_KEY);
-      const userRaw = localStorage.getItem(USER_KEY);
-
-      if (token && userRaw) {
-        const user = JSON.parse(userRaw);
-        set({ user, token, isAuthenticated: true });
-      }
-    } catch {
-      // Malformed localStorage data — clear it
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
-    }
-  },
+  initializeAuth: () => {},
 
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),

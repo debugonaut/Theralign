@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, BellOff, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { getMyNotifications, getUnreadCount, markAllRead, markAsRead } from '../../api/notification.api';
 
 const formatTimeAgo = (dateString) => {

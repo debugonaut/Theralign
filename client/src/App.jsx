@@ -38,7 +38,7 @@ const App = () => {
             error: {
               style: { borderLeft: '6px solid #C0392B' },
               iconTheme: { primary: '#C0392B', secondary: '#FFFFFF' },
-              duration: Infinity,  // Error toasts never auto-dismiss
+              duration: 6000,  // Error toasts auto-dismiss after 6 seconds
             },
           }}
         />
