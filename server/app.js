@@ -3,10 +3,12 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import crypto from 'crypto';
 
 import config from './src/config/env.js';
 import errorMiddleware from './src/middleware/error.middleware.js';
 import { errorResponse } from './src/utils/apiResponse.js';
+import { requestStore } from './src/utils/asyncStore.js';
 
 // Theralign — Express Application Setup
 import authRoutes from './src/routes/auth.routes.js';
@@ -28,14 +30,59 @@ import patientProfileRoutes from './src/routes/patientProfile.routes.js';
 
 const app = express();
 
+// Disable X-Powered-By header
+app.disable('x-powered-by');
+
 // ==========================================
 // 1. GLOBAL MIDDLEWARES & SECURITY
 // ==========================================
 
-// Layer 1: Security Headers
-app.use(helmet());
+// Layer 1: Request ID & AsyncLocalStorage Context Store
+app.use((req, res, next) => {
+  const reqId = crypto.randomUUID();
+  req.id = reqId;
+  res.setHeader('X-Request-ID', reqId);
+  requestStore.run(req, () => {
+    next();
+  });
+});
 
-// Layer 2: CORS Setup (Environment-Aware & Strict)
+// Layer 2: Security Headers
+app.use(
+  helmet({
+    // Strict HSTS configuration (Rule 2 & Rule 11)
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+    // Prevent embedding page in frame (Rule 11)
+    frameguard: {
+      action: 'deny',
+    },
+    // Basic Content Security Policy (Rule 11)
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "res.cloudinary.com"],
+        connectSrc: ["'self'"],
+      },
+    },
+  })
+);
+
+// Layer 3: Permissions Policy Header
+app.use((req, res, next) => {
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), payment=()'
+  );
+  next();
+});
+
+// Layer 4: CORS Setup (Environment-Aware & Strict)
 const allowedOrigins = config.nodeEnv === 'production'
   ? [
       config.clientUrl,
@@ -58,40 +105,70 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Layer 3: Body Parsers
+// Layer 5: Body Parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Layer 4: Request Logging (Morgan)
-const morganFormat = config.nodeEnv === 'production' ? 'combined' : 'dev';
+// Layer 6: Request Logging (Morgan with Request IDs)
+morgan.token('reqId', (req) => req.id || '');
+const morganFormat = config.nodeEnv === 'production'
+  ? ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" [reqId=:reqId]'
+  : ':method :url :status :response-time ms - :res[content-length] [reqId=:reqId]';
 app.use(morgan(morganFormat));
 
 // ==========================================
 // 2. RATE LIMITING (Production Hardening)
 // ==========================================
 
-// General API Rate Limiter
+// General/Authenticated API Rate Limiter
+// Dynamic max: 60 req/min for public, 300 req/min for authenticated users (Rule 6)
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per window per IP
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: (req) => {
+    if (req.headers.authorization) {
+      return 300;
+    }
+    return 60;
+  },
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many requests. Please try again later.' },
 });
 
-// Stricter Rate Limiter for Auth Routes (brute-force protection)
+// Stricter Rate Limiter for Auth Routes (brute-force protection - Rule 6)
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 15, // 15 login/register attempts per 15 minutes
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 login/register attempts per 15 minutes
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many login attempts. Please try again later.' },
+});
+
+// Password Reset Limiter (Rule 6)
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // 3 requests per 1 hour
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many password reset attempts. Please try again in an hour.' },
+});
+
+// AI endpoints Rate Limiter (Rule 6 & Rule 20)
+const aiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10, // 10 AI requests per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many AI requests. Please try again later.' },
 });
 
 // Apply rate limiting to appropriate namespaces
 app.use('/api', apiLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/forgot-password', passwordResetLimiter);
+app.use('/api/auth/reset-password', passwordResetLimiter);
+app.use('/api/ai', aiLimiter);
 
 // ==========================================
 // 3. SYSTEM HEALTH CHECKS

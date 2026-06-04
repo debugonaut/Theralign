@@ -43,6 +43,12 @@ export const uploadSessionDocument = asyncHandler(async (req, res) => {
   if (req.file.mimetype !== 'application/pdf') {
     throw new AppError('Only PDF documents are accepted.', 400);
   }
+
+  // Verify PDF magic bytes (%PDF)
+  if (!req.file.buffer || req.file.buffer.toString('utf-8', 0, 4) !== '%PDF') {
+    throw new AppError('Invalid PDF file content. The file content does not match a PDF signature.', 400);
+  }
+
   if (req.file.size > 5 * 1024 * 1024) {
     throw new AppError('File size limit exceeded. PDFs must be under 5MB.', 400);
   }

@@ -2,7 +2,12 @@ import { Router } from 'express';
 import multer from 'multer';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
+import validate from '../middleware/validate.middleware.js';
 import { uploadSessionDocument, deleteSessionDocument } from '../controllers/document.controller.js';
+import {
+  uploadSessionDocumentValidation,
+  deleteSessionDocumentValidation
+} from '../validations/document.validation.js';
 
 const router = Router();
 
@@ -18,6 +23,8 @@ router.post(
   requireAuth,
   requireRole('doctor'),
   upload.single('document'), // Expects 'document' field payload
+  uploadSessionDocumentValidation,
+  validate,
   uploadSessionDocument
 );
 
@@ -25,6 +32,8 @@ router.delete(
   '/:appointmentId',
   requireAuth,
   requireRole('doctor'),
+  deleteSessionDocumentValidation,
+  validate,
   deleteSessionDocument
 );
 

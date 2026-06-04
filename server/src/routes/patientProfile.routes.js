@@ -3,6 +3,8 @@ import { getMyProfile, updateMyProfile, uploadAvatar } from '../controllers/pati
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 import { uploadSingleImage } from '../middleware/upload.middleware.js';
+import validate from '../middleware/validate.middleware.js';
+import { updateMyProfileValidation } from '../validations/patientProfile.validation.js';
 
 const router = Router();
 
@@ -20,7 +22,7 @@ router.get('/me', getMyProfile);
  * PUT /api/patients/profile/me
  * Update profile (partial updates supported)
  */
-router.put('/me', updateMyProfile);
+router.put('/me', updateMyProfileValidation, validate, updateMyProfile);
 
 /**
  * POST /api/patients/profile/avatar
