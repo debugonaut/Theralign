@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import useAuthStore from '../../store/authStore';
 import { patientProfileService } from '../../api/patientProfile.api';
 import SegmentedControl from '../../components/common/SegmentedControl';
@@ -11,6 +11,8 @@ import MedicalHistoryTab from '../../components/patient/profile/MedicalHistoryTa
 import LifestyleTab from '../../components/patient/profile/LifestyleTab';
 import EmergencyContactsTab from '../../components/patient/profile/EmergencyContactsTab';
 import InsuranceTab from '../../components/patient/profile/InsuranceTab';
+
+const DRAFT_KEY = 'physio_patient_profile_draft';
 
 const TABS = [
   { value: 'BASIC INFO', label: 'BASIC INFO' },
@@ -28,9 +30,30 @@ const PatientProfile = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [pendingTab, setPendingTab] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Draft state
+  const [hasDraft, setHasDraft]           = useState(false);
+  const [draftSavedAt, setDraftSavedAt]   = useState(null); // timestamp
+  const [showDraftChip, setShowDraftChip] = useState(false); // fading chip
+  const draftChipTimerRef = useRef(null);
+  const draftDebounceRef  = useRef(null);
   
   const fileInputRef = useRef(null);
   const { showToast } = useToast();
+
+  // On mount — check for existing draft
+  useEffect(() => {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.tab) {
+          setHasDraft(true);
+          setDraftSavedAt(parsed.savedAt || null);
+        }
+      } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     fetchProfile();
@@ -69,7 +92,52 @@ const PatientProfile = () => {
     setProfile(updatedProfile);
     setHasUnsavedChanges(false);
     setPendingTab(null);
+    // Clear draft on successful save
+    localStorage.removeItem(DRAFT_KEY);
+    setHasDraft(false);
   };
+
+  // Intercept unsaved changes flag to also trigger debounced draft save
+  const handleUnsavedChanges = useCallback((dirty) => {
+    setHasUnsavedChanges(dirty);
+    if (!dirty) return;
+    // Debounce: write draft 1.5s after last change
+    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
+    draftDebounceRef.current = setTimeout(() => {
+      const draftPayload = { tab: activeTab, savedAt: new Date().toISOString() };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
+      setHasDraft(true);
+      setDraftSavedAt(draftPayload.savedAt);
+      // Show the "DRAFT SAVED" chip for 2000ms
+      setShowDraftChip(true);
+      if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
+      draftChipTimerRef.current = setTimeout(() => setShowDraftChip(false), 2000);
+    }, 1500);
+  }, [activeTab]);
+
+  // Cleanup on unmount
+  useEffect(() => () => {
+    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
+    if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
+  }, []);
+
+  const handleRestoreDraft = () => {
+    // Jump to the tab that was active when draft was saved
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.tab) setActiveTab(parsed.tab);
+      } catch {}
+    }
+    setHasDraft(false);
+  };
+
+  const handleDiscardDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setHasDraft(false);
+  };
+
 
   const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -204,7 +272,43 @@ const PatientProfile = () => {
           })}
         </div>
 
+        {/* Draft Restore Banner */}
+        {hasDraft && (
+          <div className="max-w-4xl mx-auto w-full mb-6 border border-warning/40 bg-warning/5 px-5 py-3 rounded-md flex items-center justify-between gap-4">
+            <div>
+              <span className="text-[10px] font-black text-warning uppercase tracking-widest block">
+                Unsaved Draft Found
+              </span>
+              <span className="text-ui-xs text-neutral-600 font-medium">
+                {draftSavedAt
+                  ? `Last saved at ${new Date(draftSavedAt).toLocaleTimeString()}`
+                  : 'You have unsaved changes from a previous session'}
+              </span>
+            </div>
+            <div className="flex gap-4 shrink-0">
+              <button onClick={handleRestoreDraft} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">
+                RESTORE
+              </button>
+              <button onClick={handleDiscardDraft} className="text-[10px] font-black text-accent uppercase tracking-widest hover:underline">
+                DISCARD
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* DRAFT SAVED floating chip */}
+        <div
+          className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
+            showDraftChip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+          }`}
+        >
+          <div className="bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">
+            ✓ DRAFT SAVED
+          </div>
+        </div>
+
         {/* Unsaved Changes Warning */}
+
         {hasUnsavedChanges && pendingTab && (
           <div className="max-w-4xl mx-auto w-full mb-8 border-2 border-[#FFB800] bg-yellow-50 px-6 py-4 flex items-center justify-between">
             <span className="text-ui-sm font-bold text-black uppercase tracking-widest">
@@ -227,35 +331,35 @@ const PatientProfile = () => {
             <BasicInfoTab 
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={setHasUnsavedChanges} 
+              onUnsavedChanges={handleUnsavedChanges} 
             />
           )}
           {activeTab === 'MEDICAL HISTORY' && (
             <MedicalHistoryTab 
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={setHasUnsavedChanges} 
+              onUnsavedChanges={handleUnsavedChanges} 
             />
           )}
           {activeTab === 'LIFESTYLE' && (
             <LifestyleTab 
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={setHasUnsavedChanges} 
+              onUnsavedChanges={handleUnsavedChanges} 
             />
           )}
           {activeTab === 'EMERGENCY CONTACTS' && (
             <EmergencyContactsTab 
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={setHasUnsavedChanges} 
+              onUnsavedChanges={handleUnsavedChanges} 
             />
           )}
           {activeTab === 'INSURANCE' && (
             <InsuranceTab 
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={setHasUnsavedChanges} 
+              onUnsavedChanges={handleUnsavedChanges} 
             />
           )}
         </div>

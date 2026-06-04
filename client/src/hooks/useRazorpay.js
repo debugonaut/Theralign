@@ -81,6 +81,11 @@ export const useRazorpay = () => {
                 <p class="text-[9px] text-slate-600 font-semibold mt-0.5">Order Ref: ${orderData.orderId}</p>
               </div>
 
+              <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[10px] text-amber-400 leading-relaxed flex items-start gap-2 font-medium">
+                <span class="text-amber-400 shrink-0">⚠️</span>
+                <p>TEST MODE — Use card 4111 1111 1111 1111</p>
+              </div>
+
               <div class="p-3 bg-sky-500/5 border border-sky-500/10 rounded-xl text-[10px] text-slate-400 leading-relaxed flex items-start gap-2 font-medium">
                 <span class="text-sky-400 shrink-0">ℹ️</span>
                 <p>This is a simulated Razorpay payment container. Click 'Proceed & Pay' to finalize the scheduling transaction securely using browser-native Web Crypto hashing.</p>

@@ -58,6 +58,20 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true, // Admin can deactivate accounts
     },
+
+    // ─── Password Reset ─────────────────────────────────────────────────────────
+    // Stored as sha256 hash of the raw token sent to user. Never stored raw.
+    passwordResetToken: {
+      type: String,
+      default: null,
+      select: false, // Never returned in normal queries
+    },
+
+    passwordResetExpiry: {
+      type: Date,
+      default: null,
+      select: false,
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt automatically

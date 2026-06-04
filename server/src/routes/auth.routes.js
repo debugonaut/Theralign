@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, getMe } from '../controllers/auth.controller.js';
+import { register, login, getMe, forgotPassword, resetPassword } from '../controllers/auth.controller.js';
 import { registerValidation, loginValidation } from '../validations/auth.validation.js';
 import validate from '../middleware/validate.middleware.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
@@ -26,4 +26,18 @@ router.post('/login', loginValidation, validate, login);
  */
 router.get('/me', requireAuth, getMe);
 
+/**
+ * POST /api/auth/forgot-password
+ * Public — Request a password reset token for an email address.
+ * Returns resetToken in response (demo mode — skip email delivery).
+ */
+router.post('/forgot-password', forgotPassword);
+
+/**
+ * POST /api/auth/reset-password
+ * Public — Set a new password using a valid reset token.
+ */
+router.post('/reset-password', resetPassword);
+
 export default router;
+

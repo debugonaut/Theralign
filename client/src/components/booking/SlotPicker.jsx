@@ -138,7 +138,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
           appointmentId,
           onSuccess: () => {
             setShowModal(false);
-            setTimeout(() => navigate('/patient/appointments'), 1500);
+            navigate(`/booking-success/${appointmentId}`);
           },
           onFailure: () => {
             setShowModal(false);

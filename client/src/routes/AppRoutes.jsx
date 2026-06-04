@@ -33,6 +33,7 @@ const MedicalDisclaimerPage = lazy(() => import('../pages/public/MedicalDisclaim
 const PatientDashboard = lazy(() => import('../pages/patient/PatientDashboard'));
 const PatientAppointments = lazy(() => import('../pages/patient/PatientAppointments'));
 const AppointmentDetailsPage = lazy(() => import('../pages/patient/AppointmentDetailsPage'));
+const BookingSuccessPage = lazy(() => import('../pages/patient/BookingSuccessPage'));
 const PatientPayments = lazy(() => import('../pages/patient/PatientPayments'));
 const PatientProfile = lazy(() => import('../pages/patient/PatientProfile'));
 const PatientMyReviews = lazy(() => import('../pages/patient/MyReviews'));
@@ -128,6 +129,18 @@ const AppRoutes = () => {
             <ProtectedRoute>
               <RoleRoute allowedRoles={['patient']}>
                 <AppointmentDetailsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Lightweight Mobile-First Patient booking success/payment confirmation page */}
+        <Route
+          path="/booking-success/:id"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={['patient']}>
+                <BookingSuccessPage />
               </RoleRoute>
             </ProtectedRoute>
           }

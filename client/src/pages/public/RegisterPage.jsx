@@ -136,7 +136,7 @@ const RegisterPage = () => {
                     onClick={() => setFormData((p) => ({ ...p, role: value }))}
                     className={`
                       flex-1 py-2 text-xs font-bold tracking-wide uppercase
-                      transition-all duration-fast cursor-pointer rounded-md
+                      transition-all duration-200 cursor-pointer rounded-md
                       ${formData.role === value
                         ? 'bg-primary text-white shadow-sm'
                         : 'bg-transparent text-neutral-500 hover:text-neutral-900'
@@ -147,7 +147,25 @@ const RegisterPage = () => {
                   </button>
                 ))}
               </div>
+
+              {/* Physiotherapist informational note — fades in when doctor role selected */}
+              <div
+                className={`overflow-hidden transition-all duration-200 ease-in-out ${
+                  formData.role === 'doctor'
+                    ? 'max-h-24 opacity-100'
+                    : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className="mt-2 flex items-start gap-2 bg-primary/5 border border-primary/20 rounded-md px-3 py-2.5">
+                  <span className="text-[14px] mt-0.5 shrink-0">🩺</span>
+                  <p className="text-[11px] font-semibold text-primary/90 leading-relaxed">
+                    After registration, complete your clinical profile and submit your license documents.
+                    Your profile will be reviewed and activated within 24 hours.
+                  </p>
+                </div>
+              </div>
             </div>
+
 
             {/* Full Name */}
             <Input

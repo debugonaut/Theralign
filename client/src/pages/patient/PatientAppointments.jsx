@@ -371,41 +371,39 @@ const PatientAppointments = () => {
                                       <div className="h-[1px] bg-neutral-200 w-full mt-2" />
                                     </div>
 
-                                    {/* Number star rating selector */}
+                                    {/* 5-Star Rating Selector */}
                                     <div className="flex flex-col gap-2">
                                       <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                                         RATING
                                       </span>
-                                      <div className="flex items-center gap-1.5">
-                                        {[1, 2, 3, 4, 5].map((val) => {
-                                          const isSelected = rating === val;
-                                          return (
-                                            <button
-                                              key={val}
-                                              type="button"
-                                              onClick={() => setRating(val)}
-                                              className={`w-10 h-10 border font-bold text-ui-sm flex items-center justify-center rounded-md select-none cursor-pointer transition-all duration-150 active:scale-[0.93]
-                                                ${isSelected 
-                                                  ? 'bg-neutral-900 border-neutral-900 text-white shadow-level-1' 
-                                                  : 'bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'
-                                                }
-                                              `}
+                                      <div className="flex items-center gap-1">
+                                        {[1, 2, 3, 4, 5].map((val) => (
+                                          <button
+                                            key={val}
+                                            type="button"
+                                            onClick={() => setRating(val)}
+                                            className="text-[30px] leading-none transition-transform duration-100 active:scale-90 focus:outline-none cursor-pointer hover:scale-110"
+                                            aria-label={`Rate ${val} out of 5`}
+                                          >
+                                            <span
+                                              className={`transition-colors duration-150 ${
+                                                val <= rating ? 'text-amber-400' : 'text-neutral-200'
+                                              }`}
                                             >
-                                              {val}
-                                            </button>
-                                          );
-                                        })}
+                                              ★
+                                            </span>
+                                          </button>
+                                        ))}
                                         {rating > 0 && (
-                                          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-3">
-                                            {rating === 1 && '1 = POOR'}
-                                            {rating === 2 && '2 = FAIR'}
-                                            {rating === 3 && '3 = GOOD'}
-                                            {rating === 4 && '4 = EXCELLENT'}
-                                            {rating === 5 && '5 = OUTSTANDING'}
+                                          <span className={`ml-3 text-[10px] font-black uppercase tracking-widest ${
+                                            rating <= 2 ? 'text-accent' : rating === 3 ? 'text-warning' : 'text-success'
+                                          }`}>
+                                            {['', 'Poor', 'Fair', 'Good', 'Excellent', 'Outstanding'][rating]}
                                           </span>
                                         )}
                                       </div>
                                     </div>
+
 
                                     {/* Review Text */}
                                     <div className="flex flex-col gap-2">

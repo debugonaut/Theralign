@@ -34,14 +34,14 @@ export const runSeed = async (shouldCloseConnection = true) => {
       patient = await User.create({
         name: 'Demo Patient',
         email: 'patient@demo.com',
-        password: 'Demo@1234', // Updated to match README
+        password: 'Demo@123456', // Updated to match README
         role: ROLES.PATIENT,
         phone: '9876543210',
       });
       logger.info(`[Seed] Created demo patient account: ${patient.email}`);
     } else {
       // Ensure password is aligned with README
-      patient.password = 'Demo@1234';
+      patient.password = 'Demo@123456';
       await patient.save();
       logger.info(`[Seed] Found and verified patient account: ${patient.email}`);
     }

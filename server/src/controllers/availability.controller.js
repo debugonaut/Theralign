@@ -3,6 +3,7 @@ import { successResponse } from '../utils/apiResponse.js';
 import AppError from '../utils/AppError.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import WeeklySchedule from '../models/WeeklySchedule.model.js';
 import Waitlist from '../models/Waitlist.model.js';
 import { createNotification } from '../services/notificationService.js';
 
@@ -292,3 +293,189 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
 
   return successResponse(res, 200, 'Available slots retrieved successfully', grouped);
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WEEKLY SCHEDULE ENDPOINTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * GET /api/availability/schedule
+ * Doctor — retrieve their WeeklySchedule document.
+ */
+export const getWeeklySchedule = asyncHandler(async (req, res) => {
+  const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
+  if (!doctorProfile) {
+    throw new AppError('Doctor profile not found.', 404);
+  }
+
+  const schedule = await WeeklySchedule.findOne({ doctor: doctorProfile._id });
+  // Return empty defaults if not yet configured
+  return successResponse(res, 200, 'Weekly schedule retrieved', { schedule: schedule || null });
+});
+
+/**
+ * POST /api/availability/schedule
+ * Doctor — create or upsert their WeeklySchedule.
+ */
+export const saveWeeklySchedule = asyncHandler(async (req, res) => {
+  const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
+  if (!doctorProfile) {
+    throw new AppError('Doctor profile not found.', 404);
+  }
+
+  const { schedule, slotDurationMinutes, breakEnabled, breakStartTime, breakEndTime } = req.body;
+
+  const updated = await WeeklySchedule.findOneAndUpdate(
+    { doctor: doctorProfile._id },
+    {
+      doctor: doctorProfile._id,
+      schedule,
+      slotDurationMinutes: slotDurationMinutes || 30,
+      breakEnabled: breakEnabled || false,
+      breakStartTime: breakStartTime || '13:00',
+      breakEndTime: breakEndTime || '14:00',
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  return successResponse(res, 200, 'Weekly schedule saved', { schedule: updated });
+});
+
+/**
+ * POST /api/availability/block-date
+ * Doctor — add a date to their blocked dates list.
+ */
+export const blockDate = asyncHandler(async (req, res) => {
+  const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
+  if (!doctorProfile) {
+    throw new AppError('Doctor profile not found.', 404);
+  }
+
+  const { date } = req.body; // YYYY-MM-DD
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    throw new AppError('Invalid date format. Use YYYY-MM-DD.', 400);
+  }
+
+  const schedule = await WeeklySchedule.findOneAndUpdate(
+    { doctor: doctorProfile._id },
+    {
+      $addToSet: { blockedDates: date },
+      $setOnInsert: { doctor: doctorProfile._id },
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  return successResponse(res, 200, `Date ${date} blocked`, { blockedDates: schedule.blockedDates });
+});
+
+/**
+ * DELETE /api/availability/block-date
+ * Doctor — remove a date from their blocked dates list.
+ */
+export const unblockDate = asyncHandler(async (req, res) => {
+  const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
+  if (!doctorProfile) {
+    throw new AppError('Doctor profile not found.', 404);
+  }
+
+  const { date } = req.body; // YYYY-MM-DD
+  if (!date) {
+    throw new AppError('Date is required.', 400);
+  }
+
+  const schedule = await WeeklySchedule.findOneAndUpdate(
+    { doctor: doctorProfile._id },
+    { $pull: { blockedDates: date } },
+    { new: true }
+  );
+
+  const remaining = schedule?.blockedDates || [];
+  return successResponse(res, 200, `Date ${date} unblocked`, { blockedDates: remaining });
+});
+
+/**
+ * GET /api/availability/:doctorId/slots?date=YYYY-MM-DD
+ * Public — compute available slots for a doctor on a given date from their WeeklySchedule.
+ * Falls back to the old AvailabilitySlot model if no WeeklySchedule exists.
+ */
+export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
+  const { doctorId } = req.params;
+  const { date } = req.query;
+
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    throw new AppError('Query param ?date=YYYY-MM-DD is required.', 400);
+  }
+
+  const doctorProfile = await DoctorProfile.findById(doctorId);
+  if (!doctorProfile) {
+    throw new AppError('Doctor not found.', 404);
+  }
+
+  const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorProfile._id });
+
+  if (!weeklySchedule) {
+    // Fallback: old AvailabilitySlot model
+    const slots = await AvailabilitySlot.find({
+      doctor: doctorProfile._id,
+      date,
+      isActive: true,
+      isBooked: false,
+    }).sort({ startTime: 1 });
+    return successResponse(res, 200, 'Slots retrieved (legacy)', { slots, source: 'legacy' });
+  }
+
+  // Check if date is blocked
+  if (weeklySchedule.blockedDates.includes(date)) {
+    return successResponse(res, 200, 'Date is blocked', { slots: [], blocked: true });
+  }
+
+  // Determine day of week from date string
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const dayOfWeek = new Date(date + 'T00:00:00').getDay();
+  const dayName = dayNames[dayOfWeek];
+  const daySchedule = weeklySchedule.schedule[dayName];
+
+  if (!daySchedule?.enabled) {
+    return successResponse(res, 200, 'Doctor not available this day', { slots: [], available: false });
+  }
+
+  // Generate slots from startTime to endTime with slotDuration steps, excluding break
+  const toMinutes = (timeStr) => {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
+  };
+  const fromMinutes = (totalMins) => {
+    const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+    const m = (totalMins % 60).toString().padStart(2, '0');
+    return `${h}:${m}`;
+  };
+
+  const startMins = toMinutes(daySchedule.startTime);
+  const endMins   = toMinutes(daySchedule.endTime);
+  const duration  = weeklySchedule.slotDurationMinutes;
+  const breakStart = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakStartTime) : null;
+  const breakEnd   = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakEndTime) : null;
+
+  const computedSlots = [];
+  let cursor = startMins;
+
+  while (cursor + duration <= endMins) {
+    const slotEnd = cursor + duration;
+    // Skip if slot overlaps with break
+    const overlapsBreak = breakStart !== null &&
+      !(slotEnd <= breakStart || cursor >= breakEnd);
+
+    if (!overlapsBreak) {
+      computedSlots.push({
+        startTime: fromMinutes(cursor),
+        endTime:   fromMinutes(slotEnd),
+        date,
+        source: 'weekly',
+      });
+    }
+    cursor += duration;
+  }
+
+  return successResponse(res, 200, 'Available slots computed', { slots: computedSlots, source: 'weekly' });
+});
+

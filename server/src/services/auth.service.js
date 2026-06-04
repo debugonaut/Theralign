@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import User from '../models/User.model.js';
 import AppError from '../utils/AppError.js';
 
@@ -82,3 +83,70 @@ export const getUserById = async (userId) => {
   }
   return user;
 };
+
+/**
+ * Generate a password reset token for a user email.
+ * Token is hashed with sha256 before storage — raw token returned for demo.
+ *
+ * @param {{ email: string }} param
+ * @returns {{ resetToken: string } | { message: string }}
+ */
+export const forgotPassword = async ({ email }) => {
+  // Always return generic message — never confirm email existence (prevents enumeration)
+  const user = await User.findOne({ email }).select('+passwordResetToken +passwordResetExpiry');
+
+  if (!user) {
+    // Return same generic message even if email not found
+    return { message: 'If this email exists, a reset link has been sent.' };
+  }
+
+  // Generate secure random token
+  const rawToken = crypto.randomBytes(32).toString('hex');
+
+  // Hash and store — never store the raw token in DB
+  const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+  user.passwordResetToken = hashedToken;
+  user.passwordResetExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+  await user.save({ validateBeforeSave: false });
+
+  // TODO: Replace with email send in production (SendGrid/Nodemailer)
+  // For demo: return raw token directly in API response
+  return {
+    message: 'If this email exists, a reset link has been sent.',
+    resetToken: rawToken, // Demo only — remove in production
+  };
+};
+
+/**
+ * Reset password using a valid reset token.
+ *
+ * @param {{ token: string, newPassword: string }}
+ */
+export const resetPassword = async ({ token, newPassword }) => {
+  if (!token || !newPassword) {
+    throw new AppError('Token and new password are required', 400);
+  }
+
+  // Hash incoming token to compare with stored hash
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  // Find user where token matches AND expiry is in the future
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpiry: { $gt: Date.now() },
+  }).select('+password +passwordResetToken +passwordResetExpiry');
+
+  if (!user) {
+    throw new AppError('Reset token is invalid or has expired', 400);
+  }
+
+  // Update password — pre-save hook handles hashing
+  user.password = newPassword;
+  user.passwordResetToken = null;
+  user.passwordResetExpiry = null;
+  await user.save();
+
+  return { message: 'Password updated successfully. You can now log in.' };
+};
+

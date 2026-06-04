@@ -46,7 +46,19 @@ const AdminDashboard = () => {
   useEffect(() => {
     document.title = 'System Overview — Theralign';
     loadDashboard();
-  }, []);
+
+    const pollOverview = async () => {
+      try {
+        const overviewRes = await getPlatformOverviewAPI();
+        setOverview(overviewRes.data?.data || overviewRes.data || {});
+      } catch (err) {
+        console.error('Failed to poll platform overview', err);
+      }
+    };
+
+    const intervalId = setInterval(pollOverview, 30000);
+    return () => clearInterval(intervalId);
+  }, [loadDashboard]);
 
   const handlePeriodChange = async (period) => {
     setRevenuePeriod(period);

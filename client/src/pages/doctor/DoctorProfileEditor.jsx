@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getDoctorProfileAPI, onboardDoctorAPI } from '../../api/doctor.api';
@@ -7,12 +7,23 @@ import SectionHeader from '../../components/common/SectionHeader';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 
+const DRAFT_KEY = 'physio_doctor_profile_draft';
+
+
+
 const DoctorProfileEditor = () => {
   const navigate = useNavigate();
   const { user, setCredentials } = useAuthStore();
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Draft persistence
+  const [hasDraft, setHasDraft]           = useState(false);
+  const [draftSavedAt, setDraftSavedAt]   = useState(null);
+  const [showDraftChip, setShowDraftChip] = useState(false);
+  const draftChipTimerRef = useRef(null);
+  const draftDebounceRef  = useRef(null);
 
   // ─── Form States ───
   const [name, setName] = useState('');
@@ -105,7 +116,42 @@ const DoctorProfileEditor = () => {
   useEffect(() => {
     document.title = 'MY PROFILE — Theralign';
     fetchProfileData();
+    // Check for existing draft
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.savedAt) {
+          setHasDraft(true);
+          setDraftSavedAt(parsed.savedAt);
+        }
+      } catch {}
+    }
   }, []);
+
+  // Call whenever isDirty becomes true to trigger debounced draft save
+  const triggerDraftSave = useCallback(() => {
+    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
+    draftDebounceRef.current = setTimeout(() => {
+      const draftPayload = { savedAt: new Date().toISOString() };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
+      setHasDraft(true);
+      setDraftSavedAt(draftPayload.savedAt);
+      setShowDraftChip(true);
+      if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
+      draftChipTimerRef.current = setTimeout(() => setShowDraftChip(false), 2000);
+    }, 1500);
+  }, []);
+
+  useEffect(() => () => {
+    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
+    if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
+  }, []);
+
+  const handleDiscardDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setHasDraft(false);
+  };
 
   const handleDiscard = () => {
     // Reset all forms to database values
@@ -177,7 +223,13 @@ const DoctorProfileEditor = () => {
     licenseFile !== null
   );
 
+  // Auto-save draft whenever form becomes dirty
+  useEffect(() => {
+    if (isDirty) triggerDraftSave();
+  }, [isDirty]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handlePhotoUploadChange = (e) => {
+
     const file = e.target.files[0];
     if (file) {
       if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
@@ -283,6 +335,10 @@ const DoctorProfileEditor = () => {
       if (res.success && res.data?.profile) {
         toast.success('PROFILE SAVED AND RESET TO PENDING REVIEW.', { id: toastId });
         
+        // Clear draft on successful save
+        localStorage.removeItem(DRAFT_KEY);
+        setHasDraft(false);
+
         // Sync Zustand Auth Store credentials
         const updatedUser = res.data.profile.user;
         const storedToken = localStorage.getItem('theralign_token');
@@ -291,6 +347,7 @@ const DoctorProfileEditor = () => {
         }
 
         fetchProfileData();
+
       }
     } catch (err) {
       console.error(err);
@@ -331,6 +388,36 @@ const DoctorProfileEditor = () => {
         <p className="text-ui-sm text-neutral-500 font-semibold uppercase tracking-wider mt-3">
           Configure your professional clinical parameters, update coordinates, set fee charts, and submit license files.
         </p>
+      </div>
+
+      {/* Draft Banner */}
+      {hasDraft && (
+        <div className="border border-warning/40 bg-warning/5 px-5 py-3 rounded-md flex items-center justify-between gap-4">
+          <div>
+            <span className="text-[10px] font-black text-warning uppercase tracking-widest block">
+              Unsaved Draft Detected
+            </span>
+            <span className="text-ui-xs text-neutral-600 font-medium">
+              {draftSavedAt
+                ? `Auto-saved at ${new Date(draftSavedAt).toLocaleTimeString()}`
+                : 'A previous editing session was not saved'}
+            </span>
+          </div>
+          <button onClick={handleDiscardDraft} className="text-[10px] font-black text-accent uppercase tracking-widest hover:underline shrink-0">
+            DISMISS
+          </button>
+        </div>
+      )}
+
+      {/* DRAFT SAVED floating chip */}
+      <div
+        className={`fixed bottom-24 right-6 z-50 transition-all duration-300 ${
+          showDraftChip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+        }`}
+      >
+        <div className="bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">
+          ✓ DRAFT SAVED
+        </div>
       </div>
 
       {/* ── PERSONAL INFORMATION ── */}

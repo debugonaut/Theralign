@@ -9,7 +9,7 @@ const doctorSeeds = [
     user: {
       name: 'Priya Sharma',
       email: 'doctor@demo.com', // Map README demo doctor email
-      password: 'Demo@1234',
+      password: 'Demo@123456',
       role: ROLES.DOCTOR,
     },
     profile: {
@@ -1027,6 +1027,16 @@ export const seedDoctors = async () => {
     }
 
     logger.info(`[Seed] Successfully seeded ${doctorSeeds.length} doctor profiles across multiple cities.`);
+
+    // ─── Idempotent safety net ─────────────────────────────────────────────────
+    // Ensure ALL seeded doctors are verified and available (covers re-runs / stale docs)
+    const fixResult = await DoctorProfile.updateMany(
+      { verificationStatus: { $ne: DOCTOR_STATUS.VERIFIED } },
+      { $set: { verificationStatus: DOCTOR_STATUS.VERIFIED, isAvailable: true } }
+    );
+    if (fixResult.modifiedCount > 0) {
+      logger.info(`[Seed] Fixed ${fixResult.modifiedCount} doctor profiles to verified status.`);
+    }
   } catch (err) {
     logger.error('[Seed] Failed to seed doctor profiles:', err.message);
   }

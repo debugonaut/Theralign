@@ -32,3 +32,30 @@ export const getMe = asyncHandler(async (req, res) => {
   const user = await authService.getUserById(req.user.id);
   return successResponse(res, 200, 'User retrieved successfully', { user });
 });
+
+/**
+ * POST /api/auth/forgot-password
+ * Public — Generate a password reset token.
+ * For demo: returns the raw token in the response (skip email delivery).
+ */
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return successResponse(res, 200, 'If this email exists, a reset link has been sent.', {
+      message: 'If this email exists, a reset link has been sent.',
+    });
+  }
+  const result = await authService.forgotPassword({ email });
+  return successResponse(res, 200, result.message, result);
+});
+
+/**
+ * POST /api/auth/reset-password
+ * Public — Reset password using a valid token.
+ */
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { token, newPassword } = req.body;
+  const result = await authService.resetPassword({ token, newPassword });
+  return successResponse(res, 200, result.message, result);
+});
+
