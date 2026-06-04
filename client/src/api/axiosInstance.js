@@ -16,9 +16,14 @@ const axiosInstance = axios.create({
   },
 });
 
-// Request Interceptor: Attach JWT token if present
+// Request Interceptor: Attach JWT token if present and prevent GET caching
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Prevent browser caching of GET requests
+    if (config.method === 'get') {
+      config.params = { ...config.params, _t: Date.now() };
+    }
+    
     const token = localStorage.getItem('theralign_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
