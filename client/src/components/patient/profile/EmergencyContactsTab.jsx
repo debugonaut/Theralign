@@ -6,7 +6,7 @@ import EmptyState from '../../common/EmptyState';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
+const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
   const [contacts, setContacts] = useState(profile?.emergencyContacts || []);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
@@ -95,7 +95,7 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
         </div>
       )}
 
-      <div className="border-t border-neutral-200 pt-8 mt-4">
+      <div className="border-t border-neutral-200 pt-8 mt-4 flex items-center gap-4">
         {saveStatus === 'success' ? (
           <div className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
             <Check size={14} /> Emergency Contacts Saved
@@ -108,6 +108,15 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
             className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
           >
             {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Emergency Contacts →'}
+          </Button>
+        )}
+        {onNext && (
+          <Button
+            variant="ghost"
+            onClick={onNext}
+            className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
+          >
+            Next Step →
           </Button>
         )}
       </div>

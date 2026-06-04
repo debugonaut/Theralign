@@ -6,7 +6,7 @@ import EmptyState from '../../common/EmptyState';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
+const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
   const [conditions, setConditions] = useState(profile?.medicalHistory?.conditions || []);
   const [medications, setMedications] = useState(profile?.medicalHistory?.medications || []);
   const [surgeries, setSurgeries] = useState(profile?.medicalHistory?.surgeries || []);
@@ -127,7 +127,7 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
       {/* MEDICATIONS */}
       <section>
         <div className="flex flex-col mb-4">
-          <span className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest mb-2">Medications</span>
+          <span className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest mb-2">Ref medications</span>
           <div className="h-[1px] bg-neutral-200 w-full"></div>
         </div>
 
@@ -192,7 +192,7 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
         )}
       </section>
 
-      <div className="border-t border-neutral-200 pt-8 mt-4">
+      <div className="border-t border-neutral-200 pt-8 mt-4 flex items-center gap-4">
         {saveStatus === 'success' ? (
           <div className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
             <Check size={14} /> Medical History Saved
@@ -205,6 +205,15 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
             className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
           >
             {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Medical History →'}
+          </Button>
+        )}
+        {onNext && (
+          <Button
+            variant="ghost"
+            onClick={onNext}
+            className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
+          >
+            Next Step →
           </Button>
         )}
       </div>

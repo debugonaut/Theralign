@@ -5,6 +5,7 @@ import SegmentedControl from '../../components/common/SegmentedControl';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Button from '../../components/common/Button';
 import { useToast } from '../../components/common/Toast';
+import HorizontalStepper from '../../components/common/HorizontalStepper';
 
 import BasicInfoTab from '../../components/patient/profile/BasicInfoTab';
 import MedicalHistoryTab from '../../components/patient/profile/MedicalHistoryTab';
@@ -22,6 +23,24 @@ const TABS = [
   { value: 'INSURANCE', label: 'INSURANCE' }
 ];
 
+const getCompletedSteps = (prof) => {
+  const completed = [];
+  if (!prof) return completed;
+  if (prof.dateOfBirth && prof.gender && prof.bloodGroup) completed.push(0);
+  if (
+    prof.medicalHistory &&
+    (prof.medicalHistory.conditions?.length > 0 ||
+      prof.medicalHistory.medications?.length > 0 ||
+      prof.medicalHistory.surgeries?.length > 0)
+  ) {
+    completed.push(1);
+  }
+  if (prof.lifestyle && prof.lifestyle.activityLevel) completed.push(2);
+  if (prof.emergencyContacts && prof.emergencyContacts.length > 0) completed.push(3);
+  if (prof.insurance && (prof.insurance.provider || prof.insurance.policyNumber)) completed.push(4);
+  return completed;
+};
+
 const PatientProfile = () => {
   const { user } = useAuthStore();
   const [profile, setProfile] = useState(null);
@@ -30,6 +49,8 @@ const PatientProfile = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [pendingTab, setPendingTab] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [completedSteps, setCompletedSteps] = useState([]);
+  const [animatingStepIdx, setAnimatingStepIdx] = useState(null);
 
   // Draft state
   const [hasDraft, setHasDraft]           = useState(false);
@@ -63,6 +84,7 @@ const PatientProfile = () => {
     try {
       const response = await patientProfileService.getProfile();
       setProfile(response.profile);
+      setCompletedSteps(getCompletedSteps(response.profile));
     } catch (error) {
       showToast('error', 'Failed to load profile');
     } finally {
@@ -95,6 +117,31 @@ const PatientProfile = () => {
     // Clear draft on successful save
     localStorage.removeItem(DRAFT_KEY);
     setHasDraft(false);
+
+    // Get current step index
+    const currentStepIdx = TABS.findIndex((t) => t.value === activeTab);
+
+    // Add current step to completed if not already there
+    if (!completedSteps.includes(currentStepIdx)) {
+      setCompletedSteps((prev) => [...prev, currentStepIdx]);
+    }
+
+    // Trigger ticking animation
+    setAnimatingStepIdx(currentStepIdx);
+
+    // Recompute other completed steps just in case, but merge with current
+    const computed = getCompletedSteps(updatedProfile);
+    setCompletedSteps((prev) => Array.from(new Set([...prev, ...computed, currentStepIdx])));
+
+    // Advance after 1000ms
+    setTimeout(() => {
+      setAnimatingStepIdx(null);
+      if (currentStepIdx < TABS.length - 1) {
+        setActiveTab(TABS[currentStepIdx + 1].value);
+      } else {
+        showToast('success', 'PROFILE UPDATED SUCCESSFULLY!');
+      }
+    }, 1000);
   };
 
   // Intercept unsaved changes flag to also trigger debounced draft save
@@ -248,29 +295,13 @@ const PatientProfile = () => {
 
       {/* RIGHT COLUMN: Tabs Content */}
       <div className="flex-1 flex flex-col p-8 bg-white overflow-y-auto relative">
-        <div className="mb-8 w-full max-w-4xl mx-auto flex gap-2 border-b border-neutral-200 pb-px overflow-x-auto">
-          {TABS.map((tab) => {
-            const isActive = activeTab === tab.value;
-            return (
-              <button
-                key={tab.value}
-                onClick={() => handleTabChange(tab.value)}
-                className={`
-                  pb-3 px-4 font-semibold text-sm transition-all duration-300 relative whitespace-nowrap normal-case focus:outline-none select-none
-                  ${isActive 
-                    ? 'text-primary font-bold' 
-                    : 'text-neutral-500 hover:text-neutral-900'
-                  }
-                `}
-              >
-                {tab.label}
-                {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-t-full transition-all duration-300" />
-                )}
-              </button>
-            );
-          })}
-        </div>
+        <HorizontalStepper
+          steps={TABS}
+          activeStep={TABS.findIndex((t) => t.value === activeTab)}
+          completedSteps={completedSteps}
+          animatingStepIdx={animatingStepIdx}
+          onStepClick={(idx) => handleTabChange(TABS[idx].value)}
+        />
 
         {/* Draft Restore Banner */}
         {hasDraft && (
@@ -332,6 +363,7 @@ const PatientProfile = () => {
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
+              onNext={() => handleTabChange('MEDICAL HISTORY')}
             />
           )}
           {activeTab === 'MEDICAL HISTORY' && (
@@ -339,6 +371,7 @@ const PatientProfile = () => {
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
+              onNext={() => handleTabChange('LIFESTYLE')}
             />
           )}
           {activeTab === 'LIFESTYLE' && (
@@ -346,6 +379,7 @@ const PatientProfile = () => {
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
+              onNext={() => handleTabChange('EMERGENCY CONTACTS')}
             />
           )}
           {activeTab === 'EMERGENCY CONTACTS' && (
@@ -353,6 +387,7 @@ const PatientProfile = () => {
               profile={profile} 
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
+              onNext={() => handleTabChange('INSURANCE')}
             />
           )}
           {activeTab === 'INSURANCE' && (

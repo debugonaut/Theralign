@@ -6,10 +6,32 @@ import useAuthStore from '../../store/authStore';
 import SectionHeader from '../../components/common/SectionHeader';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
+import HorizontalStepper from '../../components/common/HorizontalStepper';
 
 const DRAFT_KEY = 'physio_doctor_profile_draft';
 
+const DOCTOR_STEPS_UNVERIFIED = [
+  { key: 'personal', label: 'PERSONAL INFO' },
+  { key: 'professional', label: 'PROFESSIONAL DETAILS' },
+  { key: 'clinic', label: 'CLINIC DETAILS' },
+  { key: 'documents', label: 'VERIFICATION' }
+];
 
+const DOCTOR_STEPS_VERIFIED = [
+  { key: 'personal', label: 'PERSONAL INFO' },
+  { key: 'professional', label: 'PROFESSIONAL DETAILS' },
+  { key: 'clinic', label: 'CLINIC DETAILS' }
+];
+
+const getDoctorCompletedSteps = (prof) => {
+  const completed = [];
+  if (!prof) return completed;
+  if (prof.user?.name && prof.user?.phone) completed.push(0);
+  if (prof.specialization?.length > 0 && prof.experience && prof.bio) completed.push(1);
+  if (prof.clinicName && prof.clinicAddress && prof.consultationFee) completed.push(2);
+  if ((prof.degreeDocument && prof.licenseDocument) || prof.verificationStatus === 'verified') completed.push(3);
+  return completed;
+};
 
 const DoctorProfileEditor = () => {
   const navigate = useNavigate();
@@ -17,6 +39,11 @@ const DoctorProfileEditor = () => {
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Stepper states
+  const [editorStep, setEditorStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState([]);
+  const [animatingStepIdx, setAnimatingStepIdx] = useState(null);
 
   // Draft persistence
   const [hasDraft, setHasDraft]           = useState(false);
@@ -96,6 +123,7 @@ const DoctorProfileEditor = () => {
         }
 
         setProfilePhotoPreview(p.user?.profileImage || '');
+        setCompletedSteps(getDoctorCompletedSteps(p));
       } else {
         setName(user?.name || '');
         let rawPhone = user?.phone || '';
@@ -104,6 +132,7 @@ const DoctorProfileEditor = () => {
         }
         setPhone(rawPhone);
         setProfilePhotoPreview(user?.profileImage || '');
+        setCompletedSteps([]);
       }
     } catch (err) {
       console.error(err);
@@ -347,13 +376,87 @@ const DoctorProfileEditor = () => {
         }
 
         fetchProfileData();
-
+        return true;
       }
+      return false;
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || 'FAILED TO SAVE PROFILE CHANGES.', { id: toastId });
+      return false;
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleSaveStep = async () => {
+    const isVerified = profile?.verificationStatus === 'verified';
+    const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
+
+    if (!isDirty) {
+      // Just advance step without saving if not dirty
+      if (editorStep < activeSteps.length - 1) {
+        setEditorStep((prev) => prev + 1);
+      } else {
+        toast.success('PRACTITIONER PROFILE COMPLETE!');
+      }
+      return;
+    }
+
+    // Validations based on the current step
+    if (editorStep === 0) {
+      if (!name.trim()) {
+        toast.error('FULL NAME IS REQUIRED.');
+        return;
+      }
+    }
+    if (editorStep === 1) {
+      if (!specializationText.trim()) {
+        toast.error('SPECIALIZATION FIELD IS REQUIRED.');
+        return;
+      }
+      if (!experience.trim() || isNaN(parseInt(experience))) {
+        toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
+        return;
+      }
+      if (bio.trim().length < 50) {
+        toast.error('PROFESSIONAL BIO MUST BE AT LEAST 50 CHARACTERS.');
+        return;
+      }
+    }
+    if (editorStep === 2) {
+      if (!clinicName.trim()) {
+        toast.error('CLINIC NAME IS REQUIRED.');
+        return;
+      }
+      if (!city.trim() || !stateName.trim() || !address.trim()) {
+        toast.error('COMPLETE CLINIC ADDRESS IS REQUIRED.');
+        return;
+      }
+      if (!consultationFee.trim() || isNaN(parseFloat(consultationFee))) {
+        toast.error('CONSULTATION FEE MUST BE A VALID NUMBER.');
+        return;
+      }
+    }
+
+    const success = await handleSave();
+    if (success) {
+      // Add current step to completed steps
+      if (!completedSteps.includes(editorStep)) {
+        setCompletedSteps((prev) => [...prev, editorStep]);
+      }
+
+      // Trigger ticking animation
+      setAnimatingStepIdx(editorStep);
+
+      // Advance after 1000ms
+      setTimeout(() => {
+        setAnimatingStepIdx(null);
+        if (editorStep < activeSteps.length - 1) {
+          setEditorStep((prev) => prev + 1);
+        } else {
+          toast.success('PRACTITIONER PROFILE COMPLETED!');
+        }
+      }, 1000);
     }
   };
 
@@ -368,16 +471,18 @@ const DoctorProfileEditor = () => {
   const isVerified = profile?.verificationStatus === 'verified';
   const currentStatus = profile?.verificationStatus || 'pending';
   // 0: SUBMITTED, 1: UNDER REVIEW, 2: APPROVED, 3: ACTIVE
-  let activeStep = 0;
-  if (currentStatus === 'pending') activeStep = 1;
-  if (currentStatus === 'verified') activeStep = 3;
+  let activeStatusStep = 0;
+  if (currentStatus === 'pending') activeStatusStep = 1;
+  if (currentStatus === 'verified') activeStatusStep = 3;
 
-  const steps = [
+  const statusStepsList = [
     { key: 'submitted', label: 'Submitted', desc: 'Application received and registered.' },
     { key: 'review', label: 'Under Review', desc: 'Credential verification in progress.' },
     { key: 'approved', label: 'Approved', desc: 'Credentials verified successfully.' },
     { key: 'active', label: 'Active', desc: 'Profile live in search directory.' },
   ];
+
+  const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
 
   return (
     <div className="flex flex-col gap-12 select-none text-left bg-neutral-50 pb-32 px-6 py-8 page-fade-in">
@@ -389,6 +494,15 @@ const DoctorProfileEditor = () => {
           Configure your professional clinical parameters, update coordinates, set fee charts, and submit license files.
         </p>
       </div>
+
+      {/* Stepper Navigation */}
+      <HorizontalStepper
+        steps={activeSteps}
+        activeStep={editorStep}
+        completedSteps={completedSteps}
+        animatingStepIdx={animatingStepIdx}
+        onStepClick={(idx) => setEditorStep(idx)}
+      />
 
       {/* Draft Banner */}
       {hasDraft && (
@@ -420,216 +534,226 @@ const DoctorProfileEditor = () => {
         </div>
       </div>
 
-      {/* ── PERSONAL INFORMATION ── */}
-      <div className="flex flex-col gap-6">
-        <SectionHeader title="Personal Information" size="sm" ruled={true} className="mb-0" />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Full Name */}
+      {/* ── PERSONAL INFORMATION (Step 0) ── */}
+      {editorStep === 0 && (
+        <>
+          <div className="flex flex-col gap-6">
+            <SectionHeader title="Personal Information" size="sm" ruled={true} className="mb-0" />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Full Name */}
+              <Input
+                type="text"
+                label="Full Name *"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Jane Smith"
+              />
+
+              {/* Email (Disabled, Read-only) */}
+              <div className="flex flex-col gap-1.5">
+                <Input
+                  type="email"
+                  label="Email Address"
+                  value={profile?.user?.email || user?.email || ''}
+                  disabled={true}
+                  showLock={true}
+                  placeholder="you@example.com"
+                />
+                <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
+                  Email cannot be changed. Contact support if needed.
+                </span>
+              </div>
+            </div>
+
+            {/* Phone Input with Internal prefix line */}
+            <div className="flex flex-col gap-1.5 w-full md:w-1/2">
+              <label className="text-[12px] font-semibold text-neutral-700">
+                Phone Number *
+              </label>
+              <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
+                <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
+                  +91
+                </div>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="e.g. 9876543210"
+                  className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ── PROFILE PHOTO ── */}
+          <div className="flex flex-col gap-6">
+            <SectionHeader title="Profile Photo" size="sm" ruled={true} className="mb-0" />
+            
+            <div className="flex items-center gap-6">
+              {/* Bordered Square Preview 120x120 */}
+              <div className="w-[120px] h-[120px] border border-neutral-200 rounded-lg overflow-hidden shrink-0 bg-white shadow-level-1 flex items-center justify-center">
+                {profilePhotoPreview ? (
+                  <img
+                    src={profilePhotoPreview}
+                    alt="Profile Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-ui-xs font-bold text-neutral-400 uppercase">NO PHOTO</span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="h-10 px-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs flex items-center justify-center uppercase tracking-widest transition-all select-none rounded-md cursor-pointer w-max shadow-sm bg-white">
+                  Upload Photo →
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUploadChange}
+                    className="hidden"
+                  />
+                </label>
+                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">
+                  JPG or PNG · Max 5MB
+                </span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── PROFESSIONAL DETAILS (Step 1) ── */}
+      {editorStep === 1 && (
+        <div className="flex flex-col gap-6">
+          <SectionHeader title="Professional Details" size="sm" ruled={true} className="mb-0" />
+          
+          {/* Specialization Comma field */}
           <Input
             type="text"
-            label="Full Name *"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            label="Specialization (Separate multiple with commas) *"
+            value={specializationText}
+            onChange={(e) => setSpecializationText(e.target.value)}
+            placeholder="e.g. Sports Physiotherapy, Manual Therapy, Dry Needling"
             required
-            placeholder="Jane Smith"
           />
 
-          {/* Email (Disabled, Read-only) */}
+          {/* Years experience narrow input */}
+          <div className="w-[240px]">
+            <Input
+              type="number"
+              label="Years of Practice Experience *"
+              min="0"
+              max="60"
+              value={experience}
+              onChange={(e) => setExperience(e.target.value.replace(/\D/g, ''))}
+              required
+              placeholder="e.g. 5"
+            />
+          </div>
+
+          {/* Professional Bio with char counter */}
           <div className="flex flex-col gap-1.5">
             <Input
-              type="email"
-              label="Email Address"
-              value={profile?.user?.email || user?.email || ''}
-              disabled={true}
-              showLock={true}
-              placeholder="you@example.com"
+              multiline={true}
+              rows={5}
+              label="Professional Bio *"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              maxLength={1000}
+              placeholder="Describe your treatment philosophy, academic experience, and physiotherapist patient care methods..."
+              required
             />
-            <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
-              Email cannot be changed. Contact support if needed.
+            <span className="text-[10px] font-bold text-neutral-400 text-right uppercase tracking-wider">
+              {bio.length} / 1000 characters (minimum 50 chars)
             </span>
           </div>
         </div>
+      )}
 
-        {/* Phone Input with Internal prefix line */}
-        <div className="flex flex-col gap-1.5 w-full md:w-1/2">
-          <label className="text-[12px] font-semibold text-neutral-700">
-            Phone Number *
-          </label>
-          <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
-            <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
-              +91
-            </div>
-            <input
+      {/* ── CLINIC DETAILS (Step 2) ── */}
+      {editorStep === 2 && (
+        <>
+          <div className="flex flex-col gap-6">
+            <SectionHeader title="Clinic Details" size="sm" ruled={true} className="mb-0" />
+            
+            {/* Clinic Name */}
+            <Input
               type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-              placeholder="e.g. 9876543210"
-              className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
+              label="Clinic Name *"
+              value={clinicName}
+              onChange={(e) => setClinicName(e.target.value)}
+              placeholder="e.g. Metro Physio Clinic"
               required
             />
-          </div>
-        </div>
-      </div>
 
-      {/* ── PROFESSIONAL DETAILS ── */}
-      <div className="flex flex-col gap-6">
-        <SectionHeader title="Professional Details" size="sm" ruled={true} className="mb-0" />
-        
-        {/* Specialization Comma field */}
-        <Input
-          type="text"
-          label="Specialization (Separate multiple with commas) *"
-          value={specializationText}
-          onChange={(e) => setSpecializationText(e.target.value)}
-          placeholder="e.g. Sports Physiotherapy, Manual Therapy, Dry Needling"
-          required
-        />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* City */}
+              <Input
+                type="text"
+                label="City *"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Pune"
+                required
+              />
 
-        {/* Years experience narrow input */}
-        <div className="w-[240px]">
-          <Input
-            type="number"
-            label="Years of Practice Experience *"
-            min="0"
-            max="60"
-            value={experience}
-            onChange={(e) => setExperience(e.target.value.replace(/\D/g, ''))}
-            required
-            placeholder="e.g. 5"
-          />
-        </div>
-
-        {/* Professional Bio with char counter */}
-        <div className="flex flex-col gap-1.5">
-          <Input
-            multiline={true}
-            rows={5}
-            label="Professional Bio *"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            maxLength={1000}
-            placeholder="Describe your treatment philosophy, academic experience, and physiotherapist patient care methods..."
-            required
-          />
-          <span className="text-[10px] font-bold text-neutral-400 text-right uppercase tracking-wider">
-            {bio.length} / 1000 characters (minimum 50 chars)
-          </span>
-        </div>
-      </div>
-
-      {/* ── CLINIC DETAILS ── */}
-      <div className="flex flex-col gap-6">
-        <SectionHeader title="Clinic Details" size="sm" ruled={true} className="mb-0" />
-        
-        {/* Clinic Name */}
-        <Input
-          type="text"
-          label="Clinic Name *"
-          value={clinicName}
-          onChange={(e) => setClinicName(e.target.value)}
-          placeholder="e.g. Metro Physio Clinic"
-          required
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* City */}
-          <Input
-            type="text"
-            label="City *"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="e.g. Pune"
-            required
-          />
-
-          {/* State */}
-          <Input
-            type="text"
-            label="State *"
-            value={stateName}
-            onChange={(e) => setStateName(e.target.value)}
-            placeholder="e.g. Maharashtra"
-            required
-          />
-        </div>
-
-        {/* Address */}
-        <Input
-          multiline={true}
-          rows={3}
-          label="Street Address *"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          placeholder="Enter complete clinic street address..."
-          required
-        />
-      </div>
-
-      {/* ── CONSULTATION FEE ── */}
-      <div className="flex flex-col gap-6">
-        <SectionHeader title="Consultation Fee" size="sm" ruled={true} className="mb-0" />
-        
-        <div className="flex flex-col gap-1.5 w-[240px]">
-          <label className="text-[12px] font-semibold text-neutral-700">
-            Consultation Fee Per Session *
-          </label>
-          <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
-            <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
-              ₹
+              {/* State */}
+              <Input
+                type="text"
+                label="State *"
+                value={stateName}
+                onChange={(e) => setStateName(e.target.value)}
+                placeholder="e.g. Maharashtra"
+                required
+              />
             </div>
-            <input
-              type="number"
-              min="0"
-              value={consultationFee}
-              onChange={(e) => setConsultationFee(e.target.value.replace(/\D/g, ''))}
-              className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
+
+            {/* Address */}
+            <Input
+              multiline={true}
+              rows={3}
+              label="Street Address *"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter complete clinic street address..."
               required
             />
           </div>
-        </div>
-        <p className="text-[11px] text-neutral-500 font-medium">
-          This amount is shown to patients on your profile and at booking. You can update it at any time.
-        </p>
-      </div>
 
-      {/* ── PROFILE PHOTO ── */}
-      <div className="flex flex-col gap-6">
-        <SectionHeader title="Profile Photo" size="sm" ruled={true} className="mb-0" />
-        
-        <div className="flex items-center gap-6">
-          {/* Bordered Square Preview 120x120 */}
-          <div className="w-[120px] h-[120px] border border-neutral-200 rounded-lg overflow-hidden shrink-0 bg-white shadow-level-1 flex items-center justify-center">
-            {profilePhotoPreview ? (
-              <img
-                src={profilePhotoPreview}
-                alt="Profile Preview"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-ui-xs font-bold text-neutral-400 uppercase">NO PHOTO</span>
-            )}
+          {/* ── CONSULTATION FEE ── */}
+          <div className="flex flex-col gap-6">
+            <SectionHeader title="Consultation Fee" size="sm" ruled={true} className="mb-0" />
+            
+            <div className="flex flex-col gap-1.5 w-[240px]">
+              <label className="text-[12px] font-semibold text-neutral-700">
+                Consultation Fee Per Session *
+              </label>
+              <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
+                <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
+                  ₹
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  value={consultationFee}
+                  onChange={(e) => setConsultationFee(e.target.value.replace(/\D/g, ''))}
+                  className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
+                  required
+                />
+              </div>
+            </div>
+            <p className="text-[11px] text-neutral-500 font-medium">
+              This amount is shown to patients on your profile and at booking. You can update it at any time.
+            </p>
           </div>
+        </>
+      )}
 
-          <div className="flex flex-col gap-2">
-            <label className="h-10 px-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs flex items-center justify-center uppercase tracking-widest transition-all select-none rounded-md cursor-pointer w-max shadow-sm bg-white">
-              Upload Photo →
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUploadChange}
-                className="hidden"
-              />
-            </label>
-            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">
-              JPG or PNG · Max 5MB
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── VERIFICATION DOCUMENTS (Visible Only if NOT verified) ── */}
-      {!isVerified && (
+      {/* ── VERIFICATION DOCUMENTS & STATUS (Step 3) ── */}
+      {editorStep === 3 && !isVerified && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 select-none">
           <div className="lg:col-span-7 flex flex-col gap-6">
             <SectionHeader title="Verification Documents" size="sm" ruled={true} className="mb-0" />
@@ -702,32 +826,32 @@ const DoctorProfileEditor = () => {
             </div>
           </div>
 
-          {/* Verification status timeline (Part 2) */}
+          {/* Verification status timeline */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <SectionHeader title="Verification Status" size="sm" ruled={true} className="mb-0" />
             <div className="flex flex-col gap-6 bg-white border border-neutral-200 rounded-lg p-6 shadow-level-1 select-none">
               <div className="flex flex-col gap-0">
-                {steps.map((step, idx) => {
-                  const isCompleted = idx < activeStep;
-                  const isActive = idx === activeStep;
-                  const isFuture = idx > activeStep;
+                {statusStepsList.map((step, idx) => {
+                  const isTimelineCompleted = idx < activeStatusStep;
+                  const isTimelineActive = idx === activeStatusStep;
+                  const isTimelineFuture = idx > activeStatusStep;
                   
                   return (
                     <div key={step.key} className="flex gap-4 items-start relative pb-6 last:pb-0">
                       {/* Left line segment */}
-                      {idx < steps.length - 1 && (
+                      {idx < statusStepsList.length - 1 && (
                         <div className={`absolute left-2.5 top-5 bottom-0 w-0.5 border-l-2
-                          ${idx < activeStep ? 'border-success border-solid' : 'border-neutral-200 border-dashed'}
+                          ${idx < activeStatusStep ? 'border-success border-solid' : 'border-neutral-200 border-dashed'}
                         `} />
                       )}
                       
                       {/* Indicator dot */}
                       <div className={`rounded-full border-2 flex items-center justify-center shrink-0 z-10
-                        ${isCompleted ? 'bg-[#E8F8F5] border-success text-success' : ''}
-                        ${isActive ? 'bg-[#E8F4F8] border-primary text-primary animate-pulse' : ''}
-                        ${isFuture ? 'bg-white border-neutral-200 text-neutral-400' : ''}
+                        ${isTimelineCompleted ? 'bg-[#E8F8F5] border-success text-success' : ''}
+                        ${isTimelineActive ? 'bg-[#E8F4F8] border-primary text-primary animate-pulse' : ''}
+                        ${isTimelineFuture ? 'bg-white border-neutral-200 text-neutral-400' : ''}
                       `} style={{ width: '22px', height: '22px' }}>
-                        {isCompleted ? (
+                        {isTimelineCompleted ? (
                           <span className="text-[10px] font-black">✓</span>
                         ) : (
                           <span className="text-[9px] font-bold">{idx + 1}</span>
@@ -736,9 +860,9 @@ const DoctorProfileEditor = () => {
                       
                       <div className="flex flex-col text-left">
                         <span className={`text-[10px] font-black tracking-wider uppercase leading-tight
-                          ${isActive ? 'text-primary' : ''}
-                          ${isCompleted ? 'text-success' : ''}
-                          ${isFuture ? 'text-neutral-400' : ''}
+                          ${isTimelineActive ? 'text-primary' : ''}
+                          ${isTimelineCompleted ? 'text-success' : ''}
+                          ${isTimelineFuture ? 'text-neutral-400' : ''}
                         `}>
                           {step.label}
                         </span>
@@ -758,9 +882,21 @@ const DoctorProfileEditor = () => {
       {/* ── Persistent Bottom Save Changes Bar ── */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 p-4 select-none shadow-level-3">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 flex items-center justify-between">
-          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest hidden sm:inline-block">
-            {isDirty ? 'Unsaved profile changes detected.' : 'Profile settings are in sync.'}
-          </span>
+          <div className="flex items-center gap-3">
+            {editorStep > 0 && (
+              <button
+                type="button"
+                onClick={() => setEditorStep((prev) => prev - 1)}
+                disabled={isSaving}
+                className="px-4 py-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50"
+              >
+                ← Back
+              </button>
+            )}
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest hidden sm:inline-block">
+              {isDirty ? 'Unsaved profile changes detected.' : 'Profile settings are in sync.'}
+            </span>
+          </div>
           
           <div className="flex items-center gap-3 ml-auto">
             {isDirty && (
@@ -775,12 +911,17 @@ const DoctorProfileEditor = () => {
             )}
 
             <Button
-              onClick={handleSave}
-              disabled={isSaving || !isDirty}
+              onClick={handleSaveStep}
+              disabled={isSaving}
               variant="primary"
               className="h-10 px-6 font-bold"
             >
-              {isSaving ? 'Saving changes...' : 'Save Changes →'}
+              {isSaving 
+                ? 'Saving changes...' 
+                : isDirty 
+                  ? (editorStep === activeSteps.length - 1 ? 'Save & Complete ✓' : 'Save & Next →') 
+                  : (editorStep === activeSteps.length - 1 ? 'Complete ✓' : 'Next Step →')
+              }
             </Button>
           </div>
         </div>
