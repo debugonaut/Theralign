@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { getMyAppointments, cancelAppointment } from '../../api/appointment.api';
 import { submitReview } from '../../api/review.api';
@@ -9,6 +10,7 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 
 const PatientAppointments = () => {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ALL APPOINTMENTS');

@@ -204,30 +204,77 @@ export const toggleUserStatus = asyncHandler(async (req, res) => {
 
 /**
  * POST /api/admin/reset-demo
- * Resets the demo doctor back to pending state and clears their notifications.
+ * Resets the demo doctor and patient state, cleaning up demo appointments,
+ * restoring slot availability, and wiping notifications.
  */
 import Notification from '../models/Notification.model.js';
+import Appointment from '../models/Appointment.model.js';
+import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
+import Payment from '../models/Payment.model.js';
+import Review from '../models/Review.model.js';
+
 export const resetDemoFlow = asyncHandler(async (req, res) => {
-  const demoEmail = 'doctor@demo.com'; // Match the seed email exactly
-  
-  const user = await User.findOne({ email: demoEmail });
-  if (!user) {
-    throw new AppError('Demo user not found in the system', 404);
+  const demoDoctorEmail = 'doctor@demo.com';
+  const demoPatientEmail = 'patient@demo.com';
+
+  const doctorUser = await User.findOne({ email: demoDoctorEmail });
+  if (!doctorUser) {
+    throw new AppError('Demo doctor user not found in the system', 404);
   }
 
-  const profile = await DoctorProfile.findOne({ user: user._id });
+  const patientUser = await User.findOne({ email: demoPatientEmail });
+  if (!patientUser) {
+    throw new AppError('Demo patient user not found in the system', 404);
+  }
+
+  const profile = await DoctorProfile.findOne({ user: doctorUser._id });
   if (!profile) {
     throw new AppError('Demo doctor profile not found', 404);
   }
 
-  // Reset status
+  // 1. Reset Doctor Profile status and ratings back to seed standards
   profile.verificationStatus = 'pending';
   profile.rejectionReason = null;
   profile.verificationNote = null;
+  profile.averageRating = 4.8;
+  profile.totalReviews = 23;
   await profile.save();
 
-  // Wipe notifications related to the demo doctor receiving verification update
-  await Notification.deleteMany({ recipient: user._id });
+  // 2. Find and clean up demo appointments between patient and doctor
+  // Exclude seeded historical/review appointments which keep stats and graphs populated.
+  // Those start with "[Review Seed]" or "[Historical]".
+  const appointmentsToClean = await Appointment.find({
+    patient: patientUser._id,
+    doctor: profile._id,
+    patientNotes: { $not: /^\[(Review Seed|Historical)\]/ }
+  });
+
+  if (appointmentsToClean.length > 0) {
+    const appointmentIds = appointmentsToClean.map(a => a._id);
+    const slotIds = appointmentsToClean.filter(a => a.slot).map(a => a.slot);
+
+    // Free up availability slots
+    if (slotIds.length > 0) {
+      await AvailabilitySlot.updateMany(
+        { _id: { $in: slotIds } },
+        { $set: { isBooked: false } }
+      );
+    }
+
+    // Delete payments associated with these appointments
+    await Payment.deleteMany({ appointment: { $in: appointmentIds } });
+
+    // Delete reviews associated with these appointments
+    await Review.deleteMany({ appointment: { $in: appointmentIds } });
+
+    // Delete the appointments themselves
+    await Appointment.deleteMany({ _id: { $in: appointmentIds } });
+  }
+
+  // 3. Wipe all notifications for both the demo doctor and patient
+  await Notification.deleteMany({
+    recipient: { $in: [doctorUser._id, patientUser._id] }
+  });
 
   return successResponse(res, 200, 'Demo flow has been successfully reset', { profile });
 });
