@@ -6,11 +6,7 @@ import EmptyState from '../../common/EmptyState';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const MedicalHistoryTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
-  const [conditions, setConditions] = useState(profile?.medicalHistory?.conditions || []);
-  const [medications, setMedications] = useState(profile?.medicalHistory?.medications || []);
-  const [surgeries, setSurgeries] = useState(profile?.medicalHistory?.surgeries || []);
-
+const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft, onNext }) => {
   const [newCondition, setNewCondition] = useState({ conditionName: '', year: '', notes: '' });
   const [newMedication, setNewMedication] = useState('');
   const [newSurgery, setNewSurgery] = useState({ surgeryName: '', year: '', description: '' });
@@ -21,55 +17,61 @@ const MedicalHistoryTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, 
 
   const handleAddCondition = () => {
     if (!newCondition.conditionName || !newCondition.year) return;
-    setConditions([...conditions, newCondition]);
+    onChange({ conditions: [...formData.conditions, newCondition] });
     setNewCondition({ conditionName: '', year: '', notes: '' });
-    onUnsavedChanges(true);
   };
 
   const handleRemoveCondition = (index) => {
-    const newArr = [...conditions];
+    const newArr = [...formData.conditions];
     newArr.splice(index, 1);
-    setConditions(newArr);
-    onUnsavedChanges(true);
+    onChange({ conditions: newArr });
   };
 
   const handleAddMedication = () => {
     if (!newMedication.trim()) return;
-    setMedications([...medications, newMedication.trim()]);
+    onChange({ medications: [...formData.medications, newMedication.trim()] });
     setNewMedication('');
-    onUnsavedChanges(true);
   };
 
   const handleRemoveMedication = (index) => {
-    const newArr = [...medications];
+    const newArr = [...formData.medications];
     newArr.splice(index, 1);
-    setMedications(newArr);
-    onUnsavedChanges(true);
+    onChange({ medications: newArr });
   };
 
   const handleAddSurgery = () => {
     if (!newSurgery.surgeryName || !newSurgery.year) return;
-    setSurgeries([...surgeries, newSurgery]);
+    onChange({ surgeries: [...formData.surgeries, newSurgery] });
     setNewSurgery({ surgeryName: '', year: '', description: '' });
-    onUnsavedChanges(true);
   };
 
   const handleRemoveSurgery = (index) => {
-    const newArr = [...surgeries];
+    const newArr = [...formData.surgeries];
     newArr.splice(index, 1);
-    setSurgeries(newArr);
-    onUnsavedChanges(true);
+    onChange({ surgeries: newArr });
   };
+
+  const dbConditions = profile?.medicalHistory?.conditions || [];
+  const dbMedications = profile?.medicalHistory?.medications || [];
+  const dbSurgeries = profile?.medicalHistory?.surgeries || [];
+
+  const isDirty = 
+    JSON.stringify(formData.conditions) !== JSON.stringify(dbConditions) ||
+    JSON.stringify(formData.medications) !== JSON.stringify(dbMedications) ||
+    JSON.stringify(formData.surgeries) !== JSON.stringify(dbSurgeries);
 
   const handleSave = async () => {
     setIsSaving(true);
     setSaveStatus(null);
     try {
       const updatedProfile = await patientProfileService.updateProfile({
-        medicalHistory: { conditions, medications, surgeries }
+        medicalHistory: {
+          conditions: formData.conditions,
+          medications: formData.medications,
+          surgeries: formData.surgeries
+        }
       });
       setSaveStatus('success');
-      onUnsavedChanges(false);
       onSaveSuccess(updatedProfile.data.profile);
       setTimeout(() => setSaveStatus(null), 2000);
     } catch (error) {
@@ -106,11 +108,11 @@ const MedicalHistoryTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, 
         </div>
 
         {/* List */}
-        {conditions.length === 0 ? (
+        {formData.conditions.length === 0 ? (
           <EmptyState title="No conditions added" description="Add any existing conditions so your physiotherapist can prepare." />
         ) : (
           <div className="flex flex-col gap-3">
-            {conditions.map((cond, idx) => (
+            {formData.conditions.map((cond, idx) => (
               <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-white flex items-center shadow-sm hover:bg-neutral-50/50 transition-all">
                 <div className="w-1/2 font-bold text-ui-md uppercase truncate pr-4 text-neutral-800">{cond.conditionName}</div>
                 <div className="w-[15%] text-ui-sm text-neutral-400 font-bold">{cond.year}</div>
@@ -140,9 +142,9 @@ const MedicalHistoryTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, 
           </div>
         </div>
 
-        {medications.length > 0 && (
+        {formData.medications.length > 0 && (
           <div className="flex flex-col gap-3">
-            {medications.map((med, idx) => (
+            {formData.medications.map((med, idx) => (
               <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-white flex items-center justify-between shadow-sm hover:bg-neutral-50/50 transition-all">
                 <div className="font-bold text-ui-md uppercase truncate text-neutral-800">{med}</div>
                 <button type="button" onClick={() => handleRemoveMedication(idx)} className="text-ui-xs text-danger font-bold uppercase tracking-widest hover:underline select-none">
@@ -176,9 +178,9 @@ const MedicalHistoryTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, 
           </div>
         </div>
 
-        {surgeries.length > 0 && (
+        {formData.surgeries.length > 0 && (
           <div className="flex flex-col gap-3">
-            {surgeries.map((surg, idx) => (
+            {formData.surgeries.map((surg, idx) => (
               <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-white flex items-center shadow-sm hover:bg-neutral-50/50 transition-all">
                 <div className="w-1/2 font-bold text-ui-md uppercase truncate pr-4 text-neutral-800">{surg.surgeryName}</div>
                 <div className="w-[15%] text-ui-sm text-neutral-400 font-bold">{surg.year}</div>
@@ -198,14 +200,23 @@ const MedicalHistoryTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, 
             <Check size={14} /> Medical History Saved
           </div>
         ) : (
-          <Button
-            variant="primary"
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
-          >
-            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Medical History →'}
-          </Button>
+          <>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
+            >
+              {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Medical History →'}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onSaveDraft}
+              className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
+            >
+              Save Draft
+            </Button>
+          </>
         )}
         {onNext && (
           <Button

@@ -2,19 +2,10 @@ import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
-import SegmentedControl from '../../common/SegmentedControl';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const BasicInfoTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
-  const [formData, setFormData] = useState({
-    name: profile?.user?.name || '',
-    dateOfBirth: profile?.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
-    phone: profile?.user?.phone || '',
-    gender: profile?.gender || '',
-    bloodGroup: profile?.bloodGroup || '',
-  });
-
+const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft, onNext }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null); // null | 'success' | 'error'
   const { showToast } = useToast();
@@ -31,20 +22,32 @@ const BasicInfoTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNex
   ];
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    onUnsavedChanges(true);
+    onChange({ [field]: value });
   };
+
+  const isDirty =
+    formData.name !== (profile?.user?.name || '') ||
+    formData.dateOfBirth !== (profile?.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '') ||
+    formData.phone !== (profile?.user?.phone || '') ||
+    formData.gender !== (profile?.gender || '') ||
+    formData.bloodGroup !== (profile?.bloodGroup || '');
 
   const handleSave = async () => {
     setIsSaving(true);
     setSaveStatus(null);
     try {
-      const updatedProfile = await patientProfileService.updateProfile(formData);
+      const payload = {
+        name: formData.name,
+        dateOfBirth: formData.dateOfBirth,
+        phone: formData.phone,
+        gender: formData.gender,
+        bloodGroup: formData.bloodGroup
+      };
+      const updatedProfile = await patientProfileService.updateProfile(payload);
       setSaveStatus('success');
-      onUnsavedChanges(false);
       onSaveSuccess(updatedProfile.data.profile);
       
-      // Reset success status after 2000ms as specified
+      // Reset success status after 2000ms
       setTimeout(() => setSaveStatus(null), 2000);
     } catch (error) {
       setSaveStatus('error');
@@ -120,14 +123,23 @@ const BasicInfoTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNex
             <Check size={14} /> Basic Info Saved
           </div>
         ) : (
-          <Button
-            variant="primary"
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
-          >
-            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Basic Info →'}
-          </Button>
+          <>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
+            >
+              {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Basic Info →'}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onSaveDraft}
+              className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
+            >
+              Save Draft
+            </Button>
+          </>
         )}
         {onNext && (
           <Button

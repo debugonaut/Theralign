@@ -46,35 +46,40 @@ const PatientProfile = () => {
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('BASIC INFO');
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [pendingTab, setPendingTab] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [animatingStepIdx, setAnimatingStepIdx] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  // Draft state
-  const [hasDraft, setHasDraft]           = useState(false);
-  const [draftSavedAt, setDraftSavedAt]   = useState(null); // timestamp
-  const [showDraftChip, setShowDraftChip] = useState(false); // fading chip
-  const draftChipTimerRef = useRef(null);
-  const draftDebounceRef  = useRef(null);
+  // Centralized form data state for all tabs
+  const [formData, setFormData] = useState({
+    // Basic Info
+    name: '',
+    dateOfBirth: '',
+    phone: '',
+    gender: '',
+    bloodGroup: '',
+    
+    // Medical History
+    conditions: [],
+    medications: [],
+    surgeries: [],
+
+    // Lifestyle
+    occupation: '',
+    activityLevel: '',
+    smoking: null,
+    alcohol: null,
+
+    // Emergency Contacts
+    emergencyContacts: [],
+
+    // Insurance
+    provider: '',
+    policyNumber: ''
+  });
   
   const fileInputRef = useRef(null);
   const { showToast } = useToast();
-
-  // On mount — check for existing draft
-  useEffect(() => {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (parsed?.tab) {
-          setHasDraft(true);
-          setDraftSavedAt(parsed.savedAt || null);
-        }
-      } catch {}
-    }
-  }, []);
 
   useEffect(() => {
     fetchProfile();
@@ -83,8 +88,53 @@ const PatientProfile = () => {
   const fetchProfile = async () => {
     try {
       const response = await patientProfileService.getProfile();
-      setProfile(response.profile);
-      setCompletedSteps(getCompletedSteps(response.profile));
+      const dbProf = response.profile;
+      setProfile(dbProf);
+      setCompletedSteps(getCompletedSteps(dbProf));
+
+      // Construct initial values from database profile
+      const initialForm = {
+        name: dbProf?.user?.name || '',
+        dateOfBirth: dbProf?.dateOfBirth ? new Date(dbProf.dateOfBirth).toISOString().split('T')[0] : '',
+        phone: dbProf?.user?.phone || '',
+        gender: dbProf?.gender || '',
+        bloodGroup: dbProf?.bloodGroup || '',
+        conditions: dbProf?.medicalHistory?.conditions || [],
+        medications: dbProf?.medicalHistory?.medications || [],
+        surgeries: dbProf?.medicalHistory?.surgeries || [],
+        occupation: dbProf?.lifestyle?.occupation || '',
+        activityLevel: dbProf?.lifestyle?.activityLevel || '',
+        smoking: dbProf?.lifestyle?.smoking ?? null,
+        alcohol: dbProf?.lifestyle?.alcohol ?? null,
+        emergencyContacts: dbProf?.emergencyContacts || [],
+        provider: dbProf?.insurance?.provider || '',
+        policyNumber: dbProf?.insurance?.policyNumber || ''
+      };
+
+      // Check for draft in localStorage
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed?.formData) {
+            // Restore draft values silently and merge over DB values
+            setFormData({
+              ...initialForm,
+              ...parsed.formData
+            });
+            if (parsed.activeTab) {
+              setActiveTab(parsed.activeTab);
+            }
+            showToast('success', 'RESTORED UNSAVED DRAFT LOCALLY');
+            setIsLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.error('Failed to parse draft', e);
+        }
+      }
+
+      setFormData(initialForm);
     } catch (error) {
       showToast('error', 'Failed to load profile');
     } finally {
@@ -94,29 +144,54 @@ const PatientProfile = () => {
 
   const handleTabChange = (tabValue) => {
     if (tabValue === activeTab) return;
-    if (hasUnsavedChanges) {
-      setPendingTab(tabValue);
-    } else {
-      setActiveTab(tabValue);
-    }
+    setActiveTab(tabValue);
   };
 
-  const handleDiscardChanges = () => {
-    setHasUnsavedChanges(false);
-    if (pendingTab) {
-      setActiveTab(pendingTab);
-      setPendingTab(null);
-      fetchProfile(); // Re-fetch to reset form state
-    }
+  const handleFieldChange = (updates) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  };
+
+  const handleSaveDraft = () => {
+    const draftPayload = {
+      formData,
+      activeTab,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
+    showToast('success', 'DRAFT SAVED LOCALLY');
   };
 
   const handleSaveSuccess = (updatedProfile) => {
     setProfile(updatedProfile);
-    setHasUnsavedChanges(false);
-    setPendingTab(null);
-    // Clear draft on successful save
-    localStorage.removeItem(DRAFT_KEY);
-    setHasDraft(false);
+
+    // Sync database updates into formData
+    const updatedForm = {
+      ...formData,
+      name: updatedProfile?.user?.name || '',
+      dateOfBirth: updatedProfile?.dateOfBirth ? new Date(updatedProfile.dateOfBirth).toISOString().split('T')[0] : '',
+      phone: updatedProfile?.user?.phone || '',
+      gender: updatedProfile?.gender || '',
+      bloodGroup: updatedProfile?.bloodGroup || '',
+      conditions: updatedProfile?.medicalHistory?.conditions || [],
+      medications: updatedProfile?.medicalHistory?.medications || [],
+      surgeries: updatedProfile?.medicalHistory?.surgeries || [],
+      occupation: updatedProfile?.lifestyle?.occupation || '',
+      activityLevel: updatedProfile?.lifestyle?.activityLevel || '',
+      smoking: updatedProfile?.lifestyle?.smoking ?? null,
+      alcohol: updatedProfile?.lifestyle?.alcohol ?? null,
+      emergencyContacts: updatedProfile?.emergencyContacts || [],
+      provider: updatedProfile?.insurance?.provider || '',
+      policyNumber: updatedProfile?.insurance?.policyNumber || ''
+    };
+    setFormData(updatedForm);
+
+    // Update draft in localStorage to match newly saved DB values
+    const draftPayload = {
+      formData: updatedForm,
+      activeTab,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
 
     // Get current step index
     const currentStepIdx = TABS.findIndex((t) => t.value === activeTab);
@@ -137,54 +212,22 @@ const PatientProfile = () => {
     setTimeout(() => {
       setAnimatingStepIdx(null);
       if (currentStepIdx < TABS.length - 1) {
-        setActiveTab(TABS[currentStepIdx + 1].value);
+        const nextTab = TABS[currentStepIdx + 1].value;
+        setActiveTab(nextTab);
+        // Also update activeTab in localStorage draft
+        const nextDraftPayload = {
+          formData: updatedForm,
+          activeTab: nextTab,
+          savedAt: new Date().toISOString()
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(nextDraftPayload));
       } else {
         showToast('success', 'PROFILE UPDATED SUCCESSFULLY!');
+        // Clear draft when the entire profile is saved and complete
+        localStorage.removeItem(DRAFT_KEY);
       }
     }, 1000);
   };
-
-  // Intercept unsaved changes flag to also trigger debounced draft save
-  const handleUnsavedChanges = useCallback((dirty) => {
-    setHasUnsavedChanges(dirty);
-    if (!dirty) return;
-    // Debounce: write draft 1.5s after last change
-    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
-    draftDebounceRef.current = setTimeout(() => {
-      const draftPayload = { tab: activeTab, savedAt: new Date().toISOString() };
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
-      setHasDraft(true);
-      setDraftSavedAt(draftPayload.savedAt);
-      // Show the "DRAFT SAVED" chip for 2000ms
-      setShowDraftChip(true);
-      if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
-      draftChipTimerRef.current = setTimeout(() => setShowDraftChip(false), 2000);
-    }, 1500);
-  }, [activeTab]);
-
-  // Cleanup on unmount
-  useEffect(() => () => {
-    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
-    if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
-  }, []);
-
-  const handleRestoreDraft = () => {
-    // Jump to the tab that was active when draft was saved
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (parsed?.tab) setActiveTab(parsed.tab);
-      } catch {}
-    }
-    setHasDraft(false);
-  };
-
-  const handleDiscardDraft = () => {
-    localStorage.removeItem(DRAFT_KEY);
-    setHasDraft(false);
-  };
-
 
   const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -303,103 +346,55 @@ const PatientProfile = () => {
           onStepClick={(idx) => handleTabChange(TABS[idx].value)}
         />
 
-        {/* Draft Restore Banner */}
-        {hasDraft && (
-          <div className="max-w-4xl mx-auto w-full mb-6 border border-warning/40 bg-warning/5 px-5 py-3 rounded-md flex items-center justify-between gap-4">
-            <div>
-              <span className="text-[10px] font-black text-warning uppercase tracking-widest block">
-                Unsaved Draft Found
-              </span>
-              <span className="text-ui-xs text-neutral-600 font-medium">
-                {draftSavedAt
-                  ? `Last saved at ${new Date(draftSavedAt).toLocaleTimeString()}`
-                  : 'You have unsaved changes from a previous session'}
-              </span>
-            </div>
-            <div className="flex gap-4 shrink-0">
-              <button onClick={handleRestoreDraft} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">
-                RESTORE
-              </button>
-              <button onClick={handleDiscardDraft} className="text-[10px] font-black text-accent uppercase tracking-widest hover:underline">
-                DISCARD
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* DRAFT SAVED floating chip */}
-        <div
-          className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
-            showDraftChip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
-          }`}
-        >
-          <div className="bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">
-            ✓ DRAFT SAVED
-          </div>
-        </div>
-
-        {/* Unsaved Changes Warning */}
-
-        {hasUnsavedChanges && pendingTab && (
-          <div className="max-w-4xl mx-auto w-full mb-8 border-2 border-[#FFB800] bg-yellow-50 px-6 py-4 flex items-center justify-between">
-            <span className="text-ui-sm font-bold text-black uppercase tracking-widest">
-              UNSAVED CHANGES IN {activeTab} —
-            </span>
-            <div className="flex gap-6">
-              <button onClick={() => setPendingTab(null)} className="text-ui-sm font-bold text-black uppercase tracking-widest hover:underline">
-                CONTINUE EDITING
-              </button>
-              <button onClick={handleDiscardChanges} className="text-ui-sm font-bold text-[#FF3000] uppercase tracking-widest hover:underline">
-                DISCARD
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Tab Content Area */}
         <div className="max-w-4xl mx-auto w-full pb-20">
           {activeTab === 'BASIC INFO' && (
             <BasicInfoTab 
               profile={profile} 
-              isDirty={hasUnsavedChanges}
+              formData={formData}
+              onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={handleUnsavedChanges} 
+              onSaveDraft={handleSaveDraft}
               onNext={() => handleTabChange('MEDICAL HISTORY')}
             />
           )}
           {activeTab === 'MEDICAL HISTORY' && (
             <MedicalHistoryTab 
               profile={profile} 
-              isDirty={hasUnsavedChanges}
+              formData={formData}
+              onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={handleUnsavedChanges} 
+              onSaveDraft={handleSaveDraft}
               onNext={() => handleTabChange('LIFESTYLE')}
             />
           )}
           {activeTab === 'LIFESTYLE' && (
             <LifestyleTab 
               profile={profile} 
-              isDirty={hasUnsavedChanges}
+              formData={formData}
+              onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={handleUnsavedChanges} 
+              onSaveDraft={handleSaveDraft}
               onNext={() => handleTabChange('EMERGENCY CONTACTS')}
             />
           )}
           {activeTab === 'EMERGENCY CONTACTS' && (
             <EmergencyContactsTab 
               profile={profile} 
-              isDirty={hasUnsavedChanges}
+              formData={formData}
+              onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={handleUnsavedChanges} 
+              onSaveDraft={handleSaveDraft}
               onNext={() => handleTabChange('INSURANCE')}
             />
           )}
           {activeTab === 'INSURANCE' && (
             <InsuranceTab 
               profile={profile} 
-              isDirty={hasUnsavedChanges}
+              formData={formData}
+              onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
-              onUnsavedChanges={handleUnsavedChanges} 
+              onSaveDraft={handleSaveDraft}
             />
           )}
         </div>

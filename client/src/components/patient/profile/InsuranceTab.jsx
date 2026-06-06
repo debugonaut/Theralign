@@ -5,28 +5,31 @@ import Button from '../../common/Button';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const InsuranceTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
-  const [formData, setFormData] = useState({
-    provider: profile?.insurance?.provider || '',
-    policyNumber: profile?.insurance?.policyNumber || '',
-  });
-
+const InsuranceTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
   const { showToast } = useToast();
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    onUnsavedChanges(true);
+    onChange({ [field]: value });
   };
+
+  const isDirty =
+    formData.provider !== (profile?.insurance?.provider || '') ||
+    formData.policyNumber !== (profile?.insurance?.policyNumber || '');
 
   const handleSave = async () => {
     setIsSaving(true);
     setSaveStatus(null);
     try {
-      const updatedProfile = await patientProfileService.updateProfile({ insurance: formData });
+      const payload = {
+        insurance: {
+          provider: formData.provider,
+          policyNumber: formData.policyNumber
+        }
+      };
+      const updatedProfile = await patientProfileService.updateProfile(payload);
       setSaveStatus('success');
-      onUnsavedChanges(false);
       onSaveSuccess(updatedProfile.data.profile);
       setTimeout(() => setSaveStatus(null), 2000);
     } catch (error) {
@@ -63,20 +66,29 @@ const InsuranceTab = ({ profile, onSaveSuccess, onUnsavedChanges }) => {
         </div>
       </div>
 
-      <div className="border-t border-neutral-200 pt-6 mt-4">
+      <div className="border-t border-neutral-200 pt-6 mt-4 flex items-center gap-4">
         {saveStatus === 'success' ? (
           <div className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
             <Check size={14} /> Insurance Saved
           </div>
         ) : (
-          <Button
-            variant="primary"
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
-          >
-            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Insurance →'}
-          </Button>
+          <>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
+            >
+              {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Insurance →'}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onSaveDraft}
+              className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
+            >
+              Save Draft
+            </Button>
+          </>
         )}
       </div>
     </div>

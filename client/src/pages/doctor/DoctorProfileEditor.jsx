@@ -45,13 +45,6 @@ const DoctorProfileEditor = () => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [animatingStepIdx, setAnimatingStepIdx] = useState(null);
 
-  // Draft persistence
-  const [hasDraft, setHasDraft]           = useState(false);
-  const [draftSavedAt, setDraftSavedAt]   = useState(null);
-  const [showDraftChip, setShowDraftChip] = useState(false);
-  const draftChipTimerRef = useRef(null);
-  const draftDebounceRef  = useRef(null);
-
   // ─── Form States ───
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -88,52 +81,85 @@ const DoctorProfileEditor = () => {
     setIsLoading(true);
     try {
       const res = await getDoctorProfileAPI();
+      let p = null;
       if (res.success && res.data?.profile) {
-        const p = res.data.profile;
+        p = res.data.profile;
         setProfile(p);
-
-        // Populate Form States
-        setName(p.user?.name || '');
-        
-        // Strip prefix if any
-        let rawPhone = p.user?.phone || '';
-        if (rawPhone.startsWith('+91')) {
-          rawPhone = rawPhone.replace('+91', '').trim();
-        }
-        setPhone(rawPhone);
-
-        setBio(p.bio || '');
-        setExperience(p.experience ? p.experience.toString() : '');
-        setRegistrationNumber(p.registrationNumber || '');
-        setSpecializationText(p.specialization ? p.specialization.join(', ') : '');
-        setClinicName(p.clinicName || '');
-        setConsultationFee(p.consultationFee ? p.consultationFee.toString() : '');
-
-        // Parse address
-        const fullAddr = p.clinicAddress || '';
-        const parts = fullAddr.split(',').map((s) => s.trim());
-        if (parts.length >= 3) {
-          setStateName(parts.pop());
-          setCity(parts.pop());
-          setAddress(parts.join(', '));
-        } else {
-          setAddress(fullAddr);
-          setCity('');
-          setStateName('');
-        }
-
-        setProfilePhotoPreview(p.user?.profileImage || '');
-        setCompletedSteps(getDoctorCompletedSteps(p));
-      } else {
-        setName(user?.name || '');
-        let rawPhone = user?.phone || '';
-        if (rawPhone.startsWith('+91')) {
-          rawPhone = rawPhone.replace('+91', '').trim();
-        }
-        setPhone(rawPhone);
-        setProfilePhotoPreview(user?.profileImage || '');
-        setCompletedSteps([]);
       }
+
+      // 1. Construct initial values from database profile (or defaults)
+      const initialValues = {
+        name: p?.user?.name || user?.name || '',
+        phone: (p?.user?.phone || user?.phone || '').replace('+91', '').trim(),
+        bio: p?.bio || '',
+        experience: p?.experience ? p.experience.toString() : '',
+        registrationNumber: p?.registrationNumber || '',
+        specializationText: p?.specialization ? p.specialization.join(', ') : '',
+        clinicName: p?.clinicName || '',
+        consultationFee: p?.consultationFee ? p.consultationFee.toString() : '',
+        address: '',
+        city: '',
+        stateName: '',
+        profilePhotoPreview: p?.user?.profileImage || user?.profileImage || '',
+      };
+
+      if (p?.clinicAddress) {
+        const parts = p.clinicAddress.split(',').map((s) => s.trim());
+        if (parts.length >= 3) {
+          initialValues.stateName = parts.pop();
+          initialValues.city = parts.pop();
+          initialValues.address = parts.join(', ');
+        } else {
+          initialValues.address = p.clinicAddress;
+        }
+      }
+
+      // 2. Check for draft in localStorage
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed) {
+            // Restore draft values silently!
+            setName(parsed.name ?? initialValues.name);
+            setPhone(parsed.phone ?? initialValues.phone);
+            setBio(parsed.bio ?? initialValues.bio);
+            setExperience(parsed.experience ?? initialValues.experience);
+            setRegistrationNumber(parsed.registrationNumber ?? initialValues.registrationNumber);
+            setSpecializationText(parsed.specializationText ?? initialValues.specializationText);
+            setClinicName(parsed.clinicName ?? initialValues.clinicName);
+            setCity(parsed.city ?? initialValues.city);
+            setStateName(parsed.stateName ?? initialValues.stateName);
+            setAddress(parsed.address ?? initialValues.address);
+            setConsultationFee(parsed.consultationFee ?? initialValues.consultationFee);
+            if (typeof parsed.editorStep === 'number') {
+              setEditorStep(parsed.editorStep);
+            }
+            setProfilePhotoPreview(initialValues.profilePhotoPreview);
+            setCompletedSteps(getDoctorCompletedSteps(p));
+            toast.success('RESTORED UNSAVED DRAFT LOCALLY.');
+            setIsLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.error('Failed to parse draft', e);
+        }
+      }
+
+      // Set initial values if no draft
+      setName(initialValues.name);
+      setPhone(initialValues.phone);
+      setBio(initialValues.bio);
+      setExperience(initialValues.experience);
+      setRegistrationNumber(initialValues.registrationNumber);
+      setSpecializationText(initialValues.specializationText);
+      setClinicName(initialValues.clinicName);
+      setCity(initialValues.city);
+      setStateName(initialValues.stateName);
+      setAddress(initialValues.address);
+      setConsultationFee(initialValues.consultationFee);
+      setProfilePhotoPreview(initialValues.profilePhotoPreview);
+      setCompletedSteps(getDoctorCompletedSteps(p));
     } catch (err) {
       console.error(err);
       toast.error('FAILED TO FETCH PROFILE SETTINGS.');
@@ -145,41 +171,26 @@ const DoctorProfileEditor = () => {
   useEffect(() => {
     document.title = 'MY PROFILE — Theralign';
     fetchProfileData();
-    // Check for existing draft
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (parsed?.savedAt) {
-          setHasDraft(true);
-          setDraftSavedAt(parsed.savedAt);
-        }
-      } catch {}
-    }
   }, []);
 
-  // Call whenever isDirty becomes true to trigger debounced draft save
-  const triggerDraftSave = useCallback(() => {
-    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
-    draftDebounceRef.current = setTimeout(() => {
-      const draftPayload = { savedAt: new Date().toISOString() };
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
-      setHasDraft(true);
-      setDraftSavedAt(draftPayload.savedAt);
-      setShowDraftChip(true);
-      if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
-      draftChipTimerRef.current = setTimeout(() => setShowDraftChip(false), 2000);
-    }, 1500);
-  }, []);
-
-  useEffect(() => () => {
-    if (draftDebounceRef.current) clearTimeout(draftDebounceRef.current);
-    if (draftChipTimerRef.current) clearTimeout(draftChipTimerRef.current);
-  }, []);
-
-  const handleDiscardDraft = () => {
-    localStorage.removeItem(DRAFT_KEY);
-    setHasDraft(false);
+  const handleSaveDraft = () => {
+    const draftPayload = {
+      name,
+      phone,
+      bio,
+      experience,
+      registrationNumber,
+      specializationText,
+      clinicName,
+      city,
+      stateName,
+      address,
+      consultationFee,
+      editorStep,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
+    toast.success('DRAFT SAVED LOCALLY.');
   };
 
   const handleDiscard = () => {
@@ -252,13 +263,7 @@ const DoctorProfileEditor = () => {
     licenseFile !== null
   );
 
-  // Auto-save draft whenever form becomes dirty
-  useEffect(() => {
-    if (isDirty) triggerDraftSave();
-  }, [isDirty]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const handlePhotoUploadChange = (e) => {
-
     const file = e.target.files[0];
     if (file) {
       if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
@@ -366,7 +371,6 @@ const DoctorProfileEditor = () => {
         
         // Clear draft on successful save
         localStorage.removeItem(DRAFT_KEY);
-        setHasDraft(false);
 
         // Sync Zustand Auth Store credentials
         const updatedUser = res.data.profile.user;
@@ -452,9 +456,28 @@ const DoctorProfileEditor = () => {
       setTimeout(() => {
         setAnimatingStepIdx(null);
         if (editorStep < activeSteps.length - 1) {
-          setEditorStep((prev) => prev + 1);
+          const nextStep = editorStep + 1;
+          setEditorStep(nextStep);
+          // Update draft key with next step and current database values
+          const draftPayload = {
+            name,
+            phone,
+            bio,
+            experience,
+            registrationNumber,
+            specializationText,
+            clinicName,
+            city,
+            stateName,
+            address,
+            consultationFee,
+            editorStep: nextStep,
+            savedAt: new Date().toISOString()
+          };
+          localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
         } else {
           toast.success('PRACTITIONER PROFILE COMPLETED!');
+          localStorage.removeItem(DRAFT_KEY);
         }
       }, 1000);
     }
@@ -506,35 +529,6 @@ const DoctorProfileEditor = () => {
         />
       </div>
 
-      {/* Draft Banner */}
-      {hasDraft && (
-        <div className="max-w-4xl w-full border border-warning/40 bg-warning/5 px-5 py-3 rounded-md flex items-center justify-between gap-4">
-          <div>
-            <span className="text-[10px] font-black text-warning uppercase tracking-widest block">
-              Unsaved Draft Detected
-            </span>
-            <span className="text-ui-xs text-neutral-600 font-medium">
-              {draftSavedAt
-                ? `Auto-saved at ${new Date(draftSavedAt).toLocaleTimeString()}`
-                : 'A previous editing session was not saved'}
-            </span>
-          </div>
-          <button onClick={handleDiscardDraft} className="text-[10px] font-black text-accent uppercase tracking-widest hover:underline shrink-0">
-            DISMISS
-          </button>
-        </div>
-      )}
-
-      {/* DRAFT SAVED floating chip */}
-      <div
-        className={`fixed bottom-24 right-6 z-50 transition-all duration-300 ${
-          showDraftChip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
-        }`}
-      >
-        <div className="bg-neutral-900 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">
-          ✓ DRAFT SAVED
-        </div>
-      </div>
 
       {/* ── PERSONAL INFORMATION (Step 0) ── */}
       {editorStep === 0 && (
@@ -911,6 +905,15 @@ const DoctorProfileEditor = () => {
                 Discard Changes
               </button>
             )}
+
+            <button
+              type="button"
+              onClick={handleSaveDraft}
+              disabled={isSaving}
+              className="px-4 py-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50 bg-white"
+            >
+              Save Draft
+            </button>
 
             <Button
               onClick={handleSaveStep}

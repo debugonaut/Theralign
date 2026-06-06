@@ -2,18 +2,10 @@ import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
-import SegmentedControl from '../../common/SegmentedControl';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const LifestyleTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
-  const [formData, setFormData] = useState({
-    occupation: profile?.lifestyle?.occupation || '',
-    activityLevel: profile?.lifestyle?.activityLevel || '',
-    smoking: profile?.lifestyle?.smoking ?? null,
-    alcohol: profile?.lifestyle?.alcohol ?? null,
-  });
-
+const LifestyleTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft, onNext }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
   const { showToast } = useToast();
@@ -26,23 +18,30 @@ const LifestyleTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNex
     { value: 'VERY ACTIVE', label: 'VERY ACTIVE' },
   ];
 
-  const booleanOptions = [
-    { value: true, label: 'YES' },
-    { value: false, label: 'NO' },
-  ];
-
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    onUnsavedChanges(true);
+    onChange({ [field]: value });
   };
+
+  const isDirty =
+    formData.occupation !== (profile?.lifestyle?.occupation || '') ||
+    formData.activityLevel !== (profile?.lifestyle?.activityLevel || '') ||
+    formData.smoking !== (profile?.lifestyle?.smoking ?? null) ||
+    formData.alcohol !== (profile?.lifestyle?.alcohol ?? null);
 
   const handleSave = async () => {
     setIsSaving(true);
     setSaveStatus(null);
     try {
-      const updatedProfile = await patientProfileService.updateProfile({ lifestyle: formData });
+      const payload = {
+        lifestyle: {
+          occupation: formData.occupation,
+          activityLevel: formData.activityLevel,
+          smoking: formData.smoking,
+          alcohol: formData.alcohol
+        }
+      };
+      const updatedProfile = await patientProfileService.updateProfile(payload);
       setSaveStatus('success');
-      onUnsavedChanges(false);
       onSaveSuccess(updatedProfile.data.profile);
       setTimeout(() => setSaveStatus(null), 2000);
     } catch (error) {
@@ -154,14 +153,23 @@ const LifestyleTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNex
             <Check size={14} /> Lifestyle Saved
           </div>
         ) : (
-          <Button
-            variant="primary"
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
-          >
-            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Lifestyle →'}
-          </Button>
+          <>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
+            >
+              {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Lifestyle →'}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onSaveDraft}
+              className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
+            >
+              Save Draft
+            </Button>
+          </>
         )}
         {onNext && (
           <Button

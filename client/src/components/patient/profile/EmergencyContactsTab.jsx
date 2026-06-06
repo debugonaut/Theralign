@@ -6,39 +6,54 @@ import EmptyState from '../../common/EmptyState';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const EmergencyContactsTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
-  const [contacts, setContacts] = useState(profile?.emergencyContacts || []);
+const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft, onNext }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
   const { showToast } = useToast();
 
   const handleAddContact = () => {
-    if (contacts.length >= 2) return;
-    setContacts([...contacts, { name: '', relationship: '', phone: '' }]);
-    onUnsavedChanges(true);
+    if (formData.emergencyContacts.length >= 2) return;
+    onChange({ emergencyContacts: [...formData.emergencyContacts, { name: '', relationship: '', phone: '' }] });
   };
 
   const handleRemoveContact = (index) => {
-    const newContacts = [...contacts];
+    const newContacts = [...formData.emergencyContacts];
     newContacts.splice(index, 1);
-    setContacts(newContacts);
-    onUnsavedChanges(true);
+    onChange({ emergencyContacts: newContacts });
   };
 
   const handleChange = (index, field, value) => {
-    const newContacts = [...contacts];
-    newContacts[index][field] = value;
-    setContacts(newContacts);
-    onUnsavedChanges(true);
+    const newContacts = formData.emergencyContacts.map((contact, idx) => {
+      if (idx === index) {
+        return { ...contact, [field]: value };
+      }
+      return contact;
+    });
+    onChange({ emergencyContacts: newContacts });
   };
 
+  const dbContacts = profile?.emergencyContacts || [];
+  const isDirty = JSON.stringify(formData.emergencyContacts) !== JSON.stringify(dbContacts);
+
   const handleSave = async () => {
+    // Validations to avoid mongoose schema validation crashes
+    for (let i = 0; i < formData.emergencyContacts.length; i++) {
+      const contact = formData.emergencyContacts[i];
+      if (!contact.name.trim() || !contact.relationship.trim() || !contact.phone.trim()) {
+        showToast('error', `Emergency Contact ${formData.emergencyContacts.length > 1 ? i + 1 : ''} fields cannot be empty`);
+        return;
+      }
+      if (!/^\d{10}$/.test(contact.phone.trim())) {
+        showToast('error', `Emergency Contact ${formData.emergencyContacts.length > 1 ? i + 1 : ''} phone number must be exactly 10 digits`);
+        return;
+      }
+    }
+
     setIsSaving(true);
     setSaveStatus(null);
     try {
-      const updatedProfile = await patientProfileService.updateProfile({ emergencyContacts: contacts });
+      const updatedProfile = await patientProfileService.updateProfile({ emergencyContacts: formData.emergencyContacts });
       setSaveStatus('success');
-      onUnsavedChanges(false);
       onSaveSuccess(updatedProfile.data.profile);
       setTimeout(() => setSaveStatus(null), 2000);
     } catch (error) {
@@ -51,18 +66,18 @@ const EmergencyContactsTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChange
 
   return (
     <div className="flex flex-col space-y-6">
-      {contacts.length === 0 && (
+      {formData.emergencyContacts.length === 0 && (
         <EmptyState 
           title="NO EMERGENCY CONTACTS" 
           description="Add a contact who can be reached in case of an emergency during your session." 
         />
       )}
 
-      {contacts.map((contact, index) => (
+      {formData.emergencyContacts.map((contact, index) => (
         <div key={index} className="border border-neutral-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-all duration-300">
           <div className="flex justify-between items-center mb-4">
             <div className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest">
-              Emergency Contact {contacts.length > 1 ? index + 1 : ''}
+              Emergency Contact {formData.emergencyContacts.length > 1 ? index + 1 : ''}
             </div>
             <button 
               type="button" 
@@ -81,7 +96,7 @@ const EmergencyContactsTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChange
         </div>
       ))}
 
-      {contacts.length === 1 && (
+      {formData.emergencyContacts.length === 1 && (
         <div className="border border-dashed border-neutral-200 rounded-lg p-6 flex items-center justify-center bg-neutral-50/50">
           <div className="text-ui-xs text-neutral-400 font-bold uppercase tracking-widest">
             + Add Second Contact
@@ -89,7 +104,7 @@ const EmergencyContactsTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChange
         </div>
       )}
 
-      {contacts.length < 2 && (
+      {formData.emergencyContacts.length < 2 && (
         <div className="pt-2">
           <Button variant="ghost" onClick={handleAddContact} className="border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-bold text-ui-xs uppercase tracking-widest transition-all rounded-md shadow-sm">+ Add Emergency Contact &rarr;</Button>
         </div>
@@ -101,14 +116,23 @@ const EmergencyContactsTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChange
             <Check size={14} /> Emergency Contacts Saved
           </div>
         ) : (
-          <Button
-            variant="primary"
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
-          >
-            {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Emergency Contacts →'}
-          </Button>
+          <>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`h-10 px-6 font-bold ${saveStatus === 'error' ? 'border-danger text-danger bg-danger/5' : ''}`}
+            >
+              {isSaving ? 'Saving...' : saveStatus === 'error' ? 'Save Failed — Try Again' : 'Save Emergency Contacts →'}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={onSaveDraft}
+              className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
+            >
+              Save Draft
+            </Button>
+          </>
         )}
         {onNext && (
           <Button
