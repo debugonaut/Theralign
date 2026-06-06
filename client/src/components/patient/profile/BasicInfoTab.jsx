@@ -21,13 +21,13 @@ const BasicInfoTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
 
   const bloodGroupOptions = [
     { value: 'A+', label: 'A+' },
-    { value: 'A−', label: 'A−' },
+    { value: 'A-', label: 'A-' },
     { value: 'B+', label: 'B+' },
-    { value: 'B−', label: 'B−' },
+    { value: 'B-', label: 'B-' },
     { value: 'AB+', label: 'AB+' },
-    { value: 'AB−', label: 'AB−' },
+    { value: 'AB-', label: 'AB-' },
     { value: 'O+', label: 'O+' },
-    { value: 'O−', label: 'O−' },
+    { value: 'O-', label: 'O-' },
   ];
 
   const handleChange = (field, value) => {
@@ -75,9 +75,16 @@ const BasicInfoTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
         />
         <Input
           label="GENDER"
-          value={formData.gender}
+          select={true}
+          value={formData.gender?.toLowerCase() || ''}
           onChange={(e) => handleChange('gender', e.target.value)}
-        />
+        >
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </Input>
       </div>
 
       <div className="mb-8 w-full">

@@ -14,9 +14,11 @@ export const updateMyProfileValidation = [
     .isISO8601().toDate().withMessage('Invalid date of birth format'),
   body('gender')
     .optional()
+    .customSanitizer(value => value ? value.toLowerCase() : value)
     .isIn(['male', 'female', 'other', 'prefer_not_to_say']).withMessage('Invalid gender value'),
   body('bloodGroup')
     .optional()
+    .customSanitizer(value => value ? value.replace(/\u2212/g, '-') : value)
     .isIn(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'unknown']).withMessage('Invalid blood group'),
   body('height')
     .optional()
