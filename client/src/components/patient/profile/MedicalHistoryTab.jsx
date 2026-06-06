@@ -6,7 +6,7 @@ import EmptyState from '../../common/EmptyState';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
+const MedicalHistoryTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
   const [conditions, setConditions] = useState(profile?.medicalHistory?.conditions || []);
   const [medications, setMedications] = useState(profile?.medicalHistory?.medications || []);
   const [surgeries, setSurgeries] = useState(profile?.medicalHistory?.surgeries || []);
@@ -210,10 +210,10 @@ const MedicalHistoryTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext })
         {onNext && (
           <Button
             variant="ghost"
-            onClick={onNext}
+            onClick={isDirty ? handleSave : onNext}
             className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
           >
-            Next Step →
+            {isDirty ? 'Save & Next →' : 'Next Step →'}
           </Button>
         )}
       </div>

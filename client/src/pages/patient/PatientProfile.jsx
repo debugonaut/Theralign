@@ -361,6 +361,7 @@ const PatientProfile = () => {
           {activeTab === 'BASIC INFO' && (
             <BasicInfoTab 
               profile={profile} 
+              isDirty={hasUnsavedChanges}
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
               onNext={() => handleTabChange('MEDICAL HISTORY')}
@@ -369,6 +370,7 @@ const PatientProfile = () => {
           {activeTab === 'MEDICAL HISTORY' && (
             <MedicalHistoryTab 
               profile={profile} 
+              isDirty={hasUnsavedChanges}
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
               onNext={() => handleTabChange('LIFESTYLE')}
@@ -377,6 +379,7 @@ const PatientProfile = () => {
           {activeTab === 'LIFESTYLE' && (
             <LifestyleTab 
               profile={profile} 
+              isDirty={hasUnsavedChanges}
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
               onNext={() => handleTabChange('EMERGENCY CONTACTS')}
@@ -385,6 +388,7 @@ const PatientProfile = () => {
           {activeTab === 'EMERGENCY CONTACTS' && (
             <EmergencyContactsTab 
               profile={profile} 
+              isDirty={hasUnsavedChanges}
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
               onNext={() => handleTabChange('INSURANCE')}
@@ -393,6 +397,7 @@ const PatientProfile = () => {
           {activeTab === 'INSURANCE' && (
             <InsuranceTab 
               profile={profile} 
+              isDirty={hasUnsavedChanges}
               onSaveSuccess={handleSaveSuccess} 
               onUnsavedChanges={handleUnsavedChanges} 
             />

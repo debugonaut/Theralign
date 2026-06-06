@@ -6,7 +6,7 @@ import SegmentedControl from '../../common/SegmentedControl';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const BasicInfoTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
+const BasicInfoTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
   const [formData, setFormData] = useState({
     name: profile?.user?.name || '',
     dateOfBirth: profile?.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
@@ -132,10 +132,10 @@ const BasicInfoTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
         {onNext && (
           <Button
             variant="ghost"
-            onClick={onNext}
+            onClick={isDirty ? handleSave : onNext}
             className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
           >
-            Next Step →
+            {isDirty ? 'Save & Next →' : 'Next Step →'}
           </Button>
         )}
       </div>

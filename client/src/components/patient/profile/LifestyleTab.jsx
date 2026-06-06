@@ -6,7 +6,7 @@ import SegmentedControl from '../../common/SegmentedControl';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const LifestyleTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
+const LifestyleTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
   const [formData, setFormData] = useState({
     occupation: profile?.lifestyle?.occupation || '',
     activityLevel: profile?.lifestyle?.activityLevel || '',
@@ -166,10 +166,10 @@ const LifestyleTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
         {onNext && (
           <Button
             variant="ghost"
-            onClick={onNext}
+            onClick={isDirty ? handleSave : onNext}
             className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
           >
-            Next Step →
+            {isDirty ? 'Save & Next →' : 'Next Step →'}
           </Button>
         )}
       </div>

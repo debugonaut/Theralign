@@ -6,7 +6,7 @@ import EmptyState from '../../common/EmptyState';
 import { patientProfileService } from '../../../api/patientProfile.api';
 import { useToast } from '../../common/Toast';
 
-const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
+const EmergencyContactsTab = ({ profile, isDirty, onSaveSuccess, onUnsavedChanges, onNext }) => {
   const [contacts, setContacts] = useState(profile?.emergencyContacts || []);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
@@ -113,10 +113,10 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext
         {onNext && (
           <Button
             variant="ghost"
-            onClick={onNext}
+            onClick={isDirty ? handleSave : onNext}
             className="h-10 px-6 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-bold uppercase tracking-widest"
           >
-            Next Step →
+            {isDirty ? 'Save & Next →' : 'Next Step →'}
           </Button>
         )}
       </div>
