@@ -4,36 +4,7 @@ import AppError from '../utils/AppError.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
 import WeeklySchedule from '../models/WeeklySchedule.model.js';
-import Waitlist from '../models/Waitlist.model.js';
 import { createNotification } from '../services/notificationService.js';
-
-/**
- * Helper to notify patients on the waitlist when the doctor adds slot availability.
- */
-const notifyWaitlist = async (doctorProfileId, doctorName) => {
-  try {
-    const waitlistEntries = await Waitlist.find({
-      doctor: doctorProfileId,
-      notified: false,
-    });
-
-    for (const entry of waitlistEntries) {
-      createNotification({
-        recipientId: entry.patient,
-        type: 'appointment_booked', // Reuse closest category
-        title: 'New Slots Available',
-        message: `Dr. ${doctorName} has added new availability slots. Book now before they fill up!`,
-        link: `/doctors/${doctorProfileId}`,
-      });
-
-      entry.notified = true;
-      entry.notifiedAt = new Date();
-      await entry.save();
-    }
-  } catch (err) {
-    console.error('[ERROR] Waitlist notify task failed:', err);
-  }
-};
 
 /**
  * POST /api/availability/slots
@@ -67,9 +38,6 @@ export const createSlot = asyncHandler(async (req, res) => {
       startTime,
       endTime,
     });
-
-    // Notify waitlisted patients (fire and forget)
-    notifyWaitlist(doctorProfile._id, req.user.name);
 
     return successResponse(res, 201, 'Availability slot created successfully', slot);
   } catch (error) {
@@ -140,11 +108,6 @@ export const createRecurringSlots = asyncHandler(async (req, res) => {
         throw err;
       }
     }
-  }
-
-  // Notify waitlisted patients if any slot was successfully created
-  if (results.created > 0) {
-    notifyWaitlist(doctorProfile._id, req.user.name);
   }
 
   return successResponse(

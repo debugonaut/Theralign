@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getDoctorAvailability, bookAppointment } from '../../api/appointment.api';
-import { joinWaitlist, leaveWaitlist, checkWaitlistStatus } from '../../api/waitlist.api';
 import useAuthStore from '../../store/authStore';
 import BookingConfirmationModal from './BookingConfirmationModal';
 import { useRazorpay } from '../../hooks/useRazorpay';
@@ -21,9 +19,6 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
-
-  const [onWaitlist, setOnWaitlist] = useState(false);
-  const [waitlistLoading, setWaitlistLoading] = useState(false);
 
   // Fetch available slots
   const fetchAvailability = async () => {
@@ -50,49 +45,6 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   useEffect(() => {
     fetchAvailability();
   }, [doctorId]);
-
-  // Check waitlist status if empty
-  useEffect(() => {
-    const fetchWaitlistStatus = async () => {
-      if (availabilityByDate.length === 0 && isAuthenticated && user?.role === 'patient') {
-        try {
-          const res = await checkWaitlistStatus(doctorId);
-          if (res.success && res.data) {
-            setOnWaitlist(res.data.onWaitlist);
-          }
-        } catch (err) {
-          console.warn('Silent waitlist fetch warning:', err.message);
-        }
-      }
-    };
-    fetchWaitlistStatus();
-  }, [availabilityByDate, doctorId, isAuthenticated, user]);
-
-  const handleJoinWaitlist = async () => {
-    setWaitlistLoading(true);
-    try {
-      await joinWaitlist(doctorId);
-      setOnWaitlist(true);
-      toast.success('Joined waitlist successfully.');
-    } catch (err) {
-      toast.error('Failed to join waitlist.');
-    } finally {
-      setWaitlistLoading(false);
-    }
-  };
-
-  const handleLeaveWaitlist = async () => {
-    setWaitlistLoading(true);
-    try {
-      await leaveWaitlist(doctorId);
-      setOnWaitlist(false);
-      toast.success('Left waitlist successfully.');
-    } catch (err) {
-      toast.error('Failed to leave waitlist.');
-    } finally {
-      setWaitlistLoading(false);
-    }
-  };
 
   const slotsForSelectedDate = availabilityByDate.find(d => d.date === selectedDate)?.slots || [];
 
@@ -161,63 +113,6 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     }
   };
 
-  // Convert DR. DR_NAME to Dr. Name Title Case
-  const displayDoctorName = doctorName
-    ? doctorName.toLowerCase().replace(/(^\s*dr\.\s*|^\s*)/i, '').replace(/\b\w/g, c => c.toUpperCase())
-    : '';
-
-  // ── Render Waitlist UI if no availability (D3.10) ──
-  const renderWaitlistUI = () => {
-    return (
-      <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left">
-        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
-          NO AVAILABILITY
-        </span>
-        <h3 className="text-ui-xl font-black text-neutral-900 uppercase tracking-tighter mb-2 leading-none">
-          Dr. {displayDoctorName} has no open slots currently
-        </h3>
-        <p className="text-ui-sm text-neutral-700 font-bold mb-4">
-          Join the waitlist and we'll notify you when new slots open.
-        </p>
-
-        {onWaitlist ? (
-          <div className="flex flex-col gap-2 bg-[#F8F8F6] border border-success p-4 rounded-md">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 border border-success flex items-center justify-center text-success shrink-0 rounded-md bg-white">
-                <Check className="h-4 w-4" />
-              </div>
-              <div className="text-left">
-                <span className="text-[10px] font-black text-success uppercase tracking-widest block">
-                  You're on the waitlist
-                </span>
-                <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
-                  We'll notify you when new slots are available.
-                </span>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={handleLeaveWaitlist}
-              disabled={waitlistLoading}
-              className="text-[9px] font-black text-neutral-500 hover:text-accent uppercase tracking-widest text-left mt-2 select-none cursor-pointer border-t border-neutral-200 pt-2 w-full bg-transparent border-0"
-            >
-              {waitlistLoading ? 'LEAVING...' : 'LEAVE WAITLIST'}
-            </button>
-          </div>
-        ) : (
-          <Button
-            onClick={handleJoinWaitlist}
-            disabled={waitlistLoading}
-            variant="primary"
-            fullWidth
-          >
-            {waitlistLoading ? 'PROCESSING...' : 'JOIN WAITLIST →'}
-          </Button>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col gap-5 select-none w-full">
       {/* ── Consultation Fee Header ── */}
@@ -240,7 +135,10 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       {!loading && (
         <>
           {availabilityByDate.length === 0 ? (
-            renderWaitlistUI()
+            <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">NO AVAILABILITY</span>
+              <p className="text-ui-sm text-neutral-700 font-bold">No open slots at the moment. Please check back later.</p>
+            </div>
           ) : (
             <div className="flex flex-col gap-6 text-left">
               {/* Heatmap calendar */}
