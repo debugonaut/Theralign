@@ -26,8 +26,8 @@ const getOffsetDateString = (offsetDays) => {
 
 const refreshSlots = async () => {
   try {
-    const todayStr = getOffsetDateString(0);
-    await AvailabilitySlot.deleteMany({ isBooked: false, date: { $lt: todayStr } });
+    // Delete ALL unbooked slots and recreate fresh (keeps booked slots intact)
+    await AvailabilitySlot.deleteMany({ isBooked: false });
 
     const doctors = await DoctorProfile.find({ verificationStatus: DOCTOR_STATUS.VERIFIED });
     const docs = [];
@@ -39,11 +39,18 @@ const refreshSlots = async () => {
         }
       }
     }
-    const result = await AvailabilitySlot.insertMany(docs, { ordered: false }).catch(err => {
-      if (err.code !== 11000 && err.writeErrors?.some(e => e.code !== 11000)) throw err;
-      return { insertedCount: err.insertedDocs?.length ?? 0 };
-    });
-    console.log(`[INFO] Slot refresh complete. ${result.insertedCount ?? docs.length} slots ready across 30 days.`);
+    let insertedCount = 0;
+    try {
+      const result = await AvailabilitySlot.insertMany(docs, { ordered: false });
+      insertedCount = result.length;
+    } catch (err) {
+      if (err.code === 11000 || err.name === 'BulkWriteError') {
+        insertedCount = err.insertedDocs?.length ?? 0;
+      } else {
+        throw err;
+      }
+    }
+    console.log(`[INFO] Slot refresh complete. ${insertedCount} new slots inserted, ${docs.length - insertedCount} already existed.`);
   } catch (err) {
     console.error('[ERROR] Slot refresh failed:', err.message);
   }
