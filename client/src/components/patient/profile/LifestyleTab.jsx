@@ -90,7 +90,7 @@ const LifestyleTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="flex items-center justify-between border border-neutral-200 rounded-lg p-4 bg-white shadow-sm">
           <div className="text-ui-md font-bold text-neutral-700 uppercase tracking-wide">Smoking</div>
           <div className="flex gap-2">
@@ -148,7 +148,7 @@ const LifestyleTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
         </div>
       </div>
 
-      <div className="border-t border-neutral-200 pt-8 mt-4 flex items-center gap-4">
+      <div className="border-t border-neutral-200 pt-6 mt-4 flex items-center gap-4">
         {saveStatus === 'success' ? (
           <div className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
             <Check size={14} /> Lifestyle Saved

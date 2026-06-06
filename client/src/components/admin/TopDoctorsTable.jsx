@@ -52,7 +52,7 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
       </div>
 
       {doctors.length === 0 ? (
-        <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+        <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
           NO CLASSIFIED CLINICIAN RECORDS
         </div>
       ) : (

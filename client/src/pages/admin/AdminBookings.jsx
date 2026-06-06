@@ -86,11 +86,11 @@ const AdminBookings = () => {
       {/* Bookings table */}
       <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {loading ? (
-          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+          <div className="p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
             <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING SCHEDULER ENTRIES...
           </div>
         ) : appointments.length === 0 ? (
-          <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
             NO SCHEDULER RECORDS MATCH FILTERS
           </div>
         ) : (
@@ -179,7 +179,7 @@ const AdminBookings = () => {
                     {/* Collapsible Details Drawer */}
                     {isExpanded && (
                       <tr className="bg-neutral-50 border-b border-neutral-900">
-                        <td colSpan={9} className="px-8 py-6 text-left">
+                        <td colSpan={9} className="px-6 py-3 text-left">
                           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs">
                             <div>
                               <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT EMAIL</span>

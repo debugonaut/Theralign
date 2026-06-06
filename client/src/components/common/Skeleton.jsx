@@ -94,7 +94,7 @@ const Skeleton = ({
 /** Doctor card skeleton — matches the DoctorCard proportions exactly */
 export const DoctorCardSkeleton = () => (
   <div
-    className="p-8"
+    className="p-6"
     style={{ border: '2px solid #E5E5E5', borderRadius: '0' }}
     aria-label="Loading doctor information"
     aria-busy="true"
@@ -133,7 +133,7 @@ export const TableRowSkeleton = ({ columns = 5 }) => (
 /** Metric card skeleton */
 export const MetricCardSkeleton = () => (
   <div
-    className="p-8 bg-neutral-100"
+    className="p-6 bg-neutral-100"
     style={{ border: '2px solid #0F0F0F', borderRadius: '0' }}
     aria-busy="true"
   >

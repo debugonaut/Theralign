@@ -154,7 +154,7 @@ const PatientAppointments = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-white">
+    <div className="flex flex-col gap-5 select-none text-left bg-white">
       
       {/* Page Header Section */}
       <SectionHeader
@@ -191,11 +191,11 @@ const PatientAppointments = () => {
 
       {/* Appointments Ledger Table */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+        <div className="py-6 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING CLINIC TRANSACTION LEDGERS...
         </div>
       ) : activeAppts.length === 0 ? (
-        <div className="border border-neutral-200 border-dashed p-12 text-center rounded-lg flex flex-col items-center gap-4 max-w-lg mx-auto bg-neutral-50">
+        <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg flex flex-col items-center gap-3 max-w-lg mx-auto bg-neutral-50">
           <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             NO SESSIONS FILED
           </span>
@@ -207,7 +207,7 @@ const PatientAppointments = () => {
           </Button>
         </div>
       ) : (
-        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1">
+        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 max-w-[1200px]">
           <Table>
             <Table.Head>
               <tr>
@@ -295,7 +295,7 @@ const PatientAppointments = () => {
                     {isExpanded && (
                       <Table.Row expanded={true} className="border-l-4 border-neutral-900">
                         <td colSpan={8} className="bg-neutral-100 p-6 text-left">
-                          <div className="flex flex-col gap-6 w-full">
+                          <div className="flex flex-col gap-6 w-full max-w-[1200px]">
                             {/* Summary Details */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                               <div>
@@ -370,7 +370,7 @@ const PatientAppointments = () => {
                                       <h4 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tighter">
                                         SHARE YOUR SESSION EXPERIENCE WITH DR. {docName.toUpperCase()}
                                       </h4>
-                                      <div className="h-[1px] bg-neutral-200 w-full mt-2" />
+                                      <div className="h-[1px] bg-neutral-200 w-full mt-2 max-w-[1200px]" />
                                     </div>
 
                                     {/* 5-Star Rating Selector */}

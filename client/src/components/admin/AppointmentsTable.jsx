@@ -91,12 +91,12 @@ const AppointmentsTable = ({ limit = 10, onMetricsFetched }) => {
 
       {/* Table Content */}
       {loading ? (
-        <div className="p-12 text-center">
+        <div className="p-6 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-xs font-semibold text-slate-500">Retrieving system bookings...</p>
         </div>
       ) : appointments.length === 0 ? (
-        <div className="p-12 text-center flex flex-col items-center gap-3">
+        <div className="p-6 text-center flex flex-col items-center gap-3">
           <AlertCircle className="text-slate-600" size={32} />
           <p className="text-sm font-bold text-slate-400">No Appointments Recorded</p>
           <p className="text-xs text-slate-600">No bookings have been made across the platform yet.</p>
@@ -106,14 +106,14 @@ const AppointmentsTable = ({ limit = 10, onMetricsFetched }) => {
           <table className="w-full text-slate-300 text-sm">
             <thead>
               <tr className="bg-slate-900/50 border-b border-slate-800 text-slate-400 text-xs font-extrabold uppercase tracking-wider">
-                <th className="px-6 py-4">Patient</th>
-                <th className="px-6 py-4">Physiotherapist</th>
-                <th className="px-6 py-4">Specialization</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Time</th>
-                <th className="px-6 py-4">Consult Fee</th>
-                <th className="px-6 py-4">Commission</th>
-                <th className="px-6 py-4 text-right">Status</th>
+                <th className="px-4 py-2">Patient</th>
+                <th className="px-4 py-2">Physiotherapist</th>
+                <th className="px-4 py-2">Specialization</th>
+                <th className="px-4 py-2">Date</th>
+                <th className="px-4 py-2">Time</th>
+                <th className="px-4 py-2">Consult Fee</th>
+                <th className="px-4 py-2">Commission</th>
+                <th className="px-4 py-2 text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
@@ -125,24 +125,24 @@ const AppointmentsTable = ({ limit = 10, onMetricsFetched }) => {
 
                 return (
                   <tr key={appt._id} className="hover:bg-slate-900/20 transition-all font-medium">
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div>
                         <p className="font-extrabold text-slate-200">{patName}</p>
                         <p className="text-[10px] text-slate-500 mt-0.5">{patEmail}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <p className="font-extrabold text-slate-200">Dr. {docName}</p>
                     </td>
-                    <td className="px-6 py-4 text-slate-400 text-xs font-bold">{specialization}</td>
-                    <td className="px-6 py-4 text-xs font-bold">{formatHumanDate(appt.date)}</td>
-                    <td className="px-6 py-4 text-xs font-bold">{appt.startTime} – {appt.endTime}</td>
-                    <td className="px-6 py-4 text-slate-200 font-extrabold">₹{appt.consultationFee}</td>
-                    <td className="px-6 py-4 text-primary font-extrabold">
+                    <td className="px-4 py-3 text-slate-400 text-xs font-bold">{specialization}</td>
+                    <td className="px-4 py-3 text-xs font-bold">{formatHumanDate(appt.date)}</td>
+                    <td className="px-4 py-3 text-xs font-bold">{appt.startTime} – {appt.endTime}</td>
+                    <td className="px-4 py-3 text-slate-200 font-extrabold">₹{appt.consultationFee}</td>
+                    <td className="px-4 py-3 text-primary font-extrabold">
                       ₹{appt.platformCommission}
                       <span className="text-[9px] text-slate-500 font-bold block">(10%)</span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-3 text-right">
                       <span className={`inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${getStatusStyle(appt.status)}`}>
                         {appt.status}
                       </span>

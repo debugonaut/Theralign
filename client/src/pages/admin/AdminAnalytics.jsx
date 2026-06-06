@@ -86,7 +86,7 @@ const AdminAnalytics = () => {
   });
 
   return (
-    <div className="space-y-12 select-none text-neutral-900">
+    <div className="space-y-8 select-none text-neutral-900">
       {/* Page Title */}
       <SectionHeader
         title="ANALYTICS & PLANNING"
@@ -146,9 +146,9 @@ const AdminAnalytics = () => {
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left 3 Columns: Stacking specialization names as bordered rows */}
-            <div className="lg:col-span-3 border-r-0 lg:border-r-2 border-neutral-200 pr-0 lg:pr-6 space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            {/* Left 4 Columns: Stacking specialization names as bordered rows */}
+            <div className="lg:col-span-4 border-r-0 lg:border-r-2 border-neutral-200 pr-0 lg:pr-6 space-y-3">
               <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
                 SPECIALIZATION / FRACTION
               </span>
@@ -169,8 +169,8 @@ const AdminAnalytics = () => {
               </div>
             </div>
 
-            {/* Right 9 Columns: Horizontal bar chart proportional block rects */}
-            <div className="lg:col-span-9 space-y-4">
+            {/* Right 8 Columns: Horizontal bar chart proportional block rects */}
+            <div className="lg:col-span-8 space-y-4">
               <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
                 PROPORTIONAL SESSIONS DISTRIBUTION
               </span>
@@ -186,7 +186,7 @@ const AdminAnalytics = () => {
                       </div>
 
                       {/* Proportional black rectangular bar on gray track */}
-                      <div className="w-full h-8 bg-neutral-100 border border-neutral-900 rounded-none overflow-hidden relative">
+                      <div className="w-full h-8 bg-neutral-100 border border-neutral-900 rounded-none overflow-hidden relative max-w-[1200px]">
                         <div 
                           className="h-full bg-neutral-900 transition-all duration-fast rounded-none"
                           style={{ width: `${Math.max(4, spec.pct)}%` }}

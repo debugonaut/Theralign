@@ -74,11 +74,11 @@ const ReviewsTable = () => {
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+          <div className="p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
             <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING REVIEWS LEDGER...
           </div>
         ) : reviews.length === 0 ? (
-          <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
             NO REVIEWS SUBMITTED YET.
           </div>
         ) : (

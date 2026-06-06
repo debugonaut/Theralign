@@ -77,7 +77,7 @@ Table.Row = function TableRow({
         className,
       ].filter(Boolean).join(' ')}
       style={{
-        height: '56px',
+        height: '52px',
         borderLeft: getBorderLeft(),
       }}
     >
@@ -152,7 +152,7 @@ Table.Cell = function TableCell({
   return (
     <td
       className={[
-        'px-4 py-3',
+        'px-4 py-0',
         'text-neutral-900',
         'align-middle',
         numeric ? 'text-right swiss-numeric' : '',

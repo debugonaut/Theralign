@@ -58,13 +58,13 @@ const MyReviews = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10 select-none text-left bg-white">
+    <div className="flex flex-col gap-5 select-none text-left bg-white">
       
       {/* ── Page Header Section ── */}
       <SectionHeader title="MY REVIEWS" size="lg" ruled={true} className="mb-0" />
 
       {reviews.length === 0 ? (
-        <div className="py-12 bg-white select-none">
+        <div className="py-6 bg-white select-none">
           <EmptyState
             title="NO REVIEWS YET"
             description="Patient reviews appear here after completed appointments. Focus on delivering excellent care."
@@ -74,8 +74,8 @@ const MyReviews = () => {
         <>
           {/* ── Rating Summary Card (4:8 split) ── */}
           {doctorProfile && (
-            <div className="w-full p-8 bg-neutral-50 border border-neutral-200/50 rounded-lg shadow-level-1 text-left transition-warm">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+            <div className="w-full p-6 bg-neutral-50 border border-neutral-200/50 rounded-lg shadow-level-1 text-left transition-warm max-w-[1200px]">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
                 
                 {/* Left 4 Columns */}
                 <div className="md:col-span-4 flex flex-col gap-2 border-b-2 md:border-b-0 md:border-r border-neutral-200 pb-6 md:pb-0 md:pr-6">
@@ -96,7 +96,7 @@ const MyReviews = () => {
                     const count = ratingCounts[rating];
                     const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
                     return (
-                      <div key={rating} className="flex items-center gap-3 w-full">
+                      <div key={rating} className="flex items-center gap-3 w-full max-w-[1200px]">
                         {/* Star Rating Number label */}
                         <span className="text-ui-xs font-black text-neutral-900 w-3 shrink-0">
                           {rating}
@@ -147,7 +147,7 @@ const MyReviews = () => {
                 return (
                   <div
                     key={review._id}
-                    className="w-full p-8 bg-white border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col md:flex-row justify-between gap-6 transition-warm"
+                    className="w-full p-6 bg-white border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col md:flex-row justify-between gap-6 transition-warm"
                   >
                     {/* Left 9 Columns - Content */}
                     <div className="flex-1 flex gap-4">

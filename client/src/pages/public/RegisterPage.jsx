@@ -113,7 +113,7 @@ const RegisterPage = () => {
           <p className="text-neutral-500 mt-2 text-ui-sm font-semibold uppercase tracking-wider hidden sm:block">Join Theralign — it&apos;s free</p>
         </div>
 
-        <Card variant="default" className="p-6 sm:p-8 rounded-[12px] md:rounded-lg shadow-level-1">
+        <Card variant="default" className="p-6 rounded-[12px] md:rounded-lg shadow-level-1">
           {/* API Error Banner */}
           {error && (
             <div className="mb-5 bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm flex items-start gap-2">

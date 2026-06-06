@@ -127,7 +127,7 @@ const DoctorDetailPage = () => {
   )}`;
 
   return (
-    <div className="max-w-[1440px] mx-auto py-12 px-6 flex flex-col select-none bg-neutral-50 page-fade-in">
+    <div className="max-w-[1280px] mx-auto py-12 px-6 flex flex-col select-none bg-neutral-50 page-fade-in">
       {/* Back to Discovery */}
       <div className="mb-8">
         <button
@@ -140,7 +140,7 @@ const DoctorDetailPage = () => {
       </div>
 
       {/* Asymmetric 7:5 layout split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {/* Left Column (7 Columns) */}
         <div className="lg:col-span-7 flex flex-col gap-8 text-left pr-4">
@@ -273,7 +273,7 @@ const DoctorDetailPage = () => {
 
             {/* Reviews Stack */}
             {reviews.length === 0 ? (
-              <div className="border border-neutral-200 border-dashed p-10 text-center rounded-lg text-ui-xs font-bold text-neutral-500 uppercase tracking-wider">
+              <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg text-ui-xs font-bold text-neutral-500 uppercase tracking-wider">
                 No patient reviews filed yet.
               </div>
             ) : (
@@ -326,7 +326,7 @@ const DoctorDetailPage = () => {
         </div>
 
         {/* Right Sticky Booking Column (Desktop Only) */}
-        <div className="hidden lg:flex lg:col-span-5 lg:sticky lg:top-24 border-l border-neutral-200 pl-12 flex-col gap-6 z-10">
+        <div className="hidden lg:flex lg:col-span-5 lg:sticky lg:top-24 border-l border-neutral-200 pl-8 flex-col gap-6 z-10">
           <SlotPicker
             doctorId={profile._id}
             doctorName={profile.user?.name}

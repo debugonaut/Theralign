@@ -56,7 +56,7 @@ const BasicInfoTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="grid grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-2 gap-5 mb-8">
         <Input
           label="FULL NAME"
           value={formData.name}
@@ -107,7 +107,7 @@ const BasicInfoTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext }) => {
         </div>
       </div>
 
-      <div className="border-t border-neutral-200 pt-8 mt-4 flex items-center gap-4">
+      <div className="border-t border-neutral-200 pt-6 mt-4 flex items-center gap-4">
         {saveStatus === 'success' ? (
           <div className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
             <Check size={14} /> Basic Info Saved

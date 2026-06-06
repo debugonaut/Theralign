@@ -193,7 +193,7 @@ const DoctorAvailability = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10 select-none text-left bg-white max-w-4xl mx-auto w-full">
+    <div className="flex flex-col gap-5 select-none text-left bg-white max-w-4xl mx-auto w-full">
 
       {/* ── Page Header ── */}
       <div>
@@ -305,14 +305,14 @@ const DoctorAvailability = () => {
           variant="primary"
           onClick={handleSave}
           disabled={saving}
-          className="h-10 px-8 font-bold"
+          className="h-10 px-6 font-bold"
         >
           {saving ? 'SAVING...' : 'SAVE SCHEDULE →'}
         </Button>
       </div>
 
       {/* ── Divider ── */}
-      <div className="h-px bg-neutral-200 w-full" />
+      <div className="h-px bg-neutral-200 w-full max-w-[1200px]" />
 
       {/* ── Section 5: Block Dates ── */}
       <div className="flex flex-col gap-4">

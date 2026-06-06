@@ -199,7 +199,7 @@ const DoctorAppointments = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-white">
+    <div className="flex flex-col gap-5 select-none text-left bg-white">
       
       {/* ── Page Header Section ── */}
       <SectionHeader title="APPOINTMENTS" size="lg" ruled={true} className="mb-0" />
@@ -274,11 +274,11 @@ const DoctorAppointments = () => {
 
       {/* ── Appointments Table Ledger ── */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+        <div className="py-6 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING CLINIC TRANSACTION LEDGERS...
         </div>
       ) : activeAppts.length === 0 ? (
-        <div className="border-2 border-neutral-900 border-dashed p-12 text-center rounded-none flex flex-col items-center gap-4 max-w-lg mx-auto w-full bg-white select-none">
+        <div className="border-2 border-neutral-900 border-dashed p-6 text-center rounded-none flex flex-col items-center gap-3 max-w-lg mx-auto w-full bg-white select-none">
           <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             NO SESSIONS FILED
           </span>
@@ -287,7 +287,7 @@ const DoctorAppointments = () => {
           </p>
         </div>
       ) : (
-        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none">
+        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none max-w-[1200px]">
           <Table>
             <Table.Head>
               <tr>
@@ -397,7 +397,7 @@ const DoctorAppointments = () => {
                     {isExpanded && (
                       <Table.Row expanded={true} className="border-l-4 border-neutral-900">
                         <td colSpan={7} className="bg-neutral-100 p-6 text-left">
-                          <div className="flex flex-col gap-6 w-full">
+                          <div className="flex flex-col gap-6 w-full max-w-[1200px]">
                             
                             {/* Grid Detail layout */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

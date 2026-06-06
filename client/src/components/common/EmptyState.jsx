@@ -26,7 +26,7 @@ const EmptyState = ({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center py-12 px-8 ${className}`}
+      className={`flex flex-col items-center justify-center text-center py-12 px-6 bg-[#F7F9FB] border border-[#DDE3EA] rounded-xl md:rounded-lg ${className}`}
     >
       {/* Icon — must be in a soft bordered square */}
       {Icon && (

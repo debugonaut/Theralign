@@ -79,7 +79,7 @@ const BookingSuccessPage = () => {
   if (!appointment) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6">
-        <Card className="max-w-[480px] w-full p-8 text-center rounded-[12px] shadow-level-1">
+        <Card className="max-w-[480px] w-full p-6 text-center rounded-[12px] shadow-level-1">
           <ShieldAlert className="w-12 h-12 text-danger mx-auto mb-4" />
           <h2 className="text-display-xs font-black text-neutral-900 tracking-tight">Booking Not Found</h2>
           <p className="text-neutral-500 mt-2 text-ui-sm font-semibold">
@@ -134,7 +134,7 @@ const BookingSuccessPage = () => {
       `}</style>
 
       {/* Screen Layout (Hidden when printing) */}
-      <div className="no-print min-h-screen bg-neutral-50 py-12 px-6">
+      <div className="no-print min-h-screen bg-neutral-50 py-6 px-6">
         <div className="max-w-[560px] mx-auto flex flex-col gap-6">
           
           {/* Header/Success Alert */}
@@ -149,7 +149,7 @@ const BookingSuccessPage = () => {
           </div>
 
           {/* Details Card */}
-          <Card className="p-6 sm:p-8 rounded-[12px] shadow-level-1 bg-white border border-neutral-200">
+          <Card className="p-6 sm:p-6 rounded-[12px] shadow-level-1 bg-white border border-neutral-200">
             {/* Header info */}
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 border-b border-neutral-100">
               <div className="text-left">
@@ -260,7 +260,7 @@ const BookingSuccessPage = () => {
 
       {/* Print-Only Layout */}
       <div className="print-only hidden">
-        <div className="max-w-[600px] mx-auto p-12 border-2 border-neutral-900 rounded-md font-mono text-neutral-900 bg-white">
+        <div className="max-w-[600px] mx-auto p-6 border-2 border-neutral-900 rounded-md font-mono text-neutral-900 bg-white">
           <div className="border-b-2 border-neutral-900 pb-4 mb-6 flex justify-between items-end">
             <div>
               <h1 className="text-2xl font-black uppercase tracking-tight text-neutral-900">THERALIGN</h1>

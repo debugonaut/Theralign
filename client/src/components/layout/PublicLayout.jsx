@@ -11,7 +11,7 @@ const PublicLayout = () => {
       <Navbar />
       <main 
         key={location.pathname}
-        className="flex-grow max-w-[1440px] mx-auto w-full px-6 sm:px-16 page-fade-in"
+        className="flex-grow max-w-[1280px] mx-auto w-full px-16 page-fade-in"
       >
         <Outlet />
       </main>

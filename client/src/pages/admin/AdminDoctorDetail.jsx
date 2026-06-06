@@ -56,16 +56,16 @@ const AdminDoctorDetail = () => {
 
   if (loading) {
     return (
-      <div className="max-w-page mx-auto py-12 px-6 animate-pulse space-y-8 select-none">
+      <div className="max-w-page mx-auto py-6 px-6 animate-pulse space-y-8 select-none">
         <div className="h-6 bg-neutral-100 w-24 rounded-none" />
-        <div className="h-48 bg-neutral-100 w-full rounded-none" />
-        <div className="grid grid-cols-12 gap-8">
+        <div className="h-48 bg-neutral-100 w-full rounded-none max-w-[1200px]" />
+        <div className="grid grid-cols-12 gap-5">
           <div className="col-span-7 space-y-6">
             <div className="h-10 bg-neutral-100 w-3/4 rounded-none" />
             <div className="h-6 bg-neutral-100 w-1/2 rounded-none" />
-            <div className="h-32 bg-neutral-100 w-full rounded-none" />
+            <div className="h-32 bg-neutral-100 w-full rounded-none max-w-[1200px]" />
           </div>
-          <div className="col-span-5 h-64 bg-neutral-100 rounded-none" />
+          <div className="col-span-5 min-h-0 bg-neutral-100 rounded-none" />
         </div>
       </div>
     );
@@ -148,7 +148,7 @@ const AdminDoctorDetail = () => {
   if (profile.verificationStatus === 'suspended') badgeVariant = 'suspended';
 
   return (
-    <div className="max-w-page mx-auto py-8 select-none text-neutral-900 bg-white">
+    <div className="max-w-page mx-auto py-6 select-none text-neutral-900 bg-white">
       {/* Back link */}
       <div className="mb-8 text-left">
         <button
@@ -161,10 +161,10 @@ const AdminDoctorDetail = () => {
       </div>
 
       {/* 7:5 Asymmetric Layout Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
         {/* Left privileged details (7 columns) */}
-        <div className="lg:col-span-7 flex flex-col gap-8 text-left pr-4">
+        <div className="lg:col-span-7 flex flex-col gap-5 text-left pr-4">
           
           {/* Identity & Status */}
           <div className="flex flex-col gap-3">
@@ -180,7 +180,7 @@ const AdminDoctorDetail = () => {
             <span className="text-[10px] text-neutral-500 font-mono block">
               EMAIL: {profile.user?.email} · APPLICATION ID: {profile._id}
             </span>
-            <div className="h-[1px] bg-neutral-200 w-full mt-4" />
+            <div className="h-[1px] bg-neutral-200 w-full mt-4 max-w-[1200px]" />
           </div>
 
           {/* Key Stats Grid */}
@@ -298,7 +298,7 @@ const AdminDoctorDetail = () => {
           <div>
             <SectionHeader title="PATIENT FEEDBACK AUDIT" size="sm" ruled={true} className="mb-6" />
             {reviews.length === 0 ? (
-              <div className="border border-dashed p-8 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest">
+              <div className="border border-dashed p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest">
                 NO REVIEWS FILED
               </div>
             ) : (
@@ -333,7 +333,7 @@ const AdminDoctorDetail = () => {
         </div>
 
         {/* Right sticky administrative controls panel (5 columns) */}
-        <div className="lg:col-span-5 lg:sticky lg:top-24 border-t-2 border-neutral-900 lg:border-t-0 lg:border-l-2 lg:border-neutral-900 lg:pl-12 pt-8 lg:pt-0 z-10 flex flex-col gap-6 text-left">
+        <div className="lg:col-span-5 lg:sticky lg:top-24 border-t-2 border-neutral-900 lg:border-t-0 lg:border-l-2 lg:border-neutral-900 lg:pl-8 pt-6 lg:pt-0 z-10 flex flex-col gap-6 text-left">
           <div className="border-2 border-neutral-900 p-6 bg-neutral-50 flex flex-col gap-6">
             <div>
               <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
@@ -342,7 +342,7 @@ const AdminDoctorDetail = () => {
               <h3 className="text-ui-md font-black text-neutral-900 uppercase tracking-tight">
                 ADMINISTRATIVE WORKFLOWS
               </h3>
-              <div className="h-[1px] bg-swiss-gray-250 w-full mt-3" />
+              <div className="h-[1px] bg-swiss-gray-250 w-full mt-3 max-w-[1200px]" />
             </div>
 
             <div className="flex flex-col gap-4">

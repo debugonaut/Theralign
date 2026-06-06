@@ -223,7 +223,7 @@ const AdminDoctorVerification = () => {
   };
 
   return (
-    <div className="space-y-12 select-none text-neutral-900">
+    <div className="space-y-8 select-none text-neutral-900">
       {/* Header */}
       <SectionHeader
         title="DOCTORS"
@@ -312,7 +312,7 @@ const AdminDoctorVerification = () => {
                       setExpandedQueueRow(isExpanded ? null : doc._id);
                       setRejectingQueueRow(null);
                     }}
-                    className="h-20 px-6 flex items-center justify-between cursor-pointer"
+                    className="h-14 px-6 flex items-center justify-between cursor-pointer"
                   >
                     <div className="flex items-center gap-4">
                       {/* Name initial circle */}
@@ -330,7 +330,7 @@ const AdminDoctorVerification = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-5">
                       <div className="text-right hidden sm:block">
                         <span className="text-[10px] text-neutral-500 font-bold block uppercase tracking-wider">
                           EXPERIENCE / APPLIED
@@ -351,7 +351,7 @@ const AdminDoctorVerification = () => {
                   {/* Expanded block */}
                   {isExpanded && (
                     <div className="border-t border-neutral-900 p-6 bg-white text-left space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
                         {/* Profile Info (7 cols) */}
                         <div className="md:col-span-7 space-y-4">
                           <div>
@@ -520,12 +520,12 @@ const AdminDoctorVerification = () => {
         </div>
 
         {loadingDirectory ? (
-          <div className="p-12 text-center flex items-center justify-center gap-2">
+          <div className="p-6 text-center flex items-center justify-center gap-2">
             <Hourglass className="w-4 h-4 animate-spin text-neutral-500" />
             <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">RETRIEVING DIRECTORY DATA...</span>
           </div>
         ) : directory.length === 0 ? (
-          <div className="p-12 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
             NO PRACTITIONERS MATCH FILTERS
           </div>
         ) : (

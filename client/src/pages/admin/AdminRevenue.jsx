@@ -46,7 +46,7 @@ const AdminRevenue = () => {
       </div>
 
       {/* Thin horizontal rule separator */}
-      <div className="w-full bg-neutral-200" style={{ height: '2px' }} />
+      <div className="w-full bg-neutral-200 max-w-[1200px]" style={{ height: '2px' }} />
 
       {/* Payments Ledger Table with built-in filter controls */}
       <div>

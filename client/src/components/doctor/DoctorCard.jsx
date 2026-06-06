@@ -43,7 +43,6 @@ const DoctorCard = ({ doctor }) => {
     <div
       onClick={handleCardClick}
       className="group relative bg-white rounded-lg shadow-level-1 hover:shadow-level-2 border border-neutral-200/40 p-6 cursor-pointer flex flex-col gap-4 overflow-hidden transition-warm text-left"
-      style={{ minHeight: '260px' }}
     >
       {/* Verified Badge in top-right corner */}
       {doctor.verificationStatus === 'verified' && (

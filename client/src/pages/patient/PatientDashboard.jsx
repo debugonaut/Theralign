@@ -104,11 +104,11 @@ const PatientDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 lg:gap-8 select-none bg-neutral-50 text-left page-fade-in">
+    <div className="flex flex-col gap-6 lg:gap-5 select-none bg-neutral-50 text-left page-fade-in">
       
       {/* Network Failure Banner */}
       {!isOnline && (
-        <div className="w-full bg-white border-2 border-warning rounded-lg p-5 flex items-start gap-4 shadow-level-1 animate-pulse">
+        <div className="w-full bg-white border-2 border-warning rounded-lg p-5 flex items-start gap-4 shadow-level-1 animate-pulse max-w-[1200px]">
           <div className="w-10 h-10 border-2 border-warning flex items-center justify-center text-warning font-bold rounded bg-warning/5 text-ui-lg select-none shrink-0">
             <AlertTriangle className="w-5 h-5" />
           </div>
@@ -129,14 +129,14 @@ const PatientDashboard = () => {
         <span className="text-ui-lg font-semibold text-neutral-500 tracking-wide block">
           {todayFormatted}
         </span>
-        <div className="h-[1px] bg-neutral-200 w-full mt-4" />
+        <div className="h-[1px] bg-neutral-200 w-full mt-4 max-w-[1200px]" />
       </div>
 
       {/* Upcoming Appointment Spotlight */}
       {loading ? (
         <div className="h-40 bg-neutral-100 animate-pulse border border-neutral-200 rounded-lg" />
       ) : spotlightAppt ? (
-        <div className="w-full p-6 bg-neutral-100 bg-diagonal border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col gap-4 relative transition-warm">
+        <div className="w-full p-6 bg-neutral-100 bg-diagonal border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col gap-4 relative transition-warm max-w-[1200px]">
           <div>
             <span className="text-ui-xs font-bold text-accent tracking-widest uppercase block mb-2">
               Your Next Appointment
@@ -179,7 +179,7 @@ const PatientDashboard = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full p-8 border border-neutral-200/50 bg-white text-center flex flex-col items-center gap-4 rounded-lg shadow-level-1 transition-warm">
+        <div className="w-full p-6 border border-neutral-200/50 bg-white text-center flex flex-col items-center gap-3 rounded-lg shadow-level-1 transition-warm max-w-[1200px]">
           <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
             No Upcoming Appointments
           </span>
@@ -229,11 +229,11 @@ const PatientDashboard = () => {
             ))}
           </div>
         ) : appointments.length === 0 ? (
-          <div className="border border-neutral-200 border-dashed p-10 text-center rounded-lg text-ui-xs font-bold text-neutral-400 uppercase tracking-wider">
+          <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg text-ui-xs font-bold text-neutral-400 uppercase tracking-wider">
             No recent system activity recorded.
           </div>
         ) : (
-          <div className="flex flex-col w-full bg-white rounded-lg border border-neutral-200/50 shadow-level-1 p-4">
+          <div className="flex flex-col w-full bg-white rounded-lg border border-neutral-200/50 shadow-level-1 p-4 max-w-[1200px]">
             {appointments.slice(0, 3).map((appt) => {
               const apptDate = new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', {
                 day: 'numeric',

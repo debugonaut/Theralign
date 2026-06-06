@@ -56,9 +56,9 @@ const AdminAITools = () => {
         <Card
           surface="gray"
           pattern="diagonal"
-          className="border-2 border-neutral-900 rounded-none shadow-none p-8"
+          className="border-2 border-neutral-900 rounded-none shadow-none p-6"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             
             {/* Left Description and Trigger (7 columns) */}
             <div className="lg:col-span-7 space-y-6">
@@ -83,7 +83,7 @@ const AdminAITools = () => {
             </div>
 
             {/* Right Execution Stats (5 columns) */}
-            <div className="lg:col-span-5 w-full">
+            <div className="lg:col-span-5 w-full max-w-[1200px]">
               {result ? (
                 <div className="border-2 border-neutral-900 bg-white p-6 space-y-4 animate-fade-in">
                   <span className="text-[10px] font-black text-success uppercase tracking-widest flex items-center gap-1.5 pb-2 border-b border-neutral-200">
@@ -120,7 +120,7 @@ const AdminAITools = () => {
                   </p>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-neutral-500 p-8 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest h-full flex flex-col justify-center items-center">
+                <div className="border-2 border-dashed border-neutral-500 p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest h-full flex flex-col justify-center items-center">
                   PIPELINE RUN STATISTICS WILL APPEAR UPON BATCH EXECUTION.
                 </div>
               )}

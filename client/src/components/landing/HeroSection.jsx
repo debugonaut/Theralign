@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SymptomSearchBox from '../ai/SymptomSearchBox';
 import Button from '../common/Button';
-import DoctorCardDeck from './DoctorCardDeck';
+import BookingConfirmationCard from './BookingConfirmationCard';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const HeroSection = () => {
       {/* Background Grid Pattern */}
       <div className="absolute inset-0  opacity-30 pointer-events-none" />
 
-      <div className="max-w-[1440px] mx-auto w-full px-6 sm:px-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
+      <div className="max-w-[1440px] mx-auto w-full px-6 sm:px-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
         
         {/* Left Column - 7/12 width */}
         <div className="lg:col-span-7 flex flex-col items-start text-left gap-4">
@@ -48,40 +48,9 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right Column - 5/12 width, Geometric Proof Composition */}
-        <div className="hidden lg:flex lg:col-span-5 flex-col h-full relative pl-8">
-          
-          <div className="relative w-full h-[450px] mb-8">
-            {/* Geometric Element: Architectural Weight Block */}
-            <div className="absolute bottom-12 right-0 w-48 h-64 bg-neutral-900 z-10"></div>
-            
-            {/* Geometric Element: Grid Pattern Block */}
-            <div className="absolute top-24 left-0 w-56 h-56 border-2 border-neutral-900 bg-white  z-10"></div>
-
-            {/* Geometric Element: Doctor Card Mockup replaced by DoctorCardDeck */}
-            <div className="absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[480px] z-20">
-              <DoctorCardDeck />
-            </div>
-          </div>
-
-          {/* Trust Metrics Flush with CTAs */}
-          <div className="mt-auto flex items-center justify-between border-t-2 border-neutral-900 pt-6 w-full">
-            <div className="flex flex-col">
-              <span className="font-black text-[32px] tracking-[-0.03em] text-neutral-900 font-swiss">500+</span>
-              <span className="font-bold text-[11px] uppercase tracking-[0.08em] text-neutral-500">VERIFIED DOCTORS</span>
-            </div>
-            <div className="w-px h-12 bg-neutral-900"></div>
-            <div className="flex flex-col">
-              <span className="font-black text-[32px] tracking-[-0.03em] text-neutral-900 font-swiss">2,000+</span>
-              <span className="font-bold text-[11px] uppercase tracking-[0.08em] text-neutral-500">APPOINTMENTS</span>
-            </div>
-            <div className="w-px h-12 bg-neutral-900"></div>
-            <div className="flex flex-col">
-              <span className="font-black text-[32px] tracking-[-0.03em] text-neutral-900 font-swiss">4.9/5</span>
-              <span className="font-bold text-[11px] uppercase tracking-[0.08em] text-neutral-500">AVERAGE RATING</span>
-            </div>
-          </div>
-
+        {/* Right Column - 5/12 width */}
+        <div className="hidden lg:flex lg:col-span-5 items-center justify-center relative pl-8">
+          <BookingConfirmationCard />
         </div>
 
       </div>
@@ -90,3 +59,4 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
+

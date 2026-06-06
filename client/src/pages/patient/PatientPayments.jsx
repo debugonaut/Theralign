@@ -137,7 +137,7 @@ const PatientPayments = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-white">
+    <div className="flex flex-col gap-5 select-none text-left bg-white">
       
       {/* Page Header */}
       <SectionHeader
@@ -169,11 +169,11 @@ const PatientPayments = () => {
 
       {/* Payments Ledger Table */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+        <div className="py-6 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING TRANSACTIONS LEDGER...
         </div>
       ) : payments.length === 0 ? (
-        <div className="border border-neutral-200 border-dashed p-12 text-center rounded-lg flex flex-col items-center gap-4 max-w-lg mx-auto bg-neutral-50 shadow-level-1">
+        <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg flex flex-col items-center gap-3 max-w-lg mx-auto bg-neutral-50 shadow-level-1">
           <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             NO TRANSACTION ENTRIES
           </span>
@@ -182,7 +182,7 @@ const PatientPayments = () => {
           </p>
         </div>
       ) : (
-        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1">
+        <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 max-w-[1200px]">
           <Table>
             <Table.Head>
               <tr>

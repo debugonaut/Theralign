@@ -22,7 +22,7 @@ const Card = ({
   // Mobile uses rounded-xl (12px), desktop uses rounded-lg (8px)
   const baseClasses = [
     className.includes('rounded-') ? '' : 'rounded-xl md:rounded-lg', 
-    className.includes('p-') ? '' : 'p-8',
+    className.includes('p-') ? '' : 'p-6',
     'transition-[background-color,border-color] duration-fast transition-[box-shadow] duration-standard ease-swiss border-2',
   ].filter(Boolean);
 

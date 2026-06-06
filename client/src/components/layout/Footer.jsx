@@ -40,9 +40,9 @@ const Footer = () => {
   );
 
   return (
-    <footer className="w-full bg-neutral-100 border-t-2 border-neutral-900 pt-16 pb-8">
+    <footer className="w-full bg-neutral-100 border-t-2 border-neutral-900 pt-6 pb-6">
       <div className="max-w-[1440px] mx-auto px-6 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
           
           {/* Brand Column */}
           <div className="col-span-1 flex flex-col items-start gap-4">
@@ -72,7 +72,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t-2 border-neutral-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t-2 border-neutral-200 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[12px] text-neutral-500 font-medium">
             &copy; {currentYear} Theralign Inc. All rights reserved.
           </p>

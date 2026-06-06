@@ -69,7 +69,7 @@ const AppointmentDonutChart = ({ data = [] }) => {
         </h3>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-8 py-2">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-5 py-2">
         {/* SVG Donut */}
         <div className="relative shrink-0 select-none">
           <svg width="240" height="240" viewBox="0 0 240 240">

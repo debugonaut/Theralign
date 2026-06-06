@@ -485,7 +485,7 @@ const DoctorProfileEditor = () => {
   const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
 
   return (
-    <div className="flex flex-col gap-12 select-none text-left bg-neutral-50 pb-32 px-6 py-8 page-fade-in">
+    <div className="flex flex-col gap-5 select-none text-left bg-neutral-50 page-fade-in">
       
       {/* ── Page Header ── */}
       <div>
@@ -568,7 +568,7 @@ const DoctorProfileEditor = () => {
             </div>
 
             {/* Phone Input with Internal prefix line */}
-            <div className="flex flex-col gap-1.5 w-full md:w-1/2">
+            <div className="flex flex-col gap-1.5 w-full md:w-1/2 max-w-[1200px]">
               <label className="text-[12px] font-semibold text-neutral-700">
                 Phone Number *
               </label>
@@ -754,11 +754,11 @@ const DoctorProfileEditor = () => {
 
       {/* ── VERIFICATION DOCUMENTS & STATUS (Step 3) ── */}
       {editorStep === 3 && !isVerified && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 select-none">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 select-none">
           <div className="lg:col-span-7 flex flex-col gap-6">
             <SectionHeader title="Verification Documents" size="sm" ruled={true} className="mb-0" />
             
-            <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left flex flex-col gap-4">
+            <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left flex flex-col gap-4 max-w-[1200px]">
               <div className="flex flex-col gap-3">
                 {/* Degree status */}
                 <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 p-4 rounded-md h-16">
@@ -881,7 +881,7 @@ const DoctorProfileEditor = () => {
 
       {/* ── Persistent Bottom Save Changes Bar ── */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 p-4 select-none shadow-level-3">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 flex items-center justify-between">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {editorStep > 0 && (
               <button

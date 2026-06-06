@@ -31,7 +31,7 @@ const MyReviews = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-8 select-none text-left bg-white">
+    <div className="flex flex-col gap-5 select-none text-left bg-white">
       {/* Page Header */}
       <SectionHeader
         title="MY REVIEWS"
@@ -42,7 +42,7 @@ const MyReviews = () => {
 
       {/* Reviews List */}
       {loading ? (
-        <div className="py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+        <div className="py-6 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING SUBMITTED REVIEWS...
         </div>
       ) : reviews.length === 0 ? (

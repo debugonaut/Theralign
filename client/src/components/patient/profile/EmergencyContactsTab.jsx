@@ -95,7 +95,7 @@ const EmergencyContactsTab = ({ profile, onSaveSuccess, onUnsavedChanges, onNext
         </div>
       )}
 
-      <div className="border-t border-neutral-200 pt-8 mt-4 flex items-center gap-4">
+      <div className="border-t border-neutral-200 pt-6 mt-4 flex items-center gap-4">
         {saveStatus === 'success' ? (
           <div className="inline-flex items-center gap-1.5 px-4 py-2 border border-primary/20 bg-primary-light text-primary font-bold text-ui-sm uppercase tracking-widest rounded-md">
             <Check size={14} /> Emergency Contacts Saved

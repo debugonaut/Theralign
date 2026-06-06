@@ -58,7 +58,7 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
   };
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-neutral-900 z-50 overflow-hidden max-h-80 overflow-y-auto rounded-none shadow-none animate-none">
+    <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-neutral-900 z-50 overflow-hidden max-min-h-0 overflow-y-auto rounded-none shadow-none animate-none">
       {isLoading && (
         <div className="px-4 py-3 text-ui-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
           <Loader2 className="animate-spin h-4 w-4" /> SEARCHING OPTIONS...

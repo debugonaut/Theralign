@@ -167,13 +167,13 @@ const NotificationBell = () => {
           {/* List content */}
           <div className="max-h-[360px] overflow-y-auto divide-y divide-neutral-200">
             {isLoading && (
-              <div className="py-8 text-center text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center justify-center gap-2">
+              <div className="py-4 text-center text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center justify-center gap-2">
                 <Loader2 className="animate-spin h-4 w-4" /> LOADING...
               </div>
             )}
 
             {!isLoading && notifications.length === 0 && (
-              <div className="py-10 px-4 text-center select-none flex flex-col items-center">
+              <div className="py-4 px-4 text-center select-none flex flex-col items-center">
                 <BellOff className="h-8 w-8 text-neutral-400 mb-2" strokeWidth={1.5} />
                 <p className="text-xs font-black text-neutral-900 uppercase tracking-wider">ALL CAUGHT UP!</p>
                 <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mt-1">No notifications yet.</p>

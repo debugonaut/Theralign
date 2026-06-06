@@ -220,7 +220,7 @@ const PatientProfile = () => {
   return (
     <div className="flex h-full min-h-[calc(100vh-64px)]">
       {/* LEFT COLUMN: Profile Card */}
-      <div className="w-[280px] flex-shrink-0 border-r border-neutral-200 flex flex-col p-8 bg-white">
+      <div className="w-[280px] flex-shrink-0 border-r border-neutral-200 flex flex-col p-6 bg-white">
         
         {/* Avatar Section */}
         <div className="flex flex-col items-center mb-8">
@@ -257,7 +257,7 @@ const PatientProfile = () => {
           </Button>
         </div>
 
-        <div className="h-[1px] bg-neutral-200 w-full mb-6"></div>
+        <div className="h-[1px] bg-neutral-200 w-full mb-6 max-w-[1200px]"></div>
 
         {/* Identity */}
         <div className="flex flex-col mb-8">
@@ -270,7 +270,7 @@ const PatientProfile = () => {
           </div>
         </div>
 
-        <div className="h-[1px] bg-neutral-200 w-full mb-6"></div>
+        <div className="h-[1px] bg-neutral-200 w-full mb-6 max-w-[1200px]"></div>
 
         {/* Completion */}
         <div className="flex flex-col">
@@ -280,7 +280,7 @@ const PatientProfile = () => {
           <div className="text-display-xs font-bold text-neutral-900 mb-3">
             {completionScore}%
           </div>
-          <div className="w-full h-2 bg-neutral-100 mb-4 rounded-full overflow-hidden relative">
+          <div className="w-full h-2 bg-neutral-100 mb-4 rounded-full overflow-hidden relative max-w-[1200px]">
             <div 
               className="h-full bg-primary transition-all duration-300 rounded-full" 
               style={{ width: `${completionScore}%` }}
@@ -294,7 +294,7 @@ const PatientProfile = () => {
       </div>
 
       {/* RIGHT COLUMN: Tabs Content */}
-      <div className="flex-1 flex flex-col p-8 bg-white overflow-y-auto relative">
+      <div className="flex-1 flex flex-col p-6 bg-white overflow-y-auto relative">
         <HorizontalStepper
           steps={TABS}
           activeStep={TABS.findIndex((t) => t.value === activeTab)}

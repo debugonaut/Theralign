@@ -91,13 +91,13 @@ const DoctorEarnings = () => {
   };
 
   return (
-    <div className="flex flex-col gap-10 select-none text-left bg-white">
+    <div className="flex flex-col gap-5 select-none text-left bg-white">
       
       {/* ── Page Header Section ── */}
       <SectionHeader title="EARNINGS" size="lg" ruled={true} className="mb-0" />
 
       {appointments.length === 0 && !loading ? (
-        <div className="py-12 bg-white select-none">
+        <div className="py-6 bg-white select-none">
           <EmptyState
             title="NO EARNINGS YET"
             description="Complete your first appointments to see your earnings here."
@@ -182,7 +182,7 @@ const DoctorEarnings = () => {
           <div className="flex flex-col gap-6 select-none">
             <SectionHeader title="MONTHLY BREAKDOWN" size="sm" ruled={true} className="mb-0" />
             
-            <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none">
+            <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none max-w-[1200px]">
               <table className="w-full text-left border-collapse select-none">
                 <thead>
                   <tr className="border-b border-neutral-100 bg-neutral-50">
@@ -199,7 +199,7 @@ const DoctorEarnings = () => {
                     return (
                        <tr
                         key={row.month}
-                        className={`h-14 hover:bg-neutral-50 transition-colors duration-fast select-none
+                        className={`h-12 hover:bg-neutral-50 transition-colors duration-fast select-none
                           ${isCurrentMonthRow ? 'border-l-4 border-[#0A7E6E]' : ''}
                         `}
                       >
@@ -230,7 +230,7 @@ const DoctorEarnings = () => {
           <div className="flex flex-col gap-6 select-none">
             <SectionHeader title="RECENT TRANSACTIONS" size="sm" ruled={true} className="mb-0" />
             
-            <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none">
+            <div className="w-full overflow-hidden border border-neutral-200/50 rounded-lg shadow-level-1 bg-white select-none max-w-[1200px]">
               <table className="w-full text-left border-collapse select-none">
                 <thead>
                   <tr className="border-b border-neutral-100 bg-neutral-50">
@@ -251,7 +251,7 @@ const DoctorEarnings = () => {
                     const displayName = `${firstName}${initial}`;
 
                     return (
-                      <tr key={appt._id} className="h-14 hover:bg-neutral-50 transition-colors duration-fast select-none">
+                      <tr key={appt._id} className="h-12 hover:bg-neutral-50 transition-colors duration-fast select-none">
                         <td className="px-6 py-3 text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
                           {formatTransactionDate(appt.date)}
                         </td>

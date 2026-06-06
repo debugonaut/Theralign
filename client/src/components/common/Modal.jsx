@@ -131,7 +131,7 @@ const Modal = ({
       >
         {/* ── Header (Fixed) ── */}
         <div
-          className="shrink-0 relative flex items-center justify-between px-6 sm:px-8 py-5 sm:py-6 border-b border-neutral-200"
+          className="shrink-0 relative flex items-center justify-between px-6 sm:px-6 py-5 sm:py-6 border-b border-neutral-200"
         >
           <h2
             id="modal-title"
@@ -151,11 +151,11 @@ const Modal = ({
         </div>
 
         {/* ── Content & Confirmation (Cross-Faded, Scrollable) ── */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 min-h-0 relative">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-6 min-h-0 relative">
           <div
             className={`transition-all duration-200 ease-swiss ${
               isConfirmed && confirmContent 
-                ? 'opacity-0 pointer-events-none absolute inset-0 p-6 sm:p-8' 
+                ? 'opacity-0 pointer-events-none absolute inset-0 p-6 sm:p-6' 
                 : 'opacity-100'
             }`}
           >
@@ -167,7 +167,7 @@ const Modal = ({
               className={`transition-all duration-200 ease-swiss ${
                 isConfirmed 
                   ? 'opacity-100' 
-                  : 'opacity-0 pointer-events-none absolute inset-0 p-6 sm:p-8'
+                  : 'opacity-0 pointer-events-none absolute inset-0 p-6 sm:p-6'
               }`}
             >
               {confirmContent}
@@ -178,7 +178,7 @@ const Modal = ({
         {/* ── Footer (Fixed, Hidden in confirmed state if confirmation handles its own action) ── */}
         {footer && !isConfirmed && (
           <div
-            className="shrink-0 flex items-center justify-end gap-3 px-6 sm:px-8 py-5 sm:py-6 border-t border-neutral-200 bg-neutral-50 sm:bg-white"
+            className="shrink-0 flex items-center justify-end gap-3 px-6 sm:px-6 py-5 sm:py-6 border-t border-neutral-200 bg-neutral-50 sm:bg-white"
           >
             {footer}
           </div>

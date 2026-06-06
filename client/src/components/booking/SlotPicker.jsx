@@ -232,7 +232,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
       {/* ── Loading / Auth Gates ── */}
       {loading && (
-        <div className="w-full py-12 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+        <div className="w-full py-4 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           Loading clinic availability...
         </div>
       )}

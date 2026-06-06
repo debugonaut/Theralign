@@ -86,7 +86,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:gap-8">
+          <div className="hidden md:flex md:items-center md:gap-4">
             <div className="flex space-x-8">
               {currentRoleLinks.map((link) => (
                 <SwissNavLink key={link.to} to={link.to} label={link.label} />

@@ -144,12 +144,12 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
           </div>
 
           {loading ? (
-            <div className="py-12 text-center">
+            <div className="py-4 text-center">
               <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-primary mx-auto" />
               <p className="mt-3 text-xs text-slate-400 font-bold">Fetching therapist's calendar...</p>
             </div>
           ) : availability.length === 0 ? (
-            <div className="py-12 text-center flex flex-col items-center gap-2">
+            <div className="py-4 text-center flex flex-col items-center gap-2">
               <Calendar className="h-8 w-8 text-neutral-400 mx-auto" strokeWidth={1.5} />
               <p className="text-xs font-bold text-slate-700">No Other Slots Available</p>
               <p className="text-[10px] text-slate-400 max-w-xs">

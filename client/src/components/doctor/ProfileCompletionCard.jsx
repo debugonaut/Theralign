@@ -32,8 +32,8 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
   }
 
   return (
-    <div className="w-full p-8 bg-neutral-100 border-2 border-neutral-900 rounded-none shadow-none text-left">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+    <div className="w-full p-6 bg-neutral-100 border-2 border-neutral-900 rounded-none shadow-none text-left">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
         {/* Left Side: 6 columns */}
         <div className="flex flex-col gap-4">
           <div>

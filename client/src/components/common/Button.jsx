@@ -59,7 +59,7 @@ const VARIANT_CLASSES = {
 const SIZE_CLASSES = {
   sm: 'h-8  px-4  text-ui-xs',
   md: 'h-10 px-6  text-ui-sm',
-  lg: 'h-12 px-8  text-ui-md',
+  lg: 'h-12 px-6  text-ui-md',
 };
 
 const Button = ({

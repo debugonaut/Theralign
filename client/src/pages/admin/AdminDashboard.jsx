@@ -115,7 +115,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="space-y-12 select-none text-neutral-900">
+    <div className="space-y-8 select-none text-neutral-900">
       {/* Platform Header */}
       <SectionHeader
         title="SYSTEM OVERVIEW"
@@ -130,7 +130,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Charts Row - 6:6 split */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RevenueChart
           data={revenueSeries}
           period={revenuePeriod}
