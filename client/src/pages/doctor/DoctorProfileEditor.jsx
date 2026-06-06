@@ -485,10 +485,10 @@ const DoctorProfileEditor = () => {
   const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
 
   return (
-    <div className="flex flex-col gap-5 select-none text-left bg-neutral-50 page-fade-in">
+    <div className="flex flex-col gap-6 select-none text-left bg-neutral-50 page-fade-in">
       
       {/* ── Page Header ── */}
-      <div>
+      <div className="max-w-4xl w-full">
         <SectionHeader title="My Profile" size="lg" ruled={true} className="mb-0" />
         <p className="text-ui-sm text-neutral-500 font-semibold uppercase tracking-wider mt-3">
           Configure your professional clinical parameters, update coordinates, set fee charts, and submit license files.
@@ -496,17 +496,19 @@ const DoctorProfileEditor = () => {
       </div>
 
       {/* Stepper Navigation */}
-      <HorizontalStepper
-        steps={activeSteps}
-        activeStep={editorStep}
-        completedSteps={completedSteps}
-        animatingStepIdx={animatingStepIdx}
-        onStepClick={(idx) => setEditorStep(idx)}
-      />
+      <div className="max-w-4xl w-full">
+        <HorizontalStepper
+          steps={activeSteps}
+          activeStep={editorStep}
+          completedSteps={completedSteps}
+          animatingStepIdx={animatingStepIdx}
+          onStepClick={(idx) => setEditorStep(idx)}
+        />
+      </div>
 
       {/* Draft Banner */}
       {hasDraft && (
-        <div className="border border-warning/40 bg-warning/5 px-5 py-3 rounded-md flex items-center justify-between gap-4">
+        <div className="max-w-4xl w-full border border-warning/40 bg-warning/5 px-5 py-3 rounded-md flex items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-black text-warning uppercase tracking-widest block">
               Unsaved Draft Detected
@@ -536,7 +538,7 @@ const DoctorProfileEditor = () => {
 
       {/* ── PERSONAL INFORMATION (Step 0) ── */}
       {editorStep === 0 && (
-        <>
+        <div className="max-w-3xl w-full flex flex-col gap-6">
           <div className="flex flex-col gap-6">
             <SectionHeader title="Personal Information" size="sm" ruled={true} className="mb-0" />
             
@@ -568,7 +570,7 @@ const DoctorProfileEditor = () => {
             </div>
 
             {/* Phone Input with Internal prefix line */}
-            <div className="flex flex-col gap-1.5 w-full md:w-1/2 max-w-[1200px]">
+            <div className="flex flex-col gap-1.5 w-full md:w-1/2">
               <label className="text-[12px] font-semibold text-neutral-700">
                 Phone Number *
               </label>
@@ -622,12 +624,12 @@ const DoctorProfileEditor = () => {
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
 
       {/* ── PROFESSIONAL DETAILS (Step 1) ── */}
       {editorStep === 1 && (
-        <div className="flex flex-col gap-6">
+        <div className="max-w-3xl w-full flex flex-col gap-6">
           <SectionHeader title="Professional Details" size="sm" ruled={true} className="mb-0" />
           
           {/* Specialization Comma field */}
@@ -675,7 +677,7 @@ const DoctorProfileEditor = () => {
 
       {/* ── CLINIC DETAILS (Step 2) ── */}
       {editorStep === 2 && (
-        <>
+        <div className="max-w-3xl w-full flex flex-col gap-6">
           <div className="flex flex-col gap-6">
             <SectionHeader title="Clinic Details" size="sm" ruled={true} className="mb-0" />
             
@@ -749,16 +751,16 @@ const DoctorProfileEditor = () => {
               This amount is shown to patients on your profile and at booking. You can update it at any time.
             </p>
           </div>
-        </>
+        </div>
       )}
 
       {/* ── VERIFICATION DOCUMENTS & STATUS (Step 3) ── */}
       {editorStep === 3 && !isVerified && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 select-none">
+        <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 select-none">
           <div className="lg:col-span-7 flex flex-col gap-6">
             <SectionHeader title="Verification Documents" size="sm" ruled={true} className="mb-0" />
             
-            <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left flex flex-col gap-4 max-w-[1200px]">
+            <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left flex flex-col gap-4">
               <div className="flex flex-col gap-3">
                 {/* Degree status */}
                 <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 p-4 rounded-md h-16">
@@ -880,7 +882,7 @@ const DoctorProfileEditor = () => {
       )}
 
       {/* ── Persistent Bottom Save Changes Bar ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 p-4 select-none shadow-level-3">
+      <div className="sticky bottom-0 z-50 bg-white border-t border-neutral-200 p-4 select-none shadow-level-3 -mx-6 -mb-6 mt-8">
         <div className="max-w-[1440px] mx-auto px-6 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {editorStep > 0 && (
