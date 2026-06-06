@@ -26,6 +26,11 @@ const getOffsetDateString = (offsetDays) => {
 
 const refreshSlots = async () => {
   try {
+    const todayStr = getOffsetDateString(0);
+
+    // Purge all unbooked expired slots
+    await AvailabilitySlot.deleteMany({ isBooked: false, date: { $lt: todayStr } });
+
     const doctors = await DoctorProfile.find({ verificationStatus: DOCTOR_STATUS.VERIFIED });
     let created = 0;
     for (const doctor of doctors) {
@@ -43,7 +48,7 @@ const refreshSlots = async () => {
             });
             created++;
           } catch (err) {
-            if (err.code !== 11000) throw err; // skip duplicates silently
+            if (err.code !== 11000) throw err;
           }
         }
       }
