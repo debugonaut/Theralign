@@ -27,33 +27,23 @@ const getOffsetDateString = (offsetDays) => {
 const refreshSlots = async () => {
   try {
     const todayStr = getOffsetDateString(0);
-
-    // Purge all unbooked expired slots
     await AvailabilitySlot.deleteMany({ isBooked: false, date: { $lt: todayStr } });
 
     const doctors = await DoctorProfile.find({ verificationStatus: DOCTOR_STATUS.VERIFIED });
-    let created = 0;
+    const docs = [];
     for (const doctor of doctors) {
       for (let day = 0; day < 30; day++) {
         const dateStr = getOffsetDateString(day);
         for (const slot of TIME_SLOTS) {
-          try {
-            await AvailabilitySlot.create({
-              doctor: doctor._id,
-              date: dateStr,
-              startTime: slot.start,
-              endTime: slot.end,
-              isBooked: false,
-              isActive: true,
-            });
-            created++;
-          } catch (err) {
-            if (err.code !== 11000) throw err;
-          }
+          docs.push({ doctor: doctor._id, date: dateStr, startTime: slot.start, endTime: slot.end, isBooked: false, isActive: true });
         }
       }
     }
-    console.log(`[INFO] Slot refresh complete. ${created} new slots created across 30 days.`);
+    const result = await AvailabilitySlot.insertMany(docs, { ordered: false }).catch(err => {
+      if (err.code !== 11000 && err.writeErrors?.some(e => e.code !== 11000)) throw err;
+      return { insertedCount: err.insertedDocs?.length ?? 0 };
+    });
+    console.log(`[INFO] Slot refresh complete. ${result.insertedCount ?? docs.length} slots ready across 30 days.`);
   } catch (err) {
     console.error('[ERROR] Slot refresh failed:', err.message);
   }

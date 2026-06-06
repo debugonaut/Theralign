@@ -21,16 +21,18 @@ process.on('uncaughtException', (err) => {
 // Define immediate startup routine
 const startServer = async () => {
   try {
-    // 1. Establish database connection first
-    await connectDB();
-
-    // 2. Initialize scheduled background jobs
-    initReminderJob();
-
-    // 3. Start Express HTTP Listener
+    // 1. Start Express HTTP Listener immediately so Render detects the port
     const server = app.listen(config.port, () => {
       logger.info(`Theralign Express Server running in [${config.nodeEnv}] on port ${config.port}`);
     });
+
+    // 2. Establish database connection + run seeds in background
+    connectDB().catch((err) => {
+      logger.error('Background DB init failed:', err);
+    });
+
+    // 3. Initialize scheduled background jobs
+    initReminderJob();
 
     process.on('SIGTERM', () => {
       logger.warn('SIGTERM signal received. Shutting down server gracefully...');
