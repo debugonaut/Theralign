@@ -82,14 +82,21 @@ export const patientProfileService = {
           ...data.insurance
         };
       }
+      if (data.completedSteps !== undefined) {
+        profile.completedSteps = data.completedSteps;
+      }
 
       // Approximate completion percentage calculation
       let score = 0;
-      if (profile.dateOfBirth && profile.bloodGroup) score += 20;
-      if (profile.medicalHistory) score += 20;
-      if (profile.lifestyle?.activityLevel) score += 20;
-      if (profile.emergencyContacts?.length > 0) score += 20;
-      if (profile.insurance?.provider) score += 20;
+      if (profile.completedSteps && profile.completedSteps.length > 0) {
+        score = profile.completedSteps.length * 20;
+      } else {
+        if (profile.dateOfBirth && profile.bloodGroup) score += 20;
+        if (profile.medicalHistory) score += 20;
+        if (profile.lifestyle?.activityLevel) score += 20;
+        if (profile.emergencyContacts?.length > 0) score += 20;
+        if (profile.insurance?.provider) score += 20;
+      }
       profile.completionPercentage = score;
 
       localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(profile));

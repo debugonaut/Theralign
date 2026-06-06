@@ -1,4 +1,5 @@
 import React from 'react';
+import { Check } from 'lucide-react';
 
 const HorizontalStepper = ({ 
   steps, 
@@ -8,105 +9,88 @@ const HorizontalStepper = ({
   onStepClick 
 }) => {
   const N = steps.length;
-  const segmentPercent = 50 / N;
+  const progressPercent = (activeStep / (N - 1)) * 100;
+  const segmentWidth = 100 / N;
+  const leftOffset = segmentWidth / 2;
+  const trackWidth = 100 - segmentWidth;
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-10 select-none relative px-4">
+    <div className="w-full select-none pb-8 mb-8 border-b border-[#EEF2F6] relative">
       {/* Background Line Track */}
       <div 
-        className="absolute top-[21px] h-[2px] bg-neutral-200 -z-10" 
-        style={{ left: `${segmentPercent}%`, right: `${segmentPercent}%` }}
+        className="absolute top-[18px] h-[1px] bg-[#DDE3EA] -z-10" 
+        style={{ left: `${leftOffset}%`, right: `${leftOffset}%` }}
       />
 
-      {/* Filled Line Segments */}
+      {/* Progress line overlay */}
       <div 
-        className="absolute top-[21px] h-[2px] -z-10 flex"
-        style={{ left: `${segmentPercent}%`, right: `${segmentPercent}%` }}
-      >
-        {steps.map((_, idx) => {
-          if (idx === N - 1) return null;
-          // A connecting line is filled if the step on the left is completed
-          const isLineFilled = completedSteps.includes(idx);
-          return (
-            <div key={idx} className="flex-1 h-full relative">
-              <div 
-                className="h-full bg-success transition-all duration-500 ease-in-out" 
-                style={{ width: isLineFilled ? '100%' : '0%' }}
-              />
-            </div>
-          );
-        })}
-      </div>
+        className="absolute top-[18px] h-[2px] bg-[#0B4F6C] -z-10 transition-all duration-300 ease-out" 
+        style={{ 
+          left: `${leftOffset}%`, 
+          width: `${progressPercent * (trackWidth / 100)}%` 
+        }}
+      />
 
       {/* Steps Row */}
       <div className="flex justify-between items-start">
         {steps.map((step, idx) => {
           const isCompleted = completedSteps.includes(idx);
           const isActive = idx === activeStep;
-          const isAnimating = animatingStepIdx === idx;
+          const isUpcoming = idx > activeStep;
+
+          const labels = [
+            'Basic Info',
+            'Medical History',
+            'Lifestyle',
+            'Emergency Contacts',
+            'Insurance'
+          ];
+          const labelText = labels[idx] || step.label;
+
+          // Determine circle classes and content
+          let circleClass = 'w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ';
+          let childContent = null;
+          let labelClass = 'text-[11px] tracking-[0.06em] mt-2 block transition-colors duration-200 ';
+
+          if (isCompleted && !isActive) {
+            // Completed step: teal background, no border, white checkmark
+            circleClass += 'bg-[#0B4F6C] text-white';
+            childContent = <Check size={14} strokeWidth={3} />;
+            labelClass += 'font-semibold text-[#0B4F6C]';
+          } else if (isActive) {
+            // Current step: white background, 2.5px teal border, teal text number
+            circleClass += 'bg-white border-[2.5px] border-[#0B4F6C] text-[#0B4F6C]';
+            childContent = <span className="font-bold text-[13px]">{idx + 1}</span>;
+            labelClass += 'font-bold text-[#0B4F6C]';
+          } else {
+            // Upcoming step: white background, 1.5px gray border, gray text number
+            circleClass += 'bg-white border-[1.5px] border-[#DDE3EA] text-[#A8B8C8]';
+            childContent = <span className="font-medium text-[13px]">{idx + 1}</span>;
+            labelClass += 'font-normal text-[#A8B8C8]';
+          }
+
+          // Enforce: only step 1 (idx 0) or steps where the previous step is completed can be clicked
+          const isClickable = idx === 0 || completedSteps.includes(idx - 1);
 
           return (
             <button
               key={step.value || step.key}
               type="button"
-              disabled={!onStepClick}
+              disabled={!isClickable}
               onClick={() => onStepClick && onStepClick(idx)}
-              className={`flex flex-col items-center focus:outline-none group ${
-                onStepClick ? 'cursor-pointer' : 'cursor-default'
+              className={`flex flex-col items-center focus:outline-none ${
+                isClickable ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'
               }`}
-              style={{ width: `${100 / N}%` }}
+              style={{ width: `${segmentWidth}%` }}
             >
-              {/* Circle Container to keep size changes from shifting other elements */}
-              <div className="h-11 flex items-center justify-center relative">
-                <div 
-                  className={`
-                    rounded-full flex items-center justify-center border-2 transition-all duration-300 ease-in-out
-                    ${isCompleted 
-                      ? `bg-success border-success text-white ${
-                          isAnimating ? 'animate-circle-pop shadow-level-2' : 'shadow-sm'
-                        } w-9 h-9` 
-                      : isActive 
-                        ? 'bg-white border-primary text-primary shadow-level-2 scale-110 w-11 h-11' 
-                        : 'bg-white border-neutral-200 text-neutral-300 w-9 h-9'
-                    }
-                  `}
-                >
-                  {isCompleted ? (
-                    <svg 
-                      className="w-5 h-5 text-white" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor" 
-                      strokeWidth={3}
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        d="M5 13l4 4L19 7" 
-                        className={isAnimating ? 'animate-checkmark' : ''} 
-                      />
-                    </svg>
-                  ) : (
-                    <span className={`text-xs font-bold ${isActive ? 'text-primary' : 'text-neutral-400'}`}>
-                      {idx + 1}
-                    </span>
-                  )}
-                </div>
+              {/* Circle */}
+              <div className={circleClass}>
+                {childContent}
               </div>
 
               {/* Step Label */}
-              <span 
-                className={`
-                  mt-3 text-[10px] font-bold uppercase tracking-wider transition-colors duration-300 text-center max-w-full truncate px-1
-                  ${isActive 
-                    ? 'text-primary' 
-                    : isCompleted 
-                      ? 'text-success' 
-                      : 'text-neutral-400 group-hover:text-neutral-600'
-                  }
-                `}
-              >
-                {step.label}
+              <span className={labelClass}>
+                {labelText}
               </span>
             </button>
           );

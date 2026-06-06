@@ -90,7 +90,7 @@ const PatientProfile = () => {
       const response = await patientProfileService.getProfile();
       const dbProf = response.profile;
       setProfile(dbProf);
-      setCompletedSteps(getCompletedSteps(dbProf));
+      setCompletedSteps(dbProf?.completedSteps || getCompletedSteps(dbProf));
 
       // Construct initial values from database profile
       const initialForm = {
@@ -144,6 +144,11 @@ const PatientProfile = () => {
 
   const handleTabChange = (tabValue) => {
     if (tabValue === activeTab) return;
+    const targetIdx = TABS.findIndex((t) => t.value === tabValue);
+    if (targetIdx > 0 && !completedSteps.includes(targetIdx - 1)) {
+      showToast('error', 'Please fill and save the previous steps first.');
+      return;
+    }
     setActiveTab(tabValue);
   };
 
@@ -196,17 +201,12 @@ const PatientProfile = () => {
     // Get current step index
     const currentStepIdx = TABS.findIndex((t) => t.value === activeTab);
 
-    // Add current step to completed if not already there
-    if (!completedSteps.includes(currentStepIdx)) {
-      setCompletedSteps((prev) => [...prev, currentStepIdx]);
-    }
+    // Update completedSteps from database or state
+    const newCompleted = updatedProfile?.completedSteps || Array.from(new Set([...completedSteps, currentStepIdx]));
+    setCompletedSteps(newCompleted);
 
     // Trigger ticking animation
     setAnimatingStepIdx(currentStepIdx);
-
-    // Recompute other completed steps just in case, but merge with current
-    const computed = getCompletedSteps(updatedProfile);
-    setCompletedSteps((prev) => Array.from(new Set([...prev, ...computed, currentStepIdx])));
 
     // Advance after 1000ms
     setTimeout(() => {
@@ -355,6 +355,7 @@ const PatientProfile = () => {
               onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
               onSaveDraft={handleSaveDraft}
+              completedSteps={completedSteps}
               onNext={() => handleTabChange('MEDICAL HISTORY')}
             />
           )}
@@ -365,6 +366,8 @@ const PatientProfile = () => {
               onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
               onSaveDraft={handleSaveDraft}
+              completedSteps={completedSteps}
+              onBack={() => handleTabChange('BASIC INFO')}
               onNext={() => handleTabChange('LIFESTYLE')}
             />
           )}
@@ -375,6 +378,8 @@ const PatientProfile = () => {
               onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
               onSaveDraft={handleSaveDraft}
+              completedSteps={completedSteps}
+              onBack={() => handleTabChange('MEDICAL HISTORY')}
               onNext={() => handleTabChange('EMERGENCY CONTACTS')}
             />
           )}
@@ -385,6 +390,8 @@ const PatientProfile = () => {
               onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
               onSaveDraft={handleSaveDraft}
+              completedSteps={completedSteps}
+              onBack={() => handleTabChange('LIFESTYLE')}
               onNext={() => handleTabChange('INSURANCE')}
             />
           )}
@@ -395,6 +402,8 @@ const PatientProfile = () => {
               onChange={handleFieldChange}
               onSaveSuccess={handleSaveSuccess} 
               onSaveDraft={handleSaveDraft}
+              completedSteps={completedSteps}
+              onBack={() => handleTabChange('EMERGENCY CONTACTS')}
             />
           )}
         </div>

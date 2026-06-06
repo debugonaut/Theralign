@@ -133,6 +133,11 @@ const patientProfileSchema = new mongoose.Schema(
         default: '',
       },
     },
+    // STEP TRACKING
+    completedSteps: {
+      type: [Number],
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -141,36 +146,13 @@ const patientProfileSchema = new mongoose.Schema(
 
 // Virtual for profile completion percentage
 patientProfileSchema.virtual('completionPercentage').get(function () {
-  let filledFields = 0;
-  let totalFields = 0;
-
-  // Basic Info check
-  const basicInfoFields = ['dateOfBirth', 'gender', 'bloodGroup']; // skipping height/weight as they aren't explicitly in basic info form, but could be added
-  basicInfoFields.forEach(field => {
-    totalFields++;
-    if (this[field]) filledFields++;
-  });
+  if (this.completedSteps && this.completedSteps.length > 0) {
+    return this.completedSteps.length * 20;
+  }
   
-  // Also check User fields (name, phone) usually via populated user, but we'll approximate based on what is commonly required.
-  // The actual percentage might also incorporate the phone number if available.
-
-  totalFields++; // Lifestyle (at least one field filled)
-  if (this.lifestyle && (this.lifestyle.occupation || this.lifestyle.activityLevel)) filledFields++;
-
-  totalFields++; // Medical History (considered filled if array length > 0, or just let them leave it empty)
-  // Actually, for arrays, it's better to consider them "reviewed" if saved.
-  // To avoid punishing users with no conditions, we might just scale based on scalar fields.
-  
-  // A simpler completion logic:
-  // 5 sections: Basic Info, Medical History, Lifestyle, Emergency Contacts, Insurance
-  // We'll give 20% for each section that has been touched/saved.
-  // Since we use $set to update sections, we can check if data exists.
-  
-  // For the sake of this virtual, we can calculate based on specific keys:
+  // Fallback calculation in case completedSteps is not populated yet
   let score = 0;
-  
   if (this.dateOfBirth && this.bloodGroup) score += 20;
-  // If arrays are defined (even if empty, meaning they saved it)
   if (this.medicalHistory) score += 20; 
   if (this.lifestyle && this.lifestyle.activityLevel) score += 20;
   if (this.emergencyContacts && this.emergencyContacts.length > 0) score += 20;
