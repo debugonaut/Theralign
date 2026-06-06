@@ -29,6 +29,9 @@ import patientProfileRoutes from './src/routes/patientProfile.routes.js';
 
 const app = express();
 
+// Enable trust proxy for express-rate-limit behind Render load balancer
+app.set('trust proxy', 1);
+
 // Disable X-Powered-By header
 app.disable('x-powered-by');
 
