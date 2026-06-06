@@ -50,28 +50,45 @@ export const updateMyProfile = asyncHandler(async (req, res) => {
   }
 
   // 2. Update or Create PatientProfile using partial updates
-  // For nested fields like medicalHistory, if the frontend sends the whole object for that tab, 
-  // it overwrites that specific object.
-  const updatePayload = {
-    user: req.user.id
-  };
+  const $set = { user: req.user.id };
+  const $unset = {};
   
   // Basic info fields
-  if (profileData.dateOfBirth !== undefined) updatePayload.dateOfBirth = profileData.dateOfBirth;
-  if (profileData.gender !== undefined) updatePayload.gender = profileData.gender;
-  if (profileData.bloodGroup !== undefined) updatePayload.bloodGroup = profileData.bloodGroup;
-  if (profileData.height !== undefined) updatePayload.height = profileData.height;
-  if (profileData.weight !== undefined) updatePayload.weight = profileData.weight;
+  if (profileData.dateOfBirth !== undefined) {
+    if (profileData.dateOfBirth === '') $unset.dateOfBirth = 1;
+    else $set.dateOfBirth = profileData.dateOfBirth;
+  }
+  if (profileData.gender !== undefined) {
+    if (profileData.gender === '') $unset.gender = 1;
+    else $set.gender = profileData.gender;
+  }
+  if (profileData.bloodGroup !== undefined) {
+    if (profileData.bloodGroup === '') $unset.bloodGroup = 1;
+    else $set.bloodGroup = profileData.bloodGroup;
+  }
+  if (profileData.height !== undefined) {
+    if (profileData.height === '') $unset.height = 1;
+    else $set.height = profileData.height;
+  }
+  if (profileData.weight !== undefined) {
+    if (profileData.weight === '') $unset.weight = 1;
+    else $set.weight = profileData.weight;
+  }
   
   // Tab objects
-  if (profileData.medicalHistory) updatePayload.medicalHistory = profileData.medicalHistory;
-  if (profileData.lifestyle) updatePayload.lifestyle = profileData.lifestyle;
-  if (profileData.emergencyContacts) updatePayload.emergencyContacts = profileData.emergencyContacts;
-  if (profileData.insurance) updatePayload.insurance = profileData.insurance;
+  if (profileData.medicalHistory) $set.medicalHistory = profileData.medicalHistory;
+  if (profileData.lifestyle) $set.lifestyle = profileData.lifestyle;
+  if (profileData.emergencyContacts) $set.emergencyContacts = profileData.emergencyContacts;
+  if (profileData.insurance) $set.insurance = profileData.insurance;
+
+  const updateDoc = { $set };
+  if (Object.keys($unset).length > 0) {
+    updateDoc.$unset = $unset;
+  }
 
   const profile = await PatientProfile.findOneAndUpdate(
     { user: req.user.id },
-    { $set: updatePayload },
+    updateDoc,
     { new: true, upsert: true, runValidators: true }
   ).populate('user', 'name phone profileImage email');
 

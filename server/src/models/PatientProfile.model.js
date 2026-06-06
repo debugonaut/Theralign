@@ -52,7 +52,7 @@ const patientProfileSchema = new mongoose.Schema(
     bloodGroup: {
       type: String,
       enum: {
-        values: ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'],
+        values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
         message: '{VALUE} is not a valid blood group',
       },
     },

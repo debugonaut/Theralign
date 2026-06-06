@@ -2,29 +2,28 @@ import { body } from 'express-validator';
 
 export const updateMyProfileValidation = [
   body('name')
-    .optional()
+    .optional({ checkFalsy: true })
     .isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters')
     .trim(),
   body('phone')
-    .optional()
+    .optional({ checkFalsy: true })
     .isString()
     .trim(),
   body('dateOfBirth')
-    .optional()
+    .optional({ checkFalsy: true })
     .isISO8601().toDate().withMessage('Invalid date of birth format'),
   body('gender')
-    .optional()
+    .optional({ checkFalsy: true })
     .customSanitizer(value => value ? value.toLowerCase() : value)
     .isIn(['male', 'female', 'other', 'prefer_not_to_say']).withMessage('Invalid gender value'),
   body('bloodGroup')
-    .optional()
-    .customSanitizer(value => value ? value.replace(/\u2212/g, '-') : value)
+    .optional({ checkFalsy: true })
     .isIn(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'unknown']).withMessage('Invalid blood group'),
   body('height')
-    .optional()
+    .optional({ checkFalsy: true })
     .isFloat({ min: 0, max: 300 }).withMessage('Height must be a valid number in cm'),
   body('weight')
-    .optional()
+    .optional({ checkFalsy: true })
     .isFloat({ min: 0, max: 500 }).withMessage('Weight must be a valid number in kg'),
   body('medicalHistory')
     .optional()
