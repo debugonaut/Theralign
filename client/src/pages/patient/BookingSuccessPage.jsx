@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, Calendar, Clock, MapPin, Printer, ArrowRight, ShieldAlert } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { jsPDF } from 'jspdf';
 import { getMyAppointments } from '../../api/appointment.api';
 import { getMyPayments } from '../../api/payment.api';
 import Card from '../../components/common/Card';
@@ -63,7 +64,94 @@ const BookingSuccessPage = () => {
   }, [id]);
 
   const handlePrint = () => {
-    window.print();
+    const docName = appointment.doctor?.user?.name || 'Physiotherapist';
+    const paymentId = payment?.razorpayPaymentId || `pay_mock_${id.slice(-8)}`;
+    const fee = appointment.consultationFee || 0;
+    const receiptDateStr = payment 
+      ? new Date(payment.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+      : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+    const pad = 48;
+
+    // Header bar
+    doc.setFillColor(15, 15, 15);
+    doc.rect(0, 0, W, 72, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('THERALIGN', pad, 38);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text('CLINICAL PAYMENT RECEIPT', pad, 54);
+
+    // Receipt ID top-right
+    doc.setFontSize(7);
+    doc.text(`RECEIPT: ${paymentId.slice(-8).toUpperCase()}`, W - pad, 38, { align: 'right' });
+    doc.text(receiptDateStr.toUpperCase(), W - pad, 54, { align: 'right' });
+
+    // Divider
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.5);
+    doc.line(pad, 100, W - pad, 100);
+
+    // Section: Clinician
+    let y = 128;
+    const label = (text, x, yPos) => {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(140, 140, 140);
+      doc.text(text, x, yPos);
+    };
+    const value = (text, x, yPos, bold = false) => {
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(15, 15, 15);
+      doc.text(text, x, yPos);
+    };
+
+    const rows = [
+      ['CLINICIAN',       `DR. ${docName.toUpperCase()}`],
+      ['APPOINTMENT DATE', String(appointment.date)],
+      ['APPOINTMENT TIME', String(appointment.startTime)],
+      ['TRANSACTION ID',  paymentId],
+      ['PAYMENT GATEWAY', 'SECURED BY RAZORPAY'],
+      ['STATUS',          'CONFIRMED / PAID'],
+    ];
+
+    rows.forEach(([lbl, val]) => {
+      label(lbl, pad, y);
+      value(val, pad, y + 14);
+      y += 40;
+    });
+
+    // Amount box
+    y += 8;
+    doc.setFillColor(245, 245, 245);
+    doc.roundedRect(pad, y, W - pad * 2, 56, 4, 4, 'F');
+    label('FEE CHARGED', pad + 16, y + 18);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(15, 15, 15);
+    doc.text(`Rs. ${fee}`, pad + 16, y + 40);
+    label('PLATFORM COMMISSION (10%)', W - pad - 16, y + 18);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(15, 15, 15);
+    doc.text(`Rs. ${(fee * 0.1).toFixed(0)}`, W - pad - 16, y + 40, { align: 'right' });
+
+    // Footer
+    doc.setDrawColor(220, 220, 220);
+    doc.line(pad, 780, W - pad, 780);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(160, 160, 160);
+    doc.text('Thank you for choosing Theralign clinical networks.', W / 2, 796, { align: 'center' });
+    doc.text('This is a system-generated receipt and does not require a signature.', W / 2, 808, { align: 'center' });
+
+    doc.save(`Theralign-RECEIPT-${paymentId.slice(-8)}.pdf`);
+    toast.success('RECEIPT DOWNLOADED.');
   };
 
   if (loading) {
@@ -117,24 +205,8 @@ const BookingSuccessPage = () => {
 
   return (
     <>
-      {/* Print Stylesheet */}
-      <style>{`
-        @media print {
-          body {
-            background: white !important;
-            color: black !important;
-          }
-          .no-print {
-            display: none !important;
-          }
-          .print-only {
-            display: block !important;
-          }
-        }
-      `}</style>
-
-      {/* Screen Layout (Hidden when printing) */}
-      <div className="no-print min-h-screen bg-neutral-50 py-6 px-6">
+      {/* Screen Layout */}
+      <div className="min-h-screen bg-neutral-50 py-6 px-6">
         <div className="max-w-[560px] mx-auto flex flex-col gap-6">
           
           {/* Header/Success Alert */}
@@ -255,65 +327,6 @@ const BookingSuccessPage = () => {
               </Link>
             </div>
           </Card>
-        </div>
-      </div>
-
-      {/* Print-Only Layout */}
-      <div className="print-only hidden">
-        <div className="max-w-[600px] mx-auto p-6 border-2 border-neutral-900 rounded-md font-mono text-neutral-900 bg-white">
-          <div className="border-b-2 border-neutral-900 pb-4 mb-6 flex justify-between items-end">
-            <div>
-              <h1 className="text-2xl font-black uppercase tracking-tight text-neutral-900">THERALIGN</h1>
-              <p className="text-[9px] uppercase tracking-widest text-neutral-500 mt-1 font-bold">CLINICAL PAYMENT RECEIPT</p>
-            </div>
-            <div className="text-right">
-              <span className="text-[8px] text-neutral-400 block">RECEIPT ID</span>
-              <span className="text-xs font-bold font-mono">{paymentId.toUpperCase()}</span>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-y-5 text-xs mb-8">
-            <div>
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">CLINICIAN</span>
-              <span className="font-bold">DR. {docName.toUpperCase()}</span>
-            </div>
-            <div>
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">RECEIPT DATE</span>
-              <span className="font-bold">{receiptDateStr.toUpperCase()}</span>
-            </div>
-            <div>
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">APPOINTMENT DATE</span>
-              <span className="font-bold">{appointment.date}</span>
-            </div>
-            <div>
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">APPOINTMENT TIME</span>
-              <span className="font-bold">{appointment.startTime} – {appointment.endTime}</span>
-            </div>
-            <div>
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">CLINIC ADDRESS</span>
-              <span className="font-bold">{clinicAddress.toUpperCase()}</span>
-            </div>
-            <div>
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">PAYMENT GATEWAY</span>
-              <span className="font-bold">SECURED BY RAZORPAY</span>
-            </div>
-          </div>
-          
-          <div className="bg-neutral-100 p-5 rounded-md mb-8 flex justify-between items-center border border-neutral-200">
-            <div>
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">FEE CHARGED</span>
-              <span className="text-xl font-black">Rs. {fee}</span>
-            </div>
-            <div className="text-right">
-              <span className="text-[8px] uppercase tracking-widest text-neutral-400 block mb-0.5">PLATFORM COMMISSION (10%)</span>
-              <span className="text-sm font-bold">Rs. {(fee * 0.1).toFixed(0)}</span>
-            </div>
-          </div>
-          
-          <div className="border-t border-neutral-200 pt-6 text-center text-[10px] text-neutral-500 space-y-1">
-            <p className="font-bold">Thank you for choosing Theralign clinical networks.</p>
-            <p>This is a system-generated receipt and does not require a signature.</p>
-          </div>
         </div>
       </div>
     </>
