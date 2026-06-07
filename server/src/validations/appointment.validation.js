@@ -1,9 +1,21 @@
 import { body, param } from 'express-validator';
+import mongoose from 'mongoose';
+
+const isValidSlotId = (value) => {
+  if (typeof value === 'string' && value.startsWith('slot_weekly_')) {
+    const parts = value.split('_');
+    return parts.length >= 5 && mongoose.Types.ObjectId.isValid(parts[2]);
+  }
+  return mongoose.Types.ObjectId.isValid(value);
+};
 
 export const bookAppointmentValidation = [
   body('slotId')
     .notEmpty().withMessage('Slot ID is required')
-    .isMongoId().withMessage('Invalid slot ID'),
+    .custom((value) => {
+      if (!isValidSlotId(value)) throw new Error('Invalid slot ID');
+      return true;
+    }),
   body('patientNotes')
     .optional()
     .isString()
@@ -28,5 +40,8 @@ export const rescheduleAppointmentValidation = [
   param('id').isMongoId().withMessage('Invalid appointment ID'),
   body('newSlotId')
     .notEmpty().withMessage('New slot ID is required')
-    .isMongoId().withMessage('Invalid new slot ID'),
+    .custom((value) => {
+      if (!isValidSlotId(value)) throw new Error('Invalid new slot ID');
+      return true;
+    }),
 ];

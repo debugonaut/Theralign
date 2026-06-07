@@ -1,4 +1,5 @@
 import User from '../models/User.model.js';
+import config from './env.js';
 import { ROLES } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 
@@ -26,7 +27,7 @@ const seedAdmin = async () => {
         role: ROLES.ADMIN,
       });
       logger.info('[Seed] Admin account admin@theralign.com created successfully.');
-    } else {
+    } else if (config.nodeEnv !== 'production') {
       existingTheralign.password = 'Admin@123456';
       existingTheralign.isActive = true;
       await existingTheralign.save();

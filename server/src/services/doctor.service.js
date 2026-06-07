@@ -199,3 +199,25 @@ export const getDoctorProfileById = async (id) => {
   }
   return profile;
 };
+
+/**
+ * Public-safe doctor profile for discovery endpoints.
+ * Only returns verified doctors; strips internal document URLs and PII.
+ */
+export const getPublicDoctorProfileById = async (id) => {
+  const profile = await DoctorProfile.findOne({
+    _id: id,
+    verificationStatus: DOCTOR_STATUS.VERIFIED,
+  }).populate('user', 'name profileImage');
+
+  if (!profile) {
+    throw new AppError('Doctor profile not found', 404);
+  }
+
+  const sanitized = profile.toObject();
+  delete sanitized.degreeDocument;
+  delete sanitized.licenseDocument;
+  delete sanitized.registrationNumber;
+
+  return sanitized;
+};

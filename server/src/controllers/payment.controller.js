@@ -109,7 +109,26 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     throw new AppError('Missing required verification credentials.', 400);
   }
 
-  // 1. Cryptographically verify signature
+  // 1. Find Payment record and verify ownership + appointment binding
+  const payment = await Payment.findOne({ razorpayOrderId });
+  if (!payment) {
+    throw new AppError('Payment record not found.', 404);
+  }
+
+  if (payment.patient.toString() !== req.user.id.toString()) {
+    throw new AppError('You are not authorized to verify this payment.', 403);
+  }
+
+  if (payment.appointment.toString() !== appointmentId.toString()) {
+    throw new AppError('Payment does not match the provided appointment.', 400);
+  }
+
+  // Idempotent: already verified — return without re-processing side effects
+  if (payment.status === 'paid') {
+    return successResponse(res, 200, 'Payment already verified.', { appointmentId });
+  }
+
+  // 2. Cryptographically verify signature
   const expectedSignature = crypto
     .createHmac('sha256', config.razorpay.keySecret)
     .update(`${razorpayOrderId}|${razorpayPaymentId}`)
@@ -129,12 +148,6 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 
   if (!isMatch) {
     throw new AppError('Payment verification failed. Invalid signature.', 400);
-  }
-
-  // 2. Find Payment record
-  const payment = await Payment.findOne({ razorpayOrderId });
-  if (!payment) {
-    throw new AppError('Payment record not found.', 404);
   }
 
   // 3. Update Payment record
@@ -163,6 +176,11 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     throw new AppError('Associated appointment not found.', 404);
   }
 
+  const appointmentPatientId = appointment.patient?._id || appointment.patient;
+  if (appointmentPatientId.toString() !== req.user.id.toString()) {
+    throw new AppError('You are not authorized to verify this payment.', 403);
+  }
+
   // 5. Increment Doctor totalEarnings
   await DoctorProfile.findByIdAndUpdate(payment.doctor, {
     $inc: { totalEarnings: payment.doctorEarnings }
@@ -188,7 +206,7 @@ export const verifyPayment = asyncHandler(async (req, res) => {
   if (doctorUserId) {
     createNotification({
       recipientId: doctorUserId,
-      type: 'new_appointment',
+      type: 'appointment_booked',
       title: 'New Appointment Booked',
       message: `A new appointment has been scheduled by patient ${appointment.patient?.name} on ${appointment.date} at ${appointment.startTime}.`,
       link: '/doctor/appointments',
@@ -201,7 +219,7 @@ export const verifyPayment = asyncHandler(async (req, res) => {
   if (patientUserId) {
     createNotification({
       recipientId: patientUserId,
-      type: 'booking_confirmed',
+      type: 'appointment_booked',
       title: 'Booking Confirmed',
       message: `Your appointment with Dr. ${appointment.doctor?.user?.name || 'Physiotherapist'} on ${appointment.date} at ${appointment.startTime} is confirmed.`,
       link: '/patient/appointments',

@@ -7,6 +7,7 @@ import DoctorProfile from '../models/DoctorProfile.model.js';
 import WeeklySchedule from '../models/WeeklySchedule.model.js';
 import { sendBookingConfirmation, sendCancellationNotice } from '../services/emailService.js';
 import { createNotification } from '../services/notificationService.js';
+import { DOCTOR_STATUS } from '../utils/constants.js';
 
 /**
  * POST /api/appointments/book
@@ -18,6 +19,18 @@ export const bookAppointment = asyncHandler(async (req, res) => {
 
   if (!slotId) {
     throw new AppError('Slot ID is required to book an appointment.', 400);
+  }
+
+  const pendingCount = await Appointment.countDocuments({
+    patient: req.user.id,
+    status: 'pending',
+    paymentStatus: 'unpaid',
+  });
+  if (pendingCount >= 3) {
+    throw new AppError(
+      'You have too many unpaid bookings. Please complete payment or wait for them to expire.',
+      429
+    );
   }
 
   // Step 1: ATOMIC SLOT LOCK / DYNAMIC CREATION
@@ -115,6 +128,16 @@ export const bookAppointment = asyncHandler(async (req, res) => {
     // Rollback slot if doctor is not found
     await AvailabilitySlot.findByIdAndUpdate(slot._id, { $set: { isBooked: false } });
     throw new AppError('The doctor profile for this slot does not exist.', 404);
+  }
+
+  if (doctorProfile.verificationStatus !== DOCTOR_STATUS.VERIFIED) {
+    await AvailabilitySlot.findByIdAndUpdate(slot._id, { $set: { isBooked: false } });
+    throw new AppError('This doctor is not verified and cannot accept bookings.', 403);
+  }
+
+  if (!doctorProfile.isAvailable) {
+    await AvailabilitySlot.findByIdAndUpdate(slot._id, { $set: { isBooked: false } });
+    throw new AppError('This doctor is currently unavailable for bookings.', 403);
   }
 
   // Step 3: Calculate financials

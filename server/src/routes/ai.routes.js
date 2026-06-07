@@ -14,8 +14,17 @@ import {
 
 const router = express.Router();
 
-// Public routes - no authentication required for discovery
-router.post('/interpret-symptoms', interpretSymptomsValidation, validate, interpretSymptomsController);
+// Groq-backed — authenticated only to prevent API key abuse / billing attacks
+router.post(
+  '/interpret-symptoms',
+  requireAuth,
+  requireRole('patient'),
+  interpretSymptomsValidation,
+  validate,
+  interpretSymptomsController
+);
+
+// Cache-only public read — never triggers Groq generation (admin batch handles that)
 router.get('/doctor-summary/:doctorId', getDoctorAISummaryValidation, validate, getDoctorAISummary);
 
 // Admin-only routes

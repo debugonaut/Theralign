@@ -81,7 +81,6 @@ export const updateMyProfile = asyncHandler(async (req, res) => {
   if (profileData.lifestyle) $set.lifestyle = profileData.lifestyle;
   if (profileData.emergencyContacts) $set.emergencyContacts = profileData.emergencyContacts;
   if (profileData.insurance) $set.insurance = profileData.insurance;
-  if (profileData.completedSteps !== undefined) $set.completedSteps = profileData.completedSteps;
 
   const updateDoc = { $set };
   if (Object.keys($unset).length > 0) {

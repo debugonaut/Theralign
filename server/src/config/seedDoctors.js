@@ -1007,14 +1007,14 @@ export const seedDoctors = async () => {
         logger.info(`[Seed] Successfully migrated ${updateResult.modifiedCount} doctor profiles in the database to live Cloudinary document URLs.`);
       }
 
-      // Verify demo doctor user password
+      // Verify demo doctor user password (development only)
       let demoDoc = await User.findOne({ email: 'doctor@demo.com' });
-      if (demoDoc) {
+      if (demoDoc && process.env.NODE_ENV !== 'production') {
         demoDoc.password = 'Demo@123456';
         demoDoc.isActive = true;
         await demoDoc.save();
         logger.info('[Seed] Demo doctor account password and active state verified.');
-      } else {
+      } else if (!demoDoc) {
         logger.warn('[Seed] Demo doctor doctor@demo.com not found. Proceeding to seed.');
       }
       return;

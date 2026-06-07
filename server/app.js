@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
 
 import config from './src/config/env.js';
+import { hasValidAuthToken } from './src/utils/verifyTokenHeader.js';
 import errorMiddleware from './src/middleware/error.middleware.js';
 import { errorResponse } from './src/utils/apiResponse.js';
 import { requestStore } from './src/utils/asyncStore.js';
@@ -13,7 +14,6 @@ import { requestStore } from './src/utils/asyncStore.js';
 // Theralign — Express Application Setup
 import authRoutes from './src/routes/auth.routes.js';
 import doctorRoutes from './src/routes/doctor.routes.js';
-import bookingRoutes from './src/routes/booking.routes.js';
 import availabilityRoutes from './src/routes/availability.routes.js';
 import appointmentRoutes from './src/routes/appointment.routes.js';
 import paymentRoutes from './src/routes/payment.routes.js';
@@ -127,7 +127,7 @@ app.use(morgan(morganFormat));
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: (req) => {
-    if (req.headers.authorization) {
+    if (hasValidAuthToken(req)) {
       return 300;
     }
     return 60;
@@ -155,13 +155,22 @@ const passwordResetLimiter = rateLimit({
   message: { message: 'Too many password reset attempts. Please try again in an hour.' },
 });
 
-// AI endpoints Rate Limiter (Rule 6 & Rule 20)
+// AI endpoints — strict limit (Groq API key protection; auth required on routes)
 const aiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // 10 AI requests per minute
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many AI requests. Please try again later.' },
+});
+
+// Payment order creation — limits Razorpay API churn per user
+const paymentOrderLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many payment requests. Please try again later.' },
 });
 
 // Dedicated File Upload Rate Limiter (Rule 6)
@@ -181,6 +190,7 @@ app.use('/api/auth/register', authLimiter);
 app.use('/api/auth/forgot-password', passwordResetLimiter);
 app.use('/api/auth/reset-password', passwordResetLimiter);
 app.use('/api/ai', aiLimiter);
+app.use('/api/payments/create-order', paymentOrderLimiter);
 app.use('/api/doctors/profile/onboard', uploadLimiter);
 app.use('/api/patients/profile/avatar', uploadLimiter);
 app.use('/api/documents/upload', uploadLimiter);
@@ -214,7 +224,6 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
-app.use('/api/bookings', bookingRoutes);
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/payments', paymentRoutes);

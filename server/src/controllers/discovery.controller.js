@@ -157,15 +157,12 @@ export const getSpecializationList = asyncHandler(async (req, res) => {
  * Retrieve public doctor profile with recent reviews placeholder.
  */
 export const getDoctorPublicProfile = asyncHandler(async (req, res) => {
-  const profileDoc = await doctorService.getDoctorProfileById(req.params.id);
-
-  // Convert to plain object to attach rating/reviewCount fields and ensure compatibility
-  const profile = profileDoc.toObject();
+  const profile = await doctorService.getPublicDoctorProfileById(req.params.id);
   profile.rating = profile.averageRating ?? 0;
   profile.reviewCount = profile.totalReviews ?? 0;
 
   // Retrieve actual reviews for this doctor profile
-  const reviews = await Review.find({ doctor: profileDoc._id, isVisible: true })
+  const reviews = await Review.find({ doctor: profile._id, isVisible: true })
     .populate('patient', 'name')
     .sort({ createdAt: -1 });
 

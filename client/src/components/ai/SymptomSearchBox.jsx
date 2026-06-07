@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { interpretSymptomsAPI } from '../../api/ai.api';
 import AIRecommendationCard from './AIRecommendationCard';
+import useAuthStore from '../../store/authStore';
 import { Sparkles, Loader2, AlertCircle } from 'lucide-react';
 
 const SymptomSearchBox = ({ onSpecializationFound }) => {
+  const { isAuthenticated, user } = useAuthStore();
   const [symptoms, setSymptoms] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -26,6 +29,11 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
     const trimmed = symptoms.trim();
     if (trimmed.length < 5) {
       setError('Please describe your symptoms in more detail (minimum 5 characters)');
+      return;
+    }
+
+    if (!isAuthenticated || user?.role !== 'patient') {
+      setError('Please log in as a patient to use AI symptom analysis.');
       return;
     }
 
@@ -52,7 +60,13 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
       setResult(data);
     } catch (err) {
       console.error('Symptom search failed:', err);
-      setError('Unable to analyze symptoms right now. Please use the search filters below.');
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        setError('Please log in as a patient to use AI symptom analysis.');
+      } else if (err?.response?.status === 429) {
+        setError('Too many AI requests. Please wait a moment and try again.');
+      } else {
+        setError('Unable to analyze symptoms right now. Please use the search filters below.');
+      }
     } finally {
       setLoading(false);
     }
@@ -191,6 +205,15 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
             <div>
               <h5 className="text-[11px] font-black text-accent uppercase tracking-wider">Triage Query Warning</h5>
               <p className="text-[12px] text-accent font-medium mt-0.5">{error}</p>
+              {(!isAuthenticated || user?.role !== 'patient') && (
+                <Link
+                  to="/login"
+                  state={{ from: window.location.pathname }}
+                  className="inline-block mt-2 text-[11px] font-bold text-primary hover:underline uppercase tracking-wider"
+                >
+                  Sign in as a patient →
+                </Link>
+              )}
             </div>
           </div>
         )}

@@ -1,12 +1,13 @@
-import { interpretSymptoms, generateDoctorSummary, batchGenerateSummaries } from '../services/aiService.js';
+import { interpretSymptoms, batchGenerateSummaries } from '../services/aiService.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
 import { successResponse } from '../utils/apiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import AppError from '../utils/AppError.js';
+import { DOCTOR_STATUS } from '../utils/constants.js';
 
 /**
  * POST /api/ai/interpret-symptoms
- * Free-text symptom analysis for specialization recommendations. Public access.
+ * Free-text symptom analysis for specialization recommendations. Requires auth.
  */
 export const interpretSymptomsController = asyncHandler(async (req, res) => {
   const { symptoms } = req.body;
@@ -47,54 +48,21 @@ export const interpretSymptomsController = asyncHandler(async (req, res) => {
 
 /**
  * GET /api/ai/doctor-summary/:doctorId
- * Retrieves or generates an AI summary for a doctor's profile. Public access.
+ * Cache-only read for verified doctors — never calls Groq (generation is admin-only).
  */
 export const getDoctorAISummary = asyncHandler(async (req, res) => {
-  const profile = await DoctorProfile.findById(req.params.doctorId)
-    .populate('user', 'name');
+  const profile = await DoctorProfile.findOne({
+    _id: req.params.doctorId,
+    verificationStatus: DOCTOR_STATUS.VERIFIED,
+  }).select('aiSummary');
 
   if (!profile) {
     throw new AppError('Doctor not found', 404);
   }
 
-  // If summary already exists in DB — return it directly (no AI call)
-  if (profile.aiSummary) {
-    return successResponse(res, 200, 'Summary retrieved successfully', {
-      aiSummary: profile.aiSummary,
-      fromCache: true
-    });
-  }
-
-  // Check if there is enough content to generate a summary
-  if (!profile.bio || profile.bio.trim().length < 30) {
-    return successResponse(res, 200, 'Profile bio is too short to summarize', {
-      aiSummary: null,
-      fromCache: false
-    });
-  }
-
-  // Generate new summary
-  const summary = await generateDoctorSummary({
-    name: profile.user?.name,
-    specialization: profile.specialization,
-    experience: profile.experience,
-    bio: profile.bio,
-    qualifications: profile.qualifications,
-    clinicName: profile.clinicName,
-    languages: profile.languages
-  });
-
-  if (summary) {
-    // Store in DB so next request is served from cache
-    await DoctorProfile.findByIdAndUpdate(
-      req.params.doctorId,
-      { aiSummary: summary }
-    );
-  }
-
-  return successResponse(res, 200, 'Summary generated successfully', {
-    aiSummary: summary, // May be null if AI unavailable
-    fromCache: false
+  return successResponse(res, 200, 'Summary retrieved successfully', {
+    aiSummary: profile.aiSummary || null,
+    fromCache: Boolean(profile.aiSummary),
   });
 });
 

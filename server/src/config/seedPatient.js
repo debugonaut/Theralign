@@ -1,4 +1,5 @@
 import User from '../models/User.model.js';
+import config from './env.js';
 import { ROLES } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 
@@ -21,8 +22,8 @@ export const seedPatient = async () => {
         isActive: true,
       });
       logger.info(`[Seed] Created demo patient account: ${email}`);
-    } else {
-      patient.password = 'Demo@123456'; // Will be re-hashed on save if changed
+    } else if (config.nodeEnv !== 'production') {
+      patient.password = 'Demo@123456';
       patient.isActive = true;
       await patient.save();
       logger.info(`[Seed] Verified demo patient account and password: ${email}`);

@@ -3,6 +3,7 @@ import config from './src/config/env.js';
 import { connectDB } from './src/config/db.js';
 import logger from './src/utils/logger.js';
 import { initReminderJob } from './src/jobs/reminderJob.js';
+import { initExpirePendingJob } from './src/jobs/expirePendingAppointmentsJob.js';
 
 // ==========================================
 // PROCESS SAFETY NETS & LOGS
@@ -33,6 +34,7 @@ const startServer = async () => {
 
     // 3. Initialize scheduled background jobs
     initReminderJob();
+    initExpirePendingJob();
 
     process.on('SIGTERM', () => {
       logger.warn('SIGTERM signal received. Shutting down server gracefully...');

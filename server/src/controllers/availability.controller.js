@@ -1,4 +1,5 @@
 import asyncHandler from '../utils/asyncHandler.js';
+import { requireVerifiedDoctorProfile } from '../utils/verifiedDoctor.js';
 import { successResponse } from '../utils/apiResponse.js';
 import AppError from '../utils/AppError.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
@@ -228,6 +229,8 @@ export const deleteSlot = asyncHandler(async (req, res) => {
  */
 export const getAvailableSlots = asyncHandler(async (req, res) => {
   const { doctorId } = req.params;
+
+  await requireVerifiedDoctorProfile(doctorId);
 
   // Step 1: Construct today's date in YYYY-MM-DD using local timezone values
   const today = new Date();
@@ -473,10 +476,7 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
     throw new AppError('Query param ?date=YYYY-MM-DD is required.', 400);
   }
 
-  const doctorProfile = await DoctorProfile.findById(doctorId);
-  if (!doctorProfile) {
-    throw new AppError('Doctor not found.', 404);
-  }
+  const doctorProfile = await requireVerifiedDoctorProfile(doctorId);
 
   // Fetch active (confirmed or pending) appointments for this doctor on this date
   const activeAppts = await Appointment.find({

@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 import User from '../models/User.model.js';
 import AppError from '../utils/AppError.js';
+import config from '../config/env.js';
+import { ROLES } from '../utils/constants.js';
 import { sendPasswordResetEmail } from './emailService.js';
 
 /**
@@ -12,6 +14,12 @@ import { sendPasswordResetEmail } from './emailService.js';
  * @returns {{ user: object, token: string }}
  */
 export const registerUser = async ({ name, email, password, role }) => {
+  // Server-side role guard — admin accounts are seeded, never self-registered
+  const safeRole = role === ROLES.DOCTOR ? ROLES.DOCTOR : ROLES.PATIENT;
+  if (role === ROLES.ADMIN) {
+    throw new AppError('Admin accounts cannot be self-registered', 403);
+  }
+
   // 1. Check for duplicate email
   const existing = await User.findOne({ email });
   if (existing) {
@@ -19,7 +27,7 @@ export const registerUser = async ({ name, email, password, role }) => {
   }
 
   // 2. Create the user — pre-save hook handles hashing
-  const user = await User.create({ name, email, password, role });
+  const user = await User.create({ name, email, password, role: safeRole });
 
   // 3. Generate token
   const token = user.generateAuthToken();
@@ -115,7 +123,6 @@ export const forgotPassword = async ({ email }) => {
   const isMailConfigured = process.env.EMAIL_USER && process.env.EMAIL_PASS;
 
   if (isMailConfigured) {
-    // Send real email in production
     await sendPasswordResetEmail({
       email: user.email,
       name: user.name,
@@ -127,10 +134,18 @@ export const forgotPassword = async ({ email }) => {
     };
   }
 
-  // Graceful fallback: return token directly in the API response (Demo Mode)
+  // Production: fail closed — never expose reset tokens in API responses
+  if (config.nodeEnv === 'production') {
+    throw new AppError(
+      'Password reset is temporarily unavailable. Please contact support.',
+      503
+    );
+  }
+
+  // Development-only fallback when SMTP is not configured
   return {
     message: 'If this email exists, a reset link has been sent.',
-    resetToken: rawToken, // Demo only — fallback when credentials are not configured
+    resetToken: rawToken,
   };
 };
 
