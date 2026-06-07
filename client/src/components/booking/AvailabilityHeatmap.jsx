@@ -19,14 +19,14 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
     return 'available';
   };
 
-  // Generate date array for the subsequent 28 days from local today
+  // Generate date array for the subsequent 28 days from local today (aligned to Asia/Kolkata)
   const generateNext28Days = () => {
     const dates = [];
     const today = new Date();
     for (let i = 0; i < 28; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() + i);
-      dates.push(d.toISOString().split('T')[0]); // "YYYY-MM-DD"
+      dates.push(d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })); // "YYYY-MM-DD" in IST
     }
     return dates;
   };

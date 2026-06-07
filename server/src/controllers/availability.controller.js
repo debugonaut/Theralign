@@ -87,7 +87,7 @@ export const createRecurringSlots = asyncHandler(async (req, res) => {
   for (let week = 0; week < repeatWeeksNum; week++) {
     const d = new Date(baseDate);
     d.setDate(d.getDate() + week * 7);
-    targetDates.push(d.toISOString().split('T')[0]); // YYYY-MM-DD
+    targetDates.push(d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' }));
   }
 
   // Step 5: Attempt to create all slots individually, skipping duplicates (index collisions)
@@ -232,28 +232,22 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
 
   await requireVerifiedDoctorProfile(doctorId);
 
-  // Step 1: Construct today's date in YYYY-MM-DD using local timezone values
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const todayString = `${year}-${month}-${day}`;
+  // Step 1: Construct today's date in YYYY-MM-DD in Asia/Kolkata timezone
+  const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
 
   // Check if WeeklySchedule exists for this doctor
   const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
   if (weeklySchedule) {
-    // Generate dates for the next 7 days in doctor's local time (today to today + 6)
+    // Generate dates for the next 28 days in doctor's local time (today to today + 27, aligned to Asia/Kolkata)
     const targetDates = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 28; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const dayNum = String(d.getDate()).padStart(2, '0');
-      targetDates.push(`${y}-${m}-${dayNum}`);
+      const dateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+      targetDates.push(dateStr);
     }
 
-    // Fetch active appointments for these 7 days
+    // Fetch active appointments for these 28 days
     const activeAppts = await Appointment.find({
       doctor: doctorId,
       date: { $in: targetDates },

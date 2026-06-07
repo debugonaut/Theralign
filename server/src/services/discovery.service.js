@@ -217,11 +217,18 @@ export const searchDoctors = async ({ query, filters = {}, page = 1, limit = 12 
   const cleanQuery = query.trim();
   const escapedQuery = cleanQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+  // Strip 'Dr.' or 'Dr' prefix from user name search specifically
+  let nameQuery = cleanQuery;
+  if (/^dr\.?\s+/i.test(nameQuery)) {
+    nameQuery = nameQuery.replace(/^dr\.?\s+/i, '');
+  }
+  const escapedNameQuery = nameQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
   // Phase 1: Search User collection for matching doctor names
   const matchingUsers = await User.find({
     role: ROLES.DOCTOR,
     isActive: true,
-    name: { $regex: escapedQuery, $options: 'i' },
+    name: { $regex: escapedNameQuery, $options: 'i' },
   }).select('_id');
 
   const matchingUserIds = matchingUsers.map((u) => u._id);

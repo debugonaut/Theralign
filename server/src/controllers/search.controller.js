@@ -1,6 +1,7 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/apiResponse.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import User from '../models/User.model.js';
 
 /**
  * GET /api/search/suggestions
@@ -20,26 +21,32 @@ export const getSuggestions = asyncHandler(async (req, res) => {
 
   // Run Mongoose distinct & populate queries concurrently
   const [nameMatches, specializationMatches, cityMatches] = await Promise.all([
-    // 1. Match doctor user names
-    DoctorProfile.find({ verificationStatus: 'verified', isAvailable: true })
-      .populate({ 
-        path: 'user', 
-        match: { name: regex }, 
-        select: 'name' 
-      })
-      .limit(10)
-      .then(docs => 
-        docs
-          .filter(d => d.user) // Remove profiles where the populate match returned null
-          .map(d => ({
-            type: 'doctor',
-            label: d.user.name,
-            value: d.user.name,
-            subLabel: Array.isArray(d.specialization) ? d.specialization.join(', ') : d.specialization,
-            doctorId: d._id,
-          }))
-          .slice(0, 3) // Return top 3 matching doctors
-      ),
+    // 1. Match doctor user names — two-phase to avoid in-memory limit issues
+    User.find({
+      role: 'doctor',
+      isActive: true,
+      name: regex,
+    })
+      .select('_id name')
+      .limit(5)
+      .then(async (matchingUsers) => {
+        if (!matchingUsers.length) return [];
+        const userIds = matchingUsers.map((u) => u._id);
+        const profiles = await DoctorProfile.find({
+          user: { $in: userIds },
+          verificationStatus: 'verified',
+          isAvailable: true,
+        })
+          .populate('user', 'name')
+          .limit(3);
+        return profiles.map((d) => ({
+          type: 'doctor',
+          label: d.user.name,
+          value: d.user.name,
+          subLabel: Array.isArray(d.specialization) ? d.specialization.join(', ') : d.specialization,
+          doctorId: d._id,
+        }));
+      }),
 
     // 2. Match specializations distinct list
     DoctorProfile.distinct('specialization', {

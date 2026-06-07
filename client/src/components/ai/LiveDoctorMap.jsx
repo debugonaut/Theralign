@@ -15,7 +15,7 @@ const CITY_CENTERS = {
 
 // Radius steps in km
 const RADIUS_STEPS = [1, 2, 5, 10, 25, 50, 100, 250, 500, 1000, 3500];
-const DEFAULT_RADIUS_IDX = 2; // 5 km
+const DEFAULT_RADIUS_IDX = 7; // 250 km — wide enough to show all doctors in a region by default
 
 // Haversine distance in km
 const haversine = (lat1, lng1, lat2, lng2) => {
@@ -66,12 +66,12 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
     };
 
     fetchAllDoctors();
-    const interval = setInterval(fetchAllDoctors, 15000);
+    const interval = setInterval(fetchAllDoctors, 10000);
     return () => clearInterval(interval);
   }, [city, specialization, search]);
 
-  // ─── Filter doctors by radius from center ───
-  const visibleDoctors = radius >= 3500
+  // ─── Filter doctors by radius from center (bypass if search is active or doctor selected) ───
+  const visibleDoctors = (radius >= 3500 || search || selectedDoctorId)
     ? allDoctors
     : allDoctors.filter((doc) => {
         if (!doc.clinicLocation?.coordinates) return false;
@@ -227,11 +227,15 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
     });
 
     // Fit bounds to visible doctors
-    if (visibleDoctors.length > 0 && radius >= 3500) {
+    if (visibleDoctors.length > 0 && (radius >= 3500 || search || selectedDoctorId)) {
       const points = visibleDoctors
         .filter((d) => d.clinicLocation?.coordinates)
         .map((d) => [d.clinicLocation.coordinates[1], d.clinicLocation.coordinates[0]]);
-      if (points.length > 1) map.fitBounds(points, { padding: [40, 40] });
+      if (points.length > 1) {
+        map.fitBounds(points, { padding: [40, 40] });
+      } else if (points.length === 1) {
+        map.setView(points[0], 13);
+      }
     }
   }, [visibleDoctors, center, radius, selectedDoctorId]);
 

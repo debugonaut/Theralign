@@ -272,11 +272,7 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
 
   // Step 4: Validate date check for patients
   if (role === 'patient' && appointment.status === 'confirmed') {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayString = `${year}-${month}-${day}`;
+    const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
 
     if (appointment.date <= todayString) {
       throw new AppError('Cannot cancel a past or today\'s appointment.', 400);
@@ -449,11 +445,7 @@ export const rescheduleAppointment = asyncHandler(async (req, res) => {
     throw new AppError('Only confirmed appointments can be rescheduled.', 400);
   }
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const todayString = `${year}-${month}-${day}`;
+  const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
 
   if (appointment.date <= todayString) {
     throw new AppError('Cannot reschedule past or today\'s appointments.', 400);

@@ -94,7 +94,7 @@ export const getNearbyDoctors = asyncHandler(async (req, res) => {
  * Full text search across names, specializations, bios, etc.
  */
 export const searchDoctors = asyncHandler(async (req, res) => {
-  const { q, specialization, page = 1, limit = 12 } = req.query;
+  const { q, page = 1, limit = 12, ...filters } = req.query;
 
   if (!q || q.trim().length < 2) {
     throw new AppError('Search query must be at least 2 characters', 400);
@@ -102,7 +102,7 @@ export const searchDoctors = asyncHandler(async (req, res) => {
 
   const result = await discoveryService.searchDoctors({
     query: q.trim(),
-    filters: { specialization },
+    filters,
     page: Number(page),
     limit: Number(limit),
   });

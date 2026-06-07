@@ -77,7 +77,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     fetchAvailability(false);
     const interval = setInterval(() => {
       fetchAvailability(true);
-    }, 15000); // Poll every 15 seconds to update slots in real time
+    }, 8000); // Poll every 8 seconds for near-real-time slot updates
     return () => clearInterval(interval);
   }, [doctorId]);
 

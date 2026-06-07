@@ -16,7 +16,7 @@ export const initReminderJob = () => {
       // Calculate tomorrow's date string in YYYY-MM-DD format
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      const tomorrowStr = tomorrow.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
 
       // Fetch tomorrow's active confirmed bookings
       const appointments = await Appointment.find({

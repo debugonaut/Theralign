@@ -66,4 +66,26 @@ export const searchDoctorsValidation = [
   query('limit')
     .optional()
     .isInt({ min: 1, max: 50 }).withMessage('limit must be between 1 and 50'),
+
+  query('minFee')
+    .optional()
+    .isFloat({ min: 0 }).withMessage('minFee must be a non-negative number'),
+
+  query('maxFee')
+    .optional()
+    .isFloat({ min: 0 }).withMessage('maxFee must be a non-negative number')
+    .custom((value, { req }) => {
+      if (req.query.minFee && Number(value) < Number(req.query.minFee)) {
+        throw new Error('maxFee must be greater than or equal to minFee');
+      }
+      return true;
+    }),
+
+  query('minRating')
+    .optional()
+    .isFloat({ min: 0, max: 5 }).withMessage('minRating must be between 0 and 5'),
+
+  query('minExperience')
+    .optional()
+    .isInt({ min: 0 }).withMessage('minExperience must be a non-negative integer'),
 ];
