@@ -236,6 +236,109 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
   const day = String(today.getDate()).padStart(2, '0');
   const todayString = `${year}-${month}-${day}`;
 
+  // Check if WeeklySchedule exists for this doctor
+  const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
+  if (weeklySchedule) {
+    // Generate dates for the next 7 days in doctor's local time (today to today + 6)
+    const targetDates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dayNum = String(d.getDate()).padStart(2, '0');
+      targetDates.push(`${y}-${m}-${dayNum}`);
+    }
+
+    // Fetch active appointments for these 7 days
+    const activeAppts = await Appointment.find({
+      doctor: doctorId,
+      date: { $in: targetDates },
+      status: { $in: ['confirmed', 'pending'] },
+    });
+
+    // Group appointments by date
+    const apptsByDate = activeAppts.reduce((acc, appt) => {
+      if (!acc[appt.date]) {
+        acc[appt.date] = new Set();
+      }
+      acc[appt.date].add(appt.startTime);
+      return acc;
+    }, {});
+
+    const toMinutes = (timeStr) => {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    };
+    const fromMinutes = (totalMins) => {
+      const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+      const m = (totalMins % 60).toString().padStart(2, '0');
+      return `${h}:${m}`;
+    };
+
+    const duration = weeklySchedule.slotDurationMinutes;
+    const breakStart = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakStartTime) : null;
+    const breakEnd = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakEndTime) : null;
+
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    const grouped = [];
+
+    for (const dateStr of targetDates) {
+      // Skip if date is blocked
+      if (weeklySchedule.blockedDates.includes(dateStr)) {
+        continue;
+      }
+
+      // Determine day name
+      const dayOfWeek = new Date(dateStr + 'T00:00:00').getDay();
+      const dayName = dayNames[dayOfWeek];
+      const daySchedule = weeklySchedule.schedule[dayName];
+
+      if (!daySchedule?.enabled) {
+        continue;
+      }
+
+      const occupiedStartTimes = apptsByDate[dateStr] || new Set();
+
+      const startMins = toMinutes(daySchedule.startTime);
+      const endMins = toMinutes(daySchedule.endTime);
+      const computedSlots = [];
+      let cursor = startMins;
+
+      while (cursor + duration <= endMins) {
+        const slotEnd = cursor + duration;
+        const overlapsBreak = breakStart !== null &&
+          !(slotEnd <= breakStart || cursor >= breakEnd);
+
+        if (!overlapsBreak) {
+          const startTimeStr = fromMinutes(cursor);
+          if (!occupiedStartTimes.has(startTimeStr)) {
+            computedSlots.push({
+              _id: `slot_weekly_${doctorId}_${dateStr}_${startTimeStr}`,
+              startTime: startTimeStr,
+              endTime: fromMinutes(slotEnd),
+              date: dateStr,
+              doctor: doctorId,
+              isBooked: false,
+              isActive: true,
+            });
+          }
+        }
+        cursor += duration;
+      }
+
+      if (computedSlots.length > 0) {
+        grouped.push({
+          date: dateStr,
+          slots: computedSlots,
+        });
+      }
+    }
+
+    return successResponse(res, 200, 'Available slots retrieved successfully', grouped);
+  }
+
   // Step 2: Query active, unbooked future slots
   const slots = await AvailabilitySlot.find({
     doctor: doctorId,
@@ -382,6 +485,9 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
     status: { $in: ['confirmed', 'pending'] },
   });
   const occupiedStartTimes = new Set(activeAppts.map((appt) => appt.startTime));
+
+  // Retrieve weekly schedule
+  const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorProfile._id });
 
   if (!weeklySchedule) {
     // Fallback: old AvailabilitySlot model

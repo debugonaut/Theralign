@@ -20,9 +20,9 @@ const AdminBookings = () => {
 
   const LIMIT = 10;
 
-  const fetchAppointments = useCallback(async () => {
+  const fetchAppointments = useCallback(async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const res = await getAllAppointments(page, LIMIT);
       const d = res.data || res || {};
       const appts = d.appointments || [];
@@ -40,14 +40,21 @@ const AdminBookings = () => {
       const comm = filtered.reduce((s, a) => s + (a.platformCommission || 0), 0);
       setPageTotals({ fees, commission: comm });
     } catch {
-      toast.error('Failed to load appointments registry');
+      if (!silent) toast.error('Failed to load appointments registry');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [page, statusFilter]);
 
   useEffect(() => {
-    fetchAppointments();
+    fetchAppointments(false);
+  }, [fetchAppointments]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchAppointments(true);
+    }, 15000);
+    return () => clearInterval(interval);
   }, [fetchAppointments]);
 
   const STATUS_TABS = [

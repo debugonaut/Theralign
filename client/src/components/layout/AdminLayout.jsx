@@ -197,7 +197,7 @@ const AdminLayout = () => {
 
         {/* Page Body */}
         <main className="flex-1 overflow-y-auto bg-neutral-50 page-fade-in">
-          <div className="max-w-[1200px] px-6 py-6">
+          <div className="max-w-[1200px] mx-auto w-full px-6 py-6">
             <Outlet />
           </div>
         </main>

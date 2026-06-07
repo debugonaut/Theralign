@@ -20,9 +20,9 @@ const AdminUsers = () => {
 
   const LIMIT = 15;
 
-  const fetchUsers = useCallback(async () => {
+  const fetchUsers = useCallback(async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const params = { page, limit: LIMIT };
       if (search) params.search = search;
       if (roleFilter !== 'all') params.role = roleFilter;
@@ -34,14 +34,21 @@ const AdminUsers = () => {
       setTotal(d.total || 0);
       setTotalPages(d.totalPages || 1);
     } catch {
-      toast.error('Failed to load user directory');
+      if (!silent) toast.error('Failed to load user directory');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [page, search, roleFilter, statusFilter]);
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(false);
+  }, [fetchUsers]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchUsers(true);
+    }, 15000);
+    return () => clearInterval(interval);
   }, [fetchUsers]);
 
   const handleToggleStatus = async (userId) => {

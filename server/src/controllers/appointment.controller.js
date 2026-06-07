@@ -4,6 +4,7 @@ import AppError from '../utils/AppError.js';
 import Appointment from '../models/Appointment.model.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import WeeklySchedule from '../models/WeeklySchedule.model.js';
 import { sendBookingConfirmation, sendCancellationNotice } from '../services/emailService.js';
 import { createNotification } from '../services/notificationService.js';
 
@@ -19,12 +20,90 @@ export const bookAppointment = asyncHandler(async (req, res) => {
     throw new AppError('Slot ID is required to book an appointment.', 400);
   }
 
-  // Step 1: ATOMIC SLOT LOCK
-  const slot = await AvailabilitySlot.findOneAndUpdate(
-    { _id: slotId, isBooked: false, isActive: true },
-    { $set: { isBooked: true } },
-    { new: true }
-  );
+  // Step 1: ATOMIC SLOT LOCK / DYNAMIC CREATION
+  let slot;
+  if (typeof slotId === 'string' && slotId.startsWith('slot_weekly_')) {
+    const parts = slotId.split('_');
+    const doctorId = parts[2];
+    const date = parts[3];
+    const startTime = parts[4];
+
+    // Check if slot already exists in DB
+    let existingSlot = await AvailabilitySlot.findOne({ doctor: doctorId, date, startTime });
+    if (existingSlot) {
+      if (existingSlot.isBooked) {
+        throw new AppError('This slot is no longer available.', 409);
+      }
+      existingSlot.isBooked = true;
+      await existingSlot.save();
+      slot = existingSlot;
+    } else {
+      const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
+      if (!weeklySchedule) {
+        throw new AppError('Doctor availability schedule not found.', 404);
+      }
+
+      if (weeklySchedule.blockedDates.includes(date)) {
+        throw new AppError('This slot is no longer available on this date.', 409);
+      }
+
+      const toMinutes = (timeStr) => {
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+      };
+      const fromMinutes = (totalMins) => {
+        const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+        const m = (totalMins % 60).toString().padStart(2, '0');
+        return `${h}:${m}`;
+      };
+
+      const startMins = toMinutes(startTime);
+      const duration = weeklySchedule.slotDurationMinutes;
+      const endTime = fromMinutes(startMins + duration);
+
+      // Check if an active appointment already exists
+      const activeAppt = await Appointment.findOne({
+        doctor: doctorId,
+        date,
+        startTime,
+        status: { $in: ['confirmed', 'pending'] }
+      });
+      if (activeAppt) {
+        throw new AppError('This slot is no longer available.', 409);
+      }
+
+      try {
+        slot = await AvailabilitySlot.create({
+          doctor: doctorId,
+          date,
+          startTime,
+          endTime,
+          isBooked: true,
+          isActive: true,
+        });
+      } catch (err) {
+        if (err.code === 11000) {
+          existingSlot = await AvailabilitySlot.findOneAndUpdate(
+            { doctor: doctorId, date, startTime, isBooked: false, isActive: true },
+            { $set: { isBooked: true } },
+            { new: true }
+          );
+          if (!existingSlot) {
+            throw new AppError('This slot is no longer available.', 409);
+          }
+          slot = existingSlot;
+        } else {
+          throw err;
+        }
+      }
+    }
+  } else {
+    slot = await AvailabilitySlot.findOneAndUpdate(
+      { _id: slotId, isBooked: false, isActive: true },
+      { $set: { isBooked: true } },
+      { new: true }
+    );
+  }
 
   if (!slot) {
     throw new AppError('This slot is no longer available.', 409);
@@ -34,7 +113,7 @@ export const bookAppointment = asyncHandler(async (req, res) => {
   const doctorProfile = await DoctorProfile.findById(slot.doctor);
   if (!doctorProfile) {
     // Rollback slot if doctor is not found
-    await AvailabilitySlot.findByIdAndUpdate(slotId, { $set: { isBooked: false } });
+    await AvailabilitySlot.findByIdAndUpdate(slot._id, { $set: { isBooked: false } });
     throw new AppError('The doctor profile for this slot does not exist.', 404);
   }
 
@@ -62,7 +141,7 @@ export const bookAppointment = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     // Rollback slot isBooked state
-    await AvailabilitySlot.findByIdAndUpdate(slotId, { $set: { isBooked: false } });
+    await AvailabilitySlot.findByIdAndUpdate(slot._id, { $set: { isBooked: false } });
     throw new AppError('Failed to create booking transaction. Slot rolled back.', 500);
   }
 
@@ -357,33 +436,111 @@ export const rescheduleAppointment = asyncHandler(async (req, res) => {
     throw new AppError('Cannot reschedule past or today\'s appointments.', 400);
   }
 
-  // Step 3: Verify new slot exists and belongs to the SAME doctor
-  const newSlot = await AvailabilitySlot.findOne({
-    _id: newSlotId,
-    doctor: appointment.doctor,
-    isActive: true,
-  });
+  // Step 3: Secure the new slot atomically / DYNAMIC CREATION
+  let lockedNewSlot;
+  if (typeof newSlotId === 'string' && newSlotId.startsWith('slot_weekly_')) {
+    const parts = newSlotId.split('_');
+    const doctorId = parts[2];
+    const date = parts[3];
+    const startTime = parts[4];
 
-  if (!newSlot) {
-    throw new AppError('The requested time slot is invalid or belongs to a different doctor.', 400);
+    if (doctorId !== appointment.doctor.toString()) {
+      throw new AppError('The requested time slot belongs to a different doctor.', 400);
+    }
+
+    // Check if slot already exists in DB
+    let existingSlot = await AvailabilitySlot.findOne({ doctor: doctorId, date, startTime });
+    if (existingSlot) {
+      if (existingSlot.isBooked) {
+        throw new AppError('The requested time slot is no longer available.', 409);
+      }
+      existingSlot.isBooked = true;
+      await existingSlot.save();
+      lockedNewSlot = existingSlot;
+    } else {
+      const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
+      if (!weeklySchedule) {
+        throw new AppError('Doctor availability schedule not found.', 404);
+      }
+
+      if (weeklySchedule.blockedDates.includes(date)) {
+        throw new AppError('The requested time slot is no longer available on this date.', 409);
+      }
+
+      const toMinutes = (timeStr) => {
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+      };
+      const fromMinutes = (totalMins) => {
+        const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+        const m = (totalMins % 60).toString().padStart(2, '0');
+        return `${h}:${m}`;
+      };
+
+      const startMins = toMinutes(startTime);
+      const duration = weeklySchedule.slotDurationMinutes;
+      const endTime = fromMinutes(startMins + duration);
+
+      const activeAppt = await Appointment.findOne({
+        doctor: doctorId,
+        date,
+        startTime,
+        status: { $in: ['confirmed', 'pending'] }
+      });
+      if (activeAppt) {
+        throw new AppError('The requested time slot is no longer available.', 409);
+      }
+
+      try {
+        lockedNewSlot = await AvailabilitySlot.create({
+          doctor: doctorId,
+          date,
+          startTime,
+          endTime,
+          isBooked: true,
+          isActive: true,
+        });
+      } catch (err) {
+        if (err.code === 11000) {
+          existingSlot = await AvailabilitySlot.findOneAndUpdate(
+            { doctor: doctorId, date, startTime, isBooked: false, isActive: true },
+            { $set: { isBooked: true } },
+            { new: true }
+          );
+          if (!existingSlot) {
+            throw new AppError('The requested time slot is no longer available.', 409);
+          }
+          lockedNewSlot = existingSlot;
+        } else {
+          throw err;
+        }
+      }
+    }
+  } else {
+    // Verify legacy slot owner is correct doctor
+    const legacySlot = await AvailabilitySlot.findOne({ _id: newSlotId, doctor: appointment.doctor, isActive: true });
+    if (!legacySlot) {
+      throw new AppError('The requested time slot is invalid or belongs to a different doctor.', 400);
+    }
+
+    lockedNewSlot = await AvailabilitySlot.findOneAndUpdate(
+      { _id: newSlotId, isBooked: false, isActive: true },
+      { $set: { isBooked: true } },
+      { new: true }
+    );
   }
-
-  if (newSlot._id.toString() === appointment.slot?.toString()) {
-    throw new AppError('You are already scheduled in this time slot.', 400);
-  }
-
-  // Step 4: Secure the new slot atomically (secured first to avoid losing current booking if slot was taken)
-  const lockedNewSlot = await AvailabilitySlot.findOneAndUpdate(
-    { _id: newSlotId, isBooked: false, isActive: true },
-    { $set: { isBooked: true } },
-    { new: true }
-  );
 
   if (!lockedNewSlot) {
     throw new AppError('The requested time slot is no longer available.', 409);
   }
 
-  // Step 5: Release the old slot and update the appointment
+  if (lockedNewSlot._id.toString() === appointment.slot?.toString()) {
+    // Rollback booking status if slot is same
+    await AvailabilitySlot.findByIdAndUpdate(lockedNewSlot._id, { $set: { isBooked: false } });
+    throw new AppError('You are already scheduled in this time slot.', 400);
+  }
+
+  // Step 4: Release the old slot and update the appointment
   const oldSlotId = appointment.slot;
 
   try {
@@ -401,7 +558,7 @@ export const rescheduleAppointment = asyncHandler(async (req, res) => {
     await appointment.save();
   } catch (err) {
     // Rollback atomic lock on new slot if database save fails
-    await AvailabilitySlot.findByIdAndUpdate(newSlotId, { $set: { isBooked: false } });
+    await AvailabilitySlot.findByIdAndUpdate(lockedNewSlot._id, { $set: { isBooked: false } });
     throw new AppError('Failed to complete rescheduling operation. Slot rolled back.', 500);
   }
 

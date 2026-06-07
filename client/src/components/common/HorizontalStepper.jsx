@@ -38,14 +38,7 @@ const HorizontalStepper = ({
           const isActive = idx === activeStep;
           const isUpcoming = idx > activeStep;
 
-          const labels = [
-            'Basic Info',
-            'Medical History',
-            'Lifestyle',
-            'Emergency Contacts',
-            'Insurance'
-          ];
-          const labelText = labels[idx] || step.label;
+          const labelText = step.label || step.value || step.key;
 
           // Determine circle classes and content
           let circleClass = 'w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ';

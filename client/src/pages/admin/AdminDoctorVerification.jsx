@@ -46,23 +46,23 @@ const AdminDoctorVerification = () => {
   const LIMIT = 10;
 
   // 1. Fetch verification queue
-  const fetchQueue = async () => {
+  const fetchQueue = async (silent = false) => {
     try {
-      setLoadingQueue(true);
+      if (!silent) setLoadingQueue(true);
       const res = await getPendingDoctorsAPI();
       const list = res.data?.profiles || res.data || [];
       setPendingQueue(list);
     } catch (err) {
-      toast.error('Failed to load pending applications queue');
+      if (!silent) toast.error('Failed to load pending applications queue');
     } finally {
-      setLoadingQueue(false);
+      if (!silent) setLoadingQueue(false);
     }
   };
 
   // 2. Fetch full directory (paginated, searchable, filterable)
-  const fetchDirectory = useCallback(async () => {
+  const fetchDirectory = useCallback(async (silent = false) => {
     try {
-      setLoadingDirectory(true);
+      if (!silent) setLoadingDirectory(true);
       const params = { page, limit: LIMIT };
       if (search) params.search = search;
       if (statusFilter !== 'all') params.status = statusFilter;
@@ -73,18 +73,26 @@ const AdminDoctorVerification = () => {
       setDirectoryTotal(data.total || 0);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
-      toast.error('Failed to load doctor directory ledger');
+      if (!silent) toast.error('Failed to load doctor directory ledger');
     } finally {
-      setLoadingDirectory(false);
+      if (!silent) setLoadingDirectory(false);
     }
   }, [page, search, statusFilter]);
 
   useEffect(() => {
-    fetchQueue();
+    fetchQueue(false);
   }, []);
 
   useEffect(() => {
-    fetchDirectory();
+    fetchDirectory(false);
+  }, [fetchDirectory]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchQueue(true);
+      fetchDirectory(true);
+    }, 15000);
+    return () => clearInterval(interval);
   }, [fetchDirectory]);
 
   // Handle Search Input Change

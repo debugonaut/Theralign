@@ -39,21 +39,28 @@ const PatientDashboard = () => {
     };
   }, []);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await getMyAppointments();
       setAppointments(res.data || res.appointments || []);
     } catch (err) {
       console.warn('Dashboard appointments load failure:', err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     document.title = 'Dashboard — Theralign';
-    fetchData();
+    fetchData(false);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchData(true);
+    }, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   // Compute metrics

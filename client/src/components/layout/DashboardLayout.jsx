@@ -221,7 +221,7 @@ const DashboardLayout = () => {
 
         {/* Page Body */}
         <main className="flex-1 overflow-y-auto bg-neutral-50 page-fade-in">
-          <div className="max-w-[1200px] px-6 py-6">
+          <div className="max-w-[1200px] mx-auto w-full px-6 py-6">
             <Outlet />
           </div>
         </main>
@@ -235,14 +235,14 @@ const DashboardLayout = () => {
             .animate-fade-in { animation: theralignFadeIn 0.3s ease-out forwards; }
             .animate-scale-in { animation: theralignScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
           `}} />
-          <div className="bg-white border-2 border-neutral-900 p-8 max-w-lg w-full text-center rounded-none shadow-none flex flex-col items-center gap-6 animate-scale-in">
+          <div className="bg-white border border-neutral-200/80 p-8 max-w-md w-full text-center rounded-2xl shadow-2xl flex flex-col items-center gap-6 animate-scale-in mx-4 border-t-4 border-t-primary">
             {/* Verified Badge Check Icon */}
-            <div className="w-16 h-16 rounded-full bg-[#E8F8F5] border-2 border-success text-success flex items-center justify-center shrink-0">
+            <div className="w-16 h-16 rounded-full bg-[#E8F8F5] border border-success/30 text-success flex items-center justify-center shrink-0 shadow-sm animate-circle-pop">
               <span className="text-3xl font-black leading-none">✓</span>
             </div>
             
             <div className="flex flex-col gap-2">
-              <h2 className="text-2xl font-black text-neutral-900 uppercase tracking-tighter leading-none">
+              <h2 className="text-xl font-black text-neutral-900 uppercase tracking-tighter leading-tight">
                 YOUR APPLICATION IS ACCEPTED!
               </h2>
               <p className="text-[11px] font-black text-success uppercase tracking-widest mt-1">
@@ -260,7 +260,7 @@ const DashboardLayout = () => {
                 setShowVerificationSuccessModal(false);
                 window.location.reload(); // Re-sync layouts
               }}
-              className="w-full py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white font-black text-xs uppercase tracking-widest transition-all select-none border-0 cursor-pointer"
+              className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-bold text-xs uppercase tracking-widest transition-all select-none rounded-xl cursor-pointer shadow-md border-0 active-press"
             >
               GO LIVE & ENTER DASHBOARD →
             </button>

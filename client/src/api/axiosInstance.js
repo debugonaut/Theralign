@@ -3,8 +3,8 @@ import axios from 'axios';
 let apiURL = import.meta.env.VITE_API_URL;
 
 if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-  // Force local development server (configured on port 5002 in server env)
-  apiURL = 'http://localhost:5002';
+  // Force local development server (configured on port 5012 in server env)
+  apiURL = 'http://localhost:5012';
 } else if (!apiURL) {
   apiURL = 'https://theralign.onrender.com';
 }

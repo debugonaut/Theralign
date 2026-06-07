@@ -162,13 +162,15 @@ const PatientProfile = () => {
       return () => clearTimeout(timer);
     }
   }, [formData, activeTab, savedData]);
-
   const fetchProfile = async () => {
     try {
       const response = await patientProfileService.getProfile();
       const dbProf = response.profile;
       setProfile(dbProf);
-      setCompletedSteps(dbProf?.completedSteps || getCompletedSteps(dbProf));
+      const initialCompleted = (dbProf?.completedSteps && dbProf.completedSteps.length > 0)
+        ? dbProf.completedSteps
+        : getCompletedSteps(dbProf);
+      setCompletedSteps(initialCompleted);
 
       // Construct initial values from database profile
       const initialForm = {

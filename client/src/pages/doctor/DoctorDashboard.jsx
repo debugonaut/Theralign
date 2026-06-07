@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getDoctorProfileAPI } from '../../api/doctor.api';
 import { getDoctorAppointments, completeAppointment } from '../../api/appointment.api';
-import { getMySlots } from '../../api/availability.api';
+import { getMySlots, getWeeklyScheduleAPI } from '../../api/availability.api';
 import useAuthStore from '../../store/authStore';
 import SectionHeader from '../../components/common/SectionHeader';
 import Badge from '../../components/common/Badge';
@@ -22,10 +22,11 @@ const DoctorDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [profileRes, apptRes, slotsRes] = await Promise.all([
+      const [profileRes, apptRes, slotsRes, scheduleRes] = await Promise.all([
         getDoctorProfileAPI().catch(() => ({ success: true, data: { profile: null } })),
         getDoctorAppointments().catch(() => ({ success: true, data: [] })),
         getMySlots().catch(() => ({ success: true, data: [] })),
+        getWeeklyScheduleAPI().catch(() => ({ success: true, data: { schedule: null } })),
       ]);
 
       if (profileRes.success && profileRes.data?.profile) {
@@ -41,7 +42,14 @@ const DoctorDashboard = () => {
         else if (Array.isArray(slotsRes)) slots = slotsRes;
         else if (slotsRes.success && Array.isArray(slotsRes.data?.slots)) slots = slotsRes.data.slots;
       }
-      setSlotCount(slots.length);
+      
+      let hasWeekly = false;
+      if (scheduleRes?.data?.schedule?.schedule) {
+        const schedObj = scheduleRes.data.schedule.schedule;
+        hasWeekly = Object.values(schedObj).some(day => day && day.enabled === true);
+      }
+
+      setSlotCount(slots.length || (hasWeekly ? 1 : 0));
     } catch (err) {
       console.error('Failed to load doctor dashboard:', err);
       toast.error('FAILED TO FETCH PRACTICE STATUS DATA.');

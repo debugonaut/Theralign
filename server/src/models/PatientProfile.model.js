@@ -143,7 +143,6 @@ const patientProfileSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
 // Virtual for profile completion percentage
 patientProfileSchema.virtual('completionPercentage').get(function () {
   if (this.completedSteps && this.completedSteps.length > 0) {
@@ -152,11 +151,18 @@ patientProfileSchema.virtual('completionPercentage').get(function () {
   
   // Fallback calculation in case completedSteps is not populated yet
   let score = 0;
-  if (this.dateOfBirth && this.bloodGroup) score += 20;
-  if (this.medicalHistory) score += 20; 
+  if (this.dateOfBirth && this.gender && this.bloodGroup) score += 20;
+  if (
+    this.medicalHistory &&
+    (this.medicalHistory.conditions?.length > 0 ||
+      this.medicalHistory.medications?.length > 0 ||
+      this.medicalHistory.surgeries?.length > 0)
+  ) {
+    score += 20;
+  }
   if (this.lifestyle && this.lifestyle.activityLevel) score += 20;
   if (this.emergencyContacts && this.emergencyContacts.length > 0) score += 20;
-  if (this.insurance && this.insurance.provider) score += 20;
+  if (this.insurance && (this.insurance.provider || this.insurance.policyNumber)) score += 20;
 
   return score;
 });

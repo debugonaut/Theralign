@@ -33,23 +33,32 @@ const DoctorAppointments = () => {
   // Document action loading state
   const [actionLoading, setActionLoading] = useState({});
 
-  const fetchAppointments = async () => {
-    setLoading(true);
+  const fetchAppointments = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await getDoctorAppointments();
       const rawAppts = res.data?.appointments || res.data || res.appointments || [];
       setAppointments(rawAppts);
     } catch (err) {
       console.error(err);
-      toast.error('FAILED TO FETCH APPOINTMENT TRANSACTION RECORDS.');
+      if (!silent) {
+        toast.error('FAILED TO FETCH APPOINTMENT TRANSACTION RECORDS.');
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     document.title = 'APPOINTMENTS — Theralign';
-    fetchAppointments();
+    fetchAppointments(false);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchAppointments(true);
+    }, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const todayStr = new Date().toISOString().split('T')[0];

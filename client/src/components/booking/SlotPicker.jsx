@@ -44,6 +44,8 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
   useEffect(() => {
     fetchAvailability();
+    const interval = setInterval(fetchAvailability, 15000); // Poll every 15 seconds to update slots in real time
+    return () => clearInterval(interval);
   }, [doctorId]);
 
   const slotsForSelectedDate = availabilityByDate.find(d => d.date === selectedDate)?.slots || [];
