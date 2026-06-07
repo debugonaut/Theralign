@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Menu, X, LogOut, LayoutDashboard, Calendar, Search, 
@@ -15,6 +15,8 @@ const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState('pending');
   const [pendingCount, setPendingCount] = useState(0);
+  const [showVerificationSuccessModal, setShowVerificationSuccessModal] = useState(false);
+  const isInitiallyVerified = useRef(null);
 
   const user = useAuthStore((state) => state.user);
   const clearCredentials = useAuthStore((state) => state.clearCredentials);
@@ -31,7 +33,16 @@ const DashboardLayout = () => {
         try {
           const profileRes = await getDoctorProfileAPI();
           if (profileRes.success && profileRes.data?.profile) {
-            setVerificationStatus(profileRes.data.profile.verificationStatus);
+            const currentStatus = profileRes.data.profile.verificationStatus;
+            
+            if (isInitiallyVerified.current === null) {
+              isInitiallyVerified.current = currentStatus === 'verified';
+            } else if (!isInitiallyVerified.current && currentStatus === 'verified') {
+              setShowVerificationSuccessModal(true);
+              isInitiallyVerified.current = true;
+            }
+
+            setVerificationStatus(currentStatus);
           }
         } catch (err) {
           console.error('Failed to fetch doctor profile in layout:', err);
@@ -50,6 +61,8 @@ const DashboardLayout = () => {
       };
 
       fetchDoctorData();
+      const interval = setInterval(fetchDoctorData, 15000);
+      return () => clearInterval(interval);
     }
   }, [user, location.pathname]);
 
@@ -213,6 +226,47 @@ const DashboardLayout = () => {
           </div>
         </main>
       </div>
+      {/* Real-time Verification Success Full-Screen Modal */}
+      {showVerificationSuccessModal && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-neutral-950/80 backdrop-blur-md select-none animate-fade-in">
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes theralignFadeIn { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes theralignScaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+            .animate-fade-in { animation: theralignFadeIn 0.3s ease-out forwards; }
+            .animate-scale-in { animation: theralignScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+          `}} />
+          <div className="bg-white border-2 border-neutral-900 p-8 max-w-lg w-full text-center rounded-none shadow-none flex flex-col items-center gap-6 animate-scale-in">
+            {/* Verified Badge Check Icon */}
+            <div className="w-16 h-16 rounded-full bg-[#E8F8F5] border-2 border-success text-success flex items-center justify-center shrink-0">
+              <span className="text-3xl font-black leading-none">✓</span>
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <h2 className="text-2xl font-black text-neutral-900 uppercase tracking-tighter leading-none">
+                YOUR APPLICATION IS ACCEPTED!
+              </h2>
+              <p className="text-[11px] font-black text-success uppercase tracking-widest mt-1">
+                Verified Specialist Status Active
+              </p>
+            </div>
+
+            <p className="text-xs text-neutral-500 font-bold uppercase tracking-wide leading-relaxed">
+              Your professional qualifications and clinic details have been successfully verified. Your clinic profile is now live on the public directory map and search radar!
+            </p>
+
+            <button
+              type="button"
+              onClick={() => {
+                setShowVerificationSuccessModal(false);
+                window.location.reload(); // Re-sync layouts
+              }}
+              className="w-full py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white font-black text-xs uppercase tracking-widest transition-all select-none border-0 cursor-pointer"
+            >
+              GO LIVE & ENTER DASHBOARD →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

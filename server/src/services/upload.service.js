@@ -12,14 +12,10 @@ import AppError from '../utils/AppError.js';
  */
 export const uploadToCloudinary = async (localFilePath, folder) => {
   try {
-    // Detect if file is a PDF to use correct resource_type
-    const isPdf = localFilePath.toLowerCase().endsWith('.pdf');
     const uploadOptions = {
       folder: `theralign/${folder}`,
+      resource_type: 'auto',
     };
-    if (isPdf) {
-      uploadOptions.resource_type = 'raw';
-    }
 
     const result = await cloudinary.uploader.upload(localFilePath, uploadOptions);
 

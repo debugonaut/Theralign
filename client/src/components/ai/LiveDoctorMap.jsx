@@ -42,13 +42,19 @@ const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
   const activeCityKey = (city || 'pune').toLowerCase();
   const center = CITY_CENTERS[activeCityKey] || CITY_CENTERS.pune;
 
-  // ─── Fetch all 32 doctors once ───
+  // ─── Fetch all doctors with background polling ───
   useEffect(() => {
-    getDiscoveryListingAPI({ limit: 50, page: 1 })
-      .then((res) => {
-        if (res.success && res.data?.doctors) setAllDoctors(res.data.doctors);
-      })
-      .catch(() => {});
+    const fetchAllDoctors = () => {
+      getDiscoveryListingAPI({ limit: 50, page: 1 })
+        .then((res) => {
+          if (res.success && res.data?.doctors) setAllDoctors(res.data.doctors);
+        })
+        .catch(() => {});
+    };
+
+    fetchAllDoctors();
+    const interval = setInterval(fetchAllDoctors, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   // ─── Filter doctors by radius from center ───

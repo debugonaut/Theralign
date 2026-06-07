@@ -51,9 +51,11 @@ const DoctorListingPage = () => {
   }, []);
 
   // Fetch listing data
-  const fetchDoctors = async () => {
-    setLoading(true);
-    setError(null);
+  const fetchDoctors = async (isBackground = false) => {
+    if (!isBackground) {
+      setLoading(true);
+      setError(null);
+    }
     try {
       let result;
       const rawFilters = {
@@ -89,15 +91,25 @@ const DoctorListingPage = () => {
       }
     } catch (err) {
       console.error(err);
-      setError('FAILED TO DISCOVER PHYSICIANS. PLEASE RETRY QUERY.');
+      if (!isBackground) {
+        setError('FAILED TO DISCOVER PHYSICIANS. PLEASE RETRY QUERY.');
+      }
     } finally {
-      setLoading(false);
+      if (!isBackground) {
+        setLoading(false);
+      }
     }
   };
 
-  // Trigger search on params change
+  // Trigger search on params change and set up background polling
   useEffect(() => {
-    fetchDoctors();
+    fetchDoctors(false);
+
+    const interval = setInterval(() => {
+      fetchDoctors(true);
+    }, 15000);
+
+    return () => clearInterval(interval);
   }, [searchParams]);
 
   // Handle Search Input submit
