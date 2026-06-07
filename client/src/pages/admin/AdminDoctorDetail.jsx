@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, FileText, ExternalLink, ShieldAlert, Award, Star } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { getDoctorPublicProfileAPI } from '../../api/discovery.api';
 import {
   verifyDoctorAPI,
   rejectDoctorAPI,
+  getDoctorDetailAdminAPI,
 } from '../../api/admin.api';
 import {
   suspendDoctorAPI,
@@ -15,6 +15,14 @@ import {
 
 import SectionHeader from '../../components/common/SectionHeader';
 import Badge from '../../components/common/Badge';
+
+const getSafeDocumentUrl = (url) => {
+  if (!url) return '';
+  if (url.includes('/image/upload/') && url.toLowerCase().endsWith('.pdf')) {
+    return url.replace(/\.pdf$/i, '.jpg');
+  }
+  return url;
+};
 
 const AdminDoctorDetail = () => {
   const { id } = useParams();
@@ -28,7 +36,7 @@ const AdminDoctorDetail = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const res = await getDoctorPublicProfileAPI(id);
+      const res = await getDoctorDetailAdminAPI(id);
       if (res.success && res.data) {
         setProfile(res.data.profile);
         setReviews(res.data.reviews || []);
@@ -237,7 +245,7 @@ const AdminDoctorDetail = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {profile.degreeDocument && (
                 <a
-                  href={profile.degreeDocument}
+                  href={getSafeDocumentUrl(profile.degreeDocument)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center justify-between border-2 border-neutral-900 p-4 hover:bg-neutral-50 transition-colors"
@@ -256,7 +264,7 @@ const AdminDoctorDetail = () => {
 
               {profile.licenseDocument && (
                 <a
-                  href={profile.licenseDocument}
+                  href={getSafeDocumentUrl(profile.licenseDocument)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center justify-between border-2 border-neutral-900 p-4 hover:bg-neutral-50 transition-colors"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { getDoctorAvailability, bookAppointment, cancelAppointment } from '../../api/appointment.api';
@@ -20,31 +20,64 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
 
+  const selectedDateRef = useRef(selectedDate);
+  const selectedSlotRef = useRef(selectedSlot);
+
+  useEffect(() => {
+    selectedDateRef.current = selectedDate;
+  }, [selectedDate]);
+
+  useEffect(() => {
+    selectedSlotRef.current = selectedSlot;
+  }, [selectedSlot]);
+
   // Fetch available slots
-  const fetchAvailability = async () => {
-    setLoading(true);
+  const fetchAvailability = async (isBackground = false) => {
+    if (!isBackground) {
+      setLoading(true);
+    }
     try {
       const res = await getDoctorAvailability(doctorId);
       if (res.success && res.data) {
         setAvailabilityByDate(res.data);
-        if (res.data.length > 0) {
-          setSelectedDate(res.data[0].date);
-          setSelectedSlot(null);
+        
+        const currentSelectedDate = selectedDateRef.current;
+        const currentSelectedSlot = selectedSlotRef.current;
+
+        const hasDate = res.data.some(d => d.date === currentSelectedDate);
+        if (currentSelectedDate && hasDate) {
+          // Keep currentSelectedDate
+          if (currentSelectedSlot) {
+            const dateEntry = res.data.find(d => d.date === currentSelectedDate);
+            const slotStillAvailable = dateEntry?.slots?.some(s => s._id === currentSelectedSlot._id);
+            if (!slotStillAvailable) {
+              setSelectedSlot(null);
+            }
+          }
         } else {
-          setSelectedDate(null);
-          setSelectedSlot(null);
+          if (res.data.length > 0) {
+            setSelectedDate(res.data[0].date);
+            setSelectedSlot(null);
+          } else {
+            setSelectedDate(null);
+            setSelectedSlot(null);
+          }
         }
       }
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!isBackground) {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    fetchAvailability();
-    const interval = setInterval(fetchAvailability, 15000); // Poll every 15 seconds to update slots in real time
+    fetchAvailability(false);
+    const interval = setInterval(() => {
+      fetchAvailability(true);
+    }, 15000); // Poll every 15 seconds to update slots in real time
     return () => clearInterval(interval);
   }, [doctorId]);
 

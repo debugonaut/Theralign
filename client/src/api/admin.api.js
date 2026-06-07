@@ -58,3 +58,12 @@ export const resetDemoFlowAPI = async () => {
   const response = await axiosInstance.post(`/admin/reset-demo`);
   return response.data;
 };
+
+/**
+ * Admin: Retrieve full profile details (including documents) for a doctor.
+ * @param {string} profileId - The DoctorProfile ID
+ */
+export const getDoctorDetailAdminAPI = async (profileId) => {
+  const response = await axiosInstance.get(`/admin/doctors/${profileId}`);
+  return response.data;
+};

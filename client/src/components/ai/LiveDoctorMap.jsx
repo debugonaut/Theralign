@@ -109,16 +109,14 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
     }
   }, []);
 
-  // ─── Init / rebuild map when deps change ───
+  const layerGroupRef = useRef(null);
+
+  // ─── Init Map Instance (Once) ───
   useEffect(() => {
     if (!mapLoaded || !mapRef.current || !window.L) return;
     const L = window.L;
 
-    if (leafletInstance.current) {
-      leafletInstance.current.remove();
-      leafletInstance.current = null;
-    }
-    markersRef.current = [];
+    if (leafletInstance.current) return;
 
     const mapCenter = radius >= 3500 ? INDIA_CENTER : center;
     const zoom = radius >= 3500 ? 5 : radius >= 250 ? 7 : radius >= 50 ? 9 : radius >= 10 ? 11 : 13;
@@ -134,6 +132,36 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
       maxZoom: 20,
     }).addTo(map);
 
+    // Create the layer group for markers and add it to the map
+    layerGroupRef.current = L.layerGroup().addTo(map);
+
+    return () => {
+      if (leafletInstance.current) {
+        leafletInstance.current.remove();
+        leafletInstance.current = null;
+      }
+    };
+  }, [mapLoaded]);
+
+  // ─── Update Map View when center/radius changes ───
+  useEffect(() => {
+    if (!leafletInstance.current || !window.L) return;
+    const map = leafletInstance.current;
+    const mapCenter = radius >= 3500 ? INDIA_CENTER : center;
+    const zoom = radius >= 3500 ? 5 : radius >= 250 ? 7 : radius >= 50 ? 9 : radius >= 10 ? 11 : 13;
+    map.setView([mapCenter.lat, mapCenter.lng], zoom);
+  }, [center, radius]);
+
+  // ─── Draw Markers dynamically when visibleDoctors or selectedDoctorId changes ───
+  useEffect(() => {
+    if (!leafletInstance.current || !layerGroupRef.current || !window.L) return;
+    const L = window.L;
+    const map = leafletInstance.current;
+    const layerGroup = layerGroupRef.current;
+
+    layerGroup.clearLayers();
+    markersRef.current = [];
+
     // Patient / center marker (only when not country-wide)
     if (radius < 3500) {
       const patientIcon = L.divIcon({
@@ -145,14 +173,14 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
         iconSize: [24, 24], iconAnchor: [12, 12],
       });
       L.marker([center.lat, center.lng], { icon: patientIcon })
-        .addTo(map)
+        .addTo(layerGroup)
         .bindPopup(`<b style="font-size:11px;">MY LOCATION</b><br/><span style="font-size:10px;color:#666;">${center.name}</span>`);
 
       // Radius circle
       L.circle([center.lat, center.lng], {
         color: '#14b8a6', fillColor: '#14b8a6', fillOpacity: 0.04,
         weight: 1.5, dashArray: '4 4', radius: radius * 1000,
-      }).addTo(map);
+      }).addTo(layerGroup);
     }
 
     // Doctor markers
@@ -192,7 +220,7 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
         </div>`;
 
       const marker = L.marker([lat, lng], { icon: doctorIcon })
-        .addTo(map)
+        .addTo(layerGroup)
         .bindPopup(popupHtml);
 
       markersRef.current.push({ marker, doc });
@@ -205,8 +233,7 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
         .map((d) => [d.clinicLocation.coordinates[1], d.clinicLocation.coordinates[0]]);
       if (points.length > 1) map.fitBounds(points, { padding: [40, 40] });
     }
-
-  }, [mapLoaded, visibleDoctors, center, radius, selectedDoctorId]);
+  }, [visibleDoctors, center, radius, selectedDoctorId]);
 
   // ─── Global callback for popup button clicks ───
   useEffect(() => {

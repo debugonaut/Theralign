@@ -121,6 +121,7 @@ export const onboardDoctor = async (userId, profileData, files) => {
     user: userId,
     isOnboarded,
     verificationStatus: isOnboarded ? DOCTOR_STATUS.PENDING : (profile?.verificationStatus || DOCTOR_STATUS.PENDING),
+    isAvailable: isOnboarded ? false : (profile?.isAvailable ?? false),
     rejectionReason: isOnboarded ? null : (profile?.rejectionReason || null),
   };
 

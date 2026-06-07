@@ -24,6 +24,10 @@ export const reconsiderDoctorValidation = [
   param('profileId').isMongoId().withMessage('Invalid doctor profile ID'),
 ];
 
+export const getDoctorDetailAdminValidation = [
+  param('profileId').isMongoId().withMessage('Invalid doctor profile ID'),
+];
+
 export const getAllDoctorsValidation = [
   query('status')
     .optional()

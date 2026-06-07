@@ -21,6 +21,14 @@ import Table, { ActionLink } from '../../components/common/Table';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/common/Button';
 
+const getSafeDocumentUrl = (url) => {
+  if (!url) return '';
+  if (url.includes('/image/upload/') && url.toLowerCase().endsWith('.pdf')) {
+    return url.replace(/\.pdf$/i, '.jpg');
+  }
+  return url;
+};
+
 const AdminDoctorVerification = () => {
   const navigate = useNavigate();
 
@@ -401,7 +409,7 @@ const AdminDoctorVerification = () => {
                           {/* Degree Document Thumbnail */}
                           {doc.degreeDocument ? (
                             <a
-                              href={doc.degreeDocument}
+                              href={getSafeDocumentUrl(doc.degreeDocument)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="group flex items-center justify-between border-2 border-neutral-900 p-4 hover:bg-neutral-50 transition-colors"
@@ -425,7 +433,7 @@ const AdminDoctorVerification = () => {
                           {/* License Document Thumbnail */}
                           {doc.licenseDocument ? (
                             <a
-                              href={doc.licenseDocument}
+                              href={getSafeDocumentUrl(doc.licenseDocument)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="group flex items-center justify-between border-2 border-neutral-900 p-4 hover:bg-neutral-50 transition-colors"

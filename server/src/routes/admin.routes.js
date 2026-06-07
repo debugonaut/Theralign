@@ -9,6 +9,7 @@ import {
   getAllUsersAdmin,
   toggleUserStatus,
   resetDemoFlow,
+  getDoctorDetailAdmin,
 } from '../controllers/admin.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
@@ -21,6 +22,7 @@ import {
   getAllDoctorsValidation,
   getAllUsersAdminValidation,
   toggleUserStatusValidation,
+  getDoctorDetailAdminValidation,
 } from '../validations/admin.validation.js';
 
 const router = Router();
@@ -35,6 +37,9 @@ router.get('/doctors/pending', getPendingDoctors);
 
 /** GET /api/admin/doctors/all — Fetch all doctors with optional status filter */
 router.get('/doctors/all', getAllDoctorsValidation, validate, getAllDoctors);
+
+/** GET /api/admin/doctors/:profileId — Fetch detailed doctor profile for admin */
+router.get('/doctors/:profileId', getDoctorDetailAdminValidation, validate, getDoctorDetailAdmin);
 
 /** PATCH /api/admin/doctors/:profileId/verify — Approve doctor profile */
 router.patch('/doctors/:profileId/verify', verifyDoctorValidation, validate, verifyDoctor);

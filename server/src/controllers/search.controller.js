@@ -21,7 +21,7 @@ export const getSuggestions = asyncHandler(async (req, res) => {
   // Run Mongoose distinct & populate queries concurrently
   const [nameMatches, specializationMatches, cityMatches] = await Promise.all([
     // 1. Match doctor user names
-    DoctorProfile.find({ verificationStatus: 'verified' })
+    DoctorProfile.find({ verificationStatus: 'verified', isAvailable: true })
       .populate({ 
         path: 'user', 
         match: { name: regex }, 
@@ -44,6 +44,7 @@ export const getSuggestions = asyncHandler(async (req, res) => {
     // 2. Match specializations distinct list
     DoctorProfile.distinct('specialization', {
       verificationStatus: 'verified',
+      isAvailable: true,
       specialization: regex,
     }).then(specs => 
       specs
@@ -59,6 +60,7 @@ export const getSuggestions = asyncHandler(async (req, res) => {
     // 3. Match distinct cities
     DoctorProfile.distinct('city', {
       verificationStatus: 'verified',
+      isAvailable: true,
       city: regex,
     }).then(cities => 
       cities

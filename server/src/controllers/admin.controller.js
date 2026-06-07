@@ -278,3 +278,27 @@ export const resetDemoFlow = asyncHandler(async (req, res) => {
 
   return successResponse(res, 200, 'Demo flow has been successfully reset', { profile });
 });
+
+/**
+ * GET /api/admin/doctors/:profileId
+ * Fetch full profile details (including documents) for admin verification.
+ */
+export const getDoctorDetailAdmin = asyncHandler(async (req, res) => {
+  const { profileId } = req.params;
+  const profile = await DoctorProfile.findById(profileId)
+    .populate('user', 'name email profileImage phone role isActive');
+
+  if (!profile) {
+    throw new AppError('Doctor profile not found', 404);
+  }
+
+  // Fetch all reviews for this doctor profile (include both visible and hidden)
+  const reviews = await Review.find({ doctor: profile._id })
+    .populate('patient', 'name')
+    .sort({ createdAt: -1 });
+
+  return successResponse(res, 200, 'Doctor profile retrieved successfully for admin', {
+    profile,
+    reviews,
+  });
+});

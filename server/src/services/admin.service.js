@@ -27,6 +27,7 @@ export const verifyDoctorProfile = async (profileId) => {
   }
 
   profile.verificationStatus = DOCTOR_STATUS.VERIFIED;
+  profile.isAvailable = true; // Ensure they are available to appear in patient discovery listings
   profile.rejectionReason = null; // Clear any old rejection comments
 
   await profile.save();
@@ -51,6 +52,7 @@ export const rejectDoctorProfile = async (profileId, reason) => {
   }
 
   profile.verificationStatus = DOCTOR_STATUS.REJECTED;
+  profile.isAvailable = false; // Revoke discovery availability on rejection
   profile.rejectionReason = reason.trim();
 
   await profile.save();

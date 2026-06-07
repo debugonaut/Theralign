@@ -1,5 +1,6 @@
 import cloudinary from '../config/cloudinary.js';
 import fs from 'fs/promises';
+import path from 'path';
 import AppError from '../utils/AppError.js';
 
 /**
