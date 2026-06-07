@@ -6,7 +6,7 @@ if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' |
   // Force local development server (configured on port 5002 in server env)
   apiURL = 'http://localhost:5002';
 } else if (!apiURL) {
-  apiURL = 'https://physioconnect-api.onrender.com';
+  apiURL = 'https://theralign.onrender.com';
 }
 
 const axiosInstance = axios.create({
