@@ -1060,7 +1060,7 @@ export const seedDoctors = async () => {
     // ─── Idempotent safety net ─────────────────────────────────────────────────
     // Ensure ALL seeded doctors are verified and available (covers re-runs / stale docs)
     const fixResult = await DoctorProfile.updateMany(
-      { verificationStatus: { $ne: DOCTOR_STATUS.VERIFIED } },
+      { $or: [ { verificationStatus: { $ne: DOCTOR_STATUS.VERIFIED } }, { isAvailable: { $ne: true } } ] },
       { $set: { verificationStatus: DOCTOR_STATUS.VERIFIED, isAvailable: true } }
     );
     if (fixResult.modifiedCount > 0) {

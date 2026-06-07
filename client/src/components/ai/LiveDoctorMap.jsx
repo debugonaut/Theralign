@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ShieldAlert } from 'lucide-react';
-import { getDiscoveryListingAPI } from '../../api/discovery.api';
+import { getDiscoveryListingAPI, searchDoctorsAPI } from '../../api/discovery.api';
 
 // India center for wide-radius view
 const INDIA_CENTER = { lat: 20.5937, lng: 78.9629 };
@@ -30,7 +30,7 @@ const haversine = (lat1, lng1, lat2, lng2) => {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
+const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSelect, selectedDoctorId }) => {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [allDoctors, setAllDoctors] = useState([]);
   const [radiusIdx, setRadiusIdx] = useState(DEFAULT_RADIUS_IDX);
@@ -44,18 +44,31 @@ const LiveDoctorMap = ({ city = '', onDoctorSelect, selectedDoctorId }) => {
 
   // ─── Fetch all doctors with background polling ───
   useEffect(() => {
-    const fetchAllDoctors = () => {
-      getDiscoveryListingAPI({ limit: 50, page: 1 })
-        .then((res) => {
-          if (res.success && res.data?.doctors) setAllDoctors(res.data.doctors);
-        })
-        .catch(() => {});
+    const fetchAllDoctors = async () => {
+      try {
+        const params = { limit: 50, page: 1 };
+        if (city) params.city = city;
+        if (specialization) params.specialization = specialization;
+
+        let res;
+        if (search) {
+          res = await searchDoctorsAPI({ q: search, ...params });
+        } else {
+          res = await getDiscoveryListingAPI(params);
+        }
+
+        if (res.success && res.data?.doctors) {
+          setAllDoctors(res.data.doctors);
+        }
+      } catch (err) {
+        console.error('Failed to fetch doctors for map:', err);
+      }
     };
 
     fetchAllDoctors();
     const interval = setInterval(fetchAllDoctors, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [city, specialization, search]);
 
   // ─── Filter doctors by radius from center ───
   const visibleDoctors = radius >= 3500

@@ -248,6 +248,8 @@ const DoctorListingPage = () => {
           <div className="lg:col-span-6 flex">
             <LiveDoctorMap
               city={currentFilters.city}
+              specialization={currentFilters.specialization}
+              search={currentFilters.search}
               onDoctorSelect={handleMapDoctorSelect}
               selectedDoctorId={selectedMapDoctor?._id}
             />
