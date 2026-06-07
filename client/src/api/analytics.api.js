@@ -37,3 +37,8 @@ export const suspendDoctorAPI = (profileId, reason) =>
 
 export const reconsiderDoctorAPI = (profileId) =>
   axiosInstance.patch(`/admin/doctors/${profileId}/reconsider`);
+
+export const getServerHealthAPI = () => {
+  const apiURL = axiosInstance.defaults.baseURL.replace(/\/api$/, '');
+  return axiosInstance.get('/health', { baseURL: apiURL });
+};

@@ -44,6 +44,7 @@ const DoctorProfileEditor = () => {
   const [editorStep, setEditorStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [animatingStepIdx, setAnimatingStepIdx] = useState(null);
+  const [dirtyStep, setDirtyStep] = useState(null);
 
   // ─── Form States ───
   const [name, setName] = useState('');
@@ -57,6 +58,11 @@ const DoctorProfileEditor = () => {
   const [stateName, setStateName] = useState('');
   const [address, setAddress] = useState('');
   const [consultationFee, setConsultationFee] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [isManualCoordinates, setIsManualCoordinates] = useState(false);
+  const [draftToRestore, setDraftToRestore] = useState(null);
+  const [locationError, setLocationError] = useState('');
 
   // Physical files states
   const [profilePhotoFile, setProfilePhotoFile] = useState(null);
@@ -75,6 +81,65 @@ const DoctorProfileEditor = () => {
   const getCityCoords = (cityVal) => {
     const key = (cityVal || 'pune').toLowerCase();
     return CITY_COORDS[key] || CITY_COORDS.pune;
+  };
+
+  const handleUseMyLocation = () => {
+    setLocationError('');
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser.');
+      toast.error('GEOLOCATION NOT SUPPORTED.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(6);
+        const lng = position.coords.longitude.toFixed(6);
+        setLatitude(lat.toString());
+        setLongitude(lng.toString());
+        toast.success('COORDINATES UPDATED SUCCESSFULLY.');
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        let msg = 'Failed to retrieve location.';
+        if (error.code === error.PERMISSION_DENIED) {
+          msg = 'Location permission denied. Please enable location access in browser settings.';
+        }
+        setLocationError(msg);
+        toast.error('LOCATION ACCESS DENIED OR FAILED.');
+      }
+    );
+  };
+
+  const handleRestoreDraft = () => {
+    if (!draftToRestore) return;
+    setName(draftToRestore.name ?? draftToRestore.initialValues.name);
+    setPhone(draftToRestore.phone ?? draftToRestore.initialValues.phone);
+    setBio(draftToRestore.bio ?? draftToRestore.initialValues.bio);
+    setExperience(draftToRestore.experience ?? draftToRestore.initialValues.experience);
+    setRegistrationNumber(draftToRestore.registrationNumber ?? draftToRestore.initialValues.registrationNumber);
+    setSpecializationText(draftToRestore.specializationText ?? draftToRestore.initialValues.specializationText);
+    setClinicName(draftToRestore.clinicName ?? draftToRestore.initialValues.clinicName);
+    setCity(draftToRestore.city ?? draftToRestore.initialValues.city);
+    setStateName(draftToRestore.stateName ?? draftToRestore.initialValues.stateName);
+    setAddress(draftToRestore.address ?? draftToRestore.initialValues.address);
+    setLatitude(draftToRestore.latitude ?? draftToRestore.initialValues.latitude);
+    setLongitude(draftToRestore.longitude ?? draftToRestore.initialValues.longitude);
+    setConsultationFee(draftToRestore.consultationFee ?? draftToRestore.initialValues.consultationFee);
+    if (typeof draftToRestore.editorStep === 'number') {
+      setEditorStep(draftToRestore.editorStep);
+    }
+    setProfilePhotoPreview(draftToRestore.initialValues.profilePhotoPreview);
+    setCompletedSteps(getDoctorCompletedSteps(profile));
+    setDraftToRestore(null);
+    toast.success('DRAFT RESTORED SUCCESSFULLY.');
+  };
+
+  const handleDiscardDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setDraftToRestore(null);
+    toast.success('DRAFT DISCARDED.');
+    fetchProfileData();
   };
 
   const fetchProfileData = async () => {
@@ -101,6 +166,8 @@ const DoctorProfileEditor = () => {
         city: '',
         stateName: '',
         profilePhotoPreview: p?.user?.profileImage || user?.profileImage || '',
+        latitude: p?.clinicLocation?.coordinates ? p.clinicLocation.coordinates[1].toString() : '',
+        longitude: p?.clinicLocation?.coordinates ? p.clinicLocation.coordinates[0].toString() : '',
       };
 
       if (p?.clinicAddress) {
@@ -120,24 +187,10 @@ const DoctorProfileEditor = () => {
         try {
           const parsed = JSON.parse(raw);
           if (parsed) {
-            // Restore draft values silently!
-            setName(parsed.name ?? initialValues.name);
-            setPhone(parsed.phone ?? initialValues.phone);
-            setBio(parsed.bio ?? initialValues.bio);
-            setExperience(parsed.experience ?? initialValues.experience);
-            setRegistrationNumber(parsed.registrationNumber ?? initialValues.registrationNumber);
-            setSpecializationText(parsed.specializationText ?? initialValues.specializationText);
-            setClinicName(parsed.clinicName ?? initialValues.clinicName);
-            setCity(parsed.city ?? initialValues.city);
-            setStateName(parsed.stateName ?? initialValues.stateName);
-            setAddress(parsed.address ?? initialValues.address);
-            setConsultationFee(parsed.consultationFee ?? initialValues.consultationFee);
-            if (typeof parsed.editorStep === 'number') {
-              setEditorStep(parsed.editorStep);
-            }
-            setProfilePhotoPreview(initialValues.profilePhotoPreview);
-            setCompletedSteps(getDoctorCompletedSteps(p));
-            toast.success('RESTORED UNSAVED DRAFT LOCALLY.');
+            setDraftToRestore({
+              ...parsed,
+              initialValues
+            });
             setIsLoading(false);
             return;
           }
@@ -157,6 +210,8 @@ const DoctorProfileEditor = () => {
       setCity(initialValues.city);
       setStateName(initialValues.stateName);
       setAddress(initialValues.address);
+      setLatitude(initialValues.latitude);
+      setLongitude(initialValues.longitude);
       setConsultationFee(initialValues.consultationFee);
       setProfilePhotoPreview(initialValues.profilePhotoPreview);
       
@@ -201,6 +256,8 @@ const DoctorProfileEditor = () => {
       city,
       stateName,
       address,
+      latitude,
+      longitude,
       consultationFee,
       editorStep,
       savedAt: new Date().toISOString()
@@ -239,6 +296,9 @@ const DoctorProfileEditor = () => {
         setStateName('');
       }
 
+      setLatitude(profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[1].toString() : '');
+      setLongitude(profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[0].toString() : '');
+
       setProfilePhotoPreview(profile.user?.profileImage || '');
       setProfilePhotoFile(null);
       setDegreeFile(null);
@@ -261,6 +321,8 @@ const DoctorProfileEditor = () => {
     clinicName.trim() !== '' ||
     currentClinicAddress.trim() !== '' ||
     consultationFee.trim() !== '' ||
+    latitude.trim() !== '' ||
+    longitude.trim() !== '' ||
     profilePhotoFile !== null ||
     degreeFile !== null ||
     licenseFile !== null
@@ -274,10 +336,164 @@ const DoctorProfileEditor = () => {
     clinicName !== (profile.clinicName || '') ||
     currentClinicAddress !== dbClinicAddress ||
     consultationFee !== (profile.consultationFee?.toString() || '') ||
+    latitude !== (profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[1].toString() : '') ||
+    longitude !== (profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[0].toString() : '') ||
     profilePhotoFile !== null ||
     degreeFile !== null ||
     licenseFile !== null
   );
+  const isStepDirty = (stepIdx) => {
+    if (!profile) return false;
+    if (stepIdx === 0) {
+      return (
+        name !== (profile.user?.name || '') ||
+        phone !== (profile.user?.phone || '').replace('+91', '').trim() ||
+        profilePhotoFile !== null
+      );
+    }
+    if (stepIdx === 1) {
+      return (
+        bio !== (profile.bio || '') ||
+        experience !== (profile.experience?.toString() || '') ||
+        registrationNumber !== (profile.registrationNumber || '') ||
+        specializationText !== (profile.specialization?.join(', ') || '')
+      );
+    }
+    if (stepIdx === 2) {
+      const dbClinicAddress = profile.clinicAddress || '';
+      const currentClinicAddress = `${address}${city ? `, ${city}` : ''}${stateName ? `, ${stateName}` : ''}`;
+      return (
+        clinicName !== (profile.clinicName || '') ||
+        currentClinicAddress !== dbClinicAddress ||
+        consultationFee !== (profile.consultationFee?.toString() || '') ||
+        latitude !== (profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[1].toString() : '') ||
+        longitude !== (profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[0].toString() : '')
+      );
+    }
+    if (stepIdx === 3) {
+      return degreeFile !== null || licenseFile !== null;
+    }
+    return false;
+  };
+
+  const handleStepChange = (targetStepIdx) => {
+    if (targetStepIdx === editorStep) return;
+    if (isStepDirty(editorStep)) {
+      setDirtyStep(editorStep);
+    }
+    setEditorStep(targetStepIdx);
+  };
+
+  const handleSaveDirtyStep = async (stepIdx) => {
+    if (stepIdx === 0) {
+      if (!name.trim()) {
+        toast.error('FULL NAME IS REQUIRED.');
+        return;
+      }
+      if (!phone.trim()) {
+        toast.error('PHONE NUMBER IS REQUIRED.');
+        return;
+      }
+      if (phone.trim().length !== 10) {
+        toast.error('PHONE NUMBER MUST BE 10 DIGITS.');
+        return;
+      }
+    }
+    if (stepIdx === 1) {
+      if (!specializationText.trim()) {
+        toast.error('SPECIALIZATION FIELD IS REQUIRED.');
+        return;
+      }
+      if (!experience.trim() || isNaN(parseInt(experience))) {
+        toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
+        return;
+      }
+      if (!registrationNumber.trim()) {
+        toast.error('REGISTRATION NUMBER IS REQUIRED.');
+        return;
+      }
+      if (bio.trim().length < 50) {
+        toast.error('PROFESSIONAL BIO MUST BE AT LEAST 50 CHARACTERS.');
+        return;
+      }
+    }
+    if (stepIdx === 2) {
+      if (!clinicName.trim()) {
+        toast.error('CLINIC NAME IS REQUIRED.');
+        return;
+      }
+      if (!city.trim() || !stateName.trim() || !address.trim()) {
+        toast.error('COMPLETE CLINIC ADDRESS IS REQUIRED.');
+        return;
+      }
+      if (!latitude || !longitude) {
+        toast.error('GEOLOCATION COORDINATES ARE REQUIRED. USE LOCATION OR ENTER MANUALLY.');
+        return;
+      }
+      if (!consultationFee.trim() || isNaN(parseFloat(consultationFee))) {
+        toast.error('CONSULTATION FEE MUST BE A VALID NUMBER.');
+        return;
+      }
+    }
+    if (stepIdx === 3 && profile?.verificationStatus !== 'verified') {
+      if (!degreeFile && !profile?.degreeDocument) {
+        toast.error('DEGREE CERTIFICATE IS REQUIRED.');
+        return;
+      }
+      if (!licenseFile && !profile?.licenseDocument) {
+        toast.error('PRACTITIONER LICENSE DOCUMENT IS REQUIRED.');
+        return;
+      }
+    }
+
+    const success = await handleSave(false);
+    if (success) {
+      setDirtyStep(null);
+    }
+  };
+
+  const discardStepChanges = (stepIdx) => {
+    if (!profile) return;
+    if (stepIdx === 0) {
+      setName(profile.user?.name || '');
+      let rawPhone = profile.user?.phone || '';
+      if (rawPhone.startsWith('+91')) {
+        rawPhone = rawPhone.replace('+91', '').trim();
+      }
+      setPhone(rawPhone);
+      setProfilePhotoPreview(profile.user?.profileImage || '');
+      setProfilePhotoFile(null);
+    }
+    if (stepIdx === 1) {
+      setBio(profile.bio || '');
+      setExperience(profile.experience ? profile.experience.toString() : '');
+      setRegistrationNumber(profile.registrationNumber || '');
+      setSpecializationText(profile.specialization ? profile.specialization.join(', ') : '');
+    }
+    if (stepIdx === 2) {
+      setClinicName(profile.clinicName || '');
+      setConsultationFee(profile.consultationFee ? profile.consultationFee.toString() : '');
+      const fullAddr = profile.clinicAddress || '';
+      const parts = fullAddr.split(',').map((s) => s.trim());
+      if (parts.length >= 3) {
+        setStateName(parts.pop());
+        setCity(parts.pop());
+        setAddress(parts.join(', '));
+      } else {
+        setAddress(fullAddr);
+        setCity('');
+        setStateName('');
+      }
+      setLatitude(profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[1].toString() : '');
+      setLongitude(profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[0].toString() : '');
+    }
+    if (stepIdx === 3) {
+      setDegreeFile(null);
+      setLicenseFile(null);
+    }
+    setDirtyStep(null);
+    toast.success(`CHANGES IN ${activeSteps[stepIdx]?.label} DISCARDED.`);
+  };
 
   const handlePhotoUploadChange = (e) => {
     const file = e.target.files[0];
@@ -363,6 +579,10 @@ const DoctorProfileEditor = () => {
         toast.error('COMPLETE CLINIC ADDRESS IS REQUIRED.');
         return false;
       }
+      if (!latitude || !longitude) {
+        toast.error('GEOLOCATION COORDINATES ARE REQUIRED. USE LOCATION OR ENTER MANUALLY.');
+        return false;
+      }
       if (!consultationFee.trim() || isNaN(parseFloat(consultationFee))) {
         toast.error('CONSULTATION FEE MUST BE A VALID NUMBER.');
         return false;
@@ -422,10 +642,9 @@ const DoctorProfileEditor = () => {
         formData.append('city', city.trim());
       }
       
-      if (city.trim() !== '') {
-        const coords = getCityCoords(city);
-        formData.append('latitude', coords.lat);
-        formData.append('longitude', coords.lng);
+      if (latitude && longitude) {
+        formData.append('latitude', parseFloat(latitude));
+        formData.append('longitude', parseFloat(longitude));
       }
 
       if (consultationFee.trim() !== '') {
@@ -516,6 +735,10 @@ const DoctorProfileEditor = () => {
         toast.error('COMPLETE CLINIC ADDRESS IS REQUIRED.');
         return;
       }
+      if (!latitude || !longitude) {
+        toast.error('GEOLOCATION COORDINATES ARE REQUIRED. USE LOCATION OR ENTER MANUALLY.');
+        return;
+      }
       if (!consultationFee.trim() || isNaN(parseFloat(consultationFee))) {
         toast.error('CONSULTATION FEE MUST BE A VALID NUMBER.');
         return;
@@ -570,6 +793,8 @@ const DoctorProfileEditor = () => {
             city,
             stateName,
             address,
+            latitude,
+            longitude,
             consultationFee,
             editorStep: nextStep,
             savedAt: new Date().toISOString()
@@ -608,10 +833,64 @@ const DoctorProfileEditor = () => {
   ];
 
   const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
+  const showUnsavedBanner = dirtyStep !== null && isStepDirty(dirtyStep);
 
   return (
     <div className="flex flex-col gap-6 select-none text-left bg-neutral-50 page-fade-in">
       
+      {/* Draft Restore Banner */}
+      {draftToRestore && (
+        <div className="bg-[#E8F4F8] border border-[#0B4F6C]/25 text-[#0B4F6C] p-4 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4">
+          <div className="flex flex-col text-left">
+            <span className="text-[12px] font-black uppercase tracking-wider">
+              Saved Draft Found
+            </span>
+            <span className="text-[11px] text-neutral-600 mt-0.5">
+              You have a saved draft from your previous session
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleRestoreDraft}
+              className="px-4 py-2 bg-[#0B4F6C] text-white font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-[#083A52] transition-colors cursor-pointer select-none"
+            >
+              Continue
+            </button>
+            <button
+              onClick={handleDiscardDraft}
+              className="px-4 py-2 bg-white border border-neutral-300 text-neutral-600 font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-neutral-50 transition-colors cursor-pointer select-none"
+            >
+              Start Fresh
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Unsaved changes warning banner */}
+      {showUnsavedBanner && (
+        <div className="bg-amber-50 border border-amber-300 text-amber-900 p-4 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4 max-w-4xl w-full">
+          <div className="flex items-center gap-2.5">
+            <span className="text-[12px] font-bold uppercase tracking-wider">
+              UNSAVED CHANGES IN {activeSteps[dirtyStep]?.label}
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleSaveDirtyStep(dirtyStep)}
+              className="px-4 py-2 bg-amber-600 text-white font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-amber-700 transition cursor-pointer select-none border-0"
+            >
+              SAVE NOW
+            </button>
+            <button
+              onClick={() => discardStepChanges(dirtyStep)}
+              className="px-4 py-2 bg-white border border-amber-300 text-amber-700 font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-amber-100 transition cursor-pointer select-none"
+            >
+              DISCARD
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Page Header ── */}
       <div className="max-w-4xl w-full">
         <SectionHeader title="My Profile" size="lg" ruled={true} className="mb-0" />
@@ -627,7 +906,7 @@ const DoctorProfileEditor = () => {
           activeStep={editorStep}
           completedSteps={completedSteps}
           animatingStepIdx={animatingStepIdx}
-          onStepClick={(idx) => setEditorStep(idx)}
+          onStepClick={handleStepChange}
         />
       </div>
 
@@ -828,6 +1107,50 @@ const DoctorProfileEditor = () => {
               placeholder="Enter complete clinic street address..."
               required
             />
+
+            {/* Geolocation Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+              <Input
+                type="text"
+                label="Latitude *"
+                value={latitude}
+                onChange={(e) => setLatitude(e.target.value)}
+                placeholder="e.g. 18.5204"
+                disabled={!isManualCoordinates}
+                required
+              />
+              <Input
+                type="text"
+                label="Longitude *"
+                value={longitude}
+                onChange={(e) => setLongitude(e.target.value)}
+                placeholder="e.g. 73.8567"
+                disabled={!isManualCoordinates}
+                required
+              />
+            </div>
+            
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={handleUseMyLocation}
+                className="h-10 px-5 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-md text-[11px] font-bold uppercase tracking-widest transition-colors flex-1 cursor-pointer select-none"
+              >
+                USE MY LOCATION →
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsManualCoordinates(!isManualCoordinates)}
+                className="h-10 px-4 border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-md text-[11px] font-bold uppercase tracking-widest transition-colors cursor-pointer select-none bg-white"
+              >
+                {isManualCoordinates ? 'Lock Coordinates' : 'Edit Manually'}
+              </button>
+            </div>
+            {locationError && (
+              <span className="text-[11px] text-[#C0392B] font-bold mt-1">
+                {locationError}
+              </span>
+            )}
           </div>
 
           {/* ── CONSULTATION FEE ── */}
@@ -993,7 +1316,7 @@ const DoctorProfileEditor = () => {
             {editorStep > 0 && (
               <button
                 type="button"
-                onClick={() => setEditorStep((prev) => prev - 1)}
+                onClick={() => handleStepChange(editorStep - 1)}
                 disabled={isSaving}
                 className="px-4 py-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50"
               >

@@ -6,6 +6,7 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Button from '../../components/common/Button';
 import { useToast } from '../../components/common/Toast';
 import HorizontalStepper from '../../components/common/HorizontalStepper';
+import { AlertTriangle, Check } from 'lucide-react';
 
 import BasicInfoTab from '../../components/patient/profile/BasicInfoTab';
 import MedicalHistoryTab from '../../components/patient/profile/MedicalHistoryTab';
@@ -41,6 +42,42 @@ const getCompletedSteps = (prof) => {
   return completed;
 };
 
+const isTabDirty = (tabName, currentFormData, baseData) => {
+  if (!baseData) return false;
+  const getKeysForTab = (tab) => {
+    switch (tab) {
+      case 'BASIC INFO':
+        return ['name', 'dateOfBirth', 'phone', 'gender', 'bloodGroup'];
+      case 'MEDICAL HISTORY':
+        return ['conditions', 'medications', 'surgeries'];
+      case 'LIFESTYLE':
+        return ['occupation', 'activityLevel', 'smoking', 'alcohol'];
+      case 'EMERGENCY CONTACTS':
+        return ['emergencyContacts'];
+      case 'INSURANCE':
+        return ['provider', 'policyNumber'];
+      default:
+        return [];
+    }
+  };
+  
+  const keys = getKeysForTab(tabName);
+  for (const key of keys) {
+    const curr = currentFormData[key];
+    const prev = baseData[key];
+    
+    if (Array.isArray(curr)) {
+      if (!Array.isArray(prev) || curr.length !== prev.length) return true;
+      const strCurr = JSON.stringify(curr);
+      const strPrev = JSON.stringify(prev);
+      if (strCurr !== strPrev) return true;
+    } else if (curr !== prev) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const PatientProfile = () => {
   const { user } = useAuthStore();
   const [profile, setProfile] = useState(null);
@@ -49,6 +86,11 @@ const PatientProfile = () => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [animatingStepIdx, setAnimatingStepIdx] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  const [savedData, setSavedData] = useState(null);
+  const [draftToRestore, setDraftToRestore] = useState(null);
+  const [dirtyTab, setDirtyTab] = useState(null);
+  const [showAutosaveChip, setShowAutosaveChip] = useState(false);
 
   // Centralized form data state for all tabs
   const [formData, setFormData] = useState({
@@ -80,10 +122,46 @@ const PatientProfile = () => {
   
   const fileInputRef = useRef(null);
   const { showToast } = useToast();
+  const firstRender = useRef(true);
 
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  // Autosave effect
+  useEffect(() => {
+    if (firstRender.current) {
+      if (savedData && formData) {
+        firstRender.current = false;
+      }
+      return;
+    }
+    if (!savedData) return;
+
+    // Check if anything has changed from savedData
+    const hasChanges = Object.keys(formData).some((key) => {
+      const curr = formData[key];
+      const prev = savedData[key];
+      if (Array.isArray(curr)) {
+        return JSON.stringify(curr) !== JSON.stringify(prev);
+      }
+      return curr !== prev;
+    });
+
+    if (hasChanges) {
+      const draftPayload = {
+        formData,
+        activeTab,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
+      
+      // Flash autosave chip
+      setShowAutosaveChip(true);
+      const timer = setTimeout(() => setShowAutosaveChip(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [formData, activeTab, savedData]);
 
   const fetchProfile = async () => {
     try {
@@ -111,30 +189,21 @@ const PatientProfile = () => {
         policyNumber: dbProf?.insurance?.policyNumber || ''
       };
 
+      setSavedData(initialForm);
+      setFormData(initialForm);
+
       // Check for draft in localStorage
       const raw = localStorage.getItem(DRAFT_KEY);
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
           if (parsed?.formData) {
-            // Restore draft values silently and merge over DB values
-            setFormData({
-              ...initialForm,
-              ...parsed.formData
-            });
-            if (parsed.activeTab) {
-              setActiveTab(parsed.activeTab);
-            }
-            showToast('success', 'RESTORED UNSAVED DRAFT LOCALLY');
-            setIsLoading(false);
-            return;
+            setDraftToRestore(parsed);
           }
         } catch (e) {
           console.error('Failed to parse draft', e);
         }
       }
-
-      setFormData(initialForm);
     } catch (error) {
       showToast('error', 'Failed to load profile');
     } finally {
@@ -149,6 +218,11 @@ const PatientProfile = () => {
       showToast('error', 'Please fill and save the previous steps first.');
       return;
     }
+
+    if (isTabDirty(activeTab, formData, savedData)) {
+      setDirtyTab(activeTab);
+    }
+
     setActiveTab(tabValue);
   };
 
@@ -164,6 +238,96 @@ const PatientProfile = () => {
     };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
     showToast('success', 'DRAFT SAVED LOCALLY');
+  };
+
+  const saveTab = async (tabName) => {
+    try {
+      let payload = {};
+      const currentStepIdx = TABS.findIndex((t) => t.value === tabName);
+      if (tabName === 'BASIC INFO') {
+        payload = {
+          name: formData.name,
+          dateOfBirth: formData.dateOfBirth,
+          phone: formData.phone,
+          gender: formData.gender,
+          bloodGroup: formData.bloodGroup,
+          completedSteps: Array.from(new Set([...completedSteps, 0]))
+        };
+      } else if (tabName === 'MEDICAL HISTORY') {
+        payload = {
+          medicalHistory: {
+            conditions: formData.conditions,
+            medications: formData.medications,
+            surgeries: formData.surgeries
+          },
+          completedSteps: Array.from(new Set([...completedSteps, 1]))
+        };
+      } else if (tabName === 'LIFESTYLE') {
+        payload = {
+          lifestyle: {
+            occupation: formData.occupation,
+            activityLevel: formData.activityLevel,
+            smoking: formData.smoking,
+            alcohol: formData.alcohol
+          },
+          completedSteps: Array.from(new Set([...completedSteps, 2]))
+        };
+      } else if (tabName === 'EMERGENCY CONTACTS') {
+        payload = {
+          emergencyContacts: formData.emergencyContacts,
+          completedSteps: Array.from(new Set([...completedSteps, 3]))
+        };
+      } else if (tabName === 'INSURANCE') {
+        payload = {
+          insurance: {
+            provider: formData.provider,
+            policyNumber: formData.policyNumber
+          },
+          completedSteps: Array.from(new Set([...completedSteps, 4]))
+        };
+      }
+
+      const res = await patientProfileService.updateProfile(payload);
+      handleSaveSuccess(res.data.profile);
+      showToast('success', `${tabName} saved successfully.`);
+      setDirtyTab(null);
+    } catch (err) {
+      showToast('error', err.response?.data?.message || `Failed to save ${tabName}`);
+    }
+  };
+
+  const discardTabChanges = (tabName) => {
+    const getKeysForTab = (tab) => {
+      switch (tab) {
+        case 'BASIC INFO':
+          return ['name', 'dateOfBirth', 'phone', 'gender', 'bloodGroup'];
+        case 'MEDICAL HISTORY':
+          return ['conditions', 'medications', 'surgeries'];
+        case 'LIFESTYLE':
+          return ['occupation', 'activityLevel', 'smoking', 'alcohol'];
+        case 'EMERGENCY CONTACTS':
+          return ['emergencyContacts'];
+        case 'INSURANCE':
+          return ['provider', 'policyNumber'];
+        default:
+          return [];
+      }
+    };
+    const keys = getKeysForTab(tabName);
+    const revertedUpdates = {};
+    keys.forEach((key) => {
+      revertedUpdates[key] = savedData[key];
+    });
+    setFormData((prev) => ({
+      ...prev,
+      ...revertedUpdates
+    }));
+    
+    // Also remove the draft from localStorage to clear
+    localStorage.removeItem(DRAFT_KEY);
+
+    setDirtyTab(null);
+    showToast('success', `Unsaved changes in ${tabName} discarded.`);
   };
 
   const handleSaveSuccess = (updatedProfile) => {
@@ -189,6 +353,7 @@ const PatientProfile = () => {
       policyNumber: updatedProfile?.insurance?.policyNumber || ''
     };
     setFormData(updatedForm);
+    setSavedData(updatedForm);
 
     // Update draft in localStorage to match newly saved DB values
     const draftPayload = {
@@ -259,9 +424,10 @@ const PatientProfile = () => {
   });
   
   const completionScore = profile?.completionPercentage || 0;
+  const showUnsavedBanner = dirtyTab && isTabDirty(dirtyTab, formData, savedData);
 
   return (
-    <div className="flex h-full min-h-[calc(100vh-64px)]">
+    <div className="flex h-full min-h-[calc(100vh-64px)] relative">
       {/* LEFT COLUMN: Profile Card */}
       <div className="w-[280px] flex-shrink-0 border-r border-neutral-200 flex flex-col p-6 bg-white">
         
@@ -338,6 +504,77 @@ const PatientProfile = () => {
 
       {/* RIGHT COLUMN: Tabs Content */}
       <div className="flex-1 flex flex-col p-6 bg-white overflow-y-auto relative">
+        {/* BANNERS CONTAINER */}
+        <div className="max-w-4xl mx-auto w-full mb-2">
+          {/* Unsaved changes warning banner */}
+          {showUnsavedBanner && (
+            <div className="bg-amber-50 border border-amber-300 text-amber-900 px-4 py-3 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4">
+              <div className="flex items-center gap-2.5">
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+                <span className="text-[12px] font-bold uppercase tracking-wider">
+                  UNSAVED CHANGES IN {dirtyTab}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => saveTab(dirtyTab)}
+                  className="px-3.5 py-1.5 bg-amber-600 text-white font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-amber-700 transition"
+                >
+                  SAVE NOW
+                </button>
+                <button
+                  onClick={() => discardTabChanges(dirtyTab)}
+                  className="px-3.5 py-1.5 bg-white border border-amber-300 text-amber-700 font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-amber-100 transition"
+                >
+                  DISCARD
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Draft restore banner */}
+          {draftToRestore && (
+            <div className="bg-[#E8F4F8] border border-[#0B4F6C]/25 text-[#0B4F6C] px-4 py-3 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4">
+              <div className="flex flex-col">
+                <span className="text-[12px] font-black uppercase tracking-wider">
+                  Draft Found
+                </span>
+                <span className="text-[11px] text-neutral-600 mt-0.5">
+                  You have unsaved changes from a previous session.
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setFormData({
+                      ...formData,
+                      ...draftToRestore.formData
+                    });
+                    if (draftToRestore.activeTab) {
+                      setActiveTab(draftToRestore.activeTab);
+                    }
+                    setDraftToRestore(null);
+                    showToast('success', 'Draft restored successfully.');
+                  }}
+                  className="px-3.5 py-1.5 bg-[#0B4F6C] text-white font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-[#083A52] transition"
+                >
+                  Restore Draft
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem(DRAFT_KEY);
+                    setDraftToRestore(null);
+                    showToast('success', 'Draft discarded.');
+                  }}
+                  className="px-3.5 py-1.5 bg-white border border-neutral-300 text-neutral-600 font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-neutral-50 transition"
+                >
+                  Discard
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         <HorizontalStepper
           steps={TABS}
           activeStep={TABS.findIndex((t) => t.value === activeTab)}
@@ -408,6 +645,14 @@ const PatientProfile = () => {
           )}
         </div>
       </div>
+
+      {/* Floating Autosave Chip */}
+      {showAutosaveChip && (
+        <div className="fixed bottom-24 right-6 z-50 bg-[#E8F4F8] border border-[#0B4F6C]/20 text-[#0B4F6C] px-3.5 py-2 rounded-full flex items-center gap-2 shadow-md animate-fade-in font-sans">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#0B4F6C] animate-pulse"></span>
+          <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Draft Autosaved</span>
+        </div>
+      )}
     </div>
   );
 };

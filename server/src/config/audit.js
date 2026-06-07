@@ -17,10 +17,8 @@ const runAudit = async () => {
     // 1. Audit Admin Accounts
     console.log('--- 1. ADMIN ACCOUNTS ---');
     const defaultAdmin = await User.findOne({ email: 'admin@theralign.com' });
-    const physioAdmin = await User.findOne({ email: 'admin@physioconnect.com' });
 
-    console.log(`- default admin (admin@theralign.com): ${defaultAdmin ? 'EXISTS' : 'MISSING'}`);
-    console.log(`- requested admin (admin@physioconnect.com): ${physioAdmin ? 'EXISTS' : 'MISSING'}`);
+    console.log(`- admin (admin@theralign.com): ${defaultAdmin ? 'EXISTS' : 'MISSING'}`);
 
     // 2. Audit Doctor Profiles
     console.log('\n--- 2. DOCTOR PROFILES ---');

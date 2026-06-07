@@ -3,6 +3,7 @@ import { successResponse } from '../utils/apiResponse.js';
 import * as discoveryService from '../services/discovery.service.js';
 import * as doctorService from '../services/doctor.service.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import Review from '../models/Review.model.js';
 import AppError from '../utils/AppError.js';
 import { PAGINATION, GEOSPATIAL } from '../utils/constants.js';
 
@@ -163,8 +164,10 @@ export const getDoctorPublicProfile = asyncHandler(async (req, res) => {
   profile.rating = profile.averageRating ?? 0;
   profile.reviewCount = profile.totalReviews ?? 0;
 
-  // Placeholder for reviews (will be populated in Phase 7)
-  const reviews = [];
+  // Retrieve actual reviews for this doctor profile
+  const reviews = await Review.find({ doctor: profileDoc._id, isVisible: true })
+    .populate('patient', 'name')
+    .sort({ createdAt: -1 });
 
   return successResponse(res, 200, 'Doctor profile retrieved successfully', {
     profile,

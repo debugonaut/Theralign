@@ -27,3 +27,15 @@ services:
         sync: false
       - key: OPENAI_API_KEY
         sync: false      # Optional — AI degrades gracefully without it
+      - key: EMAIL_HOST
+        sync: false      # Optional (defaults to Gmail)
+      - key: EMAIL_PORT
+        sync: false      # Optional
+      - key: EMAIL_SECURE
+        sync: false      # Optional
+      - key: EMAIL_USER
+        sync: false      # Required for mail dispatches
+      - key: EMAIL_PASS
+        sync: false      # Required for mail dispatches
+      - key: EMAIL_FROM
+        sync: false      # Required for mail dispatches

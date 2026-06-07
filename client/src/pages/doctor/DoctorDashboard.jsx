@@ -55,6 +55,13 @@ const DoctorDashboard = () => {
     fetchDashboardData();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchDashboardData();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest bg-white">

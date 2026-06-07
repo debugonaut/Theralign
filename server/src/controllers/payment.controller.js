@@ -7,6 +7,8 @@ import Payment from '../models/Payment.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
 import razorpayInstance from '../config/razorpay.js';
 import config from '../config/env.js';
+import { sendBookingConfirmation } from '../services/emailService.js';
+import { createNotification } from '../services/notificationService.js';
 
 /**
  * POST /api/payments/create-order
@@ -141,18 +143,71 @@ export const verifyPayment = asyncHandler(async (req, res) => {
   payment.status = 'paid';
   await payment.save();
 
-  // 4. Update Appointment record
-  await Appointment.findByIdAndUpdate(appointmentId, {
-    $set: {
-      paymentStatus: 'paid',
-      paymentId: razorpayPaymentId,
-    }
-  });
+  // 4. Update Appointment record and populate details for email/notification
+  const appointment = await Appointment.findByIdAndUpdate(
+    appointmentId,
+    {
+      $set: {
+        status: 'confirmed',
+        paymentStatus: 'paid',
+        paymentId: razorpayPaymentId,
+      },
+    },
+    { new: true }
+  ).populate([
+    { path: 'patient', select: 'name email' },
+    { path: 'doctor', populate: { path: 'user', select: 'name' } }
+  ]);
+
+  if (!appointment) {
+    throw new AppError('Associated appointment not found.', 404);
+  }
 
   // 5. Increment Doctor totalEarnings
   await DoctorProfile.findByIdAndUpdate(payment.doctor, {
     $inc: { totalEarnings: payment.doctorEarnings }
   });
+
+  // 6. Send Booking Confirmation Email (Fire and forget)
+  if (appointment.patient?.email) {
+    sendBookingConfirmation({
+      patientEmail: appointment.patient.email,
+      patientName: appointment.patient.name,
+      doctorName: appointment.doctor?.user?.name || 'Physiotherapist',
+      date: appointment.date,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+      consultationFee: appointment.consultationFee,
+      appointmentId: appointment._id,
+    });
+  }
+
+  // 7. Create Notifications
+  // Notify Doctor
+  const doctorUserId = appointment.doctor?.user?._id || appointment.doctor?.user;
+  if (doctorUserId) {
+    createNotification({
+      recipientId: doctorUserId,
+      type: 'new_appointment',
+      title: 'New Appointment Booked',
+      message: `A new appointment has been scheduled by patient ${appointment.patient?.name} on ${appointment.date} at ${appointment.startTime}.`,
+      link: '/doctor/appointments',
+      relatedId: appointment._id,
+    });
+  }
+
+  // Notify Patient
+  const patientUserId = appointment.patient?._id || appointment.patient;
+  if (patientUserId) {
+    createNotification({
+      recipientId: patientUserId,
+      type: 'booking_confirmed',
+      title: 'Booking Confirmed',
+      message: `Your appointment with Dr. ${appointment.doctor?.user?.name || 'Physiotherapist'} on ${appointment.date} at ${appointment.startTime} is confirmed.`,
+      link: '/patient/appointments',
+      relatedId: appointment._id,
+    });
+  }
 
   return successResponse(res, 200, 'Payment verified successfully.', { appointmentId });
 });

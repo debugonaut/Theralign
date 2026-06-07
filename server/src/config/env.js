@@ -65,6 +65,15 @@ const config = {
   
   ai: {
     openaiKey: process.env.OPENAI_API_KEY || process.env.GROQ_API_KEY || process.env.API_KEY || '',
+  },
+  
+  email: {
+    host: process.env.EMAIL_HOST || '',
+    port: Number(process.env.EMAIL_PORT) || 465,
+    secure: process.env.EMAIL_SECURE !== 'false',
+    user: process.env.EMAIL_USER || '',
+    pass: process.env.EMAIL_PASS || '',
+    from: process.env.EMAIL_FROM || '',
   }
 };
 

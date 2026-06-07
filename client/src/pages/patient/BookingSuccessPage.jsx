@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
 import { getMyAppointments } from '../../api/appointment.api';
 import { getMyPayments } from '../../api/payment.api';
+import useAuthStore from '../../store/authStore';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
@@ -16,6 +17,7 @@ import Badge from '../../components/common/Badge';
  */
 const BookingSuccessPage = () => {
   const { id } = useParams();
+  const { user } = useAuthStore();
   const [appointment, setAppointment] = useState(null);
   const [payment, setPayment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -111,35 +113,50 @@ const BookingSuccessPage = () => {
       doc.text(text, x, yPos);
     };
 
+    const patientName = appointment.patient?.name || user?.name || 'Patient';
+    const specText = Array.isArray(appointment.doctor?.specialization)
+      ? appointment.doctor.specialization[0]
+      : appointment.doctor?.specialization || 'Clinical Specialist';
+    const clinicName = appointment.doctor?.clinicName || 'Theralign Clinic Center';
+    const clinicAddress = appointment.doctor?.clinicAddress || 'Pune Practice Center';
+
     const rows = [
-      ['CLINICIAN',       `DR. ${docName.toUpperCase()}`],
-      ['APPOINTMENT DATE', String(appointment.date)],
-      ['APPOINTMENT TIME', String(appointment.startTime)],
-      ['TRANSACTION ID',  paymentId],
-      ['PAYMENT GATEWAY', 'SECURED BY RAZORPAY'],
-      ['STATUS',          'CONFIRMED / PAID'],
+      ['CONFIRMATION NUMBER', id.toUpperCase()],
+      ['PATIENT NAME',        patientName.toUpperCase()],
+      ['CLINICIAN',           `DR. ${docName.toUpperCase()} (${specText.toUpperCase()})`],
+      ['CLINIC NAME',         clinicName.toUpperCase()],
+      ['CLINIC ADDRESS',      clinicAddress.toUpperCase()],
+      ['APPOINTMENT DATE',    String(appointment.date)],
+      ['APPOINTMENT TIME',    `${appointment.startTime} – ${appointment.endTime} (30 MIN)`],
+      ['RAZORPAY PAYMENT ID', paymentId],
+      ['PAYMENT STATUS',      'CONFIRMED / PAID'],
     ];
 
     rows.forEach(([lbl, val]) => {
       label(lbl, pad, y);
       value(val, pad, y + 14);
-      y += 40;
+      y += 35;
     });
 
     // Amount box
-    y += 8;
+    y += 15;
     doc.setFillColor(245, 245, 245);
-    doc.roundedRect(pad, y, W - pad * 2, 56, 4, 4, 'F');
-    label('FEE CHARGED', pad + 16, y + 18);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
+    doc.roundedRect(pad, y, W - pad * 2, 70, 4, 4, 'F');
+    
+    label('CONSULTATION FEE (90%)', pad + 16, y + 18);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
     doc.setTextColor(15, 15, 15);
-    doc.text(`Rs. ${fee}`, pad + 16, y + 40);
-    label('PLATFORM COMMISSION (10%)', W - pad - 16, y + 18);
+    doc.text(`Rs. ${(fee * 0.9).toFixed(2)}`, pad + 16, y + 32);
+    
+    label('PLATFORM FEE (10%)', pad + 16, y + 48);
+    doc.text(`Rs. ${(fee * 0.1).toFixed(2)}`, pad + 16, y + 62);
+    
+    label('TOTAL AMOUNT PAID', W - pad - 16, y + 18);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(16);
     doc.setTextColor(15, 15, 15);
-    doc.text(`Rs. ${(fee * 0.1).toFixed(0)}`, W - pad - 16, y + 40, { align: 'right' });
+    doc.text(`Rs. ${fee.toFixed(2)}`, W - pad - 16, y + 40, { align: 'right' });
 
     // Footer
     doc.setDrawColor(220, 220, 220);

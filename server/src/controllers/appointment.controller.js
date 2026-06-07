@@ -53,7 +53,8 @@ export const bookAppointment = asyncHandler(async (req, res) => {
       date: slot.date,
       startTime: slot.startTime,
       endTime: slot.endTime,
-      status: 'confirmed',
+      status: 'pending',
+      paymentStatus: 'unpaid',
       consultationFee,
       platformCommission,
       doctorEarnings,
@@ -70,37 +71,6 @@ export const bookAppointment = asyncHandler(async (req, res) => {
     { path: 'doctor', populate: { path: 'user', select: 'name specialization' } },
     { path: 'slot', select: 'date startTime endTime' }
   ]);
-
-  // Step 6: Dispatch Booking Confirmation Email (Fire and forget)
-  sendBookingConfirmation({
-    patientEmail: req.user.email,
-    patientName: req.user.name,
-    doctorName: appointment.doctor?.user?.name || 'Physiotherapist',
-    date: appointment.date,
-    startTime: appointment.startTime,
-    endTime: appointment.endTime,
-    consultationFee: appointment.consultationFee,
-    appointmentId: appointment._id,
-  });
-
-  // Step 7: Create in-app notifications (Fire and forget)
-  createNotification({
-    recipientId: req.user.id,
-    type: 'appointment_booked',
-    title: 'Appointment Confirmed',
-    message: `Your appointment with Dr. ${appointment.doctor?.user?.name || 'Physiotherapist'} on ${slot.date} at ${slot.startTime} is confirmed.`,
-    link: '/patient/appointments',
-    relatedId: appointment._id,
-  });
-
-  createNotification({
-    recipientId: doctorProfile.user,
-    type: 'appointment_booked',
-    title: 'New Appointment Booked',
-    message: `${req.user.name} has booked an appointment for ${slot.date} at ${slot.startTime}.`,
-    link: '/doctor/appointments',
-    relatedId: appointment._id,
-  });
 
   return successResponse(res, 201, 'Appointment booked successfully!', appointment);
 });
@@ -139,7 +109,25 @@ export const getDoctorAppointments = asyncHandler(async (req, res) => {
     .populate('patient', 'name email phone profileImage')
     .sort({ date: 1, startTime: 1 });
 
-  return successResponse(res, 200, 'Doctor patient appointments retrieved successfully', appointments);
+  // Format patient name to protect privacy (e.g. "Jane S.")
+  const formatPatientName = (name) => {
+    if (!name) return 'Patient';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length <= 1) return name;
+    const firstName = parts[0];
+    const lastInitial = parts[parts.length - 1].charAt(0).toUpperCase();
+    return `${firstName} ${lastInitial}.`;
+  };
+
+  const formattedAppointments = appointments.map((appt) => {
+    const apptObj = appt.toObject();
+    if (apptObj.patient && apptObj.patient.name) {
+      apptObj.patient.name = formatPatientName(apptObj.patient.name);
+    }
+    return apptObj;
+  });
+
+  return successResponse(res, 200, 'Doctor patient appointments retrieved successfully', formattedAppointments);
 });
 
 /**
@@ -176,12 +164,12 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
   }
 
   // Step 3: Validate status
-  if (appointment.status !== 'confirmed') {
-    throw new AppError(`Only confirmed appointments can be cancelled. Current status: ${appointment.status}`, 400);
+  if (appointment.status !== 'confirmed' && appointment.status !== 'pending') {
+    throw new AppError(`Only confirmed or pending appointments can be cancelled. Current status: ${appointment.status}`, 400);
   }
 
   // Step 4: Validate date check for patients
-  if (role === 'patient') {
+  if (role === 'patient' && appointment.status === 'confirmed') {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -193,6 +181,8 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
     }
   }
 
+  const wasConfirmed = appointment.status === 'confirmed';
+
   // Step 5: Update appointment status
   appointment.status = 'cancelled';
   appointment.cancellationReason = reason || '';
@@ -202,39 +192,42 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
   // Step 6: Unlock slot to be re-booked
   await AvailabilitySlot.findByIdAndUpdate(appointment.slot, { $set: { isBooked: false } });
 
-  // Step 7: Send Cancellation Email (Fire and forget)
-  // Populate patient and doctor user information for the template
-  const populatedAppt = await appointment.populate([
-    { path: 'patient', select: 'name email' },
-    { path: 'doctor', populate: { path: 'user', select: 'name' } }
-  ]);
+  // Only send cancellation email & notification if the appointment was confirmed
+  if (wasConfirmed) {
+    // Step 7: Send Cancellation Email (Fire and forget)
+    // Populate patient and doctor user information for the template
+    const populatedAppt = await appointment.populate([
+      { path: 'patient', select: 'name email' },
+      { path: 'doctor', populate: { path: 'user', select: 'name' } }
+    ]);
 
-  if (populatedAppt.patient?.email) {
-    sendCancellationNotice({
-      patientEmail: populatedAppt.patient.email,
-      patientName: populatedAppt.patient.name,
-      doctorName: populatedAppt.doctor?.user?.name || 'Physiotherapist',
-      date: populatedAppt.date,
-      startTime: populatedAppt.startTime,
-      cancelledBy: role,
-      appointmentId: populatedAppt._id,
-    });
-  }
+    if (populatedAppt.patient?.email) {
+      sendCancellationNotice({
+        patientEmail: populatedAppt.patient.email,
+        patientName: populatedAppt.patient.name,
+        doctorName: populatedAppt.doctor?.user?.name || 'Physiotherapist',
+        date: populatedAppt.date,
+        startTime: populatedAppt.startTime,
+        cancelledBy: role,
+        appointmentId: populatedAppt._id,
+      });
+    }
 
-  // Notify the other party (not the one who cancelled)
-  const notifyUserId = role === 'patient'
-    ? (populatedAppt.doctor?.user?._id || populatedAppt.doctor?.user)
-    : populatedAppt.patient?._id;
+    // Notify the other party (not the one who cancelled)
+    const notifyUserId = role === 'patient'
+      ? (populatedAppt.doctor?.user?._id || populatedAppt.doctor?.user)
+      : populatedAppt.patient?._id;
 
-  if (notifyUserId) {
-    createNotification({
-      recipientId: notifyUserId,
-      type: 'appointment_cancelled',
-      title: 'Appointment Cancelled',
-      message: `Your appointment on ${populatedAppt.date} at ${populatedAppt.startTime} has been cancelled.`,
-      link: role === 'patient' ? '/doctor/appointments' : '/patient/appointments',
-      relatedId: populatedAppt._id,
-    });
+    if (notifyUserId) {
+      createNotification({
+        recipientId: notifyUserId,
+        type: 'appointment_cancelled',
+        title: 'Appointment Cancelled',
+        message: `Your appointment on ${populatedAppt.date} at ${populatedAppt.startTime} has been cancelled.`,
+        link: role === 'patient' ? '/doctor/appointments' : '/patient/appointments',
+        relatedId: populatedAppt._id,
+      });
+    }
   }
 
   return successResponse(res, 200, 'Appointment cancelled successfully.', appointment);

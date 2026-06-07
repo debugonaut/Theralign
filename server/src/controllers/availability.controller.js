@@ -4,6 +4,7 @@ import AppError from '../utils/AppError.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
 import WeeklySchedule from '../models/WeeklySchedule.model.js';
+import Appointment from '../models/Appointment.model.js';
 import { createNotification } from '../services/notificationService.js';
 
 /**
@@ -374,7 +375,13 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
     throw new AppError('Doctor not found.', 404);
   }
 
-  const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorProfile._id });
+  // Fetch active (confirmed or pending) appointments for this doctor on this date
+  const activeAppts = await Appointment.find({
+    doctor: doctorProfile._id,
+    date,
+    status: { $in: ['confirmed', 'pending'] },
+  });
+  const occupiedStartTimes = new Set(activeAppts.map((appt) => appt.startTime));
 
   if (!weeklySchedule) {
     // Fallback: old AvailabilitySlot model
@@ -384,7 +391,10 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
       isActive: true,
       isBooked: false,
     }).sort({ startTime: 1 });
-    return successResponse(res, 200, 'Slots retrieved (legacy)', { slots, source: 'legacy' });
+    
+    // Filter out legacy slots that have matching active appointments
+    const filteredSlots = slots.filter((slot) => !occupiedStartTimes.has(slot.startTime));
+    return successResponse(res, 200, 'Slots retrieved (legacy)', { slots: filteredSlots, source: 'legacy' });
   }
 
   // Check if date is blocked
@@ -429,12 +439,16 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
       !(slotEnd <= breakStart || cursor >= breakEnd);
 
     if (!overlapsBreak) {
-      computedSlots.push({
-        startTime: fromMinutes(cursor),
-        endTime:   fromMinutes(slotEnd),
-        date,
-        source: 'weekly',
-      });
+      const startTimeStr = fromMinutes(cursor);
+      // Skip if slot has an active appointment
+      if (!occupiedStartTimes.has(startTimeStr)) {
+        computedSlots.push({
+          startTime: startTimeStr,
+          endTime:   fromMinutes(slotEnd),
+          date,
+          source: 'weekly',
+        });
+      }
     }
     cursor += duration;
   }

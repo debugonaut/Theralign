@@ -17,6 +17,32 @@ const toTitleCase = (str) => {
     .join(' ');
 };
 
+const formatReviewerName = (fullName) => {
+  if (!fullName) return 'Anonymous';
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0];
+  const firstName = parts[0];
+  const lastInitial = parts[parts.length - 1].charAt(0).toUpperCase();
+  return `${firstName} ${lastInitial}.`;
+};
+
+const getRelativeTimeString = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffSecs = Math.floor(diffMs / 1000);
+  const diffMins = Math.floor(diffSecs / 60);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSecs < 60) return 'just now';
+  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  if (diffDays < 30) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+
 const DoctorDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -279,19 +305,23 @@ const DoctorDetailPage = () => {
             ) : (
               <div className="flex flex-col gap-4">
                 {visibleReviews.map((rev) => {
-                  const reviewerName = toTitleCase(rev.patient?.name || 'Anonymous');
-                  const revDate = new Date(rev.createdAt).toLocaleDateString('en-IN', {
-                    month: 'short',
-                    year: 'numeric',
-                  });
+                  const reviewerName = formatReviewerName(rev.patient?.name);
+                  const revDate = getRelativeTimeString(rev.createdAt);
                   return (
                     <div
                       key={rev._id}
                       className="bg-white border border-neutral-200/50 p-6 rounded-lg relative text-left shadow-level-1 transition-warm"
                     >
-                      {/* Rating square */}
-                      <div className="absolute top-6 right-6 w-8 h-8 border border-neutral-100 flex items-center justify-center text-ui-sm font-bold text-neutral-900 bg-neutral-50 rounded-md select-none shadow-sm">
-                        {rev.rating}
+                      {/* Rating stars */}
+                      <div className="absolute top-6 right-6 flex items-center gap-0.5 select-none">
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <span
+                            key={idx}
+                            className={`text-ui-md ${idx < rev.rating ? 'text-amber-500' : 'text-neutral-200'}`}
+                          >
+                            ★
+                          </span>
+                        ))}
                       </div>
 
                       <span className="text-display-sm text-accent font-black block leading-none mb-1 select-none">

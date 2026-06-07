@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { getDoctorAvailability, bookAppointment } from '../../api/appointment.api';
+import { getDoctorAvailability, bookAppointment, cancelAppointment } from '../../api/appointment.api';
 import useAuthStore from '../../store/authStore';
 import BookingConfirmationModal from './BookingConfirmationModal';
 import { useRazorpay } from '../../hooks/useRazorpay';
@@ -93,9 +93,15 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
             setShowModal(false);
             navigate(`/booking-success/${appointmentId}`);
           },
-          onFailure: () => {
+          onFailure: async () => {
             setShowModal(false);
-            setTimeout(() => navigate('/patient/appointments'), 1500);
+            try {
+              await cancelAppointment(appointmentId, 'Payment failed or cancelled');
+              toast.error('Payment was not completed. Your booking has not been confirmed.', { duration: 5000 });
+            } catch (err) {
+              console.error('Failed to auto-cancel unpaid appointment:', err);
+            }
+            await fetchAvailability();
           },
         });
       }

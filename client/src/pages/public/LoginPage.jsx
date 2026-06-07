@@ -18,7 +18,7 @@ const DASHBOARD_ROUTES = {
 const DEMO_ACCOUNTS = [
   { label: 'Patient Demo', email: 'patient@demo.com', password: 'Demo@123456', role: 'patient' },
   { label: 'Doctor Demo',  email: 'doctor@demo.com',  password: 'Demo@123456', role: 'doctor'  },
-  { label: 'Admin Demo',   email: 'admin@physioconnect.com', password: 'Admin@123456', role: 'admin' },
+  { label: 'Admin Demo',   email: 'admin@theralign.com', password: 'Admin@123456', role: 'admin' },
 ];
 
 // ─── Forgot Password Panel (3 steps) ─────────────────────────────────────────

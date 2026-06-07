@@ -12,14 +12,31 @@ export const getMailTransporter = () => {
   }
 
   if (!transporter) {
-    transporter = nodemailer.createTransport({
-      service: 'gmail',
-      family: 4,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    const host = process.env.EMAIL_HOST;
+    if (!host || host.includes('gmail.com')) {
+      // Keep existing Gmail setup
+      transporter = nodemailer.createTransport({
+        service: 'gmail',
+        family: 4,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+    } else {
+      // Production SMTP provider (e.g. Resend, SendGrid)
+      const port = Number(process.env.EMAIL_PORT) || 465;
+      const secure = process.env.EMAIL_SECURE !== 'false'; // Secure (SSL) by default
+      transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+    }
   }
 
   return transporter;

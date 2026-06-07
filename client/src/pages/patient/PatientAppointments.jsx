@@ -33,8 +33,8 @@ const PatientAppointments = () => {
   const [submittingReview, setSubmittingReview] = useState({}); // { [apptId]: boolean }
   const [submittedReviews, setSubmittedReviews] = useState({}); // { [apptId]: { rating, comment } }
 
-  const fetchAppointments = async () => {
-    setLoading(true);
+  const fetchAppointments = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await getMyAppointments();
       if (res.success && res.data) {
@@ -42,15 +42,24 @@ const PatientAppointments = () => {
       }
     } catch (err) {
       console.error(err);
-      toast.error('FAILED TO FETCH APPOINTMENT TRANSACTION RECORDS.');
+      if (!silent) {
+        toast.error('FAILED TO FETCH APPOINTMENT TRANSACTION RECORDS.');
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     document.title = 'MY APPOINTMENTS — Theralign';
     fetchAppointments();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchAppointments(true);
+    }, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   // Sync date categorizations

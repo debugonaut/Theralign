@@ -13,38 +13,24 @@ import logger from '../utils/logger.js';
  */
 const seedAdmin = async () => {
   try {
-    // 1. Seed admin@theralign.com
+    // 1. Delete the typo admin if it exists
+    await User.deleteOne({ email: 'admin@physioconnect.com' });
+
+    // 2. Seed admin@theralign.com
     const existingTheralign = await User.findOne({ email: 'admin@theralign.com' });
     if (!existingTheralign) {
       await User.create({
         name: 'Platform Admin',
         email: 'admin@theralign.com',
-        password: 'Admin@Theralign1', // Hashed by pre-save hook
+        password: 'Admin@123456', // Hashed by pre-save hook
         role: ROLES.ADMIN,
       });
       logger.info('[Seed] Admin account admin@theralign.com created successfully.');
     } else {
-      existingTheralign.password = 'Admin@Theralign1';
+      existingTheralign.password = 'Admin@123456';
       existingTheralign.isActive = true;
       await existingTheralign.save();
       logger.info('[Seed] Admin account admin@theralign.com password and active state verified.');
-    }
-
-    // 2. Seed admin@physioconnect.com
-    const existingPhysio = await User.findOne({ email: 'admin@physioconnect.com' });
-    if (!existingPhysio) {
-      await User.create({
-        name: 'Platform Admin',
-        email: 'admin@physioconnect.com',
-        password: 'Admin@123456', // Hashed by pre-save hook
-        role: ROLES.ADMIN,
-      });
-      logger.info('[Seed] Admin account admin@physioconnect.com created successfully.');
-    } else {
-      existingPhysio.password = 'Admin@123456';
-      existingPhysio.isActive = true;
-      await existingPhysio.save();
-      logger.info('[Seed] Admin account admin@physioconnect.com password and active state verified.');
     }
   } catch (err) {
     logger.error('[Seed] Failed to seed admin accounts:', err.message);
