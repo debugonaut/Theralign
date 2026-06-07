@@ -12,32 +12,12 @@ console.log('EMAIL_USER:', process.env.EMAIL_USER);
 console.log('EMAIL_PASS length:', process.env.EMAIL_PASS ? process.env.EMAIL_PASS.length : 0);
 console.log('EMAIL_FROM:', process.env.EMAIL_FROM);
 
-const host = process.env.EMAIL_HOST;
-let transporter;
+import { getMailTransporter } from './src/config/mailer.js';
 
-if (!host || host.includes('gmail.com')) {
-  console.log('Testing connection using Gmail service configuration...');
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    family: 4,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-} else {
-  const port = Number(process.env.EMAIL_PORT) || 465;
-  const secure = process.env.EMAIL_SECURE !== 'false';
-  console.log(`Testing connection using custom SMTP configuration (${host}:${port}, secure=${secure})...`);
-  transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+const transporter = getMailTransporter();
+if (!transporter) {
+  console.error('Failed to initialize mail transporter.');
+  process.exit(1);
 }
 
 try {
