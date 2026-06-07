@@ -14,9 +14,10 @@ const doctorProfileSchema = new Schema(
 
     specialization: {
       type: [String],
-      required: [true, 'At least one specialization is required'],
+      required: [function () { return this.isOnboarded === true; }, 'At least one specialization is required'],
       validate: {
         validator: function (v) {
+          if (this.isOnboarded !== true) return true;
           return Array.isArray(v) && v.length > 0;
         },
         message: 'A doctor must have at least one specialization',
@@ -25,25 +26,25 @@ const doctorProfileSchema = new Schema(
 
     experience: {
       type: Number,
-      required: [true, 'Experience (in years) is required'],
+      required: [function () { return this.isOnboarded === true; }, 'Experience (in years) is required'],
       min: [0, 'Experience cannot be negative'],
     },
 
     clinicName: {
       type: String,
-      required: [true, 'Clinic name is required'],
+      required: [function () { return this.isOnboarded === true; }, 'Clinic name is required'],
       trim: true,
     },
 
     clinicAddress: {
       type: String,
-      required: [true, 'Clinic address is required'],
+      required: [function () { return this.isOnboarded === true; }, 'Clinic address is required'],
       trim: true,
     },
 
     city: {
       type: String,
-      required: [true, 'City is required'],
+      required: [function () { return this.isOnboarded === true; }, 'City is required'],
       trim: true,
     },
 
@@ -54,13 +55,14 @@ const doctorProfileSchema = new Schema(
           values: ['Point'],
           message: 'clinicLocation type must be "Point"',
         },
-        required: true,
+        required: [function () { return this.isOnboarded === true; }, 'clinicLocation type is required'],
       },
       coordinates: {
         type: [Number], // [longitude, latitude]
-        required: [true, 'Geospatial coordinates [longitude, latitude] are required'],
+        required: [function () { return this.isOnboarded === true; }, 'Geospatial coordinates [longitude, latitude] are required'],
         validate: {
           validator: function (coords) {
+            if (this.isOnboarded !== true) return true;
             if (!Array.isArray(coords) || coords.length !== 2) return false;
             const [lng, lat] = coords;
             return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
@@ -72,32 +74,45 @@ const doctorProfileSchema = new Schema(
 
     consultationFee: {
       type: Number,
-      required: [true, 'Consultation fee is required'],
+      required: [function () { return this.isOnboarded === true; }, 'Consultation fee is required'],
       min: [0, 'Consultation fee cannot be negative'],
     },
 
     bio: {
       type: String,
-      required: [true, 'Professional biography is required'],
-      minlength: [50, 'Biography must be at least 50 characters long'],
-      maxlength: [1000, 'Biography must not exceed 1000 characters'],
+      required: [function () { return this.isOnboarded === true; }, 'Professional biography is required'],
+      validate: {
+        validator: function (v) {
+          if (this.isOnboarded !== true) return true;
+          if (!v) return false;
+          return v.length >= 50 && v.length <= 1000;
+        },
+        message: 'Biography must be between 50 and 1000 characters long',
+      },
     },
 
     registrationNumber: {
       type: String,
-      required: [true, 'Medical license registration number is required'],
+      required: [function () { return this.isOnboarded === true; }, 'Medical license registration number is required'],
       unique: true,
+      sparse: true,
       trim: true,
     },
 
     degreeDocument: {
       type: String, // Cloudinary URL
-      required: [true, 'Degree document is required'],
+      required: [function () { return this.isOnboarded === true; }, 'Degree document is required'],
     },
 
     licenseDocument: {
       type: String, // Cloudinary URL
-      required: [true, 'Medical license document is required'],
+      required: [function () { return this.isOnboarded === true; }, 'Medical license document is required'],
+    },
+
+    isOnboarded: {
+      type: Boolean,
+      default: false,
+      required: true,
     },
 
     verificationStatus: {

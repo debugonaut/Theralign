@@ -23,6 +23,8 @@ export const onboardDoctor = async (userId, profileData, files) => {
     throw new AppError('Only doctors can complete professional onboarding', 403);
   }
 
+  const isOnboarded = profileData.isOnboarded === 'true';
+
   // 2. Extract and validate files
   const degreeFile = files?.degreeDocument?.[0];
   const licenseFile = files?.licenseDocument?.[0];
@@ -30,8 +32,8 @@ export const onboardDoctor = async (userId, profileData, files) => {
   // Fetch existing profile if any
   let profile = await DoctorProfile.findOne({ user: userId });
 
-  // For a brand new profile, both files are strictly required
-  if (!profile && (!degreeFile || !licenseFile)) {
+  // For a brand new profile, both files are strictly required only if finalizing onboarding
+  if (isOnboarded && !profile && (!degreeFile || !licenseFile)) {
     throw new AppError('Both degree and medical license documents are required for onboarding.', 400);
   }
 
@@ -60,59 +62,101 @@ export const onboardDoctor = async (userId, profileData, files) => {
   await user.save();
 
   // 4. Parse and structure data
-  let parsedSpecializations;
-  try {
-    // If it's a string (e.g. from multipart form-data), parse it
-    parsedSpecializations = typeof profileData.specialization === 'string'
-      ? JSON.parse(profileData.specialization)
-      : profileData.specialization;
-  } catch (error) {
-    throw new AppError('Invalid specialization array format. Must be a valid JSON array.', 400);
-  }
-
-  if (!Array.isArray(parsedSpecializations) || parsedSpecializations.length === 0) {
+  let parsedSpecializations = profile?.specialization;
+  if (profileData.specialization) {
+    try {
+      parsedSpecializations = typeof profileData.specialization === 'string'
+        ? JSON.parse(profileData.specialization)
+        : profileData.specialization;
+    } catch (error) {
+      throw new AppError('Invalid specialization array format. Must be a valid JSON array.', 400);
+    }
+    if (isOnboarded && (!Array.isArray(parsedSpecializations) || parsedSpecializations.length === 0)) {
+      throw new AppError('At least one specialization is required.', 400);
+    }
+  } else if (isOnboarded && (!parsedSpecializations || parsedSpecializations.length === 0)) {
     throw new AppError('At least one specialization is required.', 400);
   }
 
-  const lat = parseFloat(profileData.latitude);
-  const lng = parseFloat(profileData.longitude);
-
-  if (isNaN(lat) || isNaN(lng)) {
+  // Coordinates
+  let clinicLocation = profile?.clinicLocation;
+  if (profileData.latitude && profileData.longitude) {
+    const lat = parseFloat(profileData.latitude);
+    const lng = parseFloat(profileData.longitude);
+    if (isNaN(lat) || isNaN(lng)) {
+      throw new AppError('Valid latitude and longitude coordinates are required for the clinic location.', 400);
+    }
+    clinicLocation = {
+      type: 'Point',
+      coordinates: [lng, lat], // GeoJSON order: [longitude, latitude]
+    };
+  } else if (isOnboarded && !clinicLocation) {
     throw new AppError('Valid latitude and longitude coordinates are required for the clinic location.', 400);
   }
 
-  const clinicLocation = {
-    type: 'Point',
-    coordinates: [lng, lat], // GeoJSON order: [longitude, latitude]
-  };
-
-  const experience = parseInt(profileData.experience, 10);
-  const consultationFee = parseFloat(profileData.consultationFee);
-
-  if (isNaN(experience) || experience < 0) {
-    throw new AppError('Experience must be a positive number.', 400);
+  // Experience
+  let experience = profile?.experience;
+  if (profileData.experience !== undefined && profileData.experience !== '') {
+    experience = parseInt(profileData.experience, 10);
+    if (isNaN(experience) || experience < 0) {
+      throw new AppError('Experience must be a positive number.', 400);
+    }
+  } else if (isOnboarded && experience === undefined) {
+    throw new AppError('Experience (in years) is required.', 400);
   }
-  if (isNaN(consultationFee) || consultationFee < 0) {
-    throw new AppError('Consultation fee must be a positive number.', 400);
+
+  // Consultation Fee
+  let consultationFee = profile?.consultationFee;
+  if (profileData.consultationFee !== undefined && profileData.consultationFee !== '') {
+    consultationFee = parseFloat(profileData.consultationFee);
+    if (isNaN(consultationFee) || consultationFee < 0) {
+      throw new AppError('Consultation fee must be a positive number.', 400);
+    }
+  } else if (isOnboarded && consultationFee === undefined) {
+    throw new AppError('Consultation fee is required.', 400);
   }
 
   // 5. Save/Update Profile
   const updatePayload = {
     user: userId,
-    specialization: parsedSpecializations,
-    experience,
-    clinicName: profileData.clinicName,
-    clinicAddress: profileData.clinicAddress,
-    city: profileData.city || 'Pune',
-    clinicLocation,
-    consultationFee,
-    bio: profileData.bio,
-    registrationNumber: profileData.registrationNumber,
-    degreeDocument: degreeDocumentUrl,
-    licenseDocument: licenseDocumentUrl,
-    verificationStatus: DOCTOR_STATUS.PENDING, // Any submission resets status to pending
-    rejectionReason: null, // Clear any previous rejection reasons
+    isOnboarded,
+    verificationStatus: isOnboarded ? DOCTOR_STATUS.PENDING : (profile?.verificationStatus || DOCTOR_STATUS.PENDING),
+    rejectionReason: isOnboarded ? null : (profile?.rejectionReason || null),
   };
+
+  if (parsedSpecializations !== undefined && parsedSpecializations.length > 0) {
+    updatePayload.specialization = parsedSpecializations;
+  }
+  if (experience !== undefined) {
+    updatePayload.experience = experience;
+  }
+  if (profileData.clinicName !== undefined && profileData.clinicName !== '') {
+    updatePayload.clinicName = profileData.clinicName;
+  }
+  if (profileData.clinicAddress !== undefined && profileData.clinicAddress !== '') {
+    updatePayload.clinicAddress = profileData.clinicAddress;
+  }
+  if (profileData.city !== undefined && profileData.city !== '') {
+    updatePayload.city = profileData.city;
+  }
+  if (clinicLocation !== undefined) {
+    updatePayload.clinicLocation = clinicLocation;
+  }
+  if (consultationFee !== undefined) {
+    updatePayload.consultationFee = consultationFee;
+  }
+  if (profileData.bio !== undefined && profileData.bio !== '') {
+    updatePayload.bio = profileData.bio;
+  }
+  if (profileData.registrationNumber !== undefined && profileData.registrationNumber !== '') {
+    updatePayload.registrationNumber = profileData.registrationNumber;
+  }
+  if (degreeDocumentUrl !== undefined) {
+    updatePayload.degreeDocument = degreeDocumentUrl;
+  }
+  if (licenseDocumentUrl !== undefined) {
+    updatePayload.licenseDocument = licenseDocumentUrl;
+  }
 
   if (profile) {
     // Update existing profile — use $set to avoid re-triggering unique index validation

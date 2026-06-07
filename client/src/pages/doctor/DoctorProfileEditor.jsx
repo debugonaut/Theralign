@@ -159,7 +159,23 @@ const DoctorProfileEditor = () => {
       setAddress(initialValues.address);
       setConsultationFee(initialValues.consultationFee);
       setProfilePhotoPreview(initialValues.profilePhotoPreview);
-      setCompletedSteps(getDoctorCompletedSteps(p));
+      
+      const dbCompleted = getDoctorCompletedSteps(p);
+      setCompletedSteps(dbCompleted);
+
+      // Restore first incomplete step if profile exists
+      if (p) {
+        const isVerified = p.verificationStatus === 'verified';
+        const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
+        let firstIncomplete = 0;
+        for (let i = 0; i < activeSteps.length; i++) {
+          if (!dbCompleted.includes(i)) {
+            firstIncomplete = i;
+            break;
+          }
+        }
+        setEditorStep(firstIncomplete);
+      }
     } catch (err) {
       console.error(err);
       toast.error('FAILED TO FETCH PROFILE SETTINGS.');
@@ -301,27 +317,68 @@ const DoctorProfileEditor = () => {
     }
   };
 
-  const handleSave = async () => {
-    // Validations
+  const handleSave = async (isFinalStep = false) => {
+    // Validations based on steps reached so far
+    // Step 0 validations:
     if (!name.trim()) {
       toast.error('FULL NAME IS REQUIRED.');
-      return;
+      return false;
     }
-    if (bio.trim().length < 50) {
-      toast.error('PROFESSIONAL BIO MUST BE AT LEAST 50 CHARACTERS.');
-      return;
+    if (!phone.trim()) {
+      toast.error('PHONE NUMBER IS REQUIRED.');
+      return false;
     }
-    if (!experience.trim() || isNaN(parseInt(experience))) {
-      toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
-      return;
+    if (phone.trim().length !== 10) {
+      toast.error('PHONE NUMBER MUST BE 10 DIGITS.');
+      return false;
     }
-    if (!consultationFee.trim() || isNaN(parseFloat(consultationFee))) {
-      toast.error('CONSULTATION FEE MUST BE A VALID NUMBER.');
-      return;
+
+    // Step 1 validations (only if on Step 1, later steps, or is final submit):
+    if (editorStep >= 1 || isFinalStep) {
+      if (!specializationText.trim()) {
+        toast.error('SPECIALIZATION FIELD IS REQUIRED.');
+        return false;
+      }
+      if (!experience.trim() || isNaN(parseInt(experience))) {
+        toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
+        return false;
+      }
+      if (!registrationNumber.trim()) {
+        toast.error('REGISTRATION NUMBER IS REQUIRED.');
+        return false;
+      }
+      if (bio.trim().length < 50) {
+        toast.error('PROFESSIONAL BIO MUST BE AT LEAST 50 CHARACTERS.');
+        return false;
+      }
     }
-    if (!specializationText.trim()) {
-      toast.error('SPECIALIZATION FIELD IS REQUIRED.');
-      return;
+
+    // Step 2 validations (only if on Step 2, later steps, or is final submit):
+    if (editorStep >= 2 || isFinalStep) {
+      if (!clinicName.trim()) {
+        toast.error('CLINIC NAME IS REQUIRED.');
+        return false;
+      }
+      if (!city.trim() || !stateName.trim() || !address.trim()) {
+        toast.error('COMPLETE CLINIC ADDRESS IS REQUIRED.');
+        return false;
+      }
+      if (!consultationFee.trim() || isNaN(parseFloat(consultationFee))) {
+        toast.error('CONSULTATION FEE MUST BE A VALID NUMBER.');
+        return false;
+      }
+    }
+
+    // Step 3 validations (only if is final submit and user is not verified):
+    if (isFinalStep && profile?.verificationStatus !== 'verified') {
+      if (!degreeFile && !profile?.degreeDocument) {
+        toast.error('DEGREE CERTIFICATE IS REQUIRED.');
+        return false;
+      }
+      if (!licenseFile && !profile?.licenseDocument) {
+        toast.error('PRACTITIONER LICENSE DOCUMENT IS REQUIRED.');
+        return false;
+      }
     }
 
     setIsSaving(true);
@@ -334,26 +391,46 @@ const DoctorProfileEditor = () => {
       const cleanPhone = phone.trim();
       formData.append('phone', cleanPhone ? `+91 ${cleanPhone}` : '');
       
-      formData.append('bio', bio.trim());
-      formData.append('experience', parseInt(experience, 10));
-      formData.append('registrationNumber', registrationNumber.trim());
+      const finalOnboarded = isFinalStep || profile?.isOnboarded || false;
+      formData.append('isOnboarded', finalOnboarded ? 'true' : 'false');
 
-      // Parse specialization text back to stringified JSON array
-      const specList = specializationText
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-      formData.append('specialization', JSON.stringify(specList));
+      if (bio.trim() !== '') {
+        formData.append('bio', bio.trim());
+      }
+      if (experience.trim() !== '') {
+        formData.append('experience', parseInt(experience, 10));
+      }
+      if (registrationNumber.trim() !== '') {
+        formData.append('registrationNumber', registrationNumber.trim());
+      }
 
-      formData.append('clinicName', clinicName.trim());
-      formData.append('clinicAddress', currentClinicAddress);
+      if (specializationText.trim() !== '') {
+        const specList = specializationText
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        formData.append('specialization', JSON.stringify(specList));
+      }
+
+      if (clinicName.trim() !== '') {
+        formData.append('clinicName', clinicName.trim());
+      }
+      if (currentClinicAddress.trim() !== '') {
+        formData.append('clinicAddress', currentClinicAddress);
+      }
+      if (city.trim() !== '') {
+        formData.append('city', city.trim());
+      }
       
-      // Use actual city coordinates instead of hardcoded defaults
-      const coords = getCityCoords(city);
-      formData.append('latitude', coords.lat);
-      formData.append('longitude', coords.lng);
+      if (city.trim() !== '') {
+        const coords = getCityCoords(city);
+        formData.append('latitude', coords.lat);
+        formData.append('longitude', coords.lng);
+      }
 
-      formData.append('consultationFee', parseFloat(consultationFee));
+      if (consultationFee.trim() !== '') {
+        formData.append('consultationFee', parseFloat(consultationFee));
+      }
 
       if (profilePhotoFile) {
         formData.append('profileImage', profilePhotoFile);
@@ -367,7 +444,7 @@ const DoctorProfileEditor = () => {
 
       const res = await onboardDoctorAPI(formData);
       if (res.success && res.data?.profile) {
-        toast.success('PROFILE SAVED AND RESET TO PENDING REVIEW.', { id: toastId });
+        toast.success(finalOnboarded ? 'PROFILE SUBMITTED AND AWAITING REVIEW.' : 'PROGRESS SAVED SUCCESSFULLY.', { id: toastId });
         
         // Clear draft on successful save
         localStorage.removeItem(DRAFT_KEY);
@@ -395,21 +472,20 @@ const DoctorProfileEditor = () => {
   const handleSaveStep = async () => {
     const isVerified = profile?.verificationStatus === 'verified';
     const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
-
-    if (!isDirty) {
-      // Just advance step without saving if not dirty
-      if (editorStep < activeSteps.length - 1) {
-        setEditorStep((prev) => prev + 1);
-      } else {
-        toast.success('PRACTITIONER PROFILE COMPLETE!');
-      }
-      return;
-    }
+    const isFinalStep = editorStep === activeSteps.length - 1;
 
     // Validations based on the current step
     if (editorStep === 0) {
       if (!name.trim()) {
         toast.error('FULL NAME IS REQUIRED.');
+        return;
+      }
+      if (!phone.trim()) {
+        toast.error('PHONE NUMBER IS REQUIRED.');
+        return;
+      }
+      if (phone.trim().length !== 10) {
+        toast.error('PHONE NUMBER MUST BE 10 DIGITS.');
         return;
       }
     }
@@ -420,6 +496,10 @@ const DoctorProfileEditor = () => {
       }
       if (!experience.trim() || isNaN(parseInt(experience))) {
         toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
+        return;
+      }
+      if (!registrationNumber.trim()) {
+        toast.error('REGISTRATION NUMBER IS REQUIRED.');
         return;
       }
       if (bio.trim().length < 50) {
@@ -441,8 +521,28 @@ const DoctorProfileEditor = () => {
         return;
       }
     }
+    if (isFinalStep && !isVerified) {
+      if (!degreeFile && !profile?.degreeDocument) {
+        toast.error('DEGREE CERTIFICATE IS REQUIRED.');
+        return;
+      }
+      if (!licenseFile && !profile?.licenseDocument) {
+        toast.error('PRACTITIONER LICENSE DOCUMENT IS REQUIRED.');
+        return;
+      }
+    }
 
-    const success = await handleSave();
+    if (!isDirty) {
+      // Just advance step without saving if not dirty
+      if (editorStep < activeSteps.length - 1) {
+        setEditorStep((prev) => prev + 1);
+      } else {
+        toast.success('PRACTITIONER PROFILE COMPLETE!');
+      }
+      return;
+    }
+
+    const success = await handleSave(isFinalStep);
     if (success) {
       // Add current step to completed steps
       if (!completedSteps.includes(editorStep)) {
@@ -495,8 +595,10 @@ const DoctorProfileEditor = () => {
   const currentStatus = profile?.verificationStatus || 'pending';
   // 0: SUBMITTED, 1: UNDER REVIEW, 2: APPROVED, 3: ACTIVE
   let activeStatusStep = 0;
-  if (currentStatus === 'pending') activeStatusStep = 1;
-  if (currentStatus === 'verified') activeStatusStep = 3;
+  if (profile?.isOnboarded) {
+    if (currentStatus === 'pending') activeStatusStep = 1;
+    if (currentStatus === 'verified') activeStatusStep = 3;
+  }
 
   const statusStepsList = [
     { key: 'submitted', label: 'Submitted', desc: 'Application received and registered.' },
@@ -636,8 +738,8 @@ const DoctorProfileEditor = () => {
             required
           />
 
-          {/* Years experience narrow input */}
-          <div className="w-[240px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Years experience narrow input */}
             <Input
               type="number"
               label="Years of Practice Experience *"
@@ -647,6 +749,15 @@ const DoctorProfileEditor = () => {
               onChange={(e) => setExperience(e.target.value.replace(/\D/g, ''))}
               required
               placeholder="e.g. 5"
+            />
+            {/* Medical registration number */}
+            <Input
+              type="text"
+              label="Medical Registration Number *"
+              value={registrationNumber}
+              onChange={(e) => setRegistrationNumber(e.target.value)}
+              required
+              placeholder="e.g. MCI-12345"
             />
           </div>
 
