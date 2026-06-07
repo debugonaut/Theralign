@@ -42,9 +42,15 @@ if (!host || host.includes('gmail.com')) {
 
 try {
   console.log('Attempting to send test email...');
+  const recipient = process.env.EMAIL_USER.includes('@') 
+    ? process.env.EMAIL_USER 
+    : (process.env.EMAIL_FROM.match(/<(.+)>/)?.[1] || 'hello@aadeshkhande.com');
+
+  console.log('Sending test email to:', recipient);
+
   const info = await transporter.sendMail({
     from: process.env.EMAIL_FROM || `"Theralign" <${process.env.EMAIL_USER}>`,
-    to: process.env.EMAIL_USER, // send to self
+    to: recipient,
     subject: 'Theralign SMTP Test',
     text: 'If you are reading this, nodemailer is working perfectly!',
   });
