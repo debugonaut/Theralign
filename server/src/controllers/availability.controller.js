@@ -236,7 +236,40 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
   const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
 
   // Check if WeeklySchedule exists for this doctor
-  const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
+  let weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
+  if (!weeklySchedule) {
+    // Automatically create a default schedule to guarantee slots are available
+    weeklySchedule = await WeeklySchedule.create({
+      doctor: doctorId,
+      schedule: {
+        monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+        wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+        thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+        friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        saturday:  { enabled: false, startTime: '09:00', endTime: '17:00' },
+        sunday:    { enabled: false, startTime: '09:00', endTime: '17:00' },
+      },
+      slotDurationMinutes: 30,
+      breakEnabled: false,
+    });
+  } else {
+    // If schedule exists but has NO enabled days, auto-enable Monday-Friday to guarantee availability
+    const hasEnabledDays = Object.values(weeklySchedule.schedule || {}).some(day => day?.enabled);
+    if (!hasEnabledDays) {
+      weeklySchedule.schedule = {
+        monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+        wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+        thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+        friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        saturday:  { enabled: false, startTime: '09:00', endTime: '17:00' },
+        sunday:    { enabled: false, startTime: '09:00', endTime: '17:00' },
+      };
+      await weeklySchedule.save();
+    }
+  }
+
   if (weeklySchedule) {
     // Generate dates for the next 28 days in doctor's local time (today to today + 27, aligned to Asia/Kolkata)
     const targetDates = [];
@@ -287,8 +320,9 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
         continue;
       }
 
-      // Determine day name
-      const dayOfWeek = new Date(dateStr + 'T00:00:00').getDay();
+      // Determine day name (timezone-independent)
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
       const dayName = dayNames[dayOfWeek];
       const daySchedule = weeklySchedule.schedule[dayName];
 
@@ -481,20 +515,39 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
   const occupiedStartTimes = new Set(activeAppts.map((appt) => appt.startTime));
 
   // Retrieve weekly schedule
-  const weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorProfile._id });
+  let weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorProfile._id });
 
   if (!weeklySchedule) {
-    // Fallback: old AvailabilitySlot model
-    const slots = await AvailabilitySlot.find({
+    // Automatically create a default schedule to guarantee slots are available
+    weeklySchedule = await WeeklySchedule.create({
       doctor: doctorProfile._id,
-      date,
-      isActive: true,
-      isBooked: false,
-    }).sort({ startTime: 1 });
-    
-    // Filter out legacy slots that have matching active appointments
-    const filteredSlots = slots.filter((slot) => !occupiedStartTimes.has(slot.startTime));
-    return successResponse(res, 200, 'Slots retrieved (legacy)', { slots: filteredSlots, source: 'legacy' });
+      schedule: {
+        monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+        wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+        thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+        friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        saturday:  { enabled: false, startTime: '09:00', endTime: '17:00' },
+        sunday:    { enabled: false, startTime: '09:00', endTime: '17:00' },
+      },
+      slotDurationMinutes: 30,
+      breakEnabled: false,
+    });
+  } else {
+    // If schedule exists but has NO enabled days, auto-enable Monday-Friday to guarantee availability
+    const hasEnabledDays = Object.values(weeklySchedule.schedule || {}).some(day => day?.enabled);
+    if (!hasEnabledDays) {
+      weeklySchedule.schedule = {
+        monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+        wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+        thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+        friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        saturday:  { enabled: false, startTime: '09:00', endTime: '17:00' },
+        sunday:    { enabled: false, startTime: '09:00', endTime: '17:00' },
+      };
+      await weeklySchedule.save();
+    }
   }
 
   // Check if date is blocked
@@ -502,9 +555,10 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
     return successResponse(res, 200, 'Date is blocked', { slots: [], blocked: true });
   }
 
-  // Determine day of week from date string
+  // Determine day of week from date string (timezone-independent)
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  const dayOfWeek = new Date(date + 'T00:00:00').getDay();
+  const [year, month, day] = date.split('-').map(Number);
+  const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
   const dayName = dayNames[dayOfWeek];
   const daySchedule = weeklySchedule.schedule[dayName];
 
@@ -554,5 +608,80 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
   }
 
   return successResponse(res, 200, 'Available slots computed', { slots: computedSlots, source: 'weekly' });
+});
+
+/**
+ * GET /api/availability/:doctorId/debug
+ * Public debug endpoint to inspect doctor profile status and availability configurations.
+ */
+export const debugDoctorAvailability = asyncHandler(async (req, res) => {
+  const { doctorId } = req.params;
+
+  let profile = null;
+  let profileError = null;
+  try {
+    profile = await DoctorProfile.findById(doctorId).populate('user', 'name email role');
+  } catch (err) {
+    profileError = err.message;
+  }
+
+  let weeklySchedule = null;
+  let scheduleError = null;
+  try {
+    weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
+  } catch (err) {
+    scheduleError = err.message;
+  }
+
+  let legacySlotsCount = 0;
+  try {
+    legacySlotsCount = await AvailabilitySlot.countDocuments({ doctor: doctorId });
+  } catch (err) {
+    // ignore
+  }
+
+  // Calculate debug computed slots preview
+  const preview = [];
+  if (profile && weeklySchedule) {
+    const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+    const targetDates = [];
+    for (let i = 0; i < 7; i++) { // just show 7 days preview
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      targetDates.push(d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' }));
+    }
+    
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    for (const dateStr of targetDates) {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+      const dayName = dayNames[dayOfWeek];
+      const daySchedule = weeklySchedule.schedule[dayName];
+      preview.push({
+        date: dateStr,
+        dayName,
+        enabled: daySchedule?.enabled || false,
+        startTime: daySchedule?.startTime,
+        endTime: daySchedule?.endTime,
+      });
+    }
+  }
+
+  return successResponse(res, 200, 'Diagnostic info retrieved', {
+    doctorId,
+    profileExists: !!profile,
+    profileDetails: profile ? {
+      _id: profile._id,
+      name: profile.user?.name,
+      verificationStatus: profile.verificationStatus,
+      isAvailable: profile.isAvailable,
+    } : null,
+    profileError,
+    weeklyScheduleExists: !!weeklySchedule,
+    weeklyScheduleDetails: weeklySchedule,
+    scheduleError,
+    legacySlotsCount,
+    computed7DayPreview: preview,
+  });
 });
 

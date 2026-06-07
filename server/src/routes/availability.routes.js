@@ -12,6 +12,7 @@ import {
   blockDate,
   unblockDate,
   getAvailableSlotsByDate,
+  debugDoctorAvailability,
 } from '../controllers/availability.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
@@ -52,5 +53,8 @@ router.get('/:doctorId/available', getAvailableSlotsValidation, validate, getAva
 
 // New: computed slots from weekly schedule (with legacy fallback)
 router.get('/:doctorId/slots', getAvailableSlotsByDateValidation, validate, getAvailableSlotsByDate);
+
+// Diagnostic/debug availability settings
+router.get('/:doctorId/debug', getAvailableSlotsValidation, validate, debugDoctorAvailability);
 
 export default router;
