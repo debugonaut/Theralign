@@ -13,12 +13,13 @@ const sendMail = async ({ to, subject, html }) => {
   }
 
   try {
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM || `"Theralign" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
     });
+    logger.info(`Email successfully dispatched to ${to}. Message ID: ${info.messageId}`);
     return true;
   } catch (err) {
     logger.error(`Email dispatch failed to ${to}: ${err.message}`);
