@@ -29,7 +29,7 @@ const refreshSlots = async () => {
     // Delete ALL unbooked slots and recreate fresh (keeps booked slots intact)
     await AvailabilitySlot.deleteMany({ isBooked: false });
 
-    const doctors = await DoctorProfile.find({ verificationStatus: DOCTOR_STATUS.VERIFIED });
+    const doctors = await DoctorProfile.find({ verificationStatus: { $in: [DOCTOR_STATUS.VERIFIED, 'pending'] } });
     const docs = [];
     for (const doctor of doctors) {
       for (let day = 0; day < 30; day++) {
