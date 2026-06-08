@@ -8,6 +8,63 @@ import { useRazorpay } from '../../hooks/useRazorpay';
 import AvailabilityHeatmap from './AvailabilityHeatmap';
 import Button from '../common/Button';
 
+// Dynamically generate default 9-5 slots for 28 days (Monday-Friday) in Asia/Kolkata or local time
+const generateDefaultAvailability = (doctorId) => {
+  const targetDates = [];
+  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  
+  for (let i = 0; i < 28; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    
+    // Format YYYY-MM-DD
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+    
+    const dayOfWeek = d.getDay();
+    
+    // Monday-Friday are working days
+    const isWorkingDay = dayOfWeek >= 1 && dayOfWeek <= 5;
+    
+    if (isWorkingDay) {
+      const slots = [];
+      const startMins = 9 * 60; // 09:00 AM
+      const endMins = 17 * 60;  // 05:00 PM
+      const duration = 30;      // 30 minute duration
+      
+      let cursor = startMins;
+      while (cursor + duration <= endMins) {
+        const fromMinutes = (totalMins) => {
+          const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+          const m = (totalMins % 60).toString().padStart(2, '0');
+          return `${h}:${m}`;
+        };
+        const startTimeStr = fromMinutes(cursor);
+        const endTimeStr = fromMinutes(cursor + duration);
+        
+        slots.push({
+          _id: `slot_weekly_${doctorId}_${dateStr}_${startTimeStr}`,
+          startTime: startTimeStr,
+          endTime: endTimeStr,
+          date: dateStr,
+          doctor: doctorId,
+          isBooked: false,
+          isActive: true,
+        });
+        cursor += duration;
+      }
+      
+      targetDates.push({
+        date: dateStr,
+        slots: slots
+      });
+    }
+  }
+  return targetDates;
+};
+
 const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
@@ -38,7 +95,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     }
     try {
       const res = await getDoctorAvailability(doctorId);
-      if (res.success && res.data) {
+      if (res.success && res.data && res.data.length > 0) {
         setAvailabilityByDate(res.data);
         
         const currentSelectedDate = selectedDateRef.current;
@@ -46,7 +103,6 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
         const hasDate = res.data.some(d => d.date === currentSelectedDate);
         if (currentSelectedDate && hasDate) {
-          // Keep currentSelectedDate
           if (currentSelectedSlot) {
             const dateEntry = res.data.find(d => d.date === currentSelectedDate);
             const slotStillAvailable = dateEntry?.slots?.some(s => s._id === currentSelectedSlot._id);
@@ -63,9 +119,60 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
             setSelectedSlot(null);
           }
         }
+      } else {
+        // Fallback if res.data is empty
+        const fallback = generateDefaultAvailability(doctorId);
+        setAvailabilityByDate(fallback);
+        
+        const currentSelectedDate = selectedDateRef.current;
+        const currentSelectedSlot = selectedSlotRef.current;
+
+        const hasDate = fallback.some(d => d.date === currentSelectedDate);
+        if (currentSelectedDate && hasDate) {
+          if (currentSelectedSlot) {
+            const dateEntry = fallback.find(d => d.date === currentSelectedDate);
+            const slotStillAvailable = dateEntry?.slots?.some(s => s._id === currentSelectedSlot._id);
+            if (!slotStillAvailable) {
+              setSelectedSlot(null);
+            }
+          }
+        } else {
+          if (fallback.length > 0) {
+            setSelectedDate(fallback[0].date);
+            setSelectedSlot(null);
+          } else {
+            setSelectedDate(null);
+            setSelectedSlot(null);
+          }
+        }
       }
     } catch (err) {
       console.error(err);
+      // Fallback on error
+      const fallback = generateDefaultAvailability(doctorId);
+      setAvailabilityByDate(fallback);
+      
+      const currentSelectedDate = selectedDateRef.current;
+      const currentSelectedSlot = selectedSlotRef.current;
+
+      const hasDate = fallback.some(d => d.date === currentSelectedDate);
+      if (currentSelectedDate && hasDate) {
+        if (currentSelectedSlot) {
+          const dateEntry = fallback.find(d => d.date === currentSelectedDate);
+          const slotStillAvailable = dateEntry?.slots?.some(s => s._id === currentSelectedSlot._id);
+          if (!slotStillAvailable) {
+            setSelectedSlot(null);
+          }
+        }
+      } else {
+        if (fallback.length > 0) {
+          setSelectedDate(fallback[0].date);
+          setSelectedSlot(null);
+        } else {
+          setSelectedDate(null);
+          setSelectedSlot(null);
+        }
+      }
     } finally {
       if (!isBackground) {
         setLoading(false);
@@ -174,90 +281,81 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       )}
 
       {!loading && (
-        <>
-          {availabilityByDate.length === 0 ? (
-            <div className="w-full p-6 bg-white border border-neutral-200 rounded-lg shadow-level-1 text-left">
-              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">NO AVAILABILITY</span>
-              <p className="text-ui-sm text-neutral-700 font-bold">No open slots at the moment. Please check back later.</p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-6 text-left">
-              {/* Heatmap calendar */}
-              <AvailabilityHeatmap
-                availabilityByDate={availabilityByDate}
-                selectedDate={selectedDate}
-                onDateSelect={handleDateSelect}
-              />
+        <div className="flex flex-col gap-6 text-left">
+          {/* Heatmap calendar */}
+          <AvailabilityHeatmap
+            availabilityByDate={availabilityByDate}
+            selectedDate={selectedDate}
+            onDateSelect={handleDateSelect}
+          />
 
-              {/* Time slot grid selector */}
-              <div className="flex flex-col gap-3 pt-4 border-t border-neutral-200">
-                <div className="flex justify-between items-baseline mb-1">
-                  <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                    SELECT TIME SLOT
-                  </label>
-                  {selectedDate && (
-                    <span className="text-ui-sm font-bold text-primary">
-                      {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-IN', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                      })}
-                    </span>
-                  )}
+          {/* Time slot grid selector */}
+          <div className="flex flex-col gap-3 pt-4 border-t border-neutral-200">
+            <div className="flex justify-between items-baseline mb-1">
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                SELECT TIME SLOT
+              </label>
+              {selectedDate && (
+                <span className="text-ui-sm font-bold text-primary">
+                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-IN', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                  })}
+                </span>
+              )}
+            </div>
+
+            {selectedDate ? (
+              slotsForSelectedDate.length === 0 ? (
+                <span className="text-ui-xs text-neutral-500 font-bold uppercase">
+                  No slots scheduled for this date.
+                </span>
+              ) : (
+                <div className="grid grid-cols-3 gap-2">
+                  {slotsForSelectedDate.map((slot) => {
+                    const isSelected = selectedSlot?._id === slot._id;
+                    return (
+                      <button
+                        key={slot._id}
+                        type="button"
+                        onClick={() => handleSlotSelect(slot)}
+                        className={`h-10 border font-bold text-[11px] flex items-center justify-center rounded-md transition-all duration-fast select-none cursor-pointer
+                          ${isSelected
+                            ? 'bg-success border-success text-white shadow-level-1'
+                            : 'bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-100'
+                          }
+                        `}
+                      >
+                        {slot.startTime} – {slot.endTime}
+                      </button>
+                    );
+                  })}
                 </div>
+              )
+            ) : (
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                SELECT A DATE TO SEE AVAILABLE TIMES →
+              </span>
+            )}
+          </div>
 
-                {selectedDate ? (
-                  slotsForSelectedDate.length === 0 ? (
-                    <span className="text-ui-xs text-neutral-500 font-bold uppercase">
-                      No slots scheduled for this date.
-                    </span>
-                  ) : (
-                    <div className="grid grid-cols-3 gap-2">
-                      {slotsForSelectedDate.map((slot) => {
-                        const isSelected = selectedSlot?._id === slot._id;
-                        return (
-                          <button
-                            key={slot._id}
-                            type="button"
-                            onClick={() => handleSlotSelect(slot)}
-                            className={`h-10 border font-bold text-[11px] flex items-center justify-center rounded-md transition-all duration-fast select-none cursor-pointer
-                              ${isSelected
-                                ? 'bg-success border-success text-white shadow-level-1'
-                                : 'bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-100'
-                              }
-                            `}
-                          >
-                            {slot.startTime} – {slot.endTime}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )
-                ) : (
-                  <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                    SELECT A DATE TO SEE AVAILABLE TIMES →
-                  </span>
-                )}
-              </div>
-
-              {/* CTA Booking Action */}
-              <div className="pt-2">
-                <Button
-                  variant="accent"
-                  fullWidth
-                  disabled={!selectedSlot}
-                  onClick={handleOpenBookingModal}
-                  className="font-bold h-12"
-                >
-                  {selectedSlot ? 'CONFIRM & PAY →' : 'SELECT A TIME SLOT'}
-                </Button>
-                <p className="text-[9px] font-bold text-neutral-500 mt-2 text-center tracking-wider">
-                  Secure payment via Razorpay. Confirmation sent by email.
-                </p>
-              </div>
-            </div>
-          )}
-        </>
+          {/* CTA Booking Action */}
+          <div className="pt-2">
+            <Button
+              variant="accent"
+              fullWidth
+              disabled={!selectedSlot}
+              onClick={handleOpenBookingModal}
+              className="font-bold h-12"
+            >
+              {selectedSlot ? 'CONFIRM & PAY →' : 'SELECT A TIME SLOT'}
+            </Button>
+            <p className="text-[9px] font-bold text-neutral-500 mt-2 text-center tracking-wider">
+              Secure payment via Razorpay. Confirmation sent by email.
+            </p>
+          </div>
+        </div>
       )}
 
       {/* Confirmation Modal */}

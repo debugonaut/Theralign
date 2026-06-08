@@ -1,5 +1,6 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/apiResponse.js';
+import { formatDateKolkata } from '../utils/date.js';
 import AppError from '../utils/AppError.js';
 import Appointment from '../models/Appointment.model.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
@@ -289,7 +290,7 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
 
   // Step 4: Validate date check for patients
   if (role === 'patient' && appointment.status === 'confirmed') {
-    const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+    const todayString = formatDateKolkata(new Date());
 
     if (appointment.date <= todayString) {
       throw new AppError('Cannot cancel a past or today\'s appointment.', 400);
@@ -462,7 +463,7 @@ export const rescheduleAppointment = asyncHandler(async (req, res) => {
     throw new AppError('Only confirmed appointments can be rescheduled.', 400);
   }
 
-  const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+  const todayString = formatDateKolkata(new Date());
 
   if (appointment.date <= todayString) {
     throw new AppError('Cannot reschedule past or today\'s appointments.', 400);

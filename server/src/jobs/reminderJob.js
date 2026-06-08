@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import Appointment from '../models/Appointment.model.js';
 import { sendAppointmentReminder } from '../services/emailService.js';
+import { formatDateKolkata } from '../utils/date.js';
 import logger from '../utils/logger.js';
 
 /**
@@ -16,7 +17,7 @@ export const initReminderJob = () => {
       // Calculate tomorrow's date string in YYYY-MM-DD format
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = tomorrow.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+      const tomorrowStr = formatDateKolkata(tomorrow);
 
       // Fetch tomorrow's active confirmed bookings
       const appointments = await Appointment.find({

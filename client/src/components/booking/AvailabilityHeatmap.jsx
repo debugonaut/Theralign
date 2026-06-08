@@ -19,6 +19,20 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
     return 'available';
   };
 
+  const formatDateKolkata = (date) => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    const parts = formatter.formatToParts(date);
+    const year = parts.find((p) => p.type === 'year').value;
+    const month = parts.find((p) => p.type === 'month').value;
+    const day = parts.find((p) => p.type === 'day').value;
+    return `${year}-${month}-${day}`;
+  };
+
   // Generate date array for the subsequent 28 days from local today (aligned to Asia/Kolkata)
   const generateNext28Days = () => {
     const dates = [];
@@ -26,7 +40,7 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
     for (let i = 0; i < 28; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() + i);
-      dates.push(d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })); // "YYYY-MM-DD" in IST
+      dates.push(formatDateKolkata(d)); // "YYYY-MM-DD" in IST
     }
     return dates;
   };

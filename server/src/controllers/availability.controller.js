@@ -1,6 +1,7 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import { requireVerifiedDoctorProfile } from '../utils/verifiedDoctor.js';
 import { successResponse } from '../utils/apiResponse.js';
+import { formatDateKolkata } from '../utils/date.js';
 import AppError from '../utils/AppError.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
@@ -87,7 +88,7 @@ export const createRecurringSlots = asyncHandler(async (req, res) => {
   for (let week = 0; week < repeatWeeksNum; week++) {
     const d = new Date(baseDate);
     d.setDate(d.getDate() + week * 7);
-    targetDates.push(d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' }));
+    targetDates.push(formatDateKolkata(d));
   }
 
   // Step 5: Attempt to create all slots individually, skipping duplicates (index collisions)
@@ -233,7 +234,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
   await requireVerifiedDoctorProfile(doctorId);
 
   // Step 1: Construct today's date in YYYY-MM-DD in Asia/Kolkata timezone
-  const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+  const todayString = formatDateKolkata(new Date());
 
   // Check if WeeklySchedule exists for this doctor
   let weeklySchedule = await WeeklySchedule.findOne({ doctor: doctorId });
@@ -277,7 +278,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
     for (let i = 0; i < 28; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
-      const dateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+      const dateStr = formatDateKolkata(d);
       targetDates.push(dateStr);
     }
 
@@ -455,7 +456,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
     for (let i = 0; i < 28; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
-      const dateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+      const dateStr = formatDateKolkata(d);
       targetDates.push(dateStr);
     }
 
@@ -842,12 +843,12 @@ export const debugDoctorAvailability = asyncHandler(async (req, res) => {
   // Calculate debug computed slots preview
   const preview = [];
   if (profile && weeklySchedule) {
-    const todayString = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+    const todayString = formatDateKolkata(new Date());
     const targetDates = [];
     for (let i = 0; i < 7; i++) { // just show 7 days preview
       const d = new Date();
       d.setDate(d.getDate() + i);
-      targetDates.push(d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' }));
+      targetDates.push(formatDateKolkata(d));
     }
     
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];

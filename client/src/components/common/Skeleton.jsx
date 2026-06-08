@@ -93,29 +93,28 @@ const Skeleton = ({
 
 /** Doctor card skeleton — matches the DoctorCard proportions exactly */
 export const DoctorCardSkeleton = () => (
-  <div
-    className="p-6"
-    style={{ border: '2px solid #E5E5E5', borderRadius: '0' }}
-    aria-label="Loading doctor information"
-    aria-busy="true"
-  >
-    <div className="flex items-start gap-4 mb-6">
-      {/* Avatar circle */}
-      <Skeleton variant="circle" width="48px" height="48px" />
-      <div className="flex-1 flex flex-col gap-2">
-        {/* Name */}
-        <Skeleton variant="line" width="60%" height="16px" />
-        {/* Specialization */}
-        <Skeleton variant="line" width="40%" height="12px" />
+  <div className="h-[160px] rounded-xl overflow-hidden flex"
+       style={{ boxShadow: '0 2px 8px rgba(11,79,108,0.07)' }}>
+    <div className="w-[220px] bg-[#E8F4F8] flex-shrink-0 animate-pulse" />
+    <div className="w-[200px] flex-shrink-0 border-r border-[#EEF2F6] p-5 flex flex-col gap-4 animate-pulse">
+      <div className="h-3 bg-gray-100 rounded w-full" />
+      <div className="h-3 bg-gray-100 rounded w-4/5" />
+      <div className="h-3 bg-gray-100 rounded w-full" />
+    </div>
+    <div className="flex-1 p-5 flex flex-col gap-3 animate-pulse">
+      <div className="h-3 bg-gray-100 rounded w-3/5" />
+      <div className="h-3 bg-gray-100 rounded w-2/5" />
+      <div className="h-3 bg-gray-100 rounded w-4/5" />
+      <div className="flex gap-2">
+        <div className="h-5 bg-gray-100 rounded w-16" />
+        <div className="h-5 bg-gray-100 rounded w-16" />
       </div>
     </div>
-    {/* Rating + fee row */}
-    <div className="flex gap-4 mb-4">
-      <Skeleton variant="line" width="30%" height="12px" />
-      <Skeleton variant="line" width="25%" height="12px" />
+    <div className="w-[180px] flex-shrink-0 bg-[#FAFBFC] border-l border-[#EEF2F6] p-5 flex flex-col gap-3 items-center justify-center animate-pulse">
+      <div className="h-3 bg-gray-100 rounded w-3/4" />
+      <div className="h-9 bg-gray-100 rounded w-full" />
+      <div className="h-3 bg-gray-100 rounded w-1/2" />
     </div>
-    {/* Location */}
-    <Skeleton variant="line" width="50%" height="12px" />
   </div>
 );
 

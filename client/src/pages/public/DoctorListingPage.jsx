@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search, MapPin, X } from 'lucide-react';
-import { getDiscoveryListingAPI, searchDoctorsAPI } from '../../api/discovery.api';
+import { Search, MapPin, X, Navigation, SearchX } from 'lucide-react';
+import { getDiscoveryListingAPI, searchDoctorsAPI, getNearbyDoctorsAPI } from '../../api/discovery.api';
 import { interpretSymptomsAPI } from '../../api/ai.api';
 
 import FilterSidebar from '../../components/doctor/FilterSidebar';
@@ -64,6 +64,15 @@ const DoctorListingPage = () => {
     sortBy: searchParams.get('sortBy') || 'relevance',
     page: Number(searchParams.get('page')) || 1,
     search: searchParams.get('q') || '',
+    latitude: searchParams.get('latitude') || '',
+    longitude: searchParams.get('longitude') || '',
+  };
+
+  const handleClearNearby = () => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('latitude');
+    params.delete('longitude');
+    setSearchParams(params);
   };
 
   // Sync title
@@ -79,6 +88,8 @@ const DoctorListingPage = () => {
     }
     try {
       let result;
+      const isNearby = currentFilters.latitude && currentFilters.longitude;
+
       const rawFilters = {
         specialization: currentFilters.specialization,
         city: currentFilters.city,
@@ -93,7 +104,15 @@ const DoctorListingPage = () => {
         Object.entries(rawFilters).filter(([_, v]) => v !== '' && v !== undefined)
       );
 
-      if (currentFilters.search) {
+      if (isNearby) {
+        result = await getNearbyDoctorsAPI({
+          latitude: currentFilters.latitude,
+          longitude: currentFilters.longitude,
+          specialization: currentFilters.specialization,
+          page: currentFilters.page,
+          limit: 12,
+        });
+      } else if (currentFilters.search) {
         result = await searchDoctorsAPI({
           q: currentFilters.search,
           ...apiFilters,
@@ -367,10 +386,10 @@ const DoctorListingPage = () => {
       )}
 
       {/* Main split content: left filter panel, right results area */}
-      <div ref={selectedMapDoctor ? undefined : listingRef} className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start mt-8 pt-8 border-t-2 border-neutral-900">
+      <div ref={selectedMapDoctor ? undefined : listingRef} className="flex flex-col lg:flex-row items-start gap-8 mt-8 pt-8 border-t-2 border-neutral-900">
         
-        {/* Left Filter Panel (Width 280px via layout classes, hidden on mobile) */}
-        <div className="hidden lg:block lg:col-span-1 lg:sticky lg:top-24 z-10">
+        {/* Left Filter Panel (Width 280px, fixed, 1px solid #EEF2F6 right border) */}
+        <div className="hidden lg:block w-[280px] shrink-0 border-r border-[#EEF2F6] pr-8 lg:sticky lg:top-24 z-10">
           <FilterSidebar
             initialFilters={currentFilters}
             onApply={handleApplyFilters}
@@ -379,65 +398,64 @@ const DoctorListingPage = () => {
         </div>
 
         {/* Right Results Area */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
+        <div className="flex-grow flex flex-col w-full min-w-0" style={{ gap: '16px', padding: '0 0 40px 0' }}>
           
+          {/* Nearby Mode Visual Banner */}
+          {!!(currentFilters.latitude && currentFilters.longitude) && (
+            <div className="w-full bg-[#E8F4F8] rounded-[8px] px-4 py-2.5 flex items-center justify-between" style={{ marginBottom: '12px' }}>
+              <div className="flex items-center gap-2">
+                <Navigation size={14} className="text-[#0B4F6C]" />
+                <span className="font-medium text-[13px] text-[#0B4F6C]">
+                  Showing doctors near your location, sorted by distance
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleClearNearby}
+                className="font-semibold text-[12px] text-[#F4845F] hover:underline bg-transparent border-0 cursor-pointer"
+              >
+                CLEAR →
+              </button>
+            </div>
+          )}
+
           {/* Results Summary & Sort controls header bar */}
-          <div className="border-b-2 border-neutral-900 pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <span className="text-ui-lg font-black text-neutral-900 uppercase tracking-wider">
-              {loading ? 'DISCOVERING CLINICIANS...' : `${pagination.total} SPECIALISTS FOUND`}
+          <div className="flex justify-between items-center pb-4 border-b border-[#EEF2F6]" style={{ marginBottom: '4px' }}>
+            {/* Left Side: Results Count */}
+            <span className="font-medium text-[14px] text-[#6B7C93]">
+              {loading ? (
+                'Discovering clinicians...'
+              ) : (
+                <>
+                  <span className="font-bold text-[#1C2B3A]">{pagination.total}</span> physiotherapists found
+                </>
+              )}
             </span>
 
-            {/* Desktop Segmented control sort */}
-            <div className="hidden md:flex items-center gap-1 shrink-0">
-              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mr-2">
-                SORT BY:
-              </span>
-              {[
-                { label: 'RELEVANCE', val: 'relevance' },
-                { label: 'RATING ↓', val: 'rating' },
-                { label: 'FEE ↑', val: 'fee_asc' },
-                { label: 'FEE ↓', val: 'fee_desc' },
-              ].map((opt) => {
-                const isActive = currentFilters.sortBy === opt.val;
-                return (
-                  <button
-                    key={opt.val}
-                    type="button"
-                    onClick={() => updateSort(opt.val)}
-                    className={`px-3 py-1.5 border-2 border-neutral-900 text-[10px] font-black uppercase tracking-widest transition-colors rounded-none cursor-pointer select-none
-                      ${isActive 
-                        ? 'bg-neutral-900 text-white' 
-                        : 'bg-white text-neutral-900 hover:bg-neutral-100'
-                      }
-                    `}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Mobile Sort Dropdown select */}
-            <div className="flex md:hidden items-center gap-2 w-full mt-1">
-              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest shrink-0">
-                SORT BY:
-              </span>
-              <select
-                value={currentFilters.sortBy}
-                onChange={(e) => updateSort(e.target.value)}
-                className="flex-grow h-10 px-3 border-2 border-neutral-900 bg-white text-[10px] font-black uppercase tracking-wider focus:outline-none"
-              >
-                <option value="relevance">RELEVANCE</option>
-                <option value="rating">RATING ↓</option>
-                <option value="fee_asc">FEE ↑</option>
-                <option value="fee_desc">FEE ↓</option>
-              </select>
+            {/* Right Side: Sort Control */}
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="font-normal text-[12px] text-[#6B7C93]">Sort by</span>
+              {!!(currentFilters.latitude && currentFilters.longitude) ? (
+                <span className="font-medium text-[13px] text-[#6B7C93]">Sorted by distance</span>
+              ) : (
+                <select
+                  value={currentFilters.sortBy === 'relevance' ? 'rating' : currentFilters.sortBy}
+                  onChange={(e) => updateSort(e.target.value)}
+                  className="border border-[#DDE3EA] rounded-[6px] h-[34px] px-3 font-medium text-[13px] text-[#1C2B3A] bg-white cursor-pointer focus:outline-none focus:border-[#0B4F6C]"
+                >
+                  <option value="rating">Highest Rated</option>
+                  <option value="reviews">Most Reviewed</option>
+                  <option value="fee_asc">Fee: Low to High</option>
+                  <option value="fee_desc">Fee: High to Low</option>
+                  <option value="experience">Experience</option>
+                </select>
+              )}
             </div>
           </div>
 
-          {/* Listing Grid */}
+          {/* Listing Content */}
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <DoctorCardSkeleton key={i} />
               ))}
@@ -453,26 +471,34 @@ const DoctorListingPage = () => {
               </Button>
             </div>
           ) : doctors.length === 0 ? (
-            <EmptyState
-              title="NO SPECIALISTS FOUND"
-              description="We could not discover any clinical profiles matching your exact criteria filter. Try resetting choices."
-              icon={Search}
-              actionLabel="CLEAR SEARCH FILTERS"
-              onAction={handleClearAll}
-              actionVariant="secondary"
-            />
+            <div className="flex flex-col items-center justify-center py-[64px] px-[24px] bg-[#FAFBFC] rounded-xl border border-dashed border-[#DDE3EA] text-center w-full">
+              <SearchX size={40} className="text-[#DDE3EA] mx-auto" />
+              <h3 className="font-bold text-[20px] text-[#1C2B3A] mt-4">
+                No physiotherapists found
+              </h3>
+              <p className="font-normal text-[14px] text-[#6B7C93] mt-2 max-w-[400px] mx-auto">
+                Try adjusting your filters or expanding your search area.
+              </p>
+              <Button
+                variant="ghost"
+                onClick={handleClearAll}
+                className="mt-6"
+              >
+                CLEAR ALL FILTERS →
+              </Button>
+            </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-4">
                 {(selectedMapDoctor
                   ? [selectedMapDoctor, ...doctors.filter((d) => d._id !== selectedMapDoctor._id)]
                   : doctors
-                ).map((doc) => (
+                ).map((doc, idx) => (
                   <div
                     key={doc._id}
-                    className={selectedMapDoctor?._id === doc._id ? 'ring-2 ring-primary ring-offset-2 rounded-lg' : ''}
+                    className={selectedMapDoctor?._id === doc._id ? 'ring-2 ring-primary ring-offset-2 rounded-xl' : ''}
                   >
-                    <DoctorCard doctor={doc} />
+                    <DoctorCard doctor={doc} index={idx} />
                   </div>
                 ))}
               </div>
