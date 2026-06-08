@@ -172,18 +172,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
 
       {/* ─── ZONE D: Action (180px) ─── */}
       <div className="w-[180px] bg-[#FAFBFC] shrink-0 border-l border-[#EEF2F6] rounded-r-xl flex flex-col justify-center items-center px-5 py-5 gap-3">
-        {/* Availability Indicator */}
-        {doctor.isAvailable ? (
-          <div className="inline-flex items-center gap-1.5 bg-[#E8F8F5] rounded-[20px] px-[10px] py-1">
-            <span className="w-3 h-3 rounded-full bg-[#0A7E6E] available-dot shrink-0" />
-            <span className="font-medium text-[13px] text-[#0A7E6E]">Available</span>
-          </div>
-        ) : (
-          <div className="inline-flex items-center gap-1.5 bg-[#F0F4F7] rounded-[20px] px-[10px] py-1">
-            <span className="w-3 h-3 rounded-full bg-[#A8B8C8] shrink-0" />
-            <span className="font-medium text-[13px] text-[#A8B8C8]">Unavailable</span>
-          </div>
-        )}
+
 
         {/* Primary CTA */}
         <button
