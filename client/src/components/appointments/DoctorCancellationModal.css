@@ -1,0 +1,24 @@
+.doctor-cancellation-modal {
+  max-width: 450px;
+}
+
+.doctor-summary {
+  margin: 16px 24px;
+}
+
+.info-note {
+  margin: 16px 24px;
+  padding: 12px 16px;
+  background-color: #f0f9f8;
+  border-radius: 8px;
+  border-left: 4px solid #0a7e6e;
+}
+
+.info-note p {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #0a7e6e;
+  margin: 0;
+  line-height: 1.5;
+}

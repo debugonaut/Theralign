@@ -248,7 +248,40 @@ const PatientPayments = () => {
                       </span>
                     </Table.Cell>
                     <Table.Cell>
-                      <Badge variant="paid" />
+                      <div className="flex flex-col gap-1.5 items-start">
+                        <Badge variant="paid" />
+                        {payment.refundStatus && payment.refundStatus !== 'none' && (
+                          <div className="refund-status">
+                            {payment.refundStatus === 'pending' && (
+                              <span className="badge pending-badge" title="Your refund request is under review by our team.">
+                                REFUND PENDING
+                              </span>
+                            )}
+                            
+                            {(payment.refundStatus === 'processed' || payment.refundStatus === 'approved') && (
+                              <div className="flex flex-col items-start">
+                                <span className="badge refunded-badge" title="Refund processed. Please allow 2-3 business days for it to appear in your account.">
+                                  REFUNDED
+                                </span>
+                                <div className="refund-detail">
+                                  ₹{payment.refundAmount?.toFixed(2) || payment.amount?.toFixed(2)} · 2-3 business days
+                                </div>
+                              </div>
+                            )}
+                            
+                            {payment.refundStatus === 'rejected' && (
+                              <span className="badge rejected-badge" title={`Reason: ${payment.adminNote}`}>
+                                REFUND REJECTED
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {payment.cancelledBy === 'doctor' && (payment.refundStatus === 'processed' || payment.refundStatus === 'approved') && (
+                          <div className="cancelled-by-doctor">
+                            Cancelled by physiotherapist · Full refund issued automatically
+                          </div>
+                        )}
+                      </div>
                     </Table.Cell>
                     <Table.Cell actions>
                       {payment.status === 'refunded' ? (

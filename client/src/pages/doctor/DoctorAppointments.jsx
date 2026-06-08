@@ -8,6 +8,8 @@ import Table, { ActionLink } from '../../components/common/Table';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
+import DoctorCancellationModal from '../../components/appointments/DoctorCancellationModal.jsx';
+import { cancelAppointmentDoctorAPI } from '../../api/refund.api.js';
 
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -29,6 +31,8 @@ const DoctorAppointments = () => {
   // Cancellation Modal state
   const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null, reason: '' });
   const [cancelling, setCancelling] = useState(false);
+  const [selectedAppointmentForCancel, setSelectedAppointmentForCancel] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   // Document action loading state
   const [actionLoading, setActionLoading] = useState({});
@@ -114,6 +118,23 @@ const DoctorAppointments = () => {
       toast.error('FAILED TO CANCEL APPOINTMENT.');
     } finally {
       setCancelling(false);
+    }
+  };
+
+  const handleDoctorCancelAppointment = async () => {
+    if (!selectedAppointmentForCancel) return;
+
+    try {
+      setCancelLoading(true);
+      await cancelAppointmentDoctorAPI(selectedAppointmentForCancel._id);
+      toast.success('Appointment cancelled. Patient refund has been initiated automatically.');
+      fetchAppointments(true);
+      setSelectedAppointmentForCancel(null);
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+      toast.error(error.response?.data?.message || 'Failed to cancel appointment');
+    } finally {
+      setCancelLoading(false);
     }
   };
 
@@ -373,12 +394,24 @@ const DoctorAppointments = () => {
                             >
                               MARK COMPLETE →
                             </button>
-                            <button
-                              onClick={(e) => handleOpenCancelModal(e, appt._id)}
-                              className="font-bold uppercase cursor-pointer text-accent hover:opacity-75 bg-transparent border-0 text-[11px] tracking-widest"
-                            >
-                              CANCEL →
-                            </button>
+                            {appt.status === 'confirmed' ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedAppointmentForCancel(appt);
+                                }}
+                                className="cancel-link font-bold uppercase cursor-pointer"
+                              >
+                                CANCEL
+                              </button>
+                            ) : (
+                              <button
+                                onClick={(e) => handleOpenCancelModal(e, appt._id)}
+                                className="font-bold uppercase cursor-pointer text-accent hover:opacity-75 bg-transparent border-0 text-[11px] tracking-widest"
+                              >
+                                CANCEL →
+                              </button>
+                            )}
                           </>
                         )}
 
@@ -569,6 +602,14 @@ const DoctorAppointments = () => {
           </div>
         </Modal>
       )}
+
+      <DoctorCancellationModal
+        appointment={selectedAppointmentForCancel}
+        isOpen={!!selectedAppointmentForCancel}
+        onClose={() => setSelectedAppointmentForCancel(null)}
+        onSubmit={handleDoctorCancelAppointment}
+        isLoading={cancelLoading}
+      />
 
     </div>
   );

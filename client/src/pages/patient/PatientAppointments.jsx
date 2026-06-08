@@ -8,6 +8,8 @@ import Table, { ActionLink } from '../../components/common/Table';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
+import CancellationModal from '../../components/booking/CancellationModal.jsx';
+import { cancelAppointmentPatientAPI } from '../../api/refund.api.js';
 
 const PatientAppointments = () => {
   const navigate = useNavigate();
@@ -26,6 +28,8 @@ const PatientAppointments = () => {
   // Cancellation Modal state (Destructive action)
   const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null, reason: '' });
   const [cancelling, setCancelling] = useState(false);
+  const [selectedAppointmentForCancel, setSelectedAppointmentForCancel] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   // Inline Review Form states
   const [rating, setRating] = useState(0);
@@ -110,6 +114,23 @@ const PatientAppointments = () => {
       toast.error('FAILED TO CANCEL APPOINTMENT.');
     } finally {
       setCancelling(false);
+    }
+  };
+
+  const handlePatientCancelAppointment = async (reason) => {
+    if (!selectedAppointmentForCancel) return;
+
+    try {
+      setCancelLoading(true);
+      await cancelAppointmentPatientAPI(selectedAppointmentForCancel._id, reason);
+      toast.success('Appointment cancelled. Your refund request has been submitted for review.');
+      fetchAppointments(true);
+      setSelectedAppointmentForCancel(null);
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+      toast.error(error.response?.data?.message || 'Failed to cancel appointment');
+    } finally {
+      setCancelLoading(false);
     }
   };
 
@@ -305,13 +326,25 @@ const PatientAppointments = () => {
                         <ActionLink onClick={() => toggleRowExpansion(appt._id)}>
                           VIEW
                         </ActionLink>
-                        {canCancel && (
-                          <ActionLink
-                            destructive={true}
-                            onClick={(e) => handleOpenCancelModal(e, appt._id)}
+                        {appt.status === 'confirmed' && appt.paymentStatus === 'paid' ? (
+                          <button
+                            className="cancel-link"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedAppointmentForCancel(appt);
+                            }}
                           >
-                            CANCEL
-                          </ActionLink>
+                            CANCEL APPOINTMENT
+                          </button>
+                        ) : (
+                          canCancel && (
+                            <ActionLink
+                              destructive={true}
+                              onClick={(e) => handleOpenCancelModal(e, appt._id)}
+                            >
+                              CANCEL
+                            </ActionLink>
+                          )
                         )}
                       </Table.Cell>
                     </Table.Row>
@@ -649,7 +682,7 @@ const PatientAppointments = () => {
             </p>
             
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+               <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                 REASON FOR CANCELLATION (OPTIONAL)
               </label>
               <textarea
@@ -681,6 +714,14 @@ const PatientAppointments = () => {
           </div>
         </Modal>
       )}
+
+      <CancellationModal
+        appointment={selectedAppointmentForCancel}
+        isOpen={!!selectedAppointmentForCancel}
+        onClose={() => setSelectedAppointmentForCancel(null)}
+        onSubmit={handlePatientCancelAppointment}
+        isLoading={cancelLoading}
+      />
 
     </div>
   );

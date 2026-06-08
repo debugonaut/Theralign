@@ -8,12 +8,14 @@ import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 import { getPendingDoctorsAPI } from '../../api/admin.api';
 import NotificationBell from './NotificationBell';
+import { getRefundStatsAPI } from '../../api/refund.api';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
+  const [refundBadgeCount, setRefundBadgeCount] = useState(0);
 
   const user = useAuthStore((state) => state.user);
   const clearCredentials = useAuthStore((state) => state.clearCredentials);
@@ -27,9 +29,23 @@ const AdminLayout = () => {
     } catch { /* fail silently */ }
   };
 
+  const fetchRefundStats = async () => {
+    try {
+      const res = await getRefundStatsAPI();
+      const count = res.data?.pendingCount ?? res.data?.data?.pendingCount ?? 0;
+      setRefundBadgeCount(count);
+    } catch (error) {
+      console.error('Error fetching refund stats:', error);
+    }
+  };
+
   useEffect(() => {
     fetchPending();
-    const interval = setInterval(fetchPending, 30000);
+    fetchRefundStats();
+    const interval = setInterval(() => {
+      fetchPending();
+      fetchRefundStats();
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -54,6 +70,7 @@ const AdminLayout = () => {
 
   const financeGroup = [
     { name: 'Revenue', href: '/admin/revenue', icon: DollarSign },
+    { name: 'Refunds', href: '/admin/refunds', icon: '💸', showRefundBadge: true },
   ];
 
   const renderNavGroup = (title, items) => {
@@ -65,6 +82,7 @@ const AdminLayout = () => {
         <div className="space-y-1">
           {items.map((item) => {
             const Icon = item.icon;
+            const isEmoji = typeof Icon === 'string';
             const isActive = location.pathname === item.href;
             return (
               <NavLink
@@ -80,7 +98,11 @@ const AdminLayout = () => {
                 `}
               >
                 <div className="flex items-center gap-3 min-w-[200px]">
-                  <Icon className="w-4 h-4 shrink-0" />
+                  {isEmoji ? (
+                    <span className="w-4 h-4 shrink-0 text-sm flex items-center justify-center select-none">{Icon}</span>
+                  ) : (
+                    <Icon className="w-4 h-4 shrink-0" />
+                  )}
                   <span className="md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">{item.name}</span>
                 </div>
                 
@@ -88,6 +110,11 @@ const AdminLayout = () => {
                   {item.showBadge && pendingCount > 0 && (
                     <span className="bg-accent text-white font-bold text-[10px] px-1.5 py-0.5 rounded-sm leading-none border-0 shadow-sm">
                       {pendingCount}
+                    </span>
+                  )}
+                  {item.showRefundBadge && refundBadgeCount > 0 && (
+                    <span className="nav-badge">
+                      {refundBadgeCount}
                     </span>
                   )}
                   {isActive && <ChevronRight className="w-4 h-4 text-white/50" />}

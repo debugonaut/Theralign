@@ -11,6 +11,12 @@ import {
   resetDemoFlow,
   getDoctorDetailAdmin,
 } from '../controllers/admin.controller.js';
+import {
+  getPendingRefunds,
+  approveRefund,
+  rejectRefund,
+  getRefundStats,
+} from '../controllers/refund.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 import validate from '../middleware/validate.middleware.js';
@@ -62,5 +68,18 @@ router.patch('/users/:id/status', toggleUserStatusValidation, validate, toggleUs
 
 /** POST /api/admin/reset-demo — Reset the demo doctor flow (Admin Only) */
 router.post('/reset-demo', resetDemoFlow);
+
+// ─── Refund Management Routes ───────────────────────────────────────────────
+/** GET /api/admin/refunds/stats — Get refund statistics */
+router.get('/refunds/stats', getRefundStats);
+
+/** GET /api/admin/refunds — Get pending refund requests with pagination */
+router.get('/refunds', getPendingRefunds);
+
+/** PATCH /api/admin/refunds/:paymentId/approve — Approve pending refund */
+router.patch('/refunds/:paymentId/approve', approveRefund);
+
+/** PATCH /api/admin/refunds/:paymentId/reject — Reject pending refund */
+router.patch('/refunds/:paymentId/reject', rejectRefund);
 
 export default router;

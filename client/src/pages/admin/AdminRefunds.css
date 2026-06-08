@@ -1,0 +1,466 @@
+.admin-refunds-page {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-card.pending-card {
+  border-color: #b45309;
+  background-color: #fef3e2;
+}
+
+.stat-card.processed-card,
+.stat-card.refunded-card {
+  border-color: #0a7e6e;
+  background-color: #f0f9f8;
+}
+
+.stat-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1c2b3a;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7c93;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Refunds Container */
+.refunds-container {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #dde3ea;
+  overflow: hidden;
+}
+
+.loading-state,
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #a8b8c8;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.refunds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Inter', sans-serif;
+}
+
+.refunds-table thead {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dde3ea;
+}
+
+.refunds-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7c93;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.refund-row {
+  border-bottom: 1px solid #f0f3f7;
+  transition: background-color 0.2s;
+}
+
+.refund-row:hover {
+  background-color: #f8f9fa;
+}
+
+.refunds-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #1c2b3a;
+  vertical-align: middle;
+}
+
+/* Patient Cell */
+.patient-cell {
+  display: flex;
+  align-items: center;
+}
+
+.patient-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patient-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a7e6e, #17a082);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.patient-name {
+  font-weight: 600;
+  color: #1c2b3a;
+}
+
+.patient-email {
+  font-size: 12px;
+  color: #a8b8c8;
+  margin-top: 2px;
+}
+
+/* Amount Cell */
+.amount-cell {
+  text-align: right;
+  font-weight: 600;
+  color: #0a7e6e;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Time Cell */
+.time-cell {
+  font-size: 12px;
+  color: #a8b8c8;
+  white-space: nowrap;
+}
+
+/* Reason Cell */
+.reason-cell {
+  max-width: 200px;
+}
+
+.reason-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge.pending-badge {
+  background-color: #fef3e2;
+  color: #b45309;
+  border: 1px solid #b45309;
+}
+
+.status-badge.processed-badge {
+  background-color: #f0f9f8;
+  color: #0a7e6e;
+  border: 1px solid #0a7e6e;
+}
+
+.status-badge.rejected-badge {
+  background-color: #f3f4f6;
+  color: #6b7c93;
+  border: 1px solid #d1d5db;
+}
+
+/* Actions Cell */
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.action-link {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-left: 12px;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.action-link.approve-link {
+  color: #0a7e6e;
+}
+
+.action-link.approve-link:hover {
+  color: #065e52;
+}
+
+.action-link.reject-link {
+  color: #c0392b;
+}
+
+.action-link.reject-link:hover {
+  color: #a03225;
+}
+
+/* Expansion Row */
+.expansion-row {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dde3ea;
+}
+
+.expansion-row td {
+  padding: 0;
+}
+
+.expansion-content {
+  padding: 24px;
+  display: flex;
+  gap: 32px;
+}
+
+.expansion-summary {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a8b8c8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.summary-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1c2b3a;
+}
+
+.expansion-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1c2b3a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-textarea {
+  width: 100%;
+  height: 60px;
+  border: 1px solid #dde3ea;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #1c2b3a;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #0a7e6e;
+}
+
+.form-textarea::placeholder {
+  color: #a8b8c8;
+}
+
+.expansion-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: #6b7c93;
+  border: 1px solid #dde3ea;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #f0f3f7;
+}
+
+.btn-primary {
+  background-color: #0a7e6e;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #065e52;
+}
+
+.btn-danger {
+  background-color: #c0392b;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #a03225;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-top: 1px solid #dde3ea;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border: 1px solid #dde3ea;
+  border-radius: 8px;
+  background-color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1c2b3a;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #0a7e6e;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #6b7c93;
+  font-weight: 500;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .expansion-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .expansion-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-refunds-page {
+    padding: 16px;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .refunds-table {
+    font-size: 12px;
+  }
+
+  .refunds-table th,
+  .refunds-table td {
+    padding: 12px 8px;
+  }
+
+  .patient-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 10px;
+  }
+
+  .patient-name {
+    font-size: 13px;
+  }
+
+  .patient-email {
+    font-size: 11px;
+  }
+
+  .action-link {
+    margin-left: 6px;
+    font-size: 11px;
+  }
+
+  .expansion-buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
