@@ -32,6 +32,8 @@ const PatientAppointments = () => {
   const [comment, setComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState({}); // { [apptId]: boolean }
   const [submittedReviews, setSubmittedReviews] = useState({}); // { [apptId]: { rating, comment } }
+  const [sidebarReviewTab, setSidebarReviewTab] = useState('ONGOING'); // 'ONGOING' | 'COMPLETED'
+  const [selectedSidebarApptId, setSelectedSidebarApptId] = useState(null);
 
   const fetchAppointments = async (silent = false) => {
     if (!silent) setLoading(true);
@@ -143,9 +145,12 @@ const PatientAppointments = () => {
             a._id === apptId ? { ...a, reviewSubmitted: true } : a
           )
         );
-        // Reset local form values
+        // Reset selected appointment and local form values
+        setSelectedSidebarApptId(null);
         setRating(0);
         setComment('');
+        // Trigger background fetch to re-sync
+        fetchAppointments(true);
       }
     } catch (err) {
       console.error(err);
@@ -162,8 +167,16 @@ const PatientAppointments = () => {
     setComment('');
   };
 
+  // Derive ongoing and completed care eligible for rating/review in the sidebar
+  const ongoingEligible = appointments.filter(
+    (a) => (a.status === 'pending' || a.status === 'confirmed') && !a.reviewSubmitted
+  );
+  const completedEligible = appointments.filter(
+    (a) => a.status === 'completed' && !a.reviewSubmitted
+  );
+
   return (
-    <div className="flex flex-col gap-5 select-none text-left bg-white">
+    <div className="flex flex-col gap-5 select-none text-left bg-white max-w-[1200px] mx-auto w-full">
       
       {/* Page Header Section */}
       <SectionHeader
@@ -173,8 +186,11 @@ const PatientAppointments = () => {
         className="mb-0"
       />
 
-      {/* Segmented Tab Row */}
-      <div className="flex items-center gap-1.5 pt-2 flex-wrap">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+        {/* Left Column: List Ledger Table */}
+        <div className="lg:col-span-8 flex flex-col gap-5 w-full">
+          {/* Segmented Tab Row */}
+          <div className="flex items-center gap-1.5 pt-2 flex-wrap">
         {['ALL APPOINTMENTS', 'UPCOMING', 'COMPLETED', 'CANCELLED'].map((tab) => {
           const isActive = activeTab === tab;
           return (
@@ -367,106 +383,17 @@ const PatientAppointments = () => {
                               </div>
                             )}
 
-                             {/* ── D3.7 Inline Review Form ── */}
-                            {appt.status === 'completed' && (
-                              <div className="pt-6 border-t border-neutral-200 text-left">
-                                {!appt.reviewSubmitted && !submittedReviews[appt._id] ? (
-                                  <div className="bg-white border border-neutral-200/60 p-6 rounded-lg shadow-level-1 flex flex-col gap-4">
-                                    <div>
-                                      <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
-                                        LEAVE A REVIEW
-                                      </span>
-                                      <h4 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tighter">
-                                        SHARE YOUR SESSION EXPERIENCE WITH DR. {docName.toUpperCase()}
-                                      </h4>
-                                      <div className="h-[1px] bg-neutral-200 w-full mt-2 max-w-[1200px]" />
-                                    </div>
-
-                                    {/* 5-Star Rating Selector */}
-                                    <div className="flex flex-col gap-2">
-                                      <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                                        RATING
-                                      </span>
-                                      <div className="flex items-center gap-1">
-                                        {[1, 2, 3, 4, 5].map((val) => (
-                                          <button
-                                            key={val}
-                                            type="button"
-                                            onClick={() => setRating(val)}
-                                            className="text-[30px] leading-none transition-transform duration-100 active:scale-90 focus:outline-none cursor-pointer hover:scale-110"
-                                            aria-label={`Rate ${val} out of 5`}
-                                          >
-                                            <span
-                                              className={`transition-colors duration-150 ${
-                                                val <= rating ? 'text-amber-400' : 'text-neutral-200'
-                                              }`}
-                                            >
-                                              ★
-                                            </span>
-                                          </button>
-                                        ))}
-                                        {rating > 0 && (
-                                          <span className={`ml-3 text-[10px] font-black uppercase tracking-widest ${
-                                            rating <= 2 ? 'text-accent' : rating === 3 ? 'text-warning' : 'text-success'
-                                          }`}>
-                                            {['', 'Poor', 'Fair', 'Good', 'Excellent', 'Outstanding'][rating]}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-
-
-                                    {/* Review Text */}
-                                    <div className="flex flex-col gap-2">
-                                      <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                                        YOUR EXPERIENCE
-                                      </span>
-                                      <textarea
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                        placeholder="Describe your session, the physiotherapist's approach, and your recovery progress..."
-                                        maxLength={1000}
-                                        rows={3}
-                                        className="w-full bg-white border border-neutral-200 focus:border-[#0A7E6E] px-4 py-3 text-ui-sm font-semibold text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-[#0A7E6E]/20 transition-all rounded-md resize-none transition-warm"
-                                      />
-                                      <span className="text-[9px] font-black text-neutral-500 text-right uppercase tracking-widest">
-                                        {comment.length} / 1000 CHARACTERS (MIN 10 CHARACTERS)
-                                      </span>
-                                    </div>
-
-                                    {/* Submit action */}
-                                    <div className="pt-2">
-                                      <Button
-                                        onClick={() => handleReviewSubmit(appt._id)}
-                                        disabled={rating === 0 || comment.trim().length < 10 || submittingReview[appt._id]}
-                                        variant="primary"
-                                        fullWidth
-                                      >
-                                        {submittingReview[appt._id] ? 'SUBMITTING...' : 'SUBMIT REVIEW →'}
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  /* Post-submission confirmed card state */
-                                  <div className="bg-white border border-[#0A7E6E]/20 p-6 rounded-lg shadow-level-1 flex flex-col gap-3">
-                                    <div className="flex items-center gap-3">
-                                      <div className="w-8 h-8 border border-[#0A7E6E]/30 bg-[#0A7E6E]/5 flex items-center justify-center text-[#0A7E6E] text-ui-sm font-bold rounded-md">
-                                        {submittedReviews[appt._id]?.rating || appt.rating || 5}
-                                      </div>
-                                      <div className="text-left">
-                                        <span className="text-[10px] font-black text-success uppercase tracking-widest block">
-                                          REVIEW SUBMITTED — THANK YOU.
-                                        </span>
-                                        <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
-                                          Your feedback helps patient search indexes remain transparent.
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <p className="text-ui-md text-neutral-900 italic font-medium leading-relaxed mt-2">
-                                      "{submittedReviews[appt._id]?.comment || appt.comment || 'YOUR REVIEW WAS RECORDED SUCCESSFULLY.'}"
-                                    </p>
-                                  </div>
-                                )}
+                            {/* ── Reviewed Confirmation ── */}
+                            {appt.reviewSubmitted && (
+                              <div className="pt-4 border-t border-neutral-200 text-left">
+                                <div className="bg-white border border-[#0A7E6E]/10 p-4 rounded-md text-left flex flex-col gap-1.5">
+                                  <span className="text-[10px] font-black text-success uppercase tracking-widest block">
+                                    FEEDBACK SUCCESSFULLY RECORDED
+                                  </span>
+                                  <span className="text-[11px] text-neutral-500 font-bold uppercase tracking-wider block">
+                                    You have submitted a review/rating for this appointment in the sidebar panel.
+                                  </span>
+                                </div>
                               </div>
                             )}
 
@@ -481,6 +408,233 @@ const PatientAppointments = () => {
           </Table>
         </div>
       )}
+        </div>
+
+        {/* Right Column: Review Sidebar */}
+        <div className="lg:col-span-4 flex flex-col gap-5 w-full bg-neutral-50 border-2 border-neutral-900 p-6 shadow-none rounded-lg">
+          <div>
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
+              REVIEW SYSTEM
+            </span>
+            <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
+              RATE & REVIEW CARE
+            </h3>
+            <div className="h-[1px] bg-neutral-200 w-full mt-2" />
+          </div>
+
+          {selectedSidebarApptId ? (
+            // Form UI
+            (() => {
+              const appt = appointments.find(a => a._id === selectedSidebarApptId);
+              if (!appt) return null;
+              const docName = appt.doctor?.user?.name || 'Physiotherapist';
+              const specText = Array.isArray(appt.doctor?.specialization)
+                ? appt.doctor.specialization[0]
+                : appt.doctor?.specialization || 'Clinical';
+
+              return (
+                <div className="flex flex-col gap-4 text-left">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedSidebarApptId(null);
+                      setRating(0);
+                      setComment('');
+                    }}
+                    className="text-[10px] font-black text-neutral-500 hover:text-neutral-950 uppercase tracking-wider self-start flex items-center gap-1 cursor-pointer"
+                  >
+                    ← BACK TO LIST
+                  </button>
+
+                  <div className="bg-white border border-neutral-200 p-4 rounded-md">
+                    <span className="text-[9px] font-black text-accent uppercase tracking-wider block">
+                      {appt.status.toUpperCase()} APPOINTMENT
+                    </span>
+                    <h4 className="font-bold text-neutral-900 uppercase text-ui-sm mt-0.5">
+                      Dr. {docName}
+                    </h4>
+                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block">
+                      {specText}
+                    </span>
+                    <span className="text-[10px] text-neutral-500 font-mono block mt-1">
+                      {new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }).toUpperCase()} · {appt.startTime}
+                    </span>
+                  </div>
+
+                  {/* 5-Star Rating Selector */}
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                      RATING
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((val) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setRating(val)}
+                          className="text-[28px] leading-none transition-transform duration-100 active:scale-90 focus:outline-none cursor-pointer hover:scale-110"
+                          aria-label={`Rate ${val} out of 5`}
+                        >
+                          <span
+                            className={`transition-colors duration-150 ${
+                              val <= rating ? 'text-amber-400' : 'text-neutral-300'
+                            }`}
+                          >
+                            ★
+                          </span>
+                        </button>
+                      ))}
+                      {rating > 0 && (
+                        <span className={`ml-3 text-[10px] font-black uppercase tracking-widest ${
+                          rating <= 2 ? 'text-accent' : rating === 3 ? 'text-warning' : 'text-success'
+                        }`}>
+                          {['', 'Poor', 'Fair', 'Good', 'Excellent', 'Outstanding'][rating]}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Review Text */}
+                  <div className="flex flex-col gap-2">
+                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                      YOUR EXPERIENCE
+                    </span>
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="Describe your session, the physiotherapist's approach, and your recovery progress..."
+                      maxLength={1000}
+                      rows={4}
+                      className="w-full bg-white border border-neutral-200 focus:border-neutral-900 px-4 py-3 text-ui-sm font-semibold text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-neutral-900/10 transition-all rounded-md resize-none transition-warm"
+                    />
+                    <span className="text-[9px] font-black text-neutral-500 text-right uppercase tracking-widest">
+                      {comment.length} / 1000 CHARACTERS (MIN 10)
+                    </span>
+                  </div>
+
+                  {/* Submit Action */}
+                  <Button
+                    onClick={() => handleReviewSubmit(selectedSidebarApptId)}
+                    disabled={rating === 0 || comment.trim().length < 10 || submittingReview[selectedSidebarApptId]}
+                    variant="primary"
+                    fullWidth
+                  >
+                    {submittingReview[selectedSidebarApptId] ? 'SUBMITTING...' : 'SUBMIT REVIEW →'}
+                  </Button>
+                </div>
+              );
+            })()
+          ) : (
+            // List UI with ongoing/completed tabs
+            <div className="flex flex-col gap-4">
+              {/* Sidebar Tabs */}
+              <div className="flex border-b border-neutral-200">
+                <button
+                  type="button"
+                  onClick={() => setSidebarReviewTab('ONGOING')}
+                  className={`flex-1 pb-2 font-bold text-[10px] uppercase tracking-widest border-b-2 transition-colors cursor-pointer
+                    ${sidebarReviewTab === 'ONGOING' 
+                      ? 'border-neutral-900 text-neutral-950 font-black' 
+                      : 'border-transparent text-neutral-400 hover:text-neutral-700'
+                    }
+                  `}
+                >
+                  Ongoing Care
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSidebarReviewTab('COMPLETED')}
+                  className={`flex-1 pb-2 font-bold text-[10px] uppercase tracking-widest border-b-2 transition-colors cursor-pointer
+                    ${sidebarReviewTab === 'COMPLETED' 
+                      ? 'border-neutral-900 text-neutral-950 font-black' 
+                      : 'border-transparent text-neutral-400 hover:text-neutral-700'
+                    }
+                  `}
+                >
+                  Completed Sessions
+                </button>
+              </div>
+
+              {/* Sidebar List items */}
+              <div className="flex flex-col gap-3 max-h-[350px] overflow-y-auto pr-1">
+                {sidebarReviewTab === 'ONGOING' ? (
+                  ongoingEligible.length === 0 ? (
+                    <p className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wide py-4 text-center">
+                      No ongoing care entries to rate.
+                    </p>
+                  ) : (
+                    ongoingEligible.map((appt) => {
+                      const docName = appt.doctor?.user?.name || 'Physiotherapist';
+                      return (
+                        <div
+                          key={appt._id}
+                          onClick={() => {
+                            setSelectedSidebarApptId(appt._id);
+                            setRating(0);
+                            setComment('');
+                          }}
+                          className="bg-white border border-neutral-200 hover:border-neutral-900 p-4 rounded-md cursor-pointer transition-colors text-left"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-black text-accent uppercase tracking-wider">
+                              {appt.status.toUpperCase()}
+                            </span>
+                            <span className="text-[9px] font-mono text-neutral-400">
+                              {new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }).toUpperCase()}
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-neutral-900 uppercase text-ui-xs mt-1">
+                            Dr. {docName}
+                          </h4>
+                          <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
+                            {Array.isArray(appt.doctor?.specialization) ? appt.doctor.specialization[0] : appt.doctor?.specialization || 'Clinical'}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )
+                ) : (
+                  completedEligible.length === 0 ? (
+                    <p className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wide py-4 text-center">
+                      No completed sessions to review.
+                    </p>
+                  ) : (
+                    completedEligible.map((appt) => {
+                      const docName = appt.doctor?.user?.name || 'Physiotherapist';
+                      return (
+                        <div
+                          key={appt._id}
+                          onClick={() => {
+                            setSelectedSidebarApptId(appt._id);
+                            setRating(0);
+                            setComment('');
+                          }}
+                          className="bg-white border border-neutral-200 hover:border-neutral-900 p-4 rounded-md cursor-pointer transition-colors text-left"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-black text-success uppercase tracking-wider">
+                              COMPLETED
+                            </span>
+                            <span className="text-[9px] font-mono text-neutral-400">
+                              {new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }).toUpperCase()}
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-neutral-900 uppercase text-ui-xs mt-1">
+                            Dr. {docName}
+                          </h4>
+                          <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
+                            {Array.isArray(appt.doctor?.specialization) ? appt.doctor.specialization[0] : appt.doctor?.specialization || 'Clinical'}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Cancellation Reason Modal */}
       {cancelModal.open && (

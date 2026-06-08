@@ -13,6 +13,27 @@ import SearchSuggestions from '../../components/search/SearchSuggestions';
 import SymptomSearchBox from '../../components/ai/SymptomSearchBox';
 import LiveDoctorMap from '../../components/ai/LiveDoctorMap';
 
+const mapSpecialization = (spec) => {
+  if (!spec) return '';
+  const s = spec.trim().toLowerCase();
+  if (s.includes('orthoped') || s.includes('orthopaed')) {
+    return 'Orthopedic Physiotherapy';
+  }
+  if (s === 'sports physiotherapy' || s === 'sports injury rehab') {
+    return 'Sports Injury Rehab';
+  }
+  if (s === 'neurological physiotherapy' || s === 'neurological rehabilitation') {
+    return 'Neurological Rehabilitation';
+  }
+  if (s === 'geriatric physiotherapy' || s === 'geriatric care') {
+    return 'Geriatric Care';
+  }
+  if (s === 'cardiopulmonary physiotherapy' || s === 'cardiopulmonary rehab') {
+    return 'Cardiopulmonary Rehab';
+  }
+  return spec;
+};
+
 const DoctorListingPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,7 +57,7 @@ const DoctorListingPage = () => {
 
   // Read filters from URL
   const currentFilters = {
-    specialization: searchParams.get('specialization') || '',
+    specialization: mapSpecialization(searchParams.get('specialization') || ''),
     city: searchParams.get('city') || '',
     minFee: searchParams.get('minFee') || '',
     maxFee: searchParams.get('maxFee') || '',
@@ -132,7 +153,7 @@ const DoctorListingPage = () => {
 
     const params = new URLSearchParams(searchParams);
     if (suggestion.type === 'specialization') {
-      params.set('specialization', suggestion.value);
+      params.set('specialization', mapSpecialization(suggestion.value));
       params.delete('q');
     } else if (suggestion.type === 'city') {
       params.set('city', suggestion.value);
@@ -147,7 +168,10 @@ const DoctorListingPage = () => {
   const handleApplyFilters = (filters) => {
     const params = new URLSearchParams(searchParams);
     Object.keys(filters).forEach((key) => {
-      const val = filters[key];
+      let val = filters[key];
+      if (key === 'specialization') {
+        val = mapSpecialization(val);
+      }
       if (val !== undefined && val !== '') {
         params.set(key, val);
       } else {

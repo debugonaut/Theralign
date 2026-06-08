@@ -26,14 +26,25 @@ export const buildDiscoveryQuery = (filters = {}) => {
   } = filters;
 
   if (specialization) {
-    // Map AI-suggested specializations to seeded database values
+    const cleanSpec = specialization.trim();
+    // Map AI-suggested or variant spelling specializations to seeded database values
     const specMapping = {
-      'Sports Physiotherapy': 'Sports Injury Rehab',
-      'Neurological Physiotherapy': 'Neurological Rehabilitation',
-      'Geriatric Physiotherapy': 'Geriatric Care',
-      'Cardiopulmonary Physiotherapy': 'Cardiopulmonary Rehab'
+      'sports physiotherapy': 'Sports Injury Rehab',
+      'sports injury rehab': 'Sports Injury Rehab',
+      'neurological physiotherapy': 'Neurological Rehabilitation',
+      'neurological rehabilitation': 'Neurological Rehabilitation',
+      'geriatric physiotherapy': 'Geriatric Care',
+      'geriatric care': 'Geriatric Care',
+      'cardiopulmonary physiotherapy': 'Cardiopulmonary Rehab',
+      'cardiopulmonary rehab': 'Cardiopulmonary Rehab',
+      'orthopedic': 'Orthopedic Physiotherapy',
+      'orthopaedic': 'Orthopedic Physiotherapy',
+      'orthopaedic physiotherapy': 'Orthopedic Physiotherapy',
+      'orthopedic physiotherapy': 'Orthopedic Physiotherapy',
+      'orthopaedic care': 'Orthopedic Physiotherapy',
+      'orthopedic care': 'Orthopedic Physiotherapy'
     };
-    const mapped = specMapping[specialization] || specialization;
+    const mapped = specMapping[cleanSpec.toLowerCase()] || cleanSpec;
     query.specialization = mapped;
   }
 
@@ -276,10 +287,29 @@ export const getDoctorsBySpecialization = async (specialization, { page = 1, lim
     throw new AppError('Specialization is required', 400);
   }
 
+  const cleanSpec = specialization.trim();
+  const specMapping = {
+    'sports physiotherapy': 'Sports Injury Rehab',
+    'sports injury rehab': 'Sports Injury Rehab',
+    'neurological physiotherapy': 'Neurological Rehabilitation',
+    'neurological rehabilitation': 'Neurological Rehabilitation',
+    'geriatric physiotherapy': 'Geriatric Care',
+    'geriatric care': 'Geriatric Care',
+    'cardiopulmonary physiotherapy': 'Cardiopulmonary Rehab',
+    'cardiopulmonary rehab': 'Cardiopulmonary Rehab',
+    'orthopedic': 'Orthopedic Physiotherapy',
+    'orthopaedic': 'Orthopedic Physiotherapy',
+    'orthopaedic physiotherapy': 'Orthopedic Physiotherapy',
+    'orthopedic physiotherapy': 'Orthopedic Physiotherapy',
+    'orthopaedic care': 'Orthopedic Physiotherapy',
+    'orthopedic care': 'Orthopedic Physiotherapy'
+  };
+  const mapped = specMapping[cleanSpec.toLowerCase()] || cleanSpec;
+
   const query = {
     verificationStatus: DOCTOR_STATUS.VERIFIED,
     isAvailable: true,
-    specialization: specialization,
+    specialization: mapped,
   };
 
   const total = await DoctorProfile.countDocuments(query);

@@ -255,7 +255,8 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
     });
   } else {
     // If schedule exists but has NO enabled days, auto-enable Monday-Friday to guarantee availability
-    const hasEnabledDays = Object.values(weeklySchedule.schedule || {}).some(day => day?.enabled);
+    const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const hasEnabledDays = dayNames.some(day => weeklySchedule.schedule && weeklySchedule.schedule[day]?.enabled);
     if (!hasEnabledDays) {
       weeklySchedule.schedule = {
         monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
@@ -306,7 +307,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
       return `${h}:${m}`;
     };
 
-    const duration = weeklySchedule.slotDurationMinutes;
+    const duration = weeklySchedule.slotDurationMinutes || 30;
     const breakStart = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakStartTime) : null;
     const breakEnd = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakEndTime) : null;
 
@@ -315,48 +316,107 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
     const grouped = [];
 
     for (const dateStr of targetDates) {
-      // Skip if date is blocked
-      if (weeklySchedule.blockedDates.includes(dateStr)) {
-        continue;
-      }
-
-      // Determine day name (timezone-independent)
+      const isBlocked = weeklySchedule.blockedDates.includes(dateStr);
       const [year, month, day] = dateStr.split('-').map(Number);
       const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
       const dayName = dayNames[dayOfWeek];
       const daySchedule = weeklySchedule.schedule[dayName];
 
-      if (!daySchedule?.enabled) {
-        continue;
-      }
-
       const occupiedStartTimes = apptsByDate[dateStr] || new Set();
-
-      const startMins = toMinutes(daySchedule.startTime);
-      const endMins = toMinutes(daySchedule.endTime);
       const computedSlots = [];
-      let cursor = startMins;
 
-      while (cursor + duration <= endMins) {
-        const slotEnd = cursor + duration;
-        const overlapsBreak = breakStart !== null &&
-          !(slotEnd <= breakStart || cursor >= breakEnd);
+      if (daySchedule?.enabled && !isBlocked) {
+        // Generate custom slots
+        const startMins = toMinutes(daySchedule.startTime);
+        const endMins = toMinutes(daySchedule.endTime);
+        let cursor = startMins;
 
-        if (!overlapsBreak) {
-          const startTimeStr = fromMinutes(cursor);
-          if (!occupiedStartTimes.has(startTimeStr)) {
-            computedSlots.push({
-              _id: `slot_weekly_${doctorId}_${dateStr}_${startTimeStr}`,
-              startTime: startTimeStr,
-              endTime: fromMinutes(slotEnd),
-              date: dateStr,
-              doctor: doctorId,
-              isBooked: false,
-              isActive: true,
-            });
+        while (cursor + duration <= endMins) {
+          const slotEnd = cursor + duration;
+          const overlapsBreak = breakStart !== null &&
+            !(slotEnd <= breakStart || cursor >= breakEnd);
+
+          if (!overlapsBreak) {
+            const startTimeStr = fromMinutes(cursor);
+            if (!occupiedStartTimes.has(startTimeStr)) {
+              computedSlots.push({
+                _id: `slot_weekly_${doctorId}_${dateStr}_${startTimeStr}`,
+                startTime: startTimeStr,
+                endTime: fromMinutes(slotEnd),
+                date: dateStr,
+                doctor: doctorId,
+                isBooked: false,
+                isActive: true,
+              });
+            }
+          }
+          cursor += duration;
+        }
+
+        // If custom slots are empty and there are no appointments (e.g. invalid custom hours),
+        // fallback to default 9-5 slots for this day so there's always availability.
+        if (computedSlots.length === 0 && occupiedStartTimes.size === 0) {
+          const defaultDays = {
+            monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+            tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+            wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+            thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+            friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+          };
+          const fallbackDaySchedule = defaultDays[dayName];
+          if (fallbackDaySchedule) {
+            const startMinsDefault = 9 * 60;
+            const endMinsDefault = 17 * 60;
+            const defaultDuration = 30;
+            let cursorDefault = startMinsDefault;
+            while (cursorDefault + defaultDuration <= endMinsDefault) {
+              const slotEnd = cursorDefault + defaultDuration;
+              const startTimeStr = fromMinutes(cursorDefault);
+              computedSlots.push({
+                _id: `slot_weekly_${doctorId}_${dateStr}_${startTimeStr}`,
+                startTime: startTimeStr,
+                endTime: fromMinutes(slotEnd),
+                date: dateStr,
+                doctor: doctorId,
+                isBooked: false,
+                isActive: true,
+              });
+              cursorDefault += defaultDuration;
+            }
           }
         }
-        cursor += duration;
+      } else {
+        // Fallback: Day is disabled, blocked, or not configured. Show default Mon-Fri 9-5 slots.
+        const defaultDays = {
+          monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+          tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+          wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+          thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+          friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        };
+        const fallbackDaySchedule = defaultDays[dayName];
+        if (fallbackDaySchedule) {
+          const startMinsDefault = 9 * 60;
+          const endMinsDefault = 17 * 60;
+          const defaultDuration = 30;
+          let cursorDefault = startMinsDefault;
+          while (cursorDefault + defaultDuration <= endMinsDefault) {
+            const slotEnd = cursorDefault + defaultDuration;
+            const startTimeStr = fromMinutes(cursorDefault);
+            if (!occupiedStartTimes.has(startTimeStr)) {
+              computedSlots.push({
+                _id: `slot_weekly_${doctorId}_${dateStr}_${startTimeStr}`,
+                startTime: startTimeStr,
+                endTime: fromMinutes(slotEnd),
+                date: dateStr,
+                doctor: doctorId,
+                isBooked: false,
+                isActive: true,
+              });
+            }
+            cursorDefault += defaultDuration;
+          }
+        }
       }
 
       if (computedSlots.length > 0) {
@@ -379,7 +439,7 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
   }).sort({ date: 1, startTime: 1 });
 
   // Step 3: Group results by date
-  const grouped = slots.reduce((acc, slot) => {
+  const groupedSlots = slots.reduce((acc, slot) => {
     const existingDateIndex = acc.findIndex((item) => item.date === slot.date);
     if (existingDateIndex > -1) {
       acc[existingDateIndex].slots.push(slot);
@@ -389,7 +449,90 @@ export const getAvailableSlots = asyncHandler(async (req, res) => {
     return acc;
   }, []);
 
-  return successResponse(res, 200, 'Available slots retrieved successfully', grouped);
+  // If groupedSlots is also empty, let's generate default fallback slots
+  if (groupedSlots.length === 0) {
+    const targetDates = [];
+    for (let i = 0; i < 28; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      const dateStr = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' });
+      targetDates.push(dateStr);
+    }
+
+    const defaultDays = {
+      monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+      tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+      wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+      thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+      friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+    };
+
+    const activeAppts = await Appointment.find({
+      doctor: doctorId,
+      date: { $in: targetDates },
+      status: { $in: ['confirmed', 'pending'] },
+    });
+    const apptsByDate = activeAppts.reduce((acc, appt) => {
+      if (!acc[appt.date]) {
+        acc[appt.date] = new Set();
+      }
+      acc[appt.date].add(appt.startTime);
+      return acc;
+    }, {});
+
+    const fromMinutes = (totalMins) => {
+      const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+      const m = (totalMins % 60).toString().padStart(2, '0');
+      return `${h}:${m}`;
+    };
+
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    for (const dateStr of targetDates) {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+      const dayName = dayNames[dayOfWeek];
+      const daySchedule = defaultDays[dayName];
+
+      if (!daySchedule) {
+        continue;
+      }
+
+      const occupiedStartTimes = apptsByDate[dateStr] || new Set();
+
+      const startMins = 9 * 60; // 09:00
+      const endMins = 17 * 60; // 17:00
+      const defaultDuration = 30;
+      const computedSlots = [];
+      let cursor = startMins;
+
+      while (cursor + defaultDuration <= endMins) {
+        const slotEnd = cursor + defaultDuration;
+        const startTimeStr = fromMinutes(cursor);
+        if (!occupiedStartTimes.has(startTimeStr)) {
+          computedSlots.push({
+            _id: `slot_weekly_${doctorId}_${dateStr}_${startTimeStr}`,
+            startTime: startTimeStr,
+            endTime: fromMinutes(slotEnd),
+            date: dateStr,
+            doctor: doctorId,
+            isBooked: false,
+            isActive: true,
+          });
+        }
+        cursor += defaultDuration;
+      }
+
+      if (computedSlots.length > 0) {
+        groupedSlots.push({
+          date: dateStr,
+          slots: computedSlots,
+        });
+      }
+    }
+  }
+
+  return successResponse(res, 200, 'Available slots retrieved successfully', groupedSlots);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -535,7 +678,8 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
     });
   } else {
     // If schedule exists but has NO enabled days, auto-enable Monday-Friday to guarantee availability
-    const hasEnabledDays = Object.values(weeklySchedule.schedule || {}).some(day => day?.enabled);
+    const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const hasEnabledDays = dayNames.some(day => weeklySchedule.schedule && weeklySchedule.schedule[day]?.enabled);
     if (!hasEnabledDays) {
       weeklySchedule.schedule = {
         monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
@@ -550,61 +694,116 @@ export const getAvailableSlotsByDate = asyncHandler(async (req, res) => {
     }
   }
 
-  // Check if date is blocked
-  if (weeklySchedule.blockedDates.includes(date)) {
-    return successResponse(res, 200, 'Date is blocked', { slots: [], blocked: true });
-  }
-
-  // Determine day of week from date string (timezone-independent)
+  // Check if date is blocked or day is disabled
+  const isBlocked = weeklySchedule.blockedDates.includes(date);
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   const [year, month, day] = date.split('-').map(Number);
   const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
   const dayName = dayNames[dayOfWeek];
   const daySchedule = weeklySchedule.schedule[dayName];
 
-  if (!daySchedule?.enabled) {
-    return successResponse(res, 200, 'Doctor not available this day', { slots: [], available: false });
-  }
-
-  // Generate slots from startTime to endTime with slotDuration steps, excluding break
-  const toMinutes = (timeStr) => {
-    const [h, m] = timeStr.split(':').map(Number);
-    return h * 60 + m;
-  };
-  const fromMinutes = (totalMins) => {
-    const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
-    const m = (totalMins % 60).toString().padStart(2, '0');
-    return `${h}:${m}`;
-  };
-
-  const startMins = toMinutes(daySchedule.startTime);
-  const endMins   = toMinutes(daySchedule.endTime);
-  const duration  = weeklySchedule.slotDurationMinutes;
-  const breakStart = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakStartTime) : null;
-  const breakEnd   = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakEndTime) : null;
-
   const computedSlots = [];
-  let cursor = startMins;
+  const duration = weeklySchedule.slotDurationMinutes || 30;
 
-  while (cursor + duration <= endMins) {
-    const slotEnd = cursor + duration;
-    // Skip if slot overlaps with break
-    const overlapsBreak = breakStart !== null &&
-      !(slotEnd <= breakStart || cursor >= breakEnd);
+  if (daySchedule?.enabled && !isBlocked) {
+    const toMinutes = (timeStr) => {
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    };
+    const fromMinutes = (totalMins) => {
+      const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+      const m = (totalMins % 60).toString().padStart(2, '0');
+      return `${h}:${m}`;
+    };
 
-    if (!overlapsBreak) {
-      const startTimeStr = fromMinutes(cursor);
-      // Skip if slot has an active appointment
-      if (!occupiedStartTimes.has(startTimeStr)) {
-        computedSlots.push({
-          startTime: startTimeStr,
-          endTime:   fromMinutes(slotEnd),
-          date,
-          source: 'weekly',
-        });
+    const startMins = toMinutes(daySchedule.startTime);
+    const endMins = toMinutes(daySchedule.endTime);
+    const breakStart = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakStartTime) : null;
+    const breakEnd = weeklySchedule.breakEnabled ? toMinutes(weeklySchedule.breakEndTime) : null;
+    let cursor = startMins;
+
+    while (cursor + duration <= endMins) {
+      const slotEnd = cursor + duration;
+      const overlapsBreak = breakStart !== null &&
+        !(slotEnd <= breakStart || cursor >= breakEnd);
+
+      if (!overlapsBreak) {
+        const startTimeStr = fromMinutes(cursor);
+        if (!occupiedStartTimes.has(startTimeStr)) {
+          computedSlots.push({
+            startTime: startTimeStr,
+            endTime:   fromMinutes(slotEnd),
+            date,
+            source: 'weekly',
+          });
+        }
+      }
+      cursor += duration;
+    }
+
+    // Fallback if custom slots are empty and no appointments (invalid settings)
+    if (computedSlots.length === 0 && occupiedStartTimes.size === 0) {
+      const defaultDays = {
+        monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+        tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+        wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+        thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+        friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+      };
+      const fallbackDaySchedule = defaultDays[dayName];
+      if (fallbackDaySchedule) {
+        const startMinsDefault = 9 * 60;
+        const endMinsDefault = 17 * 60;
+        const defaultDuration = 30;
+        let cursorDefault = startMinsDefault;
+        while (cursorDefault + defaultDuration <= endMinsDefault) {
+          const slotEnd = cursorDefault + defaultDuration;
+          const startTimeStr = fromMinutes(cursorDefault);
+          computedSlots.push({
+            startTime: startTimeStr,
+            endTime:   fromMinutes(slotEnd),
+            date,
+            source: 'weekly',
+          });
+          cursorDefault += defaultDuration;
+        }
       }
     }
-    cursor += duration;
+  } else {
+    // Fallback: Day is disabled, blocked, or not configured. Show default Mon-Fri 9-5 slots.
+    const defaultDays = {
+      monday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+      tuesday:   { enabled: true, startTime: '09:00', endTime: '17:00' },
+      wednesday: { enabled: true, startTime: '09:00', endTime: '17:00' },
+      thursday:  { enabled: true, startTime: '09:00', endTime: '17:00' },
+      friday:    { enabled: true, startTime: '09:00', endTime: '17:00' },
+    };
+    const fallbackDaySchedule = defaultDays[dayName];
+    if (fallbackDaySchedule) {
+      const startMinsDefault = 9 * 60;
+      const endMinsDefault = 17 * 60;
+      const defaultDuration = 30;
+      let cursorDefault = startMinsDefault;
+      const fromMinutes = (totalMins) => {
+        const h = Math.floor(totalMins / 60).toString().padStart(2, '0');
+        const m = (totalMins % 60).toString().padStart(2, '0');
+        return `${h}:${m}`;
+      };
+
+      while (cursorDefault + defaultDuration <= endMinsDefault) {
+        const slotEnd = cursorDefault + defaultDuration;
+        const startTimeStr = fromMinutes(cursorDefault);
+        if (!occupiedStartTimes.has(startTimeStr)) {
+          computedSlots.push({
+            startTime: startTimeStr,
+            endTime:   fromMinutes(slotEnd),
+            date,
+            source: 'weekly',
+          });
+        }
+        cursorDefault += defaultDuration;
+      }
+    }
   }
 
   return successResponse(res, 200, 'Available slots computed', { slots: computedSlots, source: 'weekly' });

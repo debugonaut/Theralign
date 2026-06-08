@@ -59,10 +59,10 @@ const DoctorCard = ({ doctor }) => {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-neutral-900 text-ui-xl truncate leading-none mb-1.5 normal-case">
+          <h3 className="font-bold text-neutral-900 text-ui-xl leading-snug mb-1.5 normal-case break-words whitespace-normal">
             {formattedDrName}
           </h3>
-          <p className="text-[10px] text-accent font-bold uppercase tracking-wider truncate">
+          <p className="text-[10px] text-accent font-bold uppercase tracking-wider break-words whitespace-normal leading-normal">
             {formattedSpecText}
           </p>
         </div>
@@ -73,9 +73,9 @@ const DoctorCard = ({ doctor }) => {
 
       {/* Data Row: Location, Experience, Consultation Fee */}
       <div className="grid grid-cols-3 gap-2 text-ui-xs font-bold text-neutral-700 uppercase tracking-wider">
-        <div className="text-left truncate">
+        <div className="text-left">
           <span className="text-neutral-500 block mb-0.5">LOCATION</span>
-          <span className="text-neutral-900 truncate block normal-case font-semibold">{formattedCity}</span>
+          <span className="text-neutral-900 block normal-case font-semibold break-words whitespace-normal leading-tight">{formattedCity}</span>
         </div>
         <div className="text-center">
           <span className="text-neutral-500 block mb-0.5">EXPERIENCE</span>

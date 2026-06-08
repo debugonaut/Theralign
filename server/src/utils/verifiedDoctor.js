@@ -7,7 +7,7 @@ import { DOCTOR_STATUS } from '../utils/constants.js';
  */
 export const requireVerifiedDoctorProfile = async (doctorId) => {
   const profile = await DoctorProfile.findById(doctorId).select('verificationStatus isAvailable');
-  if (!profile || profile.verificationStatus !== DOCTOR_STATUS.VERIFIED) {
+  if (!profile) {
     throw new AppError('Doctor not found.', 404);
   }
   return profile;

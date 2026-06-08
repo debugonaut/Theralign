@@ -35,9 +35,10 @@ export const submitReview = asyncHandler(async (req, res) => {
     return errorResponse(res, 403, 'You can only review your own appointments.');
   }
 
-  // 4. Gate 2 — Completion
-  if (appointment.status !== 'completed') {
-    return errorResponse(res, 400, 'You can only review a completed appointment.');
+  // 4. Gate 2 — Allowed statuses for reviews
+  const allowedStatuses = ['completed', 'pending', 'confirmed'];
+  if (!allowedStatuses.includes(appointment.status)) {
+    return errorResponse(res, 400, 'You can only review active or completed appointments.');
   }
 
   // 5. Gate 3 — No Prior Review
