@@ -205,8 +205,208 @@ export const sendCancellationNotice = async ({
 };
 
 /**
- * Send password reset email with the verification token.
+ * Send refund approved email to patient.
  */
+export const sendRefundApprovedEmail = async ({
+  patientEmail,
+  patientName,
+  amount,
+  adminNote,
+}) => {
+  const firstName = patientName.split(' ')[0];
+  const subject = `Refund Approved: ₹${amount} is on its way`;
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+  const html = `
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0A7E6E; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0A7E6E; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0A7E6E; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0A7E6E; padding-bottom: 8px;">
+          Refund Approved
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          YOUR REFUND REQUEST HAS BEEN REVIEWED AND APPROVED BY OUR TEAM.
+        </p>
+        <div style="background: #fafafa; border: 2px solid #0A7E6E; padding: 20px; margin: 24px 0;">
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">REFUND AMOUNT: <span style="font-weight: 500; color: #0A7E6E;">₹${amount}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">TIMELINE: <span style="font-weight: 500; color: #555555;">5–7 BUSINESS DAYS</span></p>
+          ${adminNote ? `<p style="margin: 12px 0 0 0; color: #777777; font-size: 12px; font-weight: 600;">NOTE: ${adminNote}</p>` : ''}
+        </div>
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * THE REFUND WILL BE CREDITED TO YOUR ORIGINAL PAYMENT METHOD. PROCESSING TIME DEPENDS ON YOUR BANK OR CARD ISSUER.
+        </p>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${clientUrl}/patient/payments" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block;">VIEW PAYMENT HISTORY →</a>
+        </div>
+      </div>
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0A7E6E;">
+        <p style="color: #0A7E6E; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">The Theralign Team</p>
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Automated system dispatch — do not reply. Support: support@theralign.com.</p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: patientEmail, subject, html });
+};
+
+/**
+ * Send refund rejected email to patient.
+ */
+export const sendRefundRejectedEmail = async ({
+  patientEmail,
+  patientName,
+  amount,
+  adminNote,
+}) => {
+  const firstName = patientName.split(' ')[0];
+  const subject = `Refund Request Update: ₹${amount}`;
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+  const html = `
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #FF3000; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #FF3000; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #FF3000; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #FF3000; padding-bottom: 8px;">
+          Refund Request Reviewed
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          YOUR REFUND REQUEST OF ₹${amount} HAS BEEN REVIEWED BY OUR TEAM AND COULD NOT BE APPROVED AT THIS TIME.
+        </p>
+        ${adminNote ? `
+        <div style="background: #fff5f5; border: 2px solid #FF3000; padding: 16px 20px; margin: 24px 0;">
+          <p style="margin: 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">REASON FROM OUR TEAM:</p>
+          <p style="margin: 8px 0 0 0; color: #555555; font-size: 13px; font-weight: 500;">${adminNote}</p>
+        </div>` : ''}
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * IF YOU BELIEVE THIS IS AN ERROR, PLEASE CONTACT OUR SUPPORT TEAM AT SUPPORT@THERALIGN.COM.
+        </p>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${clientUrl}/patient/payments" style="background-color: #FF3000; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block;">VIEW PAYMENT HISTORY →</a>
+        </div>
+      </div>
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #FF3000;">
+        <p style="color: #FF3000; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">The Theralign Team</p>
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Automated system dispatch — do not reply. Support: support@theralign.com.</p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: patientEmail, subject, html });
+};
+
+/**
+ * Send refund initiation confirmation to patient (patient-cancelled appointment).
+ * Tells them their request is queued for admin review.
+ */
+export const sendRefundInitiatedEmail = async ({
+  patientEmail,
+  patientName,
+  doctorName,
+  date,
+  startTime,
+  amount,
+}) => {
+  const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
+  const firstName = patientName.split(' ')[0];
+  const subject = `Refund Request Submitted: ₹${amount} — Dr. ${cleanDrName}`;
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+  const html = `
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #b45309; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #b45309; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #b45309; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #b45309; padding-bottom: 8px;">
+          Refund Request Received
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          YOUR APPOINTMENT HAS BEEN CANCELLED AND YOUR REFUND REQUEST HAS BEEN SUBMITTED FOR REVIEW BY OUR TEAM.
+        </p>
+        <div style="background: #fef3e2; border: 2px solid #b45309; padding: 20px; margin: 24px 0;">
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">DOCTOR: <span style="font-weight: 500; color: #555555;">DR. ${cleanDrName.toUpperCase()}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">DATE: <span style="font-weight: 500; color: #555555;">${date} AT ${startTime}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">REFUND AMOUNT: <span style="font-weight: 500; color: #b45309;">₹${amount}</span></p>
+          <p style="margin: 12px 0 0 0; color: #b45309; font-size: 13px; font-weight: 700;">STATUS: PENDING ADMIN REVIEW</p>
+        </div>
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * OUR TEAM WILL REVIEW YOUR REQUEST WITHIN 1–2 BUSINESS DAYS. YOU WILL RECEIVE A SEPARATE EMAIL ONCE A DECISION IS MADE. APPROVED REFUNDS ARE CREDITED WITHIN 5–7 BUSINESS DAYS.
+        </p>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${clientUrl}/patient/payments" style="background-color: #b45309; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block;">VIEW PAYMENT HISTORY →</a>
+        </div>
+      </div>
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #b45309;">
+        <p style="color: #b45309; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">The Theralign Team</p>
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Automated system dispatch — do not reply. Support: support@theralign.com.</p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: patientEmail, subject, html });
+};
+
+/**
+ * Send automatic refund notification to patient (doctor-cancelled appointment).
+ * Doctor cancellations trigger an immediate Razorpay refund — no admin review needed.
+ */
+export const sendDoctorCancelledRefundEmail = async ({
+  patientEmail,
+  patientName,
+  doctorName,
+  date,
+  startTime,
+  amount,
+}) => {
+  const cleanDrName = doctorName.toLowerCase().startsWith('dr.') ? doctorName.slice(3).trim() : doctorName;
+  const firstName = patientName.split(' ')[0];
+  const subject = `Appointment Cancelled by Dr. ${cleanDrName} — Full Refund Issued`;
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+  const html = `
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0A7E6E; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0A7E6E; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0A7E6E; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0A7E6E; padding-bottom: 8px;">
+          Appointment Cancelled — Refund Issued
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi ${firstName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          DR. ${cleanDrName.toUpperCase()} HAS CANCELLED YOUR UPCOMING APPOINTMENT. A FULL REFUND HAS BEEN AUTOMATICALLY INITIATED TO YOUR ORIGINAL PAYMENT METHOD — NO ACTION IS NEEDED FROM YOU.
+        </p>
+        <div style="background: #f0f9f8; border: 2px solid #0A7E6E; padding: 20px; margin: 24px 0;">
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">CANCELLED BY: <span style="font-weight: 500; color: #555555;">DR. ${cleanDrName.toUpperCase()}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">ORIGINAL DATE: <span style="font-weight: 500; color: #555555;">${date} AT ${startTime}</span></p>
+          <p style="margin: 6px 0; color: #0f0f0f; font-size: 13px; font-weight: 900;">REFUND AMOUNT: <span style="font-weight: 500; color: #0A7E6E;">₹${amount}</span></p>
+          <p style="margin: 12px 0 0 0; color: #0A7E6E; font-size: 13px; font-weight: 700;">STATUS: REFUND AUTOMATICALLY PROCESSED</p>
+        </div>
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * THE REFUND WILL APPEAR IN YOUR ACCOUNT WITHIN 5–7 BUSINESS DAYS DEPENDING ON YOUR BANK OR CARD ISSUER. YOU MAY BOOK WITH ANOTHER PHYSIOTHERAPIST AT YOUR CONVENIENCE.
+        </p>
+        <div style="text-align: center; margin-top: 28px;">
+          <a href="${clientUrl}/doctors" style="background-color: #0A7E6E; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block;">FIND ANOTHER PHYSIOTHERAPIST →</a>
+        </div>
+      </div>
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0A7E6E;">
+        <p style="color: #0A7E6E; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">The Theralign Team</p>
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Automated system dispatch — do not reply. Support: support@theralign.com.</p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: patientEmail, subject, html });
+};
+
+
 export const sendPasswordResetEmail = async ({
   email,
   name,

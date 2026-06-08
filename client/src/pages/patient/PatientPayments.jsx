@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -29,6 +29,20 @@ const PatientPayments = () => {
   const formatINR = (value) => {
     if (value === undefined || value === null) return '₹0';
     return '₹' + new Intl.NumberFormat('en-IN').format(value);
+  };
+
+  const getRefundState = (payment) => {
+    if (!payment) return 'none';
+    if (payment.status === 'refunded' || payment.refundStatus === 'processed' || payment.refundStatus === 'approved') {
+      return 'refunded';
+    }
+    if (payment.refundStatus === 'pending' || payment.refundStatus === 'requested') {
+      return 'pending';
+    }
+    if (payment.refundStatus === 'rejected') {
+      return 'rejected';
+    }
+    return 'none';
   };
 
   const fetchPayments = async () => {
@@ -214,6 +228,7 @@ const PatientPayments = () => {
                 const specText = Array.isArray(payment.doctor?.specialization)
                   ? payment.doctor.specialization[0]
                   : payment.doctor?.specialization || 'Clinical';
+                const refundState = getRefundState(payment);
 
                 const payDateText = new Date(payment.createdAt).toLocaleDateString('en-IN', {
                   day: 'numeric',
@@ -249,30 +264,52 @@ const PatientPayments = () => {
                     </Table.Cell>
                     <Table.Cell>
                       <div className="flex flex-col gap-1.5 items-start">
-                        <Badge variant="paid" />
-                        {payment.refundStatus && payment.refundStatus !== 'none' && (
+                        <Badge
+                          variant={
+                            payment.appointment?.status === 'cancelled'
+                              ? 'cancelled'
+                              : payment.status === 'refunded'
+                                ? 'confirmed'
+                                : 'paid'
+                          }
+                          label={
+                            payment.appointment?.status === 'cancelled'
+                              ? 'Cancelled'
+                              : payment.status === 'refunded'
+                                ? 'Refunded'
+                                : 'Paid'
+                          }
+                        />
+                        {refundState !== 'none' && (
                           <div className="refund-status">
-                            {payment.refundStatus === 'requested' && (
+                            {refundState === 'pending' && (
                               <span className="badge pending-badge" title="Your refund request is under review by our team.">
-                                REFUND PENDING
+                                REFUND INITIATED
                               </span>
                             )}
 
-                            {payment.refundStatus === 'approved' && (
+                            {refundState === 'refunded' && (
                               <div className="flex flex-col items-start">
                                 <span className="badge refunded-badge" title="Refund processed. Please allow 5-7 business days for it to appear in your account.">
                                   REFUNDED
                                 </span>
                                 <div className="refund-detail">
-                                  ₹{payment.amount?.toFixed(2)} · 5-7 business days
+                                  {formatINR(payment.refundAmount || payment.amount)} · 5-7 business days
                                 </div>
                               </div>
                             )}
 
-                            {payment.refundStatus === 'rejected' && (
-                              <span className="badge rejected-badge" title={`Reason: ${payment.refundAdminNote}`}>
-                                REFUND REJECTED
-                              </span>
+                            {refundState === 'rejected' && (
+                              <div className="flex flex-col items-start">
+                                <span className="badge rejected-badge" title={`Reason: ${payment.refundAdminNote || payment.adminNote || 'Request not approved'}`}>
+                                  REFUND CANCELLED
+                                </span>
+                                {(payment.refundAdminNote || payment.adminNote) && (
+                                  <div className="refund-detail">
+                                    {payment.refundAdminNote || payment.adminNote}
+                                  </div>
+                                )}
+                              </div>
                             )}
                           </div>
                         )}
@@ -281,12 +318,12 @@ const PatientPayments = () => {
                     <Table.Cell actions>
                       {payment.status === 'refunded' ? (
                         <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">REFUNDED</span>
-                      ) : payment.refundStatus === 'approved' ? (
+                      ) : refundState === 'refunded' ? (
                         <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">REFUND APPROVED</span>
-                      ) : payment.refundStatus === 'requested' ? (
-                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">REFUND PENDING</span>
-                      ) : payment.refundStatus === 'rejected' ? (
-                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">REFUND REJECTED</span>
+                      ) : refundState === 'pending' ? (
+                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">REFUND INITIATED</span>
+                      ) : refundState === 'rejected' ? (
+                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">REFUND CANCELLED</span>
                       ) : payment.appointment?.status === 'cancelled' && payment.status === 'paid' ? (
                         <button
                           type="button"

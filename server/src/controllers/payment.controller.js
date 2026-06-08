@@ -5,9 +5,15 @@ import AppError from '../utils/AppError.js';
 import Appointment from '../models/Appointment.model.js';
 import Payment from '../models/Payment.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import User from '../models/User.model.js';
 import razorpayInstance from '../config/razorpay.js';
 import config from '../config/env.js';
-import { sendBookingConfirmation } from '../services/emailService.js';
+import {
+  sendBookingConfirmation,
+  sendRefundApprovedEmail,
+  sendRefundInitiatedEmail,
+  sendRefundRejectedEmail,
+} from '../services/emailService.js';
 import { createNotification } from '../services/notificationService.js';
 
 /**
@@ -236,8 +242,11 @@ export const verifyPayment = asyncHandler(async (req, res) => {
  * Protect: requireAuth, requireRole('patient')
  */
 export const getMyPayments = asyncHandler(async (req, res) => {
-  const payments = await Payment.find({ patient: req.user.id, status: 'paid' })
-    .populate('appointment', 'date startTime endTime status')
+  const payments = await Payment.find({
+    patient: req.user.id,
+    status: { $in: ['paid', 'refunded'] },
+  })
+    .populate('appointment', 'date startTime endTime status cancellationReason cancelledBy')
     .populate({
       path: 'doctor',
       select: 'specialization user',
@@ -312,10 +321,16 @@ export const requestRefund = asyncHandler(async (req, res) => {
   const { paymentId } = req.params;
   const { reason } = req.body;
 
-  const payment = await Payment.findById(paymentId);
+  const payment = await Payment.findById(paymentId)
+    .populate('patient', 'name email')
+    .populate({
+      path: 'doctor',
+      populate: { path: 'user', select: 'name' }
+    })
+    .populate('appointment', 'date startTime status cancellationReason');
   if (!payment) throw new AppError('Payment record not found.', 404);
 
-  if (payment.patient.toString() !== req.user.id.toString())
+  if (payment.patient._id.toString() !== req.user.id.toString())
     throw new AppError('Not authorized.', 403);
 
   if (payment.status !== 'paid')
@@ -328,17 +343,42 @@ export const requestRefund = asyncHandler(async (req, res) => {
   if (!appointment || appointment.status !== 'cancelled')
     throw new AppError('Refund is only available for cancelled appointments.', 400);
 
-  payment.refundStatus = 'requested';
+  payment.refundStatus = 'pending';
   payment.refundReason = reason || appointment.cancellationReason || '';
+  payment.refundAmount = payment.amount;
+  payment.refundInitiatedBy = 'patient';
   payment.refundRequestedAt = new Date();
   await payment.save();
 
-  createNotification({
+  await createNotification({
     recipientId: req.user.id,
     type: 'appointment_cancelled',
     title: 'Refund Requested',
     message: `Your refund request of ₹${payment.amount} has been submitted and is under review.`,
     link: '/patient/payments',
+  });
+
+  const adminUsers = await User.find({ role: 'admin', isActive: true }).select('_id');
+  await Promise.all(
+    adminUsers.map((admin) =>
+      createNotification({
+        recipientId: admin._id,
+        type: 'REFUND_REQUEST',
+        title: 'New Refund Request',
+        message: `Refund requested by ${payment.patient.name} for the appointment with Dr. ${payment.doctor?.user?.name || 'Physiotherapist'}.`,
+        link: '/admin/refunds',
+        relatedId: payment._id,
+      })
+    )
+  );
+
+  await sendRefundInitiatedEmail({
+    patientEmail: payment.patient.email,
+    patientName: payment.patient.name,
+    doctorName: payment.doctor?.user?.name || 'Physiotherapist',
+    date: payment.appointment?.date,
+    startTime: payment.appointment?.startTime,
+    amount: payment.amount,
   });
 
   return successResponse(res, 200, 'Refund request submitted successfully.', payment);
@@ -351,8 +391,9 @@ export const requestRefund = asyncHandler(async (req, res) => {
  */
 export const getRefundRequestsAdmin = asyncHandler(async (req, res) => {
   const { status = 'requested' } = req.query;
+  const refundStatusFilter = status === 'requested' ? { $in: ['requested', 'pending'] } : status;
 
-  const payments = await Payment.find({ refundStatus: status })
+  const payments = await Payment.find({ refundStatus: refundStatusFilter })
     .populate('patient', 'name email')
     .populate({ path: 'doctor', populate: { path: 'user', select: 'name' } })
     .populate('appointment', 'date startTime cancellationReason cancelledBy')
@@ -374,24 +415,32 @@ export const resolveRefund = asyncHandler(async (req, res) => {
   if (!['approve', 'reject'].includes(action))
     throw new AppError('Action must be approve or reject.', 400);
 
-  const payment = await Payment.findById(paymentId).populate('patient', 'name');
+  const payment = await Payment.findById(paymentId).populate('patient', 'name email');
   if (!payment) throw new AppError('Payment not found.', 404);
 
-  if (payment.refundStatus !== 'requested')
+  if (!['requested', 'pending'].includes(payment.refundStatus))
     throw new AppError('This refund request is not in a pending state.', 400);
 
   if (action === 'reject') {
     payment.refundStatus = 'rejected';
     payment.refundAdminNote = adminNote || '';
+    payment.adminNote = adminNote || '';
     payment.refundResolvedAt = new Date();
     await payment.save();
 
-    createNotification({
+    await createNotification({
       recipientId: payment.patient._id,
       type: 'appointment_cancelled',
       title: 'Refund Request Rejected',
       message: `Your refund request of ₹${payment.amount} was reviewed and rejected. ${adminNote ? `Note: ${adminNote}` : ''}`,
       link: '/patient/payments',
+    });
+
+    await sendRefundRejectedEmail({
+      patientEmail: payment.patient.email,
+      patientName: payment.patient.name,
+      amount: payment.refundAmount || payment.amount,
+      adminNote,
     });
 
     return successResponse(res, 200, 'Refund request rejected.', payment);
@@ -412,9 +461,12 @@ export const resolveRefund = asyncHandler(async (req, res) => {
   }
 
   payment.status = 'refunded';
-  payment.refundStatus = 'approved';
+  payment.refundStatus = 'processed';
   payment.refundId = refund.id;
   payment.refundAdminNote = adminNote || '';
+  payment.adminNote = adminNote || '';
+  payment.refundAmount = payment.refundAmount || payment.amount;
+  payment.refundProcessedAt = new Date();
   payment.refundResolvedAt = new Date();
   await payment.save();
 
@@ -423,12 +475,19 @@ export const resolveRefund = asyncHandler(async (req, res) => {
     $inc: { totalEarnings: -payment.doctorEarnings },
   });
 
-  createNotification({
+  await createNotification({
     recipientId: payment.patient._id,
     type: 'appointment_cancelled',
     title: 'Refund Approved',
-    message: `Your refund of ₹${payment.amount} has been approved and processed. It will reflect in 5–7 business days.`,
+    message: `Your refund of ₹${payment.refundAmount || payment.amount} has been approved and processed. It will reflect in 5–7 business days.`,
     link: '/patient/payments',
+  });
+
+  await sendRefundApprovedEmail({
+    patientEmail: payment.patient.email,
+    patientName: payment.patient.name,
+    amount: payment.refundAmount || payment.amount,
+    adminNote,
   });
 
   return successResponse(res, 200, 'Refund processed successfully.', payment);

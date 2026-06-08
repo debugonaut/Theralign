@@ -6,6 +6,12 @@ import razorpayInstance from '../config/razorpay.js';
 import AppError from '../utils/AppError.js';
 import logger from '../utils/logger.js';
 import { createNotification } from './notificationService.js';
+import {
+  sendRefundInitiatedEmail,
+  sendRefundApprovedEmail,
+  sendRefundRejectedEmail,
+  sendDoctorCancelledRefundEmail,
+} from './emailService.js';
 
 /**
  * Patient cancels their appointment and requests a refund.
@@ -84,6 +90,16 @@ export const initiatePatientCancellation = async (appointmentId, patientId, reas
     link: '/patient/appointments',
     relatedId: appointment._id,
   });
+
+  // 6. Send email confirmation to patient (fire-and-forget — never blocks refund flow)
+  sendRefundInitiatedEmail({
+    patientEmail: appointment.patient.email,
+    patientName: appointment.patient.name,
+    doctorName,
+    date: appointment.date,
+    startTime: appointment.startTime,
+    amount: payment.amount,
+  }).catch((err) => logger.warn(`Refund initiation email failed: ${err.message}`));
 
   return { appointment, payment };
 };
@@ -180,6 +196,16 @@ export const initiateDoctorCancellation = async (appointmentId, doctorId) => {
     relatedId: appointment._id,
   });
 
+  // 7. Send email to patient notifying of cancellation + automatic refund (fire-and-forget)
+  sendDoctorCancelledRefundEmail({
+    patientEmail: appointment.patient.email,
+    patientName: appointment.patient.name,
+    doctorName,
+    date: appointment.date,
+    startTime: appointment.startTime,
+    amount: payment.amount,
+  }).catch((err) => logger.warn(`Doctor-cancelled refund email failed: ${err.message}`));
+
   return { appointment, payment, refund };
 };
 
@@ -190,7 +216,13 @@ export const approveRefund = async (paymentId, adminId, adminNote) => {
   // Validations
   const payment = await Payment.findById(paymentId).populate({
     path: 'appointment',
-    populate: { path: 'patient' },
+    populate: [
+      { path: 'patient' },
+      {
+        path: 'doctor',
+        populate: { path: 'user', select: 'name' },
+      },
+    ],
   });
 
   if (!payment) {
@@ -226,13 +258,22 @@ export const approveRefund = async (paymentId, adminId, adminNote) => {
 
   // 3. Create notification for patient
   await createNotification({
-    recipientId: payment.patient,
+    recipientId: payment.appointment.patient._id,
     type: 'REFUND_APPROVED',
     title: 'Refund Approved',
     message: `Your refund of ₹${payment.refundAmount} has been approved and processed. It will appear in your account within 2-3 business days depending on your payment method.`,
     link: '/patient/payments',
     relatedId: payment._id,
   });
+
+  // 4. Send approval email to patient (fire-and-forget)
+  const doctorName = payment.appointment?.doctor?.user?.name || 'the physiotherapist';
+  sendRefundApprovedEmail({
+    patientEmail: payment.appointment.patient.email,
+    patientName: payment.appointment.patient.name,
+    amount: payment.refundAmount,
+    adminNote: payment.adminNote,
+  }).catch((err) => logger.warn(`Refund approval email failed: ${err.message}`));
 
   return { payment, refund };
 };
@@ -264,13 +305,21 @@ export const rejectRefund = async (paymentId, adminId, adminNote) => {
 
   // 2. Create notification for patient
   await createNotification({
-    recipientId: payment.patient,
+    recipientId: payment.patient._id,
     type: 'REFUND_REJECTED',
     title: 'Refund Request Reviewed',
     message: `Your refund request has been reviewed. Note from our team: ${adminNote}`,
     link: '/patient/payments',
     relatedId: payment._id,
   });
+
+  // 3. Send rejection email to patient (fire-and-forget)
+  sendRefundRejectedEmail({
+    patientEmail: payment.patient.email,
+    patientName: payment.patient.name,
+    amount: payment.refundAmount,
+    adminNote,
+  }).catch((err) => logger.warn(`Refund rejection email failed: ${err.message}`));
 
   return { payment };
 };

@@ -55,13 +55,21 @@ const paymentSchema = new mongoose.Schema(
     // Refund tracking
     refundStatus: {
       type: String,
-      enum: ['none', 'requested', 'approved', 'rejected'],
+      enum: ['none', 'requested', 'pending', 'approved', 'rejected', 'processed'],
       default: 'none',
     },
     refundReason: { type: String, default: '' },
     refundId: { type: String, default: null },       // Razorpay refund ID
     refundAdminNote: { type: String, default: '' },
+    adminNote: { type: String, default: '' },
+    refundAmount: { type: Number, default: null },
+    refundInitiatedBy: {
+      type: String,
+      enum: ['patient', 'doctor', 'admin', null],
+      default: null,
+    },
     refundRequestedAt: { type: Date, default: null },
+    refundProcessedAt: { type: Date, default: null },
     refundResolvedAt: { type: Date, default: null },
   },
   { timestamps: true }
