@@ -13,6 +13,32 @@ const DoctorEarnings = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
 
+  const getRefundState = (appointment) => {
+    if (!appointment) return 'not_initiated';
+
+    if (
+      appointment.payment?.refundStatus === 'approved' ||
+      appointment.payment?.refundStatus === 'processed' ||
+      appointment.payment?.status === 'refunded' ||
+      appointment.paymentStatus === 'refunded'
+    ) {
+      return 'approved';
+    }
+
+    if (
+      appointment.payment?.refundStatus === 'pending' ||
+      appointment.payment?.refundStatus === 'requested'
+    ) {
+      return 'initiated';
+    }
+
+    if (appointment.payment?.refundStatus === 'rejected') {
+      return 'cancel';
+    }
+
+    return 'not_initiated';
+  };
+
   useEffect(() => {
     document.title = 'EARNINGS — Theralign';
     const fetchData = async () => {
@@ -34,7 +60,11 @@ const DoctorEarnings = () => {
 
   // Filter for metrics: only completed, paid (not refunded) appointments reflect in actual lifetime stats
   const completedPaid = appointments.filter(
-    (a) => a.status === 'completed' && a.paymentStatus === 'paid' && a.payment?.status !== 'refunded'
+    (a) =>
+      a.status === 'completed' &&
+      (a.paymentStatus === 'paid' || a.paymentStatus === 'refunded') &&
+      !['approved', 'processed'].includes(a.payment?.refundStatus) &&
+      a.payment?.status !== 'refunded'
   );
 
   // Basic stats
@@ -254,6 +284,7 @@ const DoctorEarnings = () => {
                     const lastName = patientName.split(' ')[1] || '';
                     const initial = lastName ? ` ${lastName[0].toUpperCase()}.` : '';
                     const displayName = `${firstName}${initial}`;
+                    const refundState = getRefundState(appt);
 
                     return (
                       <tr key={appt._id} className="h-12 hover:bg-neutral-50 transition-colors duration-fast select-none">
@@ -273,14 +304,14 @@ const DoctorEarnings = () => {
                           ₹{(appt.doctorEarnings || 0).toLocaleString('en-IN')}
                         </td>
                         <td className="px-6 py-3">
-                          {appt.paymentStatus === 'refunded' || appt.payment?.status === 'refunded' ? (
-                            <Badge variant="cancelled" label="REFUNDED" />
-                          ) : appt.payment?.refundStatus === 'pending' || appt.payment?.refundStatus === 'requested' || (appt.status === 'cancelled' && appt.paymentStatus === 'paid') ? (
+                          {refundState === 'approved' ? (
+                            <Badge variant="confirmed" label="REFUND APPROVED" />
+                          ) : refundState === 'initiated' || (appt.status === 'cancelled' && appt.paymentStatus === 'paid') ? (
                             <Badge variant="warning" label="REFUND INITIATED" />
-                          ) : appt.payment?.refundStatus === 'rejected' ? (
-                            <Badge variant="rejected" label="REFUND REJECTED" />
+                          ) : refundState === 'cancel' ? (
+                            <Badge variant="rejected" label="REFUND CANCEL" />
                           ) : (
-                            <Badge variant="paid" label="PAID" />
+                            <Badge variant="paid" label="PAYMENT RECEIVED" />
                           )}
                         </td>
                       </tr>

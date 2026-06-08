@@ -164,16 +164,17 @@ export const initiateDoctorCancellation = async (appointmentId, doctorId) => {
   }
 
   // 3. Update Payment
-  payment.status = 'refunded';
-  payment.refundStatus = 'processed';
+  payment.status = 'paid';
+  payment.refundStatus = 'approved';
   payment.refundId = refund.id;
   payment.refundInitiatedBy = 'doctor';
   payment.refundAmount = payment.amount;
+  payment.refundRequestedAt = payment.refundRequestedAt || new Date();
   payment.refundProcessedAt = new Date();
   await payment.save();
 
-  // 3b. Update Appointment paymentStatus
-  appointment.paymentStatus = 'refunded';
+  // 3b. Keep payment history visible on the appointment; refund state lives on Payment.
+  appointment.paymentStatus = 'paid';
   await appointment.save();
 
   // 3c. Deduct doctor earnings
@@ -258,16 +259,19 @@ export const approveRefund = async (paymentId, adminId, adminNote) => {
   }
 
   // 2. Update Payment
-  payment.status = 'refunded';
-  payment.refundStatus = 'processed';
+  payment.status = 'paid';
+  payment.refundStatus = 'approved';
   payment.refundId = refund.id;
+  payment.refundAmount = payment.refundAmount || payment.amount;
+  payment.refundInitiatedBy = payment.refundInitiatedBy || 'patient';
   payment.refundProcessedAt = new Date();
+  payment.refundResolvedAt = new Date();
   payment.adminNote = adminNote || 'Refund approved';
   await payment.save();
 
-  // 2b. Update Appointment paymentStatus
+  // 2b. Preserve the original successful payment in doctor/patient history.
   if (payment.appointment) {
-    payment.appointment.paymentStatus = 'refunded';
+    payment.appointment.paymentStatus = 'paid';
     await payment.appointment.save();
   }
 
@@ -321,6 +325,7 @@ export const rejectRefund = async (paymentId, adminId, adminNote) => {
   // 1. Update Payment
   payment.refundStatus = 'rejected';
   payment.adminNote = adminNote;
+  payment.refundResolvedAt = new Date();
   await payment.save();
 
   // 2. Create notification for patient
@@ -385,12 +390,12 @@ export const getRefundStats = async () => {
   const pendingCount = await Payment.countDocuments({ refundStatus: 'pending' });
 
   const processedThisMonth = await Payment.countDocuments({
-    refundStatus: 'processed',
+    refundStatus: { $in: ['approved', 'processed'] },
     refundProcessedAt: { $gte: startOfMonth },
   });
 
   const totalRefundedResult = await Payment.aggregate([
-    { $match: { refundStatus: 'processed' } },
+    { $match: { refundStatus: { $in: ['approved', 'processed'] } } },
     { $group: { _id: null, total: { $sum: '$refundAmount' } } },
   ]);
 

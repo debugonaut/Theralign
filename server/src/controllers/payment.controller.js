@@ -460,8 +460,10 @@ export const resolveRefund = asyncHandler(async (req, res) => {
     throw new AppError(`Razorpay refund failed: ${err.error?.description || err.message}`, 500);
   }
 
-  payment.status = 'refunded';
-  payment.refundStatus = 'processed';
+  // Keep the original payment record as a successful payment and track
+  // refund progress independently so both sides retain payment history.
+  payment.status = 'paid';
+  payment.refundStatus = 'approved';
   payment.refundId = refund.id;
   payment.refundAdminNote = adminNote || '';
   payment.adminNote = adminNote || '';
@@ -470,9 +472,9 @@ export const resolveRefund = asyncHandler(async (req, res) => {
   payment.refundResolvedAt = new Date();
   await payment.save();
 
-  // Update appointment paymentStatus
+  // Preserve payment visibility on the appointment and expose refund via refundStatus.
   await Appointment.findByIdAndUpdate(payment.appointment, {
-    $set: { paymentStatus: 'refunded' },
+    $set: { paymentStatus: 'paid' },
   });
 
   // Deduct doctor earnings

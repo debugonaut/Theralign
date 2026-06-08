@@ -333,9 +333,11 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
       { appointment: appointment._id, status: 'paid', refundStatus: 'none' },
       {
         $set: {
-          refundStatus: 'requested',
+          refundStatus: 'pending',
           refundReason: reason || 'Appointment cancelled',
           refundRequestedAt: new Date(),
+          refundAmount: appointment.consultationFee,
+          refundInitiatedBy: role,
         },
       }
     );
@@ -650,4 +652,3 @@ export const rescheduleAppointment = asyncHandler(async (req, res) => {
 
   return successResponse(res, 200, 'Appointment rescheduled successfully!', appointment);
 });
-
