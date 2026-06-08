@@ -19,13 +19,21 @@ export const getSuggestions = asyncHandler(async (req, res) => {
   const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(escapedQuery, 'i'); // Case-insensitive matching
 
+  // Strip 'Dr.' or 'Dr' prefix from user name search to match name records in database
+  let nameQuery = query;
+  if (/^dr\.?\s+/i.test(nameQuery)) {
+    nameQuery = nameQuery.replace(/^dr\.?\s+/i, '');
+  }
+  const escapedNameQuery = nameQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const nameRegex = new RegExp(escapedNameQuery, 'i');
+
   // Run Mongoose distinct & populate queries concurrently
   const [nameMatches, specializationMatches, cityMatches] = await Promise.all([
     // 1. Match doctor user names — two-phase to avoid in-memory limit issues
     User.find({
       role: 'doctor',
       isActive: true,
-      name: regex,
+      name: nameRegex,
     })
       .select('_id name')
       .limit(5)
@@ -39,13 +47,15 @@ export const getSuggestions = asyncHandler(async (req, res) => {
         })
           .populate('user', 'name')
           .limit(3);
-        return profiles.map((d) => ({
-          type: 'doctor',
-          label: d.user.name,
-          value: d.user.name,
-          subLabel: Array.isArray(d.specialization) ? d.specialization.join(', ') : d.specialization,
-          doctorId: d._id,
-        }));
+        return profiles
+          .filter((d) => d.user) // Prevent map crash on dangling null references
+          .map((d) => ({
+            type: 'doctor',
+            label: d.user.name,
+            value: d.user.name,
+            subLabel: Array.isArray(d.specialization) ? d.specialization.join(', ') : (d.specialization || ''),
+            doctorId: d._id,
+          }));
       }),
 
     // 2. Match specializations distinct list

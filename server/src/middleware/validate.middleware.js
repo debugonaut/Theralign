@@ -11,6 +11,7 @@ import { errorResponse } from '../utils/apiResponse.js';
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.error('Validation Error Details:', JSON.stringify(errors.array(), null, 2));
     return errorResponse(res, 422, 'Validation failed', errors.array());
   }
   next();
