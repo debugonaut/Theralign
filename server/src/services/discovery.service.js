@@ -10,10 +10,7 @@ import { DOCTOR_STATUS, ROLES, GEOSPATIAL } from '../utils/constants.js';
  * @returns {object} MongoDB filter object
  */
 export const buildDiscoveryQuery = (filters = {}) => {
-  const query = {
-    verificationStatus: DOCTOR_STATUS.VERIFIED,
-    isAvailable: true,
-  };
+  const query = {};
 
   const {
     specialization,
@@ -307,8 +304,6 @@ export const getDoctorsBySpecialization = async (specialization, { page = 1, lim
   const mapped = specMapping[cleanSpec.toLowerCase()] || cleanSpec;
 
   const query = {
-    verificationStatus: DOCTOR_STATUS.VERIFIED,
-    isAvailable: true,
     specialization: mapped,
   };
 
@@ -338,8 +333,6 @@ export const getDoctorsBySpecialization = async (specialization, { page = 1, lim
  */
 export const getFeaturedDoctors = async (limit = 6) => {
   const query = {
-    verificationStatus: DOCTOR_STATUS.VERIFIED,
-    isAvailable: true,
     totalReviews: { $gte: 1 },
   };
 
