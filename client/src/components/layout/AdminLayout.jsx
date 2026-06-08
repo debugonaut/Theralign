@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, Menu, X, ShieldAlert, Users, 
-  Calendar, DollarSign, Award, LogOut, ChevronRight, Star, Sparkles
+  Calendar, DollarSign, Award, LogOut, ChevronRight, Star, Sparkles,
+  Coins
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
@@ -70,7 +71,7 @@ const AdminLayout = () => {
 
   const financeGroup = [
     { name: 'Revenue', href: '/admin/revenue', icon: DollarSign },
-    { name: 'Refunds', href: '/admin/refunds', icon: '💸', showRefundBadge: true },
+    { name: 'Refunds', href: '/admin/refunds', icon: Coins, showRefundBadge: true },
   ];
 
   const renderNavGroup = (title, items) => {

@@ -1,3 +1,5 @@
+import { X, AlertTriangle } from 'lucide-react';
+import '../booking/CancellationModal.css';
 import './DoctorCancellationModal.css';
 
 export default function DoctorCancellationModal({
@@ -20,14 +22,16 @@ export default function DoctorCancellationModal({
         {/* Header */}
         <div className="modal-header">
           <h2>Cancel Appointment</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         <div className="modal-divider"></div>
 
         {/* Warning Box */}
         <div className="warning-box doctor-warning">
-          <span className="warning-icon">⚠️</span>
+          <AlertTriangle className="w-5 h-5 text-[#b45309] shrink-0 mt-0.5" />
           <p>
             Cancelling this appointment will automatically issue a full refund to the patient.
             This action cannot be undone.

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { X, AlertTriangle } from 'lucide-react';
 import './CancellationModal.css';
 
 export default function CancellationModal({
@@ -29,14 +30,16 @@ export default function CancellationModal({
         {/* Header */}
         <div className="modal-header">
           <h2>Cancel Appointment</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         <div className="modal-divider"></div>
 
         {/* Warning Box */}
         <div className="warning-box">
-          <span className="warning-icon">⚠️</span>
+          <AlertTriangle className="w-5 h-5 text-[#b45309] shrink-0 mt-0.5" />
           <p>
             This appointment has been paid. Cancelling will submit a refund request that requires admin approval.
             Refunds typically process within 2-3 business days.
