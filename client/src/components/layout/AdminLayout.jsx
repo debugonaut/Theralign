@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 import { getPendingDoctorsAPI } from '../../api/admin.api';
 import NotificationBell from './NotificationBell';
-import { getRefundStatsAPI } from '../../api/refund.api';
+import { getPendingRefundsAPI } from '../../api/refund.api';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -32,12 +32,10 @@ const AdminLayout = () => {
 
   const fetchRefundStats = async () => {
     try {
-      const res = await getRefundStatsAPI();
-      const count = res.data?.pendingCount ?? res.data?.data?.pendingCount ?? 0;
-      setRefundBadgeCount(count);
-    } catch (error) {
-      console.error('Error fetching refund stats:', error);
-    }
+      const res = await getPendingRefundsAPI();
+      const list = res.data?.data;
+      setRefundBadgeCount(Array.isArray(list) ? list.length : 0);
+    } catch { /* fail silently */ }
   };
 
   useEffect(() => {
