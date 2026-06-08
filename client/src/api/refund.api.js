@@ -1,37 +1,19 @@
 import axiosInstance from './axiosInstance';
 
-/**
- * Patient cancels appointment and requests refund
- */
 export const cancelAppointmentPatientAPI = (appointmentId, reason) =>
   axiosInstance.post(`/appointments/${appointmentId}/cancel-patient`, { reason });
 
-/**
- * Doctor cancels appointment (automatic refund)
- */
 export const cancelAppointmentDoctorAPI = (appointmentId) =>
   axiosInstance.post(`/appointments/${appointmentId}/cancel-doctor`);
 
-/**
- * Admin fetches pending refund requests
- */
+// Admin: GET /payments/admin/refunds?status=requested
 export const getPendingRefundsAPI = (params) =>
-  axiosInstance.get('/admin/refunds', { params });
+  axiosInstance.get('/payments/admin/refunds', { params: { status: 'requested', ...params } });
 
-/**
- * Admin gets refund statistics
- */
-export const getRefundStatsAPI = () =>
-  axiosInstance.get('/admin/refunds/stats');
-
-/**
- * Admin approves a pending refund
- */
+// Admin: approve — PATCH /payments/admin/:paymentId/refund { action: 'approve', adminNote }
 export const approveRefundAPI = (paymentId, adminNote) =>
-  axiosInstance.patch(`/admin/refunds/${paymentId}/approve`, { adminNote });
+  axiosInstance.patch(`/payments/admin/${paymentId}/refund`, { action: 'approve', adminNote });
 
-/**
- * Admin rejects a pending refund
- */
+// Admin: reject — PATCH /payments/admin/:paymentId/refund { action: 'reject', adminNote }
 export const rejectRefundAPI = (paymentId, adminNote) =>
-  axiosInstance.patch(`/admin/refunds/${paymentId}/reject`, { adminNote });
+  axiosInstance.patch(`/payments/admin/${paymentId}/refund`, { action: 'reject', adminNote });

@@ -7,9 +7,7 @@ import SectionHeader from '../../components/common/SectionHeader';
 import Table, { ActionLink } from '../../components/common/Table';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/common/Button';
-import Modal from '../../components/common/Modal';
 import CancellationModal from '../../components/booking/CancellationModal.jsx';
-import { cancelAppointmentPatientAPI } from '../../api/refund.api.js';
 
 const PatientAppointments = () => {
   const navigate = useNavigate();
@@ -25,9 +23,6 @@ const PatientAppointments = () => {
   // Expanded row ID for inline details
   const [expandedRowId, setExpandedRowId] = useState(null);
 
-  // Cancellation Modal state (Destructive action)
-  const [cancelModal, setCancelModal] = useState({ open: false, appointmentId: null, reason: '' });
-  const [cancelling, setCancelling] = useState(false);
   const [selectedAppointmentForCancel, setSelectedAppointmentForCancel] = useState(null);
   const [cancelLoading, setCancelLoading] = useState(false);
 
@@ -88,42 +83,19 @@ const PatientAppointments = () => {
 
   const activeAppts = getFilteredAppointments();
 
-  // Handle Cancellation
-  const handleOpenCancelModal = (e, appointmentId) => {
-    e.stopPropagation(); // Prevent expanding row
-    setCancelModal({ open: true, appointmentId, reason: '' });
-  };
-
-  const handleConfirmCancel = async () => {
-    setCancelling(true);
-    try {
-      const res = await cancelAppointment(cancelModal.appointmentId, cancelModal.reason);
-      if (res.success) {
-        toast.success('BOOKING CANCELLED.');
-        setAppointments(
-          appointments.map((a) =>
-            a._id === cancelModal.appointmentId
-              ? { ...a, status: 'cancelled', cancellationReason: cancelModal.reason }
-              : a
-          )
-        );
-        setCancelModal({ open: false, appointmentId: null, reason: '' });
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('FAILED TO CANCEL APPOINTMENT.');
-    } finally {
-      setCancelling(false);
-    }
-  };
-
   const handlePatientCancelAppointment = async (reason) => {
     if (!selectedAppointmentForCancel) return;
-
     try {
       setCancelLoading(true);
-      await cancelAppointmentPatientAPI(selectedAppointmentForCancel._id, reason);
-      toast.success('Appointment cancelled. Your refund request has been submitted for review.');
+      // cancelAppointment (PATCH /:id/cancel) atomically cancels and sets
+      // refundStatus: 'requested' on the Payment if paymentStatus === 'paid'
+      await cancelAppointment(selectedAppointmentForCancel._id, reason);
+      const wasPaid = selectedAppointmentForCancel.paymentStatus === 'paid';
+      toast.success(
+        wasPaid
+          ? 'Appointment cancelled. Refund request submitted for admin review.'
+          : 'Appointment cancelled successfully.'
+      );
       fetchAppointments(true);
       setSelectedAppointmentForCancel(null);
     } catch (error) {
@@ -326,7 +298,7 @@ const PatientAppointments = () => {
                         <ActionLink onClick={() => toggleRowExpansion(appt._id)}>
                           VIEW
                         </ActionLink>
-                        {appt.status === 'confirmed' && appt.paymentStatus === 'paid' ? (
+                        {canCancel && (
                           <button
                             className="cancel-link"
                             onClick={(e) => {
@@ -334,17 +306,8 @@ const PatientAppointments = () => {
                               setSelectedAppointmentForCancel(appt);
                             }}
                           >
-                            CANCEL APPOINTMENT
+                            CANCEL
                           </button>
-                        ) : (
-                          canCancel && (
-                            <ActionLink
-                              destructive={true}
-                              onClick={(e) => handleOpenCancelModal(e, appt._id)}
-                            >
-                              CANCEL
-                            </ActionLink>
-                          )
                         )}
                       </Table.Cell>
                     </Table.Row>
@@ -668,52 +631,6 @@ const PatientAppointments = () => {
           )}
         </div>
       </div>
-
-      {/* Cancellation Reason Modal */}
-      {cancelModal.open && (
-        <Modal
-          isOpen={cancelModal.open}
-          onClose={() => setCancelModal({ open: false, appointmentId: null, reason: '' })}
-          title="CANCEL APPOINTMENT"
-        >
-          <div className="flex flex-col gap-5 text-left select-none">
-            <p className="text-ui-sm text-neutral-700 font-bold uppercase tracking-wide leading-relaxed">
-              Are you sure you want to cancel your clinical consultation slot? Unlocked slots will immediately become available for other patients to book.
-            </p>
-            
-            <div className="flex flex-col gap-2">
-               <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-                REASON FOR CANCELLATION (OPTIONAL)
-              </label>
-              <textarea
-                value={cancelModal.reason}
-                onChange={(e) => setCancelModal({ ...cancelModal, reason: e.target.value })}
-                placeholder="E.g. Schedule conflict, feeling better, booked another practice clinic..."
-                rows={3}
-                maxLength={200}
-                className="w-full bg-white border border-neutral-200 focus:border-accent px-4 py-3 text-ui-sm font-semibold text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-accent/20 transition-all rounded-md resize-none transition-warm"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 pt-2">
-              <Button
-                variant="accent"
-                onClick={handleConfirmCancel}
-                disabled={cancelling}
-              >
-                {cancelling ? 'CANCELLING...' : 'YES, CANCEL APPOINTMENT'}
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setCancelModal({ open: false, appointmentId: null, reason: '' })}
-                disabled={cancelling}
-              >
-                NO, KEEP APPOINTMENT
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
 
       <CancellationModal
         appointment={selectedAppointmentForCancel}

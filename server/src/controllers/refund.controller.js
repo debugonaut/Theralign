@@ -1,6 +1,8 @@
 import * as refundService from '../services/refund.service.js';
+import DoctorProfile from '../models/DoctorProfile.model.js';
 import { successResponse } from '../utils/apiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import AppError from '../utils/AppError.js';
 
 // Patient cancels their appointment
 export const cancelAppointmentPatient = asyncHandler(async (req, res) => {
@@ -25,9 +27,16 @@ export const cancelAppointmentPatient = asyncHandler(async (req, res) => {
 export const cancelAppointmentDoctor = asyncHandler(async (req, res) => {
   const { appointmentId } = req.params;
 
+  // auth.middleware only sets id/role/name/email — req.user.doctorProfile is never set.
+  // We must look up the DoctorProfile via the user's id so the ownership check works.
+  const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
+  if (!doctorProfile) {
+    throw new AppError('Doctor profile not found for this account.', 404);
+  }
+
   const result = await refundService.initiateDoctorCancellation(
     appointmentId,
-    req.user.doctorProfile
+    doctorProfile._id
   );
 
   return successResponse(

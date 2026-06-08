@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
-import { getPendingRefundsAPI, getRefundStatsAPI, approveRefundAPI, rejectRefundAPI } from '../../api/refund.api.js';
+import React, { useState, useEffect } from 'react';
+import { getPendingRefundsAPI, approveRefundAPI, rejectRefundAPI } from '../../api/refund.api.js';
 import PageHeader from '../../components/admin/PageHeader.jsx';
 import './AdminRefunds.css';
 import toast from 'react-hot-toast';
 
 export default function AdminRefunds() {
   const [refunds, setRefunds] = useState([]);
-  const [stats, setStats] = useState({ pendingCount: 0, processedThisMonth: 0, totalRefunded: 0 });
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -16,29 +15,21 @@ export default function AdminRefunds() {
 
   useEffect(() => {
     fetchRefunds();
-    fetchStats();
+    const interval = setInterval(fetchRefunds, 15000);
+    return () => clearInterval(interval);
   }, [page]);
 
   const fetchRefunds = async () => {
     try {
       setLoading(true);
       const response = await getPendingRefundsAPI({ page, limit: 20 });
-      setRefunds(response.data.refunds);
-      setTotalPages(response.data.totalPages);
+      setRefunds(response.data.data || []);
+      setTotalPages(response.data.totalPages || 1);
     } catch (error) {
       console.error('Error fetching refunds:', error);
       toast.error('Failed to load refunds');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const response = await getRefundStatsAPI();
-      setStats(response.data);
-    } catch (error) {
-      console.error('Error fetching stats:', error);
     }
   };
 
@@ -61,7 +52,6 @@ export default function AdminRefunds() {
       toast.success('Refund approved successfully');
       setExpandedRefund(null);
       fetchRefunds();
-      fetchStats();
     } catch (error) {
       console.error('Error approving refund:', error);
       toast.error(error.response?.data?.message || 'Failed to approve refund');
@@ -82,7 +72,6 @@ export default function AdminRefunds() {
       toast.success('Refund rejected successfully');
       setExpandedRefund(null);
       fetchRefunds();
-      fetchStats();
     } catch (error) {
       console.error('Error rejecting refund:', error);
       toast.error(error.response?.data?.message || 'Failed to reject refund');
@@ -105,32 +94,16 @@ export default function AdminRefunds() {
 
   const formatTime = (time) => {
     if (!time) return 'N/A';
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-IN', { 
-      hour: '2-digit', 
+    return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-IN', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: true 
+      hour12: true
     });
   };
 
   return (
     <div className="admin-refunds-page">
       <PageHeader title="REFUND REQUESTS" description="Manage and process customer refund requests" />
-
-      {/* Stats Cards */}
-      <div className="stats-row">
-        <div className="stat-card pending-card">
-          <div className="stat-value">{stats.pendingCount}</div>
-          <div className="stat-label">PENDING REVIEW</div>
-        </div>
-        <div className="stat-card processed-card">
-          <div className="stat-value">{stats.processedThisMonth}</div>
-          <div className="stat-label">PROCESSED THIS MONTH</div>
-        </div>
-        <div className="stat-card refunded-card">
-          <div className="stat-value">₹{(stats.totalRefunded || 0).toLocaleString('en-IN')}</div>
-          <div className="stat-label">TOTAL REFUNDED</div>
-        </div>
-      </div>
 
       {/* Refunds Table */}
       <div className="refunds-container">
@@ -160,26 +133,30 @@ export default function AdminRefunds() {
                 </thead>
                 <tbody>
                   {refunds.map((refund) => (
-                    <tbody key={refund._id}>
+                    <React.Fragment key={refund._id}>
                       <tr className="refund-row">
                         <td className="patient-cell">
                           <div className="patient-info">
-                            <div className="patient-avatar">{getPatientInitials(refund.appointment?.patient?.name)}</div>
+                            <div className="patient-avatar">{getPatientInitials(refund.patient?.name)}</div>
                             <div>
-                              <div className="patient-name">{refund.appointment?.patient?.name}</div>
-                              <div className="patient-email">{refund.appointment?.patient?.email}</div>
+                              <div className="patient-name">{refund.patient?.name}</div>
+                              <div className="patient-email">{refund.patient?.email}</div>
                             </div>
                           </div>
                         </td>
-                        <td>{refund.appointment?.doctor?.user?.name || 'N/A'}</td>
+                        <td>{refund.doctor?.user?.name || 'N/A'}</td>
                         <td>
                           {formatDate(refund.appointment?.date)} at {formatTime(refund.appointment?.startTime)}
                         </td>
-                        <td className="amount-cell">₹{refund.refundAmount?.toFixed(2) || '0.00'}</td>
+                        <td className="amount-cell">₹{refund.amount?.toFixed(2) || '0.00'}</td>
                         <td className="time-cell">{getRelativeTime(refund.refundRequestedAt)}</td>
                         <td className="reason-cell">
                           <span className="reason-text" title={refund.refundReason}>
-                            {refund.refundReason?.substring(0, 40)}...
+                            {refund.refundReason
+                              ? refund.refundReason.length > 40
+                                ? refund.refundReason.substring(0, 40) + '...'
+                                : refund.refundReason
+                              : '—'}
                           </span>
                         </td>
                         <td>
@@ -209,15 +186,15 @@ export default function AdminRefunds() {
                               <div className="expansion-summary">
                                 <div className="summary-item">
                                   <span className="summary-label">Patient:</span>
-                                  <span className="summary-value">{refund.appointment?.patient?.name}</span>
+                                  <span className="summary-value">{refund.patient?.name}</span>
                                 </div>
                                 <div className="summary-item">
                                   <span className="summary-label">Doctor:</span>
-                                  <span className="summary-value">{refund.appointment?.doctor?.user?.name}</span>
+                                  <span className="summary-value">{refund.doctor?.user?.name}</span>
                                 </div>
                                 <div className="summary-item">
                                   <span className="summary-label">Amount:</span>
-                                  <span className="summary-value">₹{refund.refundAmount?.toFixed(2)}</span>
+                                  <span className="summary-value">₹{refund.amount?.toFixed(2)}</span>
                                 </div>
                                 <div className="summary-item">
                                   <span className="summary-label">Date:</span>
@@ -286,7 +263,7 @@ export default function AdminRefunds() {
                           </td>
                         </tr>
                       )}
-                    </tbody>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
