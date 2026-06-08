@@ -59,10 +59,6 @@ const DoctorCard = ({ doctor, index = 0 }) => {
     animationDelay: `${delay}ms`,
   };
 
-  const bioText = doctor.bio
-    ? `${doctor.bio.trim().slice(0, 80)}...`
-    : 'Available for in-person physiotherapy sessions.';
-
   return (
     <div
       onClick={handleCardClick}
@@ -100,10 +96,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
         <div className="flex flex-col gap-3.5">
           {/* Stat 1: Rating */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Star size={13} fill="#F4845F" stroke="#F4845F" className="shrink-0" />
-              <span className="font-medium text-[12px] text-[#6B7C93]">Rating</span>
-            </div>
+            <Star size={13} fill="#F4845F" stroke="#F4845F" className="shrink-0" />
             <div className="flex items-center gap-0.5">
               <span className="font-bold text-[14px] text-[#1C2B3A]">{(doctor.averageRating || 0).toFixed(1)}</span>
               <span className="text-[#DDE3EA] text-[12px]">/</span>
@@ -116,10 +109,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
 
           {/* Stat 2: Experience */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Briefcase size={13} className="text-[#6B7C93] shrink-0" />
-              <span className="font-medium text-[12px] text-[#6B7C93]">Experience</span>
-            </div>
+            <Briefcase size={13} className="text-[#6B7C93] shrink-0" />
             <span className="font-bold text-[14px] text-[#1C2B3A]">{doctor.experience} yrs</span>
           </div>
 
@@ -127,10 +117,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
 
           {/* Stat 3: Fee */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <IndianRupee size={13} className="text-[#0B4F6C] shrink-0" />
-              <span className="font-medium text-[12px] text-[#6B7C93]">Per Session</span>
-            </div>
+            <IndianRupee size={13} className="text-[#0B4F6C] shrink-0" />
             <span className="font-bold text-[14px] text-[#0B4F6C]">₹{doctor.consultationFee}</span>
           </div>
         </div>
@@ -161,11 +148,6 @@ const DoctorCard = ({ doctor, index = 0 }) => {
           </span>
         </div>
 
-        {/* Bio Preview Row */}
-        <p className="font-normal text-[12px] text-[#A8B8C8] italic truncate whitespace-nowrap overflow-hidden">
-          {bioText}
-        </p>
-
         {/* Tags Row */}
         {remainingSpecs.length > 0 && (
           <div className="flex gap-1.5 flex-nowrap overflow-hidden pt-1">
@@ -191,19 +173,17 @@ const DoctorCard = ({ doctor, index = 0 }) => {
       {/* ─── ZONE D: Action (180px) ─── */}
       <div className="w-[180px] bg-[#FAFBFC] shrink-0 border-l border-[#EEF2F6] rounded-r-xl flex flex-col justify-center items-center px-5 py-5 gap-3">
         {/* Availability Indicator */}
-        <div className="flex items-center gap-1.5 justify-center">
-          {doctor.isAvailable ? (
-            <>
-              <span className="w-2 h-2 rounded-full bg-[#0A7E6E] available-dot shrink-0" />
-              <span className="font-medium text-[11px] text-[#0A7E6E]">Available</span>
-            </>
-          ) : (
-            <>
-              <span className="w-2 h-2 rounded-full bg-[#A8B8C8] shrink-0" />
-              <span className="font-medium text-[11px] text-[#A8B8C8]">Unavailable</span>
-            </>
-          )}
-        </div>
+        {doctor.isAvailable ? (
+          <div className="inline-flex items-center gap-1.5 bg-[#E8F8F5] rounded-[20px] px-[10px] py-1">
+            <span className="w-3 h-3 rounded-full bg-[#0A7E6E] available-dot shrink-0" />
+            <span className="font-medium text-[13px] text-[#0A7E6E]">Available</span>
+          </div>
+        ) : (
+          <div className="inline-flex items-center gap-1.5 bg-[#F0F4F7] rounded-[20px] px-[10px] py-1">
+            <span className="w-3 h-3 rounded-full bg-[#A8B8C8] shrink-0" />
+            <span className="font-medium text-[13px] text-[#A8B8C8]">Unavailable</span>
+          </div>
+        )}
 
         {/* Primary CTA */}
         <button
