@@ -7,8 +7,6 @@ import toast from 'react-hot-toast';
 export default function AdminRefunds() {
   const [refunds, setRefunds] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [expandedRefund, setExpandedRefund] = useState(null);
   const [noteInput, setNoteInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -17,14 +15,17 @@ export default function AdminRefunds() {
     fetchRefunds();
     const interval = setInterval(fetchRefunds, 15000);
     return () => clearInterval(interval);
-  }, [page]);
+  }, []);
 
   const fetchRefunds = async () => {
     try {
       setLoading(true);
-      const response = await getPendingRefundsAPI({ page, limit: 20 });
-      setRefunds(response.data.data || []);
-      setTotalPages(response.data.totalPages || 1);
+      const response = await getPendingRefundsAPI();
+      // getRefundRequestsAdmin returns a flat array in response.data.data
+      const data = response.data?.data;
+      const list = Array.isArray(data) ? data : [];
+      setRefunds(list);
+      setTotalPages(1); // server returns all at once, no pagination
     } catch (error) {
       console.error('Error fetching refunds:', error);
       toast.error('Failed to load refunds');
@@ -269,26 +270,6 @@ export default function AdminRefunds() {
               </table>
             </div>
 
-            {/* Pagination */}
-            <div className="pagination">
-              <button
-                className="pagination-btn"
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                ← Previous
-              </button>
-              <span className="pagination-info">
-                Page {page} of {totalPages}
-              </span>
-              <button
-                className="pagination-btn"
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-              >
-                Next →
-              </button>
-            </div>
           </>
         )}
       </div>

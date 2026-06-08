@@ -9,7 +9,6 @@ import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
 import DoctorCancellationModal from '../../components/appointments/DoctorCancellationModal.jsx';
-import { cancelAppointmentDoctorAPI } from '../../api/refund.api.js';
 
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -123,10 +122,9 @@ const DoctorAppointments = () => {
 
   const handleDoctorCancelAppointment = async () => {
     if (!selectedAppointmentForCancel) return;
-
     try {
       setCancelLoading(true);
-      await cancelAppointmentDoctorAPI(selectedAppointmentForCancel._id);
+      await cancelAppointment(selectedAppointmentForCancel._id, 'Cancelled by physiotherapist');
       toast.success('Appointment cancelled. Patient refund has been initiated automatically.');
       fetchAppointments(true);
       setSelectedAppointmentForCancel(null);
