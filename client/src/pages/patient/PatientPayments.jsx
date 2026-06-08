@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { getMyPayments } from '../../api/payment.api';
+import { getMyPayments, requestRefund } from '../../api/payment.api';
 import SectionHeader from '../../components/common/SectionHeader';
 import Table, { ActionLink } from '../../components/common/Table';
 import Badge from '../../components/common/Badge';
@@ -11,6 +11,20 @@ const PatientPayments = () => {
   const navigate = useNavigate();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refundingId, setRefundingId] = useState(null);
+
+  const handleRequestRefund = async (paymentId, cancellationReason) => {
+    setRefundingId(paymentId);
+    try {
+      await requestRefund(paymentId, cancellationReason);
+      toast.success('REFUND REQUEST SUBMITTED.');
+      await fetchPayments();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'FAILED TO REQUEST REFUND.');
+    } finally {
+      setRefundingId(null);
+    }
+  };
 
   const formatINR = (value) => {
     if (value === undefined || value === null) return '₹0';
@@ -237,12 +251,27 @@ const PatientPayments = () => {
                       <Badge variant="paid" />
                     </Table.Cell>
                     <Table.Cell actions>
-                      <ActionLink onClick={() => downloadReceipt(payment)}>
-                        DOWNLOAD RECEIPT →
-                      </ActionLink>
-                      <ActionLink onClick={() => navigate('/patient/appointments')}>
-                        VIEW APPOINTMENT →
-                      </ActionLink>
+                      {payment.status === 'refunded' ? (
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">REFUNDED</span>
+                      ) : payment.refundStatus === 'approved' ? (
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">REFUND APPROVED</span>
+                      ) : payment.refundStatus === 'requested' ? (
+                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">REFUND PENDING</span>
+                      ) : payment.refundStatus === 'rejected' ? (
+                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">REFUND REJECTED</span>
+                      ) : payment.appointment?.status === 'cancelled' && payment.status === 'paid' ? (
+                        <button
+                          type="button"
+                          onClick={() => handleRequestRefund(payment._id, payment.appointment?.cancellationReason)}
+                          disabled={refundingId === payment._id}
+                          className="text-[10px] font-black text-accent hover:underline uppercase tracking-widest cursor-pointer bg-transparent border-0 disabled:opacity-50"
+                        >
+                          {refundingId === payment._id ? 'REQUESTING...' : 'REQUEST REFUND →'}
+                        </button>
+                      ) : (
+                        <ActionLink onClick={() => downloadReceipt(payment)}>DOWNLOAD RECEIPT →</ActionLink>
+                      )}
+                      <ActionLink onClick={() => navigate('/patient/appointments')}>VIEW APPOINTMENT →</ActionLink>
                     </Table.Cell>
                   </Table.Row>
                 );

@@ -76,6 +76,7 @@ const doctorProfileSchema = new Schema(
       type: Number,
       required: [function () { return this.isOnboarded === true; }, 'Consultation fee is required'],
       min: [0, 'Consultation fee cannot be negative'],
+      default: 500,
     },
 
     bio: {

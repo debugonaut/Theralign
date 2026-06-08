@@ -6,6 +6,7 @@ import Appointment from '../models/Appointment.model.js';
 import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
 import WeeklySchedule from '../models/WeeklySchedule.model.js';
+import Payment from '../models/Payment.model.js';
 import { sendBookingConfirmation, sendCancellationNotice } from '../services/emailService.js';
 import { createNotification } from '../services/notificationService.js';
 import { DOCTOR_STATUS } from '../utils/constants.js';
@@ -307,6 +308,20 @@ export const cancelAppointment = asyncHandler(async (req, res) => {
 
   // Step 6: Unlock slot to be re-booked
   await AvailabilitySlot.findByIdAndUpdate(appointment.slot, { $set: { isBooked: false } });
+
+  // Auto-create refund request if appointment was paid
+  if (appointment.paymentStatus === 'paid') {
+    await Payment.findOneAndUpdate(
+      { appointment: appointment._id, status: 'paid', refundStatus: 'none' },
+      {
+        $set: {
+          refundStatus: 'requested',
+          refundReason: reason || 'Appointment cancelled',
+          refundRequestedAt: new Date(),
+        },
+      }
+    );
+  }
 
   // Only send cancellation email & notification if the appointment was confirmed
   if (wasConfirmed) {

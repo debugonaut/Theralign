@@ -9,25 +9,27 @@ export const patientProfileService = {
   getProfile: async () => {
     try {
       const response = await api.get('/patients/profile/me');
-      if (response.data?.profile) {
-        localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(response.data.profile));
+      if (response.data?.data?.profile) {
+        localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(response.data.data.profile));
       }
       return response.data;
     } catch (error) {
       console.warn('API getProfile failed, attempting local fallback', error);
       const local = localStorage.getItem(LOCAL_PROFILE_KEY);
       if (local) {
-        return { success: true, profile: JSON.parse(local) };
+        return { success: true, data: { profile: JSON.parse(local) } };
       }
       // Return a mock default patient profile structure
       return {
         success: true,
-        profile: {
-          medicalHistory: { conditions: [], medications: [], surgeries: [] },
-          lifestyle: { occupation: '', activityLevel: '', smoking: null, alcohol: null },
-          emergencyContacts: [],
-          insurance: { provider: '', policyNumber: '' },
-          completionPercentage: 0
+        data: {
+          profile: {
+            medicalHistory: { conditions: [], medications: [], surgeries: [] },
+            lifestyle: { occupation: '', activityLevel: '', smoking: null, alcohol: null },
+            emergencyContacts: [],
+            insurance: { provider: '', policyNumber: '' },
+            completionPercentage: 0
+          }
         }
       };
     }
@@ -40,8 +42,8 @@ export const patientProfileService = {
   updateProfile: async (data) => {
     try {
       const response = await api.put('/patients/profile/me', data);
-      if (response.data?.profile) {
-        localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(response.data.profile));
+      if (response.data?.data?.profile) {
+        localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(response.data.data.profile));
       }
       return response.data;
     } catch (error) {

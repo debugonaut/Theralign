@@ -302,3 +302,134 @@ export const getAllPaymentsAdmin = asyncHandler(async (req, res) => {
     }
   });
 });
+
+/**
+ * POST /api/payments/:paymentId/request-refund
+ * Patient requests a refund for a cancelled paid appointment.
+ * Protect: requireAuth, requireRole('patient')
+ */
+export const requestRefund = asyncHandler(async (req, res) => {
+  const { paymentId } = req.params;
+  const { reason } = req.body;
+
+  const payment = await Payment.findById(paymentId);
+  if (!payment) throw new AppError('Payment record not found.', 404);
+
+  if (payment.patient.toString() !== req.user.id.toString())
+    throw new AppError('Not authorized.', 403);
+
+  if (payment.status !== 'paid')
+    throw new AppError('Only paid payments are eligible for refund.', 400);
+
+  if (payment.refundStatus !== 'none')
+    throw new AppError('A refund request already exists for this payment.', 400);
+
+  const appointment = await Appointment.findById(payment.appointment);
+  if (!appointment || appointment.status !== 'cancelled')
+    throw new AppError('Refund is only available for cancelled appointments.', 400);
+
+  payment.refundStatus = 'requested';
+  payment.refundReason = reason || appointment.cancellationReason || '';
+  payment.refundRequestedAt = new Date();
+  await payment.save();
+
+  createNotification({
+    recipientId: req.user.id,
+    type: 'appointment_cancelled',
+    title: 'Refund Requested',
+    message: `Your refund request of ₹${payment.amount} has been submitted and is under review.`,
+    link: '/patient/payments',
+  });
+
+  return successResponse(res, 200, 'Refund request submitted successfully.', payment);
+});
+
+/**
+ * GET /api/payments/admin/refunds
+ * Admin views all pending refund requests.
+ * Protect: requireAuth, requireRole('admin')
+ */
+export const getRefundRequestsAdmin = asyncHandler(async (req, res) => {
+  const { status = 'requested' } = req.query;
+
+  const payments = await Payment.find({ refundStatus: status })
+    .populate('patient', 'name email')
+    .populate({ path: 'doctor', populate: { path: 'user', select: 'name' } })
+    .populate('appointment', 'date startTime cancellationReason cancelledBy')
+    .sort({ refundRequestedAt: -1 });
+
+  return successResponse(res, 200, 'Refund requests retrieved.', payments);
+});
+
+/**
+ * PATCH /api/payments/admin/:paymentId/refund
+ * Admin approves or rejects a refund request.
+ * On approval — calls Razorpay refund API and marks payment as refunded.
+ * Protect: requireAuth, requireRole('admin')
+ */
+export const resolveRefund = asyncHandler(async (req, res) => {
+  const { paymentId } = req.params;
+  const { action, adminNote } = req.body; // action: 'approve' | 'reject'
+
+  if (!['approve', 'reject'].includes(action))
+    throw new AppError('Action must be approve or reject.', 400);
+
+  const payment = await Payment.findById(paymentId).populate('patient', 'name');
+  if (!payment) throw new AppError('Payment not found.', 404);
+
+  if (payment.refundStatus !== 'requested')
+    throw new AppError('This refund request is not in a pending state.', 400);
+
+  if (action === 'reject') {
+    payment.refundStatus = 'rejected';
+    payment.refundAdminNote = adminNote || '';
+    payment.refundResolvedAt = new Date();
+    await payment.save();
+
+    createNotification({
+      recipientId: payment.patient._id,
+      type: 'appointment_cancelled',
+      title: 'Refund Request Rejected',
+      message: `Your refund request of ₹${payment.amount} was reviewed and rejected. ${adminNote ? `Note: ${adminNote}` : ''}`,
+      link: '/patient/payments',
+    });
+
+    return successResponse(res, 200, 'Refund request rejected.', payment);
+  }
+
+  // Approve — call Razorpay refund API
+  if (!payment.razorpayPaymentId)
+    throw new AppError('No Razorpay payment ID on record — cannot process refund.', 400);
+
+  let refund;
+  try {
+    refund = await razorpayInstance.payments.refund(payment.razorpayPaymentId, {
+      amount: Math.round(payment.amount * 100), // paise
+      notes: { reason: payment.refundReason || 'Patient requested refund' },
+    });
+  } catch (err) {
+    throw new AppError(`Razorpay refund failed: ${err.error?.description || err.message}`, 500);
+  }
+
+  payment.status = 'refunded';
+  payment.refundStatus = 'approved';
+  payment.refundId = refund.id;
+  payment.refundAdminNote = adminNote || '';
+  payment.refundResolvedAt = new Date();
+  await payment.save();
+
+  // Deduct doctor earnings
+  await DoctorProfile.findByIdAndUpdate(payment.doctor, {
+    $inc: { totalEarnings: -payment.doctorEarnings },
+  });
+
+  createNotification({
+    recipientId: payment.patient._id,
+    type: 'appointment_cancelled',
+    title: 'Refund Approved',
+    message: `Your refund of ₹${payment.amount} has been approved and processed. It will reflect in 5–7 business days.`,
+    link: '/patient/payments',
+  });
+
+  return successResponse(res, 200, 'Refund processed successfully.', payment);
+});

@@ -165,12 +165,12 @@ const PatientProfile = () => {
   const fetchProfile = async () => {
     try {
       const response = await patientProfileService.getProfile();
-      const dbProf = response.profile;
+      const dbProf = response.data?.profile;
       setProfile(dbProf);
+      
       const initialCompleted = (dbProf?.completedSteps && dbProf.completedSteps.length > 0)
         ? dbProf.completedSteps
         : getCompletedSteps(dbProf);
-      setCompletedSteps(initialCompleted);
 
       // Construct initial values from database profile
       const initialForm = {
@@ -191,26 +191,66 @@ const PatientProfile = () => {
         policyNumber: dbProf?.insurance?.policyNumber || ''
       };
 
-      setSavedData(initialForm);
-      setFormData(initialForm);
-
       // Check for draft in localStorage
       const raw = localStorage.getItem(DRAFT_KEY);
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
           if (parsed?.formData) {
-            setDraftToRestore(parsed);
+            setDraftToRestore({
+              ...parsed,
+              initialForm
+            });
+            setIsLoading(false);
+            return;
           }
         } catch (e) {
           console.error('Failed to parse draft', e);
         }
+      }
+
+      setSavedData(initialForm);
+      setFormData(initialForm);
+      setCompletedSteps(initialCompleted);
+
+      // Restore first incomplete step if profile exists
+      if (dbProf) {
+        let firstIncompleteIdx = 0;
+        for (let i = 0; i < TABS.length; i++) {
+          if (!initialCompleted.includes(i)) {
+            firstIncompleteIdx = i;
+            break;
+          }
+        }
+        setActiveTab(TABS[firstIncompleteIdx].value);
       }
     } catch (error) {
       showToast('error', 'Failed to load profile');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRestoreDraft = () => {
+    if (!draftToRestore) return;
+    setFormData(draftToRestore.formData);
+    setSavedData(draftToRestore.initialForm);
+    if (draftToRestore.activeTab) {
+      setActiveTab(draftToRestore.activeTab);
+    }
+    const dbCompleted = (profile?.completedSteps && profile.completedSteps.length > 0)
+      ? profile.completedSteps
+      : getCompletedSteps(profile);
+    setCompletedSteps(dbCompleted);
+    setDraftToRestore(null);
+    showToast('success', 'Draft restored successfully.');
+  };
+
+  const handleDiscardDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setDraftToRestore(null);
+    showToast('success', 'Draft discarded.');
+    fetchProfile();
   };
 
   const handleTabChange = (tabValue) => {
@@ -403,7 +443,8 @@ const PatientProfile = () => {
     setIsUploading(true);
     try {
       const response = await patientProfileService.uploadAvatar(file);
-      setProfile(prev => ({ ...prev, user: { ...prev.user, profileImage: response.user.profileImage } }));
+      const userObj = response.data?.user || response.user;
+      setProfile(prev => ({ ...prev, user: { ...prev.user, profileImage: userObj?.profileImage } }));
       showToast('success', 'Profile photo updated');
     } catch (error) {
       showToast('error', error.response?.data?.message || 'Failed to upload photo');
@@ -537,7 +578,7 @@ const PatientProfile = () => {
           {/* Draft restore banner */}
           {draftToRestore && (
             <div className="bg-[#E8F4F8] border border-[#0B4F6C]/25 text-[#0B4F6C] px-4 py-3 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4">
-              <div className="flex flex-col">
+              <div className="flex flex-col text-left">
                 <span className="text-[12px] font-black uppercase tracking-wider">
                   Draft Found
                 </span>
@@ -547,28 +588,14 @@ const PatientProfile = () => {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => {
-                    setFormData({
-                      ...formData,
-                      ...draftToRestore.formData
-                    });
-                    if (draftToRestore.activeTab) {
-                      setActiveTab(draftToRestore.activeTab);
-                    }
-                    setDraftToRestore(null);
-                    showToast('success', 'Draft restored successfully.');
-                  }}
-                  className="px-3.5 py-1.5 bg-[#0B4F6C] text-white font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-[#083A52] transition"
+                  onClick={handleRestoreDraft}
+                  className="px-3.5 py-1.5 bg-[#0B4F6C] text-white font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-[#083A52] transition cursor-pointer"
                 >
                   Restore Draft
                 </button>
                 <button
-                  onClick={() => {
-                    localStorage.removeItem(DRAFT_KEY);
-                    setDraftToRestore(null);
-                    showToast('success', 'Draft discarded.');
-                  }}
-                  className="px-3.5 py-1.5 bg-white border border-neutral-300 text-neutral-600 font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-neutral-50 transition"
+                  onClick={handleDiscardDraft}
+                  className="px-3.5 py-1.5 bg-white border border-neutral-300 text-neutral-600 font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-neutral-50 transition cursor-pointer"
                 >
                   Discard
                 </button>

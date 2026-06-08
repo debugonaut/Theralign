@@ -25,3 +25,18 @@ export const getMyPayments = async () => {
   const response = await axiosInstance.get('/payments/mine');
   return response.data;
 };
+
+export const requestRefund = async (paymentId, reason) => {
+  const response = await axiosInstance.post(`/payments/${paymentId}/request-refund`, { reason });
+  return response.data;
+};
+
+export const getRefundRequestsAdmin = async (status = 'requested') => {
+  const response = await axiosInstance.get(`/payments/admin/refunds?status=${status}`);
+  return response.data;
+};
+
+export const resolveRefund = async (paymentId, action, adminNote = '') => {
+  const response = await axiosInstance.patch(`/payments/admin/${paymentId}/refund`, { action, adminNote });
+  return response.data;
+};

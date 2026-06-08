@@ -51,6 +51,18 @@ const paymentSchema = new mongoose.Schema(
     // Breakdown snapshot (copied from Appointment at payment time)
     platformCommission: { type: Number, required: true },
     doctorEarnings: { type: Number, required: true },
+
+    // Refund tracking
+    refundStatus: {
+      type: String,
+      enum: ['none', 'requested', 'approved', 'rejected'],
+      default: 'none',
+    },
+    refundReason: { type: String, default: '' },
+    refundId: { type: String, default: null },       // Razorpay refund ID
+    refundAdminNote: { type: String, default: '' },
+    refundRequestedAt: { type: Date, default: null },
+    refundResolvedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
