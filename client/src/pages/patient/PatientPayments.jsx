@@ -114,14 +114,14 @@ const PatientPayments = () => {
     doc.roundedRect(pad, y, W - pad * 2, 56, 4, 4, 'F');
     label('FEE CHARGED', pad + 16, y + 18);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
+    doc.setFontSize(16);
     doc.setTextColor(15, 15, 15);
     doc.text(`Rs. ${payment.amount}`, pad + 16, y + 40);
-    label('PLATFORM COMMISSION (10%)', W - pad - 16, y + 18, );
+    label('PLATFORM COMMISSION (10%)', W / 2 + 8, y + 18);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.setTextColor(15, 15, 15);
-    doc.text(`Rs. ${(payment.amount * 0.1).toFixed(0)}`, W - pad - 16, y + 40, { align: 'right' });
+    doc.text(`Rs. ${(payment.amount * 0.1).toFixed(0)}`, W / 2 + 8, y + 40);
 
     // Footer
     doc.setDrawColor(220, 220, 220);
