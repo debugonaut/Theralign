@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import User from '../models/User.model.js';
+import DoctorProfile from '../models/DoctorProfile.model.js';
 import AppError from '../utils/AppError.js';
 import config from '../config/env.js';
 import { ROLES } from '../utils/constants.js';
@@ -28,6 +29,11 @@ export const registerUser = async ({ name, email, password, role }) => {
 
   // 2. Create the user — pre-save hook handles hashing
   const user = await User.create({ name, email, password, role: safeRole });
+
+  // 3. Auto-create blank DoctorProfile so doctor is searchable/discoverable immediately
+  if (safeRole === ROLES.DOCTOR) {
+    await DoctorProfile.create({ user: user._id });
+  }
 
   // 3. Generate token
   const token = user.generateAuthToken();
