@@ -230,6 +230,14 @@ export const getDoctorAppointments = asyncHandler(async (req, res) => {
     .populate('patient', 'name email phone profileImage')
     .sort({ date: 1, startTime: 1 });
 
+  // Step 3: Fetch corresponding payments to attach status details
+  const appointmentIds = appointments.map((a) => a._id);
+  const payments = await Payment.find({ appointment: { $in: appointmentIds } });
+  const paymentMap = {};
+  payments.forEach((p) => {
+    paymentMap[p.appointment.toString()] = p;
+  });
+
   // Format patient name to protect privacy (e.g. "Jane S.")
   const formatPatientName = (name) => {
     if (!name) return 'Patient';
@@ -245,6 +253,16 @@ export const getDoctorAppointments = asyncHandler(async (req, res) => {
     if (apptObj.patient && apptObj.patient.name) {
       apptObj.patient.name = formatPatientName(apptObj.patient.name);
     }
+    
+    // Attach payment info
+    const payment = paymentMap[appt._id.toString()];
+    apptObj.payment = payment ? {
+      status: payment.status,
+      refundStatus: payment.refundStatus,
+      refundAmount: payment.refundAmount,
+      amount: payment.amount,
+    } : null;
+
     return apptObj;
   });
 

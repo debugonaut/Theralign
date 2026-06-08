@@ -172,6 +172,15 @@ export const initiateDoctorCancellation = async (appointmentId, doctorId) => {
   payment.refundProcessedAt = new Date();
   await payment.save();
 
+  // 3b. Update Appointment paymentStatus
+  appointment.paymentStatus = 'refunded';
+  await appointment.save();
+
+  // 3c. Deduct doctor earnings
+  await DoctorProfile.findByIdAndUpdate(appointment.doctor._id, {
+    $inc: { totalEarnings: -payment.doctorEarnings },
+  });
+
   // 4. Get doctor name
   const doctorUser = await User.findById(appointment.doctor.user);
   const doctorName = doctorUser?.name || 'the physiotherapist';
@@ -255,6 +264,17 @@ export const approveRefund = async (paymentId, adminId, adminNote) => {
   payment.refundProcessedAt = new Date();
   payment.adminNote = adminNote || 'Refund approved';
   await payment.save();
+
+  // 2b. Update Appointment paymentStatus
+  if (payment.appointment) {
+    payment.appointment.paymentStatus = 'refunded';
+    await payment.appointment.save();
+  }
+
+  // 2c. Deduct doctor earnings
+  await DoctorProfile.findByIdAndUpdate(payment.doctor, {
+    $inc: { totalEarnings: -payment.doctorEarnings },
+  });
 
   // 3. Create notification for patient
   await createNotification({

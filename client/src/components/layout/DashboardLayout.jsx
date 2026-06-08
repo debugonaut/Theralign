@@ -226,16 +226,39 @@ const DashboardLayout = () => {
           </div>
         </main>
       </div>
-      {/* Real-time Verification Success Full-Screen Modal */}
       {showVerificationSuccessModal && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-neutral-950/80 backdrop-blur-md select-none animate-fade-in">
+        <div 
+          className="fixed inset-0 z-[99999] bg-neutral-950/80 backdrop-blur-md select-none animate-fade-in"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 99999
+          }}
+        >
           <style dangerouslySetInnerHTML={{__html: `
             @keyframes theralignFadeIn { from { opacity: 0; } to { opacity: 1; } }
             @keyframes theralignScaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
             .animate-fade-in { animation: theralignFadeIn 0.3s ease-out forwards; }
             .animate-scale-in { animation: theralignScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
           `}} />
-          <div className="bg-white border border-neutral-200/80 p-8 max-w-md w-full text-center rounded-2xl shadow-2xl flex flex-col items-center gap-6 animate-scale-in mx-4 border-t-4 border-t-primary">
+          <div 
+            className="bg-white border border-neutral-200/80 p-8 text-center rounded-2xl shadow-2xl animate-scale-in border-t-4 border-t-primary"
+            style={{
+              maxWidth: '440px',
+              width: 'calc(100% - 32px)',
+              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '24px'
+            }}
+          >
             {/* Verified Badge Check Icon */}
             <div className="w-16 h-16 rounded-full bg-[#E8F8F5] border border-success/30 text-success flex items-center justify-center shrink-0 shadow-sm animate-circle-pop">
               <span className="text-3xl font-black leading-none">✓</span>

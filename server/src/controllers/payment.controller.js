@@ -470,6 +470,11 @@ export const resolveRefund = asyncHandler(async (req, res) => {
   payment.refundResolvedAt = new Date();
   await payment.save();
 
+  // Update appointment paymentStatus
+  await Appointment.findByIdAndUpdate(payment.appointment, {
+    $set: { paymentStatus: 'refunded' },
+  });
+
   // Deduct doctor earnings
   await DoctorProfile.findByIdAndUpdate(payment.doctor, {
     $inc: { totalEarnings: -payment.doctorEarnings },

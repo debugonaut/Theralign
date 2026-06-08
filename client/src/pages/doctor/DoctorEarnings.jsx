@@ -19,8 +19,8 @@ const DoctorEarnings = () => {
       try {
         const res = await getDoctorAppointments();
         const all = res.data?.appointments || res.data || res.appointments || [];
-        // Only completed + paid appointments reflect in earnings
-        const paid = all.filter((a) => a.status === 'completed' && a.paymentStatus === 'paid');
+        // Only paid or refunded appointments reflect in payment history
+        const paid = all.filter((a) => a.paymentStatus === 'paid' || a.paymentStatus === 'refunded');
         setAppointments(paid);
       } catch (err) {
         console.error(err);
@@ -32,14 +32,19 @@ const DoctorEarnings = () => {
     fetchData();
   }, []);
 
+  // Filter for metrics: only completed, paid (not refunded) appointments reflect in actual lifetime stats
+  const completedPaid = appointments.filter(
+    (a) => a.status === 'completed' && a.paymentStatus === 'paid' && a.payment?.status !== 'refunded'
+  );
+
   // Basic stats
-  const totalEarnings = appointments.reduce((sum, a) => sum + (a.doctorEarnings || 0), 0);
-  const totalSessions = appointments.length;
+  const totalEarnings = completedPaid.reduce((sum, a) => sum + (a.doctorEarnings || 0), 0);
+  const totalSessions = completedPaid.length;
   const avgPerSession = totalSessions > 0 ? totalEarnings / totalSessions : 0;
 
   // Group by Month — YYYY-MM
   const monthlyMap = {};
-  for (const appt of appointments) {
+  for (const appt of completedPaid) {
     const month = appt.date?.slice(0, 7) || 'Unknown';
     if (!monthlyMap[month]) {
       monthlyMap[month] = { sessions: 0, grossFee: 0, commission: 0, earnings: 0 };
@@ -268,7 +273,15 @@ const DoctorEarnings = () => {
                           ₹{(appt.doctorEarnings || 0).toLocaleString('en-IN')}
                         </td>
                         <td className="px-6 py-3">
-                          <Badge variant="paid" label="PAID" />
+                          {appt.paymentStatus === 'refunded' || appt.payment?.status === 'refunded' ? (
+                            <Badge variant="cancelled" label="REFUNDED" />
+                          ) : appt.payment?.refundStatus === 'pending' || appt.payment?.refundStatus === 'requested' || (appt.status === 'cancelled' && appt.paymentStatus === 'paid') ? (
+                            <Badge variant="warning" label="REFUND INITIATED" />
+                          ) : appt.payment?.refundStatus === 'rejected' ? (
+                            <Badge variant="rejected" label="REFUND REJECTED" />
+                          ) : (
+                            <Badge variant="paid" label="PAID" />
+                          )}
                         </td>
                       </tr>
                     );
