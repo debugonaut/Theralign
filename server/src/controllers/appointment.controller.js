@@ -159,7 +159,7 @@ export const bookAppointment = asyncHandler(async (req, res) => {
   }
 
   // Step 3: Calculate financials
-  const consultationFee = doctorProfile.consultationFee;
+  const consultationFee = doctorProfile.consultationFee || 0;
   const platformCommission = parseFloat((consultationFee * 0.10).toFixed(2));
   const doctorEarnings = parseFloat((consultationFee * 0.90).toFixed(2));
 
