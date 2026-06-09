@@ -397,13 +397,8 @@ const PatientProfile = () => {
     setFormData(updatedForm);
     setSavedData(updatedForm);
 
-    // Update draft in localStorage to match newly saved DB values
-    const draftPayload = {
-      formData: updatedForm,
-      activeTab,
-      savedAt: new Date().toISOString()
-    };
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draftPayload));
+    // Data is now in DB — clear any local draft so the restore banner never shows
+    localStorage.removeItem(DRAFT_KEY);
 
     // Get current step index
     const currentStepIdx = TABS.findIndex((t) => t.value === activeTab);
@@ -419,19 +414,9 @@ const PatientProfile = () => {
     setTimeout(() => {
       setAnimatingStepIdx(null);
       if (currentStepIdx < TABS.length - 1) {
-        const nextTab = TABS[currentStepIdx + 1].value;
-        setActiveTab(nextTab);
-        // Also update activeTab in localStorage draft
-        const nextDraftPayload = {
-          formData: updatedForm,
-          activeTab: nextTab,
-          savedAt: new Date().toISOString()
-        };
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(nextDraftPayload));
+        setActiveTab(TABS[currentStepIdx + 1].value);
       } else {
         showToast('success', 'PROFILE UPDATED SUCCESSFULLY!');
-        // Clear draft when the entire profile is saved and complete
-        localStorage.removeItem(DRAFT_KEY);
       }
     }, 1000);
   };
