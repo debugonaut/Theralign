@@ -3,7 +3,7 @@ import { CheckCircle2, BadgeCheck, ShieldCheck } from 'lucide-react';
 
 const BookingConfirmationCard = () => {
   return (
-    <div className="relative w-[420px] max-w-[420px] mx-auto select-none">
+    <div className="relative w-[420px] max-w-[420px] mx-auto select-none" style={{ overflow: 'hidden', borderRadius: '16px' }}>
       {/* Decorative Background Circle */}
       <div 
         style={{
@@ -11,8 +11,8 @@ const BookingConfirmationCard = () => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '500px',
-          height: '500px',
+          width: '360px',
+          height: '360px',
           borderRadius: '50%',
           backgroundColor: '#E8F4F8',
           zIndex: 0,
@@ -29,7 +29,8 @@ const BookingConfirmationCard = () => {
           boxShadow: '0px 24px 64px rgba(11, 79, 108, 0.14), 0px 8px 24px rgba(11, 79, 108, 0.10), 0px 2px 6px rgba(11, 79, 108, 0.06)',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
+          border: 'none',
+          outline: 'none',
         }}
       >
         {/* Section 1 — The Confirmation Header Bar */}
@@ -476,12 +477,17 @@ const BookingConfirmationCard = () => {
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 500,
-            fontSize: '12px',
+            fontSize: '11px',
             color: '#6B7C93',
             textAlign: 'center',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            columnGap: '6px',
+            rowGap: '2px',
           }}
         >
-          ✓ Instant Confirmation  ·  ✓ Secure Payment  ·  ✓ Free Rescheduling
+          <span>✓ Instant Confirmation</span><span>·</span><span>✓ Secure Payment</span><span>·</span><span>✓ Free Rescheduling</span>
         </span>
 
         {/* Footer Line 2 */}
