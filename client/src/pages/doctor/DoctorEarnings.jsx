@@ -58,10 +58,10 @@ const DoctorEarnings = () => {
     fetchData();
   }, []);
 
-  // Filter for metrics: only completed, paid (not refunded) appointments reflect in actual lifetime stats
+  // Filter for metrics: only confirmed/completed, paid (not refunded) appointments reflect in actual lifetime stats
   const completedPaid = appointments.filter(
     (a) =>
-      a.status === 'completed' &&
+      ['confirmed', 'completed'].includes(a.status) &&
       (a.paymentStatus === 'paid' || a.paymentStatus === 'refunded') &&
       !['approved', 'processed'].includes(a.payment?.refundStatus) &&
       a.payment?.status !== 'refunded'
@@ -305,7 +305,7 @@ const DoctorEarnings = () => {
                         </td>
                         <td className="px-6 py-3">
                           {refundState === 'approved' ? (
-                            <Badge variant="confirmed" label="REFUND APPROVED" />
+                            <Badge variant="confirmed" label="REFUNDED" />
                           ) : refundState === 'initiated' || (appt.status === 'cancelled' && appt.paymentStatus === 'paid') ? (
                             <Badge variant="warning" label="REFUND INITIATED" />
                           ) : refundState === 'cancel' ? (

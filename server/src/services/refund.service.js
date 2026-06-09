@@ -164,7 +164,7 @@ export const initiateDoctorCancellation = async (appointmentId, doctorId) => {
   }
 
   // 3. Update Payment
-  payment.status = 'paid';
+  payment.status = 'refunded';
   payment.refundStatus = 'approved';
   payment.refundId = refund.id;
   payment.refundInitiatedBy = 'doctor';
@@ -174,7 +174,7 @@ export const initiateDoctorCancellation = async (appointmentId, doctorId) => {
   await payment.save();
 
   // 3b. Keep payment history visible on the appointment; refund state lives on Payment.
-  appointment.paymentStatus = 'paid';
+  appointment.paymentStatus = 'refunded';
   await appointment.save();
 
   // 3c. Deduct doctor earnings
@@ -259,7 +259,7 @@ export const approveRefund = async (paymentId, adminId, adminNote) => {
   }
 
   // 2. Update Payment
-  payment.status = 'paid';
+  payment.status = 'refunded';
   payment.refundStatus = 'approved';
   payment.refundId = refund.id;
   payment.refundAmount = payment.refundAmount || payment.amount;
@@ -271,7 +271,7 @@ export const approveRefund = async (paymentId, adminId, adminNote) => {
 
   // 2b. Preserve the original successful payment in doctor/patient history.
   if (payment.appointment) {
-    payment.appointment.paymentStatus = 'paid';
+    payment.appointment.paymentStatus = 'refunded';
     await payment.appointment.save();
   }
 

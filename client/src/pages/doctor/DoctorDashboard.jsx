@@ -102,10 +102,15 @@ const DoctorDashboard = () => {
   // Total Patients (unique patient IDs)
   const uniquePatients = new Set(appointments.map((a) => a.patient?._id || a.patient)).size;
 
-  // This month's earnings
+  // This month's earnings (including confirmed and completed paid appointments)
   const thisMonthPrefix = new Date().toISOString().slice(0, 7); // YYYY-MM
-  const thisMonthEarnings = completedAppts
-    .filter((a) => a.date?.startsWith(thisMonthPrefix) && a.paymentStatus === 'paid')
+  const thisMonthEarnings = appointments
+    .filter(
+      (a) =>
+        ['confirmed', 'completed'].includes(a.status) &&
+        a.paymentStatus === 'paid' &&
+        a.date?.startsWith(thisMonthPrefix)
+    )
     .reduce((sum, a) => sum + (a.doctorEarnings || 0), 0);
 
   // Today's schedule sorted chronologically by start time

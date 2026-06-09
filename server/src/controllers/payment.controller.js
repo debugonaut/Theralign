@@ -462,7 +462,7 @@ export const resolveRefund = asyncHandler(async (req, res) => {
 
   // Keep the original payment record as a successful payment and track
   // refund progress independently so both sides retain payment history.
-  payment.status = 'paid';
+  payment.status = 'refunded';
   payment.refundStatus = 'approved';
   payment.refundId = refund.id;
   payment.refundAdminNote = adminNote || '';
@@ -474,7 +474,7 @@ export const resolveRefund = asyncHandler(async (req, res) => {
 
   // Preserve payment visibility on the appointment and expose refund via refundStatus.
   await Appointment.findByIdAndUpdate(payment.appointment, {
-    $set: { paymentStatus: 'paid' },
+    $set: { paymentStatus: 'refunded' },
   });
 
   // Deduct doctor earnings

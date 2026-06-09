@@ -51,7 +51,7 @@ const PatientPayments = () => {
     if (refundState === 'approved') {
       return {
         variant: 'confirmed',
-        label: 'REFUND APPROVED',
+        label: 'REFUNDED',
         detail: `${formatINR(payment.refundAmount || payment.amount)} · 5-7 business days`,
       };
     }
@@ -312,7 +312,7 @@ const PatientPayments = () => {
                     </Table.Cell>
                     <Table.Cell actions>
                       {refundState === 'approved' ? (
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">REFUND APPROVED</span>
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">REFUNDED</span>
                       ) : refundState === 'initiated' ? (
                         <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">REFUND INITIATED</span>
                       ) : refundState === 'cancel' ? (
