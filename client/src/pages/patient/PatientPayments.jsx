@@ -83,9 +83,7 @@ const PatientPayments = () => {
     setLoading(true);
     try {
       const res = await getMyPayments();
-      if (res.success && res.data) {
-        setPayments(res.data);
-      }
+      setPayments(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
       toast.error('FAILED TO FETCH PAYMENT TRANSACTIONS LEDGER.');

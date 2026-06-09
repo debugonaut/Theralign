@@ -244,7 +244,10 @@ export const verifyPayment = asyncHandler(async (req, res) => {
 export const getMyPayments = asyncHandler(async (req, res) => {
   const payments = await Payment.find({
     patient: req.user.id,
-    status: { $in: ['paid', 'refunded'] },
+    $or: [
+      { status: { $in: ['paid', 'refunded'] } },
+      { refundStatus: { $in: ['pending', 'requested', 'approved', 'rejected', 'processed'] } },
+    ],
   })
     .populate('appointment', 'date startTime endTime status cancellationReason cancelledBy')
     .populate({
