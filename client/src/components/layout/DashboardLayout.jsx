@@ -4,6 +4,7 @@ import {
   Menu, X, LogOut, LayoutDashboard, Calendar, Search, 
   CreditCard, Star, Clock, DollarSign, User 
 } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 import { getDoctorProfileAPI } from '../../api/doctor.api';
@@ -213,6 +214,7 @@ const DashboardLayout = () => {
               <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Logged In As</p>
               <p className="text-xs font-semibold text-neutral-900">{user?.email}</p>
             </div>
+            <NotificationBell />
             <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
               {user?.name ? user.name[0].toUpperCase() : 'U'}
             </div>

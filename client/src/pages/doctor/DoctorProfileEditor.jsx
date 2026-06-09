@@ -53,6 +53,8 @@ const DoctorProfileEditor = () => {
   const [experience, setExperience] = useState('');
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [specializationText, setSpecializationText] = useState('');
+  const [specDropdownOpen, setSpecDropdownOpen] = useState(false);
+  const specDropdownRef = useRef(null);
   const [clinicName, setClinicName] = useState('');
   const [city, setCity] = useState('');
   const [stateName, setStateName] = useState('');
@@ -81,6 +83,35 @@ const DoctorProfileEditor = () => {
   const getCityCoords = (cityVal) => {
     const key = (cityVal || 'pune').toLowerCase();
     return CITY_COORDS[key] || CITY_COORDS.pune;
+  };
+
+  const SPECIALIZATION_OPTIONS = [
+    'Orthopedic Physiotherapy',
+    'Sports Physiotherapy',
+    'Neurological Physiotherapy',
+    'Pediatric Physiotherapy',
+    'Geriatric Physiotherapy',
+    'Cardiopulmonary Physiotherapy',
+    'Women\'s Health Physiotherapy',
+    'Manual Therapy',
+    'Dry Needling',
+    'Vestibular Rehabilitation',
+    'Post-Surgical Rehabilitation',
+    'Pain Management',
+    'Occupational Physiotherapy',
+    'Aquatic Physiotherapy',
+  ];
+
+  const selectedSpecs = specializationText
+    ? specializationText.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  const toggleSpec = (option) => {
+    const current = selectedSpecs;
+    const updated = current.includes(option)
+      ? current.filter((s) => s !== option)
+      : [...current, option];
+    setSpecializationText(updated.join(', '));
   };
 
   const handleUseMyLocation = () => {
@@ -243,6 +274,17 @@ const DoctorProfileEditor = () => {
     document.title = 'MY PROFILE — Theralign';
     fetchProfileData();
   }, []);
+
+  useEffect(() => {
+    if (!specDropdownOpen) return;
+    const handleClickOutside = (e) => {
+      if (specDropdownRef.current && !specDropdownRef.current.contains(e.target)) {
+        setSpecDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [specDropdownOpen]);
 
   const handleSaveDraft = () => {
     const draftPayload = {
@@ -1007,15 +1049,51 @@ const DoctorProfileEditor = () => {
         <div className="max-w-3xl w-full flex flex-col gap-6">
           <SectionHeader title="Professional Details" size="sm" ruled={true} className="mb-0" />
           
-          {/* Specialization Comma field */}
-          <Input
-            type="text"
-            label="Specialization (Separate multiple with commas) *"
-            value={specializationText}
-            onChange={(e) => setSpecializationText(e.target.value)}
-            placeholder="e.g. Sports Physiotherapy, Manual Therapy, Dry Needling"
-            required
-          />
+          {/* Specialization Multi-Select Dropdown */}
+          <div className="flex flex-col gap-1.5" ref={specDropdownRef}>
+            <label className="text-[12px] font-semibold text-neutral-700">Specialization *</label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setSpecDropdownOpen((o) => !o)}
+                className="w-full h-10 px-3 border border-neutral-200 rounded-md bg-white text-left flex items-center justify-between shadow-sm hover:border-primary transition-all focus:outline-none focus:ring-3 focus:ring-primary/12 focus:border-primary"
+              >
+                <span className={`text-ui-sm font-semibold truncate ${selectedSpecs.length === 0 ? 'text-neutral-400' : 'text-neutral-900'}`}>
+                  {selectedSpecs.length === 0 ? 'Select specializations...' : selectedSpecs.join(', ')}
+                </span>
+                <svg className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform ${specDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+
+              {specDropdownOpen && (
+                <div className="absolute z-50 mt-1 w-full bg-white border border-neutral-200 rounded-md shadow-lg max-h-56 overflow-y-auto">
+                  {SPECIALIZATION_OPTIONS.map((option) => {
+                    const isSelected = selectedSpecs.includes(option);
+                    return (
+                      <div
+                        key={option}
+                        onClick={() => toggleSpec(option)}
+                        className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-neutral-50 transition-colors select-none ${
+                          isSelected ? 'bg-primary/5' : ''
+                        }`}
+                      >
+                        <div className={`w-4 h-4 border-2 rounded-sm shrink-0 flex items-center justify-center transition-colors ${
+                          isSelected ? 'bg-primary border-primary' : 'border-neutral-300 bg-white'
+                        }`}>
+                          {isSelected && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                        </div>
+                        <span className={`text-ui-sm font-semibold ${isSelected ? 'text-neutral-900' : 'text-neutral-600'}`}>{option}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            {selectedSpecs.length > 0 && (
+              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                {selectedSpecs.length} selected
+              </span>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Years experience narrow input */}
