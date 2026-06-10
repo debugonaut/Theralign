@@ -11,7 +11,7 @@ const verify = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected!');
 
-    const emails = ['patient@demo.com', 'doctor@demo.com', 'admin@physioconnect.com', 'admin@theralign.com'];
+    const emails = ['patient@demo.com', 'doctor@demo.com', 'admin@theralign.com'];
     for (const email of emails) {
       const user = await User.findOne({ email }).select('+password');
       if (!user) {

@@ -2,14 +2,14 @@ Give this to Antigravity.
 
 ---
 
-## PhysioConnect — Complete End-to-End Flow Audit & Fix
+## Theralign — Complete End-to-End Flow Audit & Fix
 ### Full Real-Time Journey from Registration to Appointment Completion
 
 ---
 
 ### Context
 
-This is a complete audit and fix of the entire user journey on PhysioConnect. Every step of the flow must work correctly in production on the live Vercel + Render deployment. Work through each act in strict order. Do not move to the next act until the current one is fully verified. Test every step in the production URL, not locally.
+This is a complete audit and fix of the entire user journey on Theralign. Every step of the flow must work correctly in production on the live Vercel + Render deployment. Work through each act in strict order. Do not move to the next act until the current one is fully verified. Test every step in the production URL, not locally.
 
 ---
 
@@ -177,7 +177,7 @@ Click `Continue`. Verify the form restores to Phase 2 with the clinic name field
 
 ### 3.1 — Admin Sees Pending Application
 
-In the original browser window (not incognito), log in using the demo admin quick-login button or manually with `admin@physioconnect.com` / `Admin@123456`.
+In the original browser window (not incognito), log in using the demo admin quick-login button or manually with `admin@theralign.com` / `Admin@123456`.
 
 Navigate to `/admin/doctors`.
 
@@ -365,7 +365,7 @@ Click `DOWNLOAD RECEIPT →`.
 
 **Verify:**
 - The browser's print dialog opens OR a PDF downloads
-- The receipt content includes: `PHYSIOCONNECT — BOOKING CONFIRMATION`, confirmation number, patient name, doctor name and specialization, appointment date and time, clinic name, fee breakdown, Razorpay payment ID, `Payment Status: CONFIRMED ✓`
+- The receipt content includes: `THERALIGN — BOOKING CONFIRMATION`, confirmation number, patient name, doctor name and specialization, appointment date and time, clinic name, fee breakdown, Razorpay payment ID, `Payment Status: CONFIRMED ✓`
 - The receipt is generated entirely client-side from data already in the component state — no additional API call is made for receipt generation
 
 **Fix if broken:**

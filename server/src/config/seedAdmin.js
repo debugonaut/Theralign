@@ -14,10 +14,7 @@ import logger from '../utils/logger.js';
  */
 const seedAdmin = async () => {
   try {
-    // 1. Delete the typo admin if it exists
-    await User.deleteOne({ email: 'admin@physioconnect.com' });
-
-    // 2. Seed admin@theralign.com
+    // 1. Seed admin@theralign.com
     const existingTheralign = await User.findOne({ email: 'admin@theralign.com' });
     if (!existingTheralign) {
       await User.create({

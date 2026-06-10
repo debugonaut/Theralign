@@ -262,3 +262,22 @@ This development log tracks the engineering decisions, implementations, and arch
 - **Fluid Offline Resilience**: Patients searching for physiotherapists often travel or experience spotty cellular service; providing transparent network warning banners ensures seamless data recovery awareness.
 - **Adaptive Mobile Ergonomics**: Restructuring doctor sheets and sliding filter drawers ensures single-handed touch usability, removing horizontal overflows and maintaining structural UI integrity.
 - **Flawless Production Build**: Eliminating all bundle warnings and compile errors ensures the final optimized React bundle size remains under `320 kB`.
+
+---
+
+## 💳 Phase 13: Cancellation & Refund System with Razorpay Integration
+
+### What We Did
+1. **Mongoose Schema & Models Extensions**: Updated `payment.model.js` to support detailed refund tracking status states (`none`, `pending`, `approved`, `rejected`, `processed`) and auditing fields (`refundId`, `refundReason`, `refundRequestedAt`, `refundProcessedAt`, `adminNote`, `refundInitiatedBy`, `refundAmount`). Updated `appointment.model.js` with a dedicated `cancelledAt` timestamp field.
+2. **Transaction-Safe Refund Business Logic**: Created `refund.service.js` to manage cancellation routines: patient-initiated cancellations (held in a pending review state) and doctor-initiated cancellations (directly triggering immediate Razorpay refunds without manual intervention).
+3. **Decoupled API Routing**: Implemented cancellation handlers in `refund.controller.js` and wired backend routes for patient/doctor cancellations (`POST /appointments/:appointmentId/cancel-patient`, `POST /appointments/:appointmentId/cancel-doctor`) and admin operations (`GET /admin/refunds`, `PATCH /admin/refunds/:paymentId/approve`, etc.).
+4. **Interactive Cancellation Modals**: Developed `CancellationModal.jsx` and `DoctorCancellationModal.jsx` on the frontend, enforcing safety disclaimers, appointment metadata summaries, and input constraints (e.g., patient-submitted reasons require a minimum of 10 characters, verified with live counters).
+5. **Robust Admin Refund Operations Panel**: Engineered a comprehensive dashboard at `/admin/refunds` (`AdminRefunds.jsx`) featuring overview metrics (Pending Requests, Monthly Processing, Total Refunded), an inline-expanding action queue, and paginated records.
+6. **In-App Notification Dispatchers**: Automated notifications for all cancellation and refund lifecycles (initiations, admin approvals, or rejections with required explanatory comments), updating user dashboard sidebars and status logs in real-time.
+7. **Razorpay Error Resiliency**: Built safety locks keeping transactions in `pending` on payment gateway network timeouts, allowing manual retries from the dashboard to guarantee payment consistency.
+
+### Why We Did It
+- **Fair Refund Auditing**: Splitting patient-initiated cancellations into a manual admin queue prevents billing fraud, while doctor cancellations auto-refund instantly to maintain patient trust and marketplace integrity.
+- **Timing-Safe State Locks**: Transitioning refund states transactionally prevents race conditions, ensuring refund requests are never processed twice.
+- **Strict User Inputs Validation**: Enforcing comment lengths on patient reasons (min 10 characters) and admin rejection notes (non-empty) ensures meaningful records are stored for audit compliance.
+- **Non-blocking Refund Queue UI**: Combining inline expansion cards with pagination keeps the admin panel scalable and fast, even when managing large volumes of transactions.

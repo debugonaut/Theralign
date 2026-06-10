@@ -1,7 +1,7 @@
 # Refund System Implementation Guide
 
 ## Overview
-Complete cancellation and refund system for PhysioConnect with support for both patient-initiated and doctor-initiated cancellations.
+Complete cancellation and refund system for Theralign with support for both patient-initiated and doctor-initiated cancellations.
 
 ## Backend Implementation
 

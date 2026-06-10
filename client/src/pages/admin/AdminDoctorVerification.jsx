@@ -23,8 +23,10 @@ import Button from '../../components/common/Button';
 
 const getSafeDocumentUrl = (url) => {
   if (!url) return '';
-  if (url.includes('/image/upload/') && url.toLowerCase().endsWith('.pdf')) {
-    return url.replace(/\.pdf$/i, '.jpg');
+  // For PDFs stored in Cloudinary, use fl_attachment to force direct download/open
+  // rather than mangling the extension which causes 404s
+  if (url.includes('res.cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
+    return url.replace('/upload/', '/upload/fl_attachment/');
   }
   return url;
 };

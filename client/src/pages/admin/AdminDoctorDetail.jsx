@@ -18,8 +18,8 @@ import Badge from '../../components/common/Badge';
 
 const getSafeDocumentUrl = (url) => {
   if (!url) return '';
-  if (url.includes('/image/upload/') && url.toLowerCase().endsWith('.pdf')) {
-    return url.replace(/\.pdf$/i, '.jpg');
+  if (url.includes('res.cloudinary.com') && url.toLowerCase().endsWith('.pdf')) {
+    return url.replace('/upload/', '/upload/fl_attachment/');
   }
   return url;
 };

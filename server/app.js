@@ -88,7 +88,6 @@ app.use((req, res, next) => {
 const allowedOrigins = config.nodeEnv === 'production'
   ? [
       config.clientUrl,
-      'https://physioconnect.vercel.app',
       'https://theralign.vercel.app',
     ].filter(Boolean)
   : ['http://localhost:5173', 'http://localhost:3000', config.clientUrl].filter(Boolean);

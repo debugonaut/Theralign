@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: physioconnect-api
+    name: theralign-api
     env: node
     rootDir: server
     buildCommand: npm install

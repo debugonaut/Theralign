@@ -7,8 +7,8 @@ Theralign connects patients with verified physiotherapy professionals. Patients 
 ---
 
 ## Live Demo
-- **Frontend URL**: [https://physioconnect.vercel.app](https://physioconnect.vercel.app)
-- **API URL (Health)**: [https://physioconnect-api.onrender.com/health](https://physioconnect-api.onrender.com/health)
+- **Frontend URL**: [https://theralign.vercel.app](https://theralign.vercel.app)
+- **API URL (Health)**: [https://theralign-api.onrender.com/health](https://theralign-api.onrender.com/health)
 
 ## Demo Accounts
 To test different journeys end-to-end, use these pre-configured accounts:
@@ -17,7 +17,7 @@ To test different journeys end-to-end, use these pre-configured accounts:
 |------|-------|----------|
 | **Patient** | `patient@demo.com` | `Demo@123456` |
 | **Doctor** | `doctor@demo.com` | `Demo@123456` |
-| **Admin** | `admin@physioconnect.com` | `Admin@123456` |
+| **Admin** | `admin@theralign.com` | `Admin@123456` |
 
 ---
 
@@ -142,9 +142,7 @@ Client runs at: `http://localhost:5173`
 - Start command: `node server.js`
 - Add all server environment variables in Render dashboard
 
----
-
-## API Endpoints (Phases 1–9 Live Endpoints)
+## API Endpoints (Live Endpoints)
 
 | Route | Status | Description |
 |-------|--------|-------------|
@@ -153,9 +151,13 @@ Client runs at: `http://localhost:5173`
 | `POST /api/auth/login` | ✅ Live | Login User |
 | `PUT /api/doctors/profile/onboard` | ✅ Live | Doctor Onboarding & Documents Upload |
 | `GET /api/doctors/profile/me` | ✅ Live | Get Auth Doctor Profile |
+| `GET /api/patients/profile/me` | ✅ Live | Patient: Get authenticated patient profile |
+| `PUT /api/patients/profile/me` | ✅ Live | Patient: Update patient profile details |
+| `POST /api/patients/profile/avatar` | ✅ Live | Patient: Upload patient profile avatar image |
 | `GET /api/discover` | ✅ Live | Paginated Discovery Listing |
 | `GET /api/discover/nearby` | ✅ Live | Geospatial Proximity Recommendations |
 | `GET /api/discover/search` | ✅ Live | Full-Text Doctor Search |
+| `GET /api/search/suggestions` | ✅ Live | Public: Real-time autocomplete search suggestions |
 | `GET /api/discover/:id` | ✅ Live | Doctor Public Profile |
 | `POST /api/availability/slots` | ✅ Live | Doctor: Create Availability Slot |
 | `GET /api/availability/slots/mine` | ✅ Live | Doctor: Get Own Slots |
@@ -165,7 +167,9 @@ Client runs at: `http://localhost:5173`
 | `POST /api/appointments/book` | ✅ Live | Patient: Book Appointment Slot |
 | `GET /api/appointments/mine` | ✅ Live | Patient: Get Own Bookings |
 | `GET /api/appointments/doctor/mine` | ✅ Live | Doctor: Get Patient Bookings |
-| `PATCH /api/appointments/:id/cancel` | ✅ Live | Patient/Doctor/Admin: Cancel Booking |
+| `PATCH /api/appointments/:id/cancel` | ✅ Live | Patient/Doctor/Admin: Cancel Booking (Deprecating - use cancel-patient/cancel-doctor) |
+| `POST /api/appointments/:appointmentId/cancel-patient` | ✅ Live | Patient: Request appointment cancellation & refund |
+| `POST /api/appointments/:appointmentId/cancel-doctor` | ✅ Live | Doctor: Cancel appointment and auto-refund patient |
 | `PATCH /api/appointments/:id/complete` | ✅ Live | Doctor: Mark Booking Completed |
 | `GET /api/appointments/admin/all` | ✅ Live | Admin: Get All Bookings & Earnings |
 | `POST /api/payments/create-order` | ✅ Live | Patient: Initiate payment & create Razorpay order |
@@ -195,6 +199,20 @@ Client runs at: `http://localhost:5173`
 | `GET /api/admin/analytics/specializations` | ✅ Live | Admin: Aggregated clinic specialization distribution |
 | `GET /api/admin/analytics/user-growth` | ✅ Live | Admin: User registrations growth time-series data |
 | `GET /api/admin/analytics/recent-activity` | ✅ Live | Admin: System-wide recent audit activity feed |
+| `GET /api/admin/refunds/stats` | ✅ Live | Admin: Get refund system overview statistics |
+| `GET /api/admin/refunds` | ✅ Live | Admin: Fetch pending and processed refund queue |
+| `PATCH /api/admin/refunds/:paymentId/approve` | ✅ Live | Admin: Approve pending refund and trigger Razorpay transaction |
+| `PATCH /api/admin/refunds/:paymentId/reject` | ✅ Live | Admin: Reject pending refund with required explanation note |
+| `POST /api/documents/upload/:appointmentId` | ✅ Live | Doctor: Upload clinical session notes PDF document |
+| `DELETE /api/documents/:appointmentId` | ✅ Live | Doctor: Remove clinical session notes PDF document |
+| `GET /api/notifications/mine` | ✅ Live | User: Fetch in-app notifications |
+| `GET /api/notifications/unread-count` | ✅ Live | User: Get count of unread notifications |
+| `PATCH /api/notifications/read-all` | ✅ Live | User: Mark all notifications as read |
+| `PATCH /api/notifications/:id/read` | ✅ Live | User: Mark specific notification as read |
+| `GET /api/waitlist/mine` | ✅ Live | Patient: Get waitlisted doctor records |
+| `GET /api/waitlist/status/:doctorId` | ✅ Live | Patient: Check own waitlist status for a doctor |
+| `POST /api/waitlist/join/:doctorId` | ✅ Live | Patient: Join a doctor's booking waitlist |
+| `DELETE /api/waitlist/leave/:doctorId` | ✅ Live | Patient: Leave a doctor's waitlist |
 
 ---
 
@@ -214,7 +232,8 @@ Client runs at: `http://localhost:5173`
 | Phase 10 | Polish, Landing Page & Deployment | ✅ Complete |
 | Phase 11 | Patient Experience (Design Phase 3) | ✅ Complete |
 | Phase 12 | Universal Accessibility & UI/UX Humanization | ✅ Complete |
+| Phase 13 | Cancellation & Refund System with Razorpay Integration | ✅ Complete |
 
 ---
 
-*Built with engineering care during MVP sprint — Theralign v0.1.2*
+*Built with engineering care during MVP sprint — Theralign v0.2.0*

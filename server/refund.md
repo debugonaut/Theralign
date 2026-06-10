@@ -4,14 +4,14 @@ Give this to Antigravity.
 
 ---
 
-## PhysioConnect — Cancellation & Refund System
+## Theralign — Cancellation & Refund System
 ### Complete Build Prompt
 
 ---
 
 ### Context
 
-PhysioConnect already has appointment cancellation, payment models with a `refunded` status in the enum, `razorpayPaymentId` stored on every payment, and `cancellationReason` on appointments. This prompt wires all of that together into a complete refund flow. No new Razorpay keys needed — use existing credentials.
+Theralign already has appointment cancellation, payment models with a `refunded` status in the enum, `razorpayPaymentId` stored on every payment, and `cancellationReason` on appointments. This prompt wires all of that together into a complete refund flow. No new Razorpay keys needed — use existing credentials.
 
 Two distinct cancellation paths exist:
 

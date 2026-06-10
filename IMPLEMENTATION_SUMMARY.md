@@ -2,7 +2,7 @@
 
 ## ✅ Complete Implementation
 
-The full cancellation and refund system for PhysioConnect has been implemented according to the specification document.
+The full cancellation and refund system for Theralign has been implemented according to the specification document.
 
 ## Files Created (11 files)
 
