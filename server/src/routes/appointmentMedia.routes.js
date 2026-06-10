@@ -1,6 +1,6 @@
 import express from 'express';
 import { requireAuth } from '../middleware/auth.middleware.js';
-import { upload } from '../middleware/multer.middleware.js';
+import { upload } from '../middleware/upload.middleware.js';
 import {
   uploadAppointmentMedia,
   getAppointmentMedia,

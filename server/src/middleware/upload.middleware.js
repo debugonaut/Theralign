@@ -100,6 +100,9 @@ const cleanupUploadedFiles = async (reqFiles) => {
   }
 };
 
+// ─── Generic multer upload instance (for use by other routes) ───────────────
+export const upload = multerDocs;
+
 // ─── Exported Onboarding Middleware ──────────────────────────────────────────
 /**
  * Express middleware to handle doctor onboarding documents.
