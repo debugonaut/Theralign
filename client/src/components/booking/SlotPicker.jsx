@@ -76,6 +76,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [tempAppointmentId, setTempAppointmentId] = useState(null);
 
   const selectedDateRef = useRef(selectedDate);
   const selectedSlotRef = useRef(selectedSlot);
@@ -229,14 +230,17 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
       if (res.success && res.data) {
         const appointmentId = res.data._id;
+        setTempAppointmentId(appointmentId);
         await initiatePayment({
           appointmentId,
           onSuccess: () => {
             setShowModal(false);
+            setTempAppointmentId(null);
             navigate(`/booking-success/${appointmentId}`);
           },
           onFailure: async () => {
             setShowModal(false);
+            setTempAppointmentId(null);
             try {
               await cancelAppointment(appointmentId, 'Payment failed or cancelled');
               toast.error('Payment was not completed. Your booking has not been confirmed.', { duration: 5000 });
@@ -250,6 +254,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     } catch (err) {
       console.error(err);
       setShowModal(false);
+      setTempAppointmentId(null);
       if (err.response?.status === 409) {
         toast.error('Slot concurrently claimed. Retrying...');
         await fetchAvailability();
@@ -367,6 +372,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
         doctorName={doctorName}
         consultationFee={consultationFee}
         loading={bookingLoading}
+        appointmentId={tempAppointmentId}
       />
     </div>
   );

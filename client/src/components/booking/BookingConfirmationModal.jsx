@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { Lock } from 'lucide-react';
+import MediaUploadSection from './MediaUploadSection';
+import { uploadAppointmentMedia, deleteAppointmentMedia, getAppointmentMedia } from '../../api/appointmentMedia.api';
+import { toast } from 'react-hot-toast';
 
 const BookingConfirmationModal = ({ 
   isOpen, 
@@ -10,9 +13,72 @@ const BookingConfirmationModal = ({
   slot, 
   doctorName, 
   consultationFee, 
-  loading 
+  loading,
+  appointmentId = null,
 }) => {
   const [patientNotes, setPatientNotes] = useState('');
+  const [uploadedMedia, setUploadedMedia] = useState([]);
+  const [mediaLoading, setMediaLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && appointmentId) {
+      fetchMedia();
+    }
+  }, [isOpen, appointmentId]);
+
+  const fetchMedia = async () => {
+    try {
+      const response = await getAppointmentMedia(appointmentId);
+      if (response.success && response.data) {
+        setUploadedMedia(response.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch media:', err);
+    }
+  };
+
+  const handleMediaUpload = async (file) => {
+    if (!appointmentId) {
+      toast.error('Appointment ID is required to upload media.');
+      return;
+    }
+
+    setMediaLoading(true);
+    try {
+      const response = await uploadAppointmentMedia(appointmentId, file);
+      if (response.success && response.data) {
+        setUploadedMedia([...uploadedMedia, response.data]);
+        toast.success('Media uploaded successfully!');
+      } else {
+        toast.error(response.message || 'Failed to upload media');
+      }
+    } catch (err) {
+      console.error('Media upload error:', err);
+      toast.error(err.response?.data?.message || 'Failed to upload media. Please try again.');
+    } finally {
+      setMediaLoading(false);
+    }
+  };
+
+  const handleMediaDelete = async (mediaId) => {
+    if (!mediaId) return;
+
+    setMediaLoading(true);
+    try {
+      const response = await deleteAppointmentMedia(mediaId);
+      if (response.success) {
+        setUploadedMedia(uploadedMedia.filter(m => m._id !== mediaId));
+        toast.success('Media deleted successfully!');
+      } else {
+        toast.error(response.message || 'Failed to delete media');
+      }
+    } catch (err) {
+      console.error('Media delete error:', err);
+      toast.error(err.response?.data?.message || 'Failed to delete media. Please try again.');
+    } finally {
+      setMediaLoading(false);
+    }
+  };
 
   if (!isOpen || !slot) return null;
 
@@ -33,7 +99,6 @@ const BookingConfirmationModal = ({
     onConfirm(patientNotes);
   };
 
-  // Convert DR. DR_NAME to Dr. Name Title Case
   const displayDoctorName = doctorName
     ? doctorName.toLowerCase().replace(/(^\s*dr\.\s*|^\s*)/i, '').replace(/\b\w/g, c => c.toUpperCase())
     : '';
@@ -43,11 +108,10 @@ const BookingConfirmationModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Confirm Appointment Booking"
-      size="md" // 560px width
+      size="md"
     >
       <div className="flex flex-col gap-6 text-left select-none">
         
-        {/* Definition-list layout for key-value appointment details */}
         <dl className="grid grid-cols-1 gap-y-4">
           <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
             <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
@@ -104,12 +168,10 @@ const BookingConfirmationModal = ({
           </div>
         </dl>
 
-        {/* Redundant explicit confirmation sentence for older users' final check */}
         <p className="text-ui-sm text-neutral-900 leading-relaxed bg-[#FDFDFD] border border-neutral-200 p-4 rounded-md">
           You are booking a 30-minute appointment with <strong>Dr. {displayDoctorName}</strong> on <strong>{formatHumanDate(slot.date)}</strong> at <strong>{slot.startTime}</strong>. A fee of <strong>₹{consultationFee}</strong> will be charged.
         </p>
 
-        {/* Symptoms / Medical Notes (Optional) */}
         <div className="flex flex-col gap-2">
           <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             Symptoms / Medical Notes (Optional)
@@ -124,7 +186,19 @@ const BookingConfirmationModal = ({
           />
         </div>
 
-        {/* Payment details card */}
+        {appointmentId && (
+          <div className="border-t border-neutral-200 pt-4">
+            <MediaUploadSection
+              appointmentId={appointmentId}
+              uploadedMedia={uploadedMedia}
+              onMediaUpload={handleMediaUpload}
+              onMediaDelete={handleMediaDelete}
+              loading={mediaLoading}
+              disabled={loading || mediaLoading}
+            />
+          </div>
+        )}
+
         <div className="bg-neutral-50 border border-neutral-200 p-5 rounded-lg flex flex-col gap-2 shadow-level-1">
           <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             AMOUNT DUE
@@ -137,12 +211,10 @@ const BookingConfirmationModal = ({
           </span>
         </div>
 
-        {/* Notice line */}
         <p className="text-[11px] text-neutral-500 leading-relaxed font-medium">
           You will be redirected to complete payment. Your appointment is confirmed immediately upon successful payment.
         </p>
 
-        {/* Action Buttons Stacked Full-Width with Secured by Razorpay badge row */}
         <div className="flex flex-col gap-2 mt-2">
           <div className="flex items-center justify-center gap-2 py-2 border border-neutral-200 rounded-md bg-white mb-2 shadow-level-1">
             <Lock size={14} className="text-success" />
@@ -153,16 +225,16 @@ const BookingConfirmationModal = ({
             variant="accent"
             fullWidth
             onClick={handleConfirm}
-            loading={loading}
+            loading={loading || mediaLoading}
             className="font-bold h-12"
           >
-            {loading ? 'PROCESSING PAYMENT...' : `Confirm & Pay ₹${consultationFee} →`}
+            {loading || mediaLoading ? 'PROCESSING...' : `Confirm & Pay ₹${consultationFee} →`}
           </Button>
           <Button
             variant="ghost"
             fullWidth
             onClick={onClose}
-            disabled={loading}
+            disabled={loading || mediaLoading}
             className="font-bold h-12"
           >
             Cancel
