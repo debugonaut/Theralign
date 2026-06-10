@@ -83,10 +83,12 @@ const PatientPayments = () => {
     setLoading(true);
     try {
       const res = await getMyPayments();
-      setPayments(Array.isArray(res.data) ? res.data : []);
+      const list = Array.isArray(res.data) ? res.data : [];
+      setPayments(list);
+      if (!list.length) console.warn('[payments] API returned empty array. Full response:', res);
     } catch (err) {
-      console.error(err);
-      toast.error('FAILED TO FETCH PAYMENT TRANSACTIONS LEDGER.');
+      console.error('[payments] fetch error:', err?.response?.data || err?.message || err);
+      toast.error(err?.response?.data?.message || 'FAILED TO FETCH PAYMENT TRANSACTIONS LEDGER.');
     } finally {
       setLoading(false);
     }
