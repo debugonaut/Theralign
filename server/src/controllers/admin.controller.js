@@ -142,7 +142,7 @@ export const getAllDoctors = asyncHandler(async (req, res) => {
   const total = await DoctorProfile.countDocuments(query);
 
   return successResponse(res, 200, 'Doctors retrieved', {
-    profiles,
+    doctors: profiles,
     total,
     page: Number(page),
     totalPages: Math.ceil(total / limit),

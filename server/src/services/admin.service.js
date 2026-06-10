@@ -9,7 +9,7 @@ import { DOCTOR_STATUS } from '../utils/constants.js';
  * @returns {Promise<Array>} List of pending doctor profiles
  */
 export const getPendingDoctorProfiles = async () => {
-  return DoctorProfile.find({ verificationStatus: DOCTOR_STATUS.PENDING, isOnboarded: true })
+  return DoctorProfile.find({ verificationStatus: DOCTOR_STATUS.PENDING })
     .populate('user', 'name email profileImage phone')
     .sort({ createdAt: 1 }); // Oldest applications first
 };
