@@ -23,10 +23,10 @@ const VerificationExplanationSection = () => {
   return (
     <section className="py-24 px-6 max-w-[1440px] mx-auto w-full bg-neutral-900 text-white">
       <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-white pb-4 mb-16 mx-0 sm:mx-6">
-        <span className="font-medium text-sm tracking-[0.06em] uppercase text-accent font-swiss">
+        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
           06.
         </span>
-        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-medium uppercase tracking-[-0.04em] text-white font-swiss">
+        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-white font-swiss">
           CLINICAL VERIFICATION
         </h2>
       </div>
@@ -43,7 +43,7 @@ const VerificationExplanationSection = () => {
                   <Icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-[16px] uppercase tracking-widest text-white mb-2">
+                  <h3 className="font-bold text-[16px] uppercase tracking-widest text-white mb-2">
                     {step.title}
                   </h3>
                   <p className="text-[14px] text-neutral-500 font-medium leading-[1.6]">
@@ -62,7 +62,7 @@ const VerificationExplanationSection = () => {
           </p>
           <div className="mt-8 flex items-center gap-4">
             <div className="h-px bg-accent w-12"></div>
-            <span className="text-sm font-medium text-accent uppercase tracking-[0.08em]">
+            <span className="text-[11px] font-bold text-accent uppercase tracking-[0.08em]">
               INFRASTRUCTURE STANDARD
             </span>
           </div>

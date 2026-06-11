@@ -58,7 +58,7 @@ const ToastItem = ({ id, variant, title, message, onDismiss }) => {
       <div className="flex-1 min-w-0">
         {title && (
           <p
-            className="font-medium text-neutral-900 normal-case"
+            className="font-bold text-neutral-900 normal-case"
             style={{ fontSize: '13px', fontFamily: 'Inter, sans-serif', marginBottom: message ? '4px' : '0' }}
           >
             {title}

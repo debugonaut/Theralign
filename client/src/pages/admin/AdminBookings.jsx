@@ -94,11 +94,11 @@ const AdminBookings = () => {
       {/* Bookings table */}
       <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {loading ? (
-          <div className="p-6 text-center text-neutral-500 text-sm font-medium uppercase tracking-wider flex items-center justify-center gap-2">
+          <div className="p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
             <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING SCHEDULER ENTRIES...
           </div>
         ) : appointments.length === 0 ? (
-          <div className="p-6 text-center text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
+          <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
             NO SCHEDULER RECORDS MATCH FILTERS
           </div>
         ) : (
@@ -137,34 +137,34 @@ const AdminBookings = () => {
                       onClick={() => setExpandedRow(isExpanded ? null : appt._id)}
                     >
                       {/* Row index */}
-                      <td className="px-4 py-4 align-middle text-neutral-500 font-mono text-sm">
+                      <td className="px-4 py-4 align-middle text-neutral-500 font-mono text-xs">
                         {(page - 1) * LIMIT + i + 1}
                       </td>
 
                       {/* Patient */}
                       <td className="px-4 py-4 align-middle">
-                        <span className="font-medium text-neutral-900 uppercase tracking-wide text-sm">
+                        <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
                           {appt.patient?.name || 'Patient Deleted'}
                         </span>
                       </td>
 
                       {/* Doctor */}
-                      <td className="px-4 py-4 align-middle font-medium text-neutral-900 uppercase tracking-wide text-sm">
+                      <td className="px-4 py-4 align-middle font-bold text-neutral-900 uppercase tracking-wide text-xs">
                         Dr. {appt.doctor?.user?.name || 'Physio Deleted'}
                       </td>
 
                       {/* Scheduled Date */}
-                      <td className="px-4 py-4 align-middle font-mono text-sm text-swiss-gray-650">
+                      <td className="px-4 py-4 align-middle font-mono text-xs text-swiss-gray-650">
                         {appt.date} · {appt.startTime}
                       </td>
 
                       {/* Fee */}
-                      <td className="px-4 py-4 align-middle text-right font-medium text-neutral-900 swiss-numeric">
+                      <td className="px-4 py-4 align-middle text-right font-bold text-neutral-900 swiss-numeric">
                         ₹{feeVal.toLocaleString('en-IN')}
                       </td>
 
                       {/* Commission */}
-                      <td className="px-4 py-4 align-middle text-right font-medium text-neutral-500 swiss-numeric">
+                      <td className="px-4 py-4 align-middle text-right font-bold text-neutral-500 swiss-numeric">
                         ₹{commVal.toLocaleString('en-IN')}
                       </td>
 
@@ -189,27 +189,27 @@ const AdminBookings = () => {
                       <tr className="bg-neutral-50 border-b border-neutral-900">
                         <td colSpan={9} className="px-6 py-6 text-left">
                           <div className="flex flex-col gap-6">
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs">
                               <div>
-                                <span className="text-neutral-500 uppercase font-semibold tracking-widest block mb-1">PATIENT EMAIL</span>
-                                <span className="text-neutral-900 font-medium uppercase">{appt.patient?.email || '—'}</span>
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT EMAIL</span>
+                                <span className="text-neutral-900 font-bold uppercase">{appt.patient?.email || '—'}</span>
                               </div>
                               
                               <div>
-                                <span className="text-neutral-500 uppercase font-semibold tracking-widest block mb-1">CLINIC FACILITY</span>
-                                <span className="text-neutral-900 font-medium uppercase">{appt.doctor?.clinicName || '—'}</span>
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">CLINIC FACILITY</span>
+                                <span className="text-neutral-900 font-bold uppercase">{appt.doctor?.clinicName || '—'}</span>
                               </div>
 
                               <div>
-                                <span className="text-neutral-500 uppercase font-semibold tracking-widest block mb-1">PATIENT NOTES</span>
-                                <span className="text-neutral-700 font-medium uppercase italic">“{appt.patientNotes || 'NO ADDITIONAL NOTES'}”</span>
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT NOTES</span>
+                                <span className="text-neutral-700 font-bold uppercase italic">“{appt.patientNotes || 'NO ADDITIONAL NOTES'}”</span>
                               </div>
 
                               <div>
-                                <span className="text-neutral-500 uppercase font-semibold tracking-widest block mb-1">
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">
                                   {appt.status === 'cancelled' ? 'CANCELLATION REASON' : 'TRANSACTION ID'}
                                 </span>
-                                <span className="text-neutral-900 font-medium uppercase font-mono text-sm">
+                                <span className="text-neutral-900 font-bold uppercase font-mono text-[10px]">
                                   {appt.status === 'cancelled'
                                     ? (appt.cancellationReason || 'NOT REGISTERED')
                                     : (appt.paymentId || '—')}
@@ -234,11 +234,11 @@ const AdminBookings = () => {
 
         {/* Totals aggregate row */}
         {!loading && appointments.length > 0 && (
-          <div className="px-6 py-4 border-t-2 border-neutral-900 bg-neutral-50 flex items-center justify-between text-sm font-medium uppercase tracking-wider">
+          <div className="px-6 py-4 border-t-2 border-neutral-900 bg-neutral-50 flex items-center justify-between text-xs font-bold uppercase tracking-wider">
             <span className="text-neutral-500">INDEXED {appointments.length} APPOINTMENTS SESSIONS</span>
             <div className="flex gap-6 text-neutral-900">
-              <span>TOTAL FEES: <span className="text-neutral-900 font-semibold swiss-numeric">₹{pageTotals.fees.toLocaleString('en-IN')}</span></span>
-              <span>COMMISSIONS (10%): <span className="text-success font-semibold swiss-numeric">₹{pageTotals.commission.toLocaleString('en-IN')}</span></span>
+              <span>TOTAL FEES: <span className="text-neutral-900 font-black swiss-numeric">₹{pageTotals.fees.toLocaleString('en-IN')}</span></span>
+              <span>COMMISSIONS (10%): <span className="text-success font-black swiss-numeric">₹{pageTotals.commission.toLocaleString('en-IN')}</span></span>
             </div>
           </div>
         )}
@@ -246,7 +246,7 @@ const AdminBookings = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm font-medium uppercase tracking-wider pt-2 select-none">
+        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
           <span className="text-neutral-500">PAGE {page} OF {totalPages}</span>
           <div className="flex gap-4">
             <button

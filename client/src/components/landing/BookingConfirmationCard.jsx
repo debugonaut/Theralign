@@ -71,7 +71,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 500,
-                fontSize: '14px',
+                fontSize: '9px',
                 color: 'rgba(255, 255, 255, 0.55)',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
@@ -83,7 +83,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 700,
-                fontSize: '14px',
+                fontSize: '12px',
                 color: 'rgba(255, 255, 255, 0.90)',
                 letterSpacing: '0.06em',
               }}
@@ -148,7 +148,7 @@ const BookingConfirmationCard = () => {
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 600,
-                  fontSize: '14px',
+                  fontSize: '10px',
                   color: '#F4845F',
                   letterSpacing: '0.07em',
                   textTransform: 'uppercase',
@@ -176,7 +176,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 700,
-                fontSize: '14px',
+                fontSize: '10px',
                 color: '#0B4F6C',
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
@@ -204,7 +204,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: '10px',
                 color: '#6B7C93',
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
@@ -231,7 +231,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: '10px',
                 color: '#6B7C93',
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
@@ -258,7 +258,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: '10px',
                 color: '#6B7C93',
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
@@ -285,7 +285,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: '10px',
                 color: '#6B7C93',
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
@@ -440,7 +440,7 @@ const BookingConfirmationCard = () => {
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 500,
-                  fontSize: '14px',
+                  fontSize: '12px',
                   color: '#0A7E6E',
                 }}
               >
@@ -453,7 +453,7 @@ const BookingConfirmationCard = () => {
               style={{
                 fontFamily: "'Courier New', Courier, monospace",
                 fontWeight: 400,
-                fontSize: '14px',
+                fontSize: '11px',
                 color: '#6B7C93',
               }}
             >
@@ -477,7 +477,7 @@ const BookingConfirmationCard = () => {
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 500,
-            fontSize: '14px',
+            fontSize: '11px',
             color: '#6B7C93',
             textAlign: 'center',
             display: 'flex',
@@ -496,7 +496,7 @@ const BookingConfirmationCard = () => {
             marginTop: '6px',
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
-            fontSize: '14px',
+            fontSize: '11px',
             color: '#A8B8C8',
             textAlign: 'center',
             letterSpacing: '0.01em',

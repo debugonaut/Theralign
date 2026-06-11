@@ -43,11 +43,11 @@ const EmptyState = ({
       )}
 
       {/* Section number — always 00. in accent */}
-      <span className="text-sm font-normal text-accent normal-case block mb-4">00.</span>
+      <span className="text-[12px] font-semibold text-accent normal-case block mb-4">00.</span>
 
       {/* Title — display-sm, Inter 900 */}
       <h3
-        className="font-medium text-neutral-900 mb-4"
+        className="font-black text-neutral-900 mb-4"
         style={{
           fontSize: '32px',
           lineHeight: '36px',

@@ -51,7 +51,7 @@ const MyReviews = () => {
 
   if (loading) {
     return (
-      <div className="py-24 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest bg-white">
+      <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest bg-white">
         LOADING REPUTATION REVIEWS PANELS...
       </div>
     );
@@ -79,13 +79,13 @@ const MyReviews = () => {
                 
                 {/* Left 4 Columns */}
                 <div className="md:col-span-4 flex flex-col gap-2 border-b-2 md:border-b-0 md:border-r border-neutral-200 pb-6 md:pb-0 md:pr-6">
-                  <span className="text-[64px] font-semibold text-neutral-900 select-none leading-none block">
+                  <span className="text-[64px] font-black text-neutral-900 select-none leading-none block">
                     {doctorProfile.averageRating ? parseFloat(doctorProfile.averageRating).toFixed(1) : '0.0'}
                   </span>
-                  <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block">
+                  <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
                     OUT OF 5
                   </span>
-                  <span className="text-ui-sm font-medium text-neutral-700 uppercase tracking-wider block mt-1">
+                  <span className="text-ui-sm font-bold text-neutral-700 uppercase tracking-wider block mt-1">
                     BASED ON {totalReviews} {totalReviews === 1 ? 'REVIEW' : 'REVIEWS'}
                   </span>
                 </div>
@@ -98,7 +98,7 @@ const MyReviews = () => {
                     return (
                       <div key={rating} className="flex items-center gap-3 w-full max-w-[1200px]">
                         {/* Star Rating Number label */}
-                        <span className="text-ui-sm font-semibold text-neutral-900 w-3 shrink-0">
+                        <span className="text-ui-xs font-black text-neutral-900 w-3 shrink-0">
                           {rating}
                         </span>
                         
@@ -111,7 +111,7 @@ const MyReviews = () => {
                         </div>
 
                         {/* Count text */}
-                        <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest w-12 text-right shrink-0">
+                        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest w-12 text-right shrink-0">
                           {count} {count === 1 ? 'REV' : 'REVS'}
                         </span>
                       </div>
@@ -124,7 +124,7 @@ const MyReviews = () => {
           )}
 
           {/* Centered supportive disclaimer text */}
-          <p className="text-ui-sm text-neutral-500 font-medium uppercase tracking-wider text-center max-w-2xl mx-auto leading-relaxed">
+          <p className="text-ui-sm text-neutral-500 font-bold uppercase tracking-wider text-center max-w-2xl mx-auto leading-relaxed">
             Reviews are submitted by verified patients after completed, paid appointments. Contact support if a review violates platform guidelines.
           </p>
 
@@ -152,7 +152,7 @@ const MyReviews = () => {
                     {/* Left 9 Columns - Content */}
                     <div className="flex-1 flex gap-4">
                       {/* Quote symbol */}
-                      <span className="text-display-xs text-neutral-500 font-semibold leading-none select-none">
+                      <span className="text-display-xs text-neutral-500 font-black leading-none select-none">
                         “
                       </span>
 
@@ -163,14 +163,14 @@ const MyReviews = () => {
                         
                         <div className="flex items-center gap-3">
                           {/* 24px initial circle */}
-                          <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-medium text-sm shrink-0 select-none">
+                          <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs shrink-0 select-none">
                             {initial}
                           </div>
                           
-                          <span className="text-ui-sm font-semibold text-neutral-900 uppercase tracking-wider">
+                          <span className="text-ui-xs font-black text-neutral-900 uppercase tracking-wider">
                             {displayPatient}
                           </span>
-                          <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider">
+                          <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
                             · {formattedDate}
                           </span>
                         </div>
@@ -179,10 +179,10 @@ const MyReviews = () => {
 
                     {/* Right 3 Columns - Rating box */}
                     <div className="shrink-0 flex md:flex-col items-center md:items-end justify-between md:justify-center gap-4">
-                      <div className="w-14 h-14 border border-neutral-200 bg-neutral-50 text-neutral-800 font-medium text-display-xs flex items-center justify-center rounded-md select-none shadow-level-1">
+                      <div className="w-14 h-14 border border-neutral-200 bg-neutral-50 text-neutral-800 font-bold text-display-xs flex items-center justify-center rounded-md select-none shadow-level-1">
                         {review.rating}
                       </div>
-                      <span className="text-sm font-semibold text-accent tracking-widest uppercase block select-none">
+                      <span className="text-[9px] font-black text-accent tracking-widest uppercase block select-none">
                         {getTreatedSpecialization()}
                       </span>
                     </div>

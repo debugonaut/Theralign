@@ -256,18 +256,18 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
       <div className="flex items-center justify-between border-b border-neutral-100 pb-3 mb-3 shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse" />
-          <span className="text-[13px] font-semibold text-neutral-900 uppercase tracking-widest">
+          <span className="text-[13px] font-black text-neutral-900 uppercase tracking-widest">
             Realtime Specialist Radar
           </span>
         </div>
-        <div className="text-[13px] text-neutral-400 font-medium uppercase tracking-wider">
+        <div className="text-[13px] text-neutral-400 font-bold uppercase tracking-wider">
           {visibleDoctors.length} / {allDoctors.length} clinics
         </div>
       </div>
 
       {/* Radius Filter */}
       <div className="flex items-center gap-3 mb-3 shrink-0">
-        <span className="text-[11.7px] font-semibold text-neutral-500 uppercase tracking-widest whitespace-nowrap">
+        <span className="text-[11.7px] font-black text-neutral-500 uppercase tracking-widest whitespace-nowrap">
           RADIUS:
         </span>
         <input
@@ -278,7 +278,7 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
           onChange={(e) => setRadiusIdx(Number(e.target.value))}
           className="flex-1 h-1.5 accent-teal-500 cursor-pointer"
         />
-        <span className="text-[13px] font-semibold text-teal-600 uppercase tracking-wider whitespace-nowrap min-w-[80px] text-right">
+        <span className="text-[13px] font-black text-teal-600 uppercase tracking-wider whitespace-nowrap min-w-[80px] text-right">
           {radiusLabel}
         </span>
       </div>
@@ -286,12 +286,12 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
       {/* Selected doctor banner */}
       {selectedDoctorId && (
         <div className="flex items-center justify-between bg-accent/5 border border-accent/20 rounded px-3 py-1.5 mb-3 shrink-0">
-          <span className="text-[13px] font-semibold text-accent uppercase tracking-wider">
+          <span className="text-[13px] font-black text-accent uppercase tracking-wider">
             1 DOCTOR SELECTED — SCROLL DOWN TO BOOK
           </span>
           <button
             onClick={() => onDoctorSelect && onDoctorSelect(null)}
-            className="text-[11.7px] font-semibold text-neutral-500 hover:text-accent uppercase tracking-wider ml-3 cursor-pointer"
+            className="text-[11.7px] font-black text-neutral-500 hover:text-accent uppercase tracking-wider ml-3 cursor-pointer"
           >
             CANCEL ×
           </button>
@@ -306,20 +306,20 @@ const LiveDoctorMap = ({ city = '', specialization = '', search = '', onDoctorSe
         {!mapLoaded && (
           <div className="absolute inset-0 bg-white flex flex-col items-center justify-center p-6 text-center z-10">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-2" />
-            <h5 className="text-[13px] font-medium text-neutral-500 uppercase tracking-wider">Acquiring Satellites...</h5>
+            <h5 className="text-[13px] font-black text-neutral-500 uppercase tracking-wider">Acquiring Satellites...</h5>
           </div>
         )}
         {mapLoaded && visibleDoctors.length === 0 && (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
             <ShieldAlert className="w-8 h-8 text-neutral-400 mb-2" />
-            <h5 className="text-[15.6px] font-medium text-neutral-700 uppercase tracking-wider">No Clinics in Radius</h5>
+            <h5 className="text-[15.6px] font-black text-neutral-700 uppercase tracking-wider">No Clinics in Radius</h5>
             <p className="text-[13px] text-neutral-500 mt-1 max-w-[200px]">Increase the radius slider to discover more specialists.</p>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="mt-3 shrink-0 flex items-center justify-between text-[11.7px] text-neutral-400 font-medium uppercase tracking-wider border-t border-neutral-100 pt-2.5">
+      <div className="mt-3 shrink-0 flex items-center justify-between text-[11.7px] text-neutral-400 font-bold uppercase tracking-wider border-t border-neutral-100 pt-2.5">
         <span>GPS Active · {center.name}</span>
         <span>{visibleDoctors.length} clinics in {radiusLabel} radius</span>
       </div>

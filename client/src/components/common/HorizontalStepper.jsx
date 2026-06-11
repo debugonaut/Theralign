@@ -53,7 +53,7 @@ const HorizontalStepper = ({
           } else if (isActive) {
             // Current step: white background, 2.5px teal border, teal text number
             circleClass += 'bg-white border-[2.5px] border-[#0B4F6C] text-[#0B4F6C]';
-            childContent = <span className="font-medium text-[13px]">{idx + 1}</span>;
+            childContent = <span className="font-bold text-[13px]">{idx + 1}</span>;
             labelClass += 'font-bold text-[#0B4F6C]';
           } else {
             // Upcoming step: white background, 1.5px gray border, gray text number

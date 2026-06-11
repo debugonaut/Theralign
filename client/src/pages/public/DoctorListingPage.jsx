@@ -259,14 +259,14 @@ const DoctorListingPage = () => {
               }}
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // delay to allow clicks
-              className="flex-grow h-12 px-4 bg-white text-ui-sm font-medium uppercase tracking-wider text-neutral-900 placeholder-neutral-500 focus:outline-none focus:ring-0 rounded-none border-0"
+              className="flex-grow h-12 px-4 bg-white text-ui-sm font-bold uppercase tracking-wider text-neutral-900 placeholder-neutral-500 focus:outline-none focus:ring-0 rounded-none border-0"
               autoComplete="off"
             />
 
             <Button
               type="submit"
               variant="primary"
-              className="h-12 border-0 border-l-2 border-neutral-900 px-8 font-semibold shrink-0"
+              className="h-12 border-0 border-l-2 border-neutral-900 px-8 font-black shrink-0"
             >
               FIND CARE →
             </Button>
@@ -303,19 +303,19 @@ const DoctorListingPage = () => {
       {/* Active Filter Chips */}
       {activeChips.length > 0 && (
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             ACTIVE FILTERS:
           </span>
           {activeChips.map((chip) => (
             <span
               key={chip.key}
-              className="inline-flex items-center gap-2 px-3 py-1 bg-white border-2 border-neutral-900 text-sm font-semibold uppercase tracking-widest select-none rounded-none"
+              className="inline-flex items-center gap-2 px-3 py-1 bg-white border-2 border-neutral-900 text-[10px] font-black uppercase tracking-widest select-none rounded-none"
             >
               {chip.label}
               <button
                 type="button"
                 onClick={() => removeFilterChip(chip.key)}
-                className="text-neutral-900 hover:text-accent font-semibold"
+                className="text-neutral-900 hover:text-accent font-black"
               >
                 ×
               </button>
@@ -323,7 +323,7 @@ const DoctorListingPage = () => {
           ))}
           <button
             onClick={handleClearAll}
-            className="text-sm font-semibold text-accent hover:underline uppercase tracking-widest"
+            className="text-[10px] font-black text-accent hover:underline uppercase tracking-widest"
           >
             CLEAR ALL
           </button>
@@ -334,7 +334,7 @@ const DoctorListingPage = () => {
       <button
         type="button"
         onClick={() => setShowMobileFilters(true)}
-        className="lg:hidden w-full py-3 border-2 border-neutral-900 text-ui-sm font-semibold uppercase tracking-widest text-center mt-6 cursor-pointer hover:bg-neutral-100 transition-colors"
+        className="lg:hidden w-full py-3 border-2 border-neutral-900 text-ui-xs font-black uppercase tracking-widest text-center mt-6 cursor-pointer hover:bg-neutral-100 transition-colors"
       >
         FILTERS →
       </button>
@@ -343,7 +343,7 @@ const DoctorListingPage = () => {
       {showMobileFilters && (
         <div className="fixed inset-0 z-[9999] bg-white p-6 overflow-y-auto flex flex-col lg:hidden">
           <div className="flex items-center justify-between border-b-2 border-neutral-900 pb-4 mb-6">
-            <h2 className="text-ui-lg font-medium uppercase text-neutral-900">Filters</h2>
+            <h2 className="text-ui-lg font-black uppercase text-neutral-900">Filters</h2>
             <button 
               onClick={() => setShowMobileFilters(false)} 
               className="text-neutral-500 hover:text-danger p-1 cursor-pointer focus:outline-none"
@@ -371,14 +371,14 @@ const DoctorListingPage = () => {
       {selectedMapDoctor && (
         <div ref={listingRef} className="mt-6 flex items-center justify-between bg-primary/5 border-2 border-primary px-5 py-3">
           <div>
-            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">MAP SELECTION: </span>
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">MAP SELECTION: </span>
+            <span className="text-[11px] font-black text-primary uppercase tracking-wider">
               Dr. {selectedMapDoctor.user?.name?.replace(/^Dr\.\s+/i, '') || 'Physiotherapist'} · {selectedMapDoctor.city}
             </span>
           </div>
           <button
             onClick={() => setSelectedMapDoctor(null)}
-            className="text-sm font-semibold text-neutral-500 hover:text-accent uppercase tracking-wider cursor-pointer flex items-center gap-1"
+            className="text-[10px] font-black text-neutral-500 hover:text-accent uppercase tracking-wider cursor-pointer flex items-center gap-1"
           >
             CANCEL PREFERENCE <X size={12} />
           </button>
@@ -412,7 +412,7 @@ const DoctorListingPage = () => {
               <button
                 type="button"
                 onClick={handleClearNearby}
-                className="font-normal text-sm text-[#F4845F] hover:underline bg-transparent border-0 cursor-pointer"
+                className="font-semibold text-[12px] text-[#F4845F] hover:underline bg-transparent border-0 cursor-pointer"
               >
                 CLEAR →
               </button>
@@ -427,14 +427,14 @@ const DoctorListingPage = () => {
                 'Discovering clinicians...'
               ) : (
                 <>
-                  <span className="font-medium text-[#1C2B3A]">{pagination.total}</span> physiotherapists found
+                  <span className="font-bold text-[#1C2B3A]">{pagination.total}</span> physiotherapists found
                 </>
               )}
             </span>
 
             {/* Right Side: Sort Control */}
             <div className="flex items-center gap-2 shrink-0">
-              <span className="font-normal text-sm text-[#6B7C93]">Sort by</span>
+              <span className="font-normal text-[12px] text-[#6B7C93]">Sort by</span>
               {!!(currentFilters.latitude && currentFilters.longitude) ? (
                 <span className="font-medium text-[13px] text-[#6B7C93]">Sorted by distance</span>
               ) : (
@@ -462,7 +462,7 @@ const DoctorListingPage = () => {
             </div>
           ) : error ? (
             <div className="bg-white border-2 border-accent p-8 text-left flex flex-col gap-3">
-              <h3 className="text-ui-xl font-medium text-accent uppercase tracking-tighter">
+              <h3 className="text-ui-xl font-black text-accent uppercase tracking-tighter">
                 QUERY DISRUPTION
               </h3>
               <p className="text-ui-md text-neutral-700 font-medium">{error}</p>
@@ -473,7 +473,7 @@ const DoctorListingPage = () => {
           ) : doctors.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-[64px] px-[24px] bg-[#FAFBFC] rounded-xl border border-dashed border-[#DDE3EA] text-center w-full">
               <SearchX size={40} className="text-[#DDE3EA] mx-auto" />
-              <h3 className="font-medium text-[20px] text-[#1C2B3A] mt-4">
+              <h3 className="font-bold text-[20px] text-[#1C2B3A] mt-4">
                 No physiotherapists found
               </h3>
               <p className="font-normal text-[14px] text-[#6B7C93] mt-2 max-w-[400px] mx-auto">
@@ -514,7 +514,7 @@ const DoctorListingPage = () => {
                   >
                     ← PREVIOUS
                   </Button>
-                  <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest">
+                  <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest">
                     PAGE {pagination.page} OF {pagination.totalPages}
                   </span>
                   <Button

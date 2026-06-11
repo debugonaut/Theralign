@@ -55,19 +55,19 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h4 className="text-sm font-medium text-slate-800 truncate">{patientName}</h4>
-            <span className={`text-sm font-semibold px-2.5 py-0.5 rounded-full border ${getStatusStyle(appointment.status)}`}>
+            <h4 className="text-sm font-extrabold text-slate-800 truncate">{patientName}</h4>
+            <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${getStatusStyle(appointment.status)}`}>
               {appointment.status}
             </span>
           </div>
 
           <div className="mt-2 space-y-1 text-slate-400">
-            <p className="text-sm font-medium flex items-center gap-1.5 truncate">
+            <p className="text-[10px] font-bold flex items-center gap-1.5 truncate">
               <Mail size={12} className="text-slate-300" />
               {patientEmail}
             </p>
             {patientPhone && patientPhone !== 'N/A' && (
-              <p className="text-sm font-medium flex items-center gap-1.5 truncate">
+              <p className="text-[10px] font-bold flex items-center gap-1.5 truncate">
                 <Phone size={12} className="text-slate-300" />
                 {patientPhone}
               </p>
@@ -75,15 +75,15 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
           </div>
 
           <div className="mt-3.5 space-y-2">
-            <p className="text-sm font-medium text-slate-600 flex items-center gap-1.5">
+            <p className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
               <Calendar size={13} className="text-slate-400" />
               {formatHumanDate(appointment.date)}
             </p>
-            <p className="text-sm font-medium text-slate-600 flex items-center gap-1.5">
+            <p className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
               <Clock size={13} className="text-slate-400" />
               {appointment.startTime} – {appointment.endTime}
             </p>
-            <div className="flex items-center justify-between text-sm font-medium text-slate-600 gap-2">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-2">
               <span className="flex items-center gap-1.5">
                 <IndianRupee size={13} className="text-slate-400" />
                 ₹{appointment.consultationFee}
@@ -96,7 +96,7 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
                 }`}>
                   {appointment.paymentStatus === 'paid' ? 'Paid' : 'Unpaid'}
                 </span>
-                <span className="text-sm text-slate-400 font-medium bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] text-slate-400 font-bold bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
                   Earnings: ₹{appointment.doctorEarnings}
                 </span>
               </div>
@@ -109,7 +109,7 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
       {appointment.patientNotes && (
         <div className="p-3 bg-slate-50 border border-slate-100/50 rounded-xl flex items-start gap-2">
           <MessageSquare size={13} className="text-slate-400 shrink-0 mt-0.5" />
-          <p className="text-sm text-slate-500 font-medium leading-relaxed italic">
+          <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
             Patient Notes: " {appointment.patientNotes} "
           </p>
         </div>
@@ -118,11 +118,11 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
       {/* Cancellation info if cancelled */}
       {appointment.status === 'cancelled' && (
         <div className="p-3 bg-rose-50/50 border border-rose-100/50 rounded-xl space-y-1">
-          <p className="text-sm font-medium text-rose-700 uppercase tracking-wide flex items-center gap-1">
+          <p className="text-[9px] font-bold text-rose-700 uppercase tracking-wide flex items-center gap-1">
             <AlertTriangle size={10} /> Cancelled By {appointment.cancelledBy || 'Platform'}
           </p>
           {appointment.cancellationReason && (
-            <p className="text-sm text-rose-600 font-medium italic leading-relaxed">
+            <p className="text-[10px] text-rose-600 font-medium italic leading-relaxed">
               Reason: "{appointment.cancellationReason}"
             </p>
           )}
@@ -132,7 +132,7 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
       {/* Clinical Notes/Prescription Upload (Feature F3) */}
       {appointment.status === 'completed' && (
         <div className="p-4 bg-slate-50/70 border border-slate-200/50 rounded-2xl space-y-3">
-          <p className="text-sm font-medium text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <FileText size={13} className="text-slate-400 shrink-0" /> Clinical Session Notes
           </p>
 
@@ -142,7 +142,7 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
                 href={appointment.sessionDocument.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium text-primary hover:text-primary-dark truncate flex items-center gap-1.5"
+                className="text-xs font-bold text-primary hover:text-primary-dark truncate flex items-center gap-1.5"
               >
                 <FileText size={13} className="shrink-0" />
                 <span className="truncate">{appointment.sessionDocument.fileName || 'View Notes PDF'}</span>
@@ -168,7 +168,7 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
                   }
                 }}
                 disabled={actionLoading}
-                className="text-sm font-medium text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 px-2.5 py-1 rounded-lg transition-all cursor-pointer disabled:opacity-50 shrink-0"
+                className="text-[10px] font-bold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 px-2.5 py-1 rounded-lg transition-all cursor-pointer disabled:opacity-50 shrink-0"
               >
                 Remove
               </button>
@@ -216,17 +216,17 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
                   className="hidden"
                 />
                 {actionLoading ? (
-                  <div className="flex items-center gap-1.5 text-sm text-slate-400 font-medium">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-bold">
                     <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                     Uploading PDF...
                   </div>
                 ) : (
                   <>
                     <Paperclip className="h-4 w-4 text-slate-400 shrink-0" />
-                    <span className="text-sm text-primary hover:text-primary-dark font-medium">
+                    <span className="text-xs text-primary hover:text-primary-dark font-bold">
                       Upload Session PDF
                     </span>
-                    <span className="text-sm text-slate-400 font-normal mt-0.5">
+                    <span className="text-[9px] text-slate-400 font-semibold mt-0.5">
                       Max 5MB (PDF only)
                     </span>
                   </>
@@ -243,14 +243,14 @@ const DoctorAppointmentCard = ({ appointment, onComplete, onCancel, onUpdate }) 
           <button
             type="button"
             onClick={() => onCancel(appointment._id)}
-            className="bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 text-rose-600 rounded-xl py-2 text-sm font-medium transition-all shadow-sm cursor-pointer"
+            className="bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 text-rose-600 rounded-xl py-2 text-xs font-bold transition-all shadow-sm cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={() => onComplete(appointment._id)}
-            className="bg-primary hover:bg-primary-dark text-white rounded-xl py-2 text-sm font-medium transition-all shadow-md cursor-pointer flex items-center justify-center gap-1"
+            className="bg-primary hover:bg-primary-dark text-white rounded-xl py-2 text-xs font-bold transition-all shadow-md cursor-pointer flex items-center justify-center gap-1"
           >
             <ShieldCheck size={13} />
             Mark Complete

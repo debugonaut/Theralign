@@ -194,7 +194,7 @@ export const getDoctorProfileByUserId = async (userId) => {
  * @returns {Promise<object>} DoctorProfile populated with user details
  */
 export const getDoctorProfileById = async (id) => {
-  const profile = await DoctorProfile.findById(id).populate('user', 'name profileImage email phone role');
+  const profile = await DoctorProfile.findById(id).populate('user', 'name profileImage email phone');
   if (!profile) {
     throw new AppError('Doctor profile not found', 404);
   }

@@ -17,14 +17,14 @@ const MedicalDisclaimerPage = () => {
         variant="highlight" 
         className="p-8 bg-white flex flex-col gap-4 border-neutral-900 hover:border-accent"
       >
-        <span className="text-sm font-semibold text-accent uppercase tracking-widest block">
+        <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
           CRITICAL SAFETY WARNING
         </span>
-        <h2 className="text-display-xs font-medium uppercase text-neutral-900 tracking-tight leading-none">
+        <h2 className="text-display-xs font-black uppercase text-neutral-900 tracking-tight leading-none">
           NOT A CLINICAL EMERGENCY GATEWAY
         </h2>
         <div className="h-[2px] bg-neutral-900 w-full my-2" />
-        <p className="text-ui-lg text-neutral-900 font-medium leading-relaxed uppercase">
+        <p className="text-ui-lg text-neutral-900 font-semibold leading-relaxed uppercase">
           THERALIGN IS AN ADMINISTRATIVE SEARCH MARKETPLACE DIRECTORY. WE DO NOT PROVIDE EMERGENCY HEALTH RESPONSE SERVICES. IF YOU EXPENSE AN EMERGENCY OR SUDDEN SEVERE PAIN, IMMEDIATELY CALL 108 OR PROCEED TO THE NEAREST TRAUMA FACILITY.
         </p>
       </Card>
@@ -35,19 +35,19 @@ const MedicalDisclaimerPage = () => {
         {/* Left Column */}
         <div className="space-y-6">
           <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
-            <span className="text-sm font-semibold text-accent uppercase tracking-widest block">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               01. PRACTICE RESPONSIBILITIES
             </span>
-            <p className="text-sm text-swiss-gray-650 font-medium leading-relaxed">
+            <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
               All clinical diagnostic decisions, prescription exercises, and treatment actions are delivered solely by the registered physiotherapist, not the platform software. THERALIGN assumes no liability for clinical advice given during consultations.
             </p>
           </div>
 
           <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
-            <span className="text-sm font-semibold text-accent uppercase tracking-widest block">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               02. SEARCH DIRECTORY LIMITATIONS
             </span>
-            <p className="text-sm text-swiss-gray-650 font-medium leading-relaxed">
+            <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
               Practitioner profile bios, qualifications, and specialties listings represent individual credentials submitted during onboarding audits. Patients must verify therapist suitability during initial consultation schedules.
             </p>
           </div>
@@ -56,19 +56,19 @@ const MedicalDisclaimerPage = () => {
         {/* Right Column */}
         <div className="space-y-6">
           <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
-            <span className="text-sm font-semibold text-accent uppercase tracking-widest block">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               03. CREDENTIAL VETTING SCOPE
             </span>
-            <p className="text-sm text-swiss-gray-650 font-medium leading-relaxed">
+            <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
               Manual checks verify professional diplomas and state practice license certificates validity with official boards. While our vetting is extremely high-integrity, patients are encouraged to doublecheck clinician status for custom cases.
             </p>
           </div>
 
           <div className="space-y-2 border-l-4 border-neutral-900 pl-4">
-            <span className="text-sm font-semibold text-accent uppercase tracking-widest block">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block">
               04. NO PATIENT-DOCTOR Platform RELATION
             </span>
-            <p className="text-sm text-swiss-gray-650 font-medium leading-relaxed">
+            <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed">
               Booking appointments or navigating the website does not create a patient-doctor relationship between you and THERALIGN. The relationship exists solely between you and the therapist you book.
             </p>
           </div>

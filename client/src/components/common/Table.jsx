@@ -105,7 +105,7 @@ Table.Header = function TableHeader({
       className={[
         'px-4 py-3',
         'text-neutral-500',
-        'font-medium uppercase',
+        'font-semibold uppercase',
         sortable ? 'cursor-pointer hover:text-neutral-900' : '',
         numeric ? 'text-right' : 'text-left',
         className,

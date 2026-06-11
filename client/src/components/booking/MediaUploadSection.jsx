@@ -102,11 +102,11 @@ const MediaUploadSection = ({
       <div className="flex flex-col gap-1 text-left">
         <div className="flex items-center gap-1.5 text-neutral-500">
           <Paperclip size={14} className="text-neutral-500 shrink-0" />
-          <label className="text-sm font-semibold uppercase tracking-widest">
+          <label className="text-[10px] font-black uppercase tracking-widest">
             Condition Media (Optional)
           </label>
         </div>
-        <p className="text-ui-sm text-neutral-600 font-medium leading-relaxed mt-1">
+        <p className="text-ui-xs text-neutral-600 font-medium leading-relaxed mt-1">
           Help your doctor prepare — share photos, videos, or audio describing your condition before the session. 
           <br />
           Max 5 files, 25MB each.
@@ -146,10 +146,10 @@ const MediaUploadSection = ({
               className={`${dragging ? 'text-accent' : 'text-neutral-400'}`}
             />
             <div>
-              <p className="text-ui-sm font-medium text-neutral-900">
+              <p className="text-ui-sm font-bold text-neutral-900">
                 {dragging ? 'Drop files here' : 'Drag files or click to upload'}
               </p>
-              <p className="text-sm text-neutral-500 font-medium mt-0.5">
+              <p className="text-[11px] text-neutral-500 font-medium mt-0.5">
                 JPG, PNG, WEBP, MP4, MOV, MP3, M4A
               </p>
             </div>
@@ -159,7 +159,7 @@ const MediaUploadSection = ({
             <div className="absolute inset-0 bg-white/50 rounded-lg flex items-center justify-center">
               <div className="text-center">
                 <div className="inline-block animate-spin mb-2">⏳</div>
-                <p className="text-ui-sm font-medium text-neutral-600">Uploading...</p>
+                <p className="text-ui-xs font-bold text-neutral-600">Uploading...</p>
               </div>
             </div>
           )}
@@ -168,8 +168,8 @@ const MediaUploadSection = ({
         <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-4 flex items-start gap-3">
           <AlertCircle size={20} className="text-yellow-600 shrink-0 mt-0.5" />
           <div>
-            <p className="text-ui-sm font-medium text-yellow-900">Maximum files reached</p>
-            <p className="text-sm text-yellow-800 font-medium mt-0.5">
+            <p className="text-ui-sm font-bold text-yellow-900">Maximum files reached</p>
+            <p className="text-[11px] text-yellow-800 font-medium mt-0.5">
               You've uploaded {MAX_FILES} media files. Delete one to upload more.
             </p>
           </div>
@@ -179,10 +179,10 @@ const MediaUploadSection = ({
       {uploadedMedia.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
               Uploaded Media ({uploadedMedia.length}/{MAX_FILES})
             </span>
-            <span className="text-sm font-medium text-success flex items-center gap-1">
+            <span className="text-[10px] font-bold text-success flex items-center gap-1">
               <CheckCircle size={14} /> Ready
             </span>
           </div>
@@ -229,10 +229,10 @@ const MediaUploadSection = ({
                   </div>
 
                   <div className="p-2 border-t border-neutral-100">
-                    <p className="text-sm font-medium text-neutral-900 truncate">
+                    <p className="text-[10px] font-bold text-neutral-900 truncate">
                       {media.fileName}
                     </p>
-                    <p className="text-sm text-neutral-500 font-medium">
+                    <p className="text-[9px] text-neutral-500 font-medium">
                       {formatFileSize(media.fileSize)}
                     </p>
                   </div>
@@ -254,7 +254,7 @@ const MediaUploadSection = ({
       {uploadedMedia.length === 0 && (
         <div className="bg-[#F7FAFC] border border-neutral-200 rounded-lg p-4 flex gap-3 text-left">
           <Lightbulb size={16} className="text-[#D69E2E] shrink-0 mt-0.5" />
-          <p className="text-ui-sm text-neutral-600 font-medium leading-relaxed">
+          <p className="text-ui-xs text-neutral-600 font-medium leading-relaxed">
             <strong>Tip:</strong> Uploading media helps your doctor understand your condition better and prepare 
             an effective treatment plan. Examples: photos of swelling, videos of movements, audio descriptions.
           </p>

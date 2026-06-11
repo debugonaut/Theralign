@@ -50,7 +50,7 @@ const SectionHeader = ({
       {/* Section number — coral prefix */}
       {number && (
         <span
-          className="text-sm font-normal text-accent normal-case block mb-2"
+          className="text-[12px] font-semibold text-accent normal-case block mb-2"
           aria-hidden="true"
         >
           {number}
@@ -59,7 +59,7 @@ const SectionHeader = ({
 
       {/* Title */}
       <h2
-        className="font-medium text-neutral-900 block"
+        className="font-black text-neutral-900 block"
         style={{
           ...titleStyle,
           fontFamily: 'Inter, sans-serif',

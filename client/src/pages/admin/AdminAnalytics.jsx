@@ -138,10 +138,10 @@ const AdminAnalytics = () => {
         <div className="bg-white border-2 border-neutral-900 p-6 rounded-none shadow-none text-left">
           {/* Section Heading */}
           <div className="pb-4 border-b border-neutral-200 mb-6">
-            <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest block mb-1">
+            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
               MARKET PENETRATION INDEX
             </span>
-            <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
+            <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
               SPECIALIZATION POPULARITY INDEX
             </h3>
           </div>
@@ -149,19 +149,19 @@ const AdminAnalytics = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             {/* Left 4 Columns: Stacking specialization names as bordered rows */}
             <div className="lg:col-span-4 border-r-0 lg:border-r-2 border-neutral-200 pr-0 lg:pr-6 space-y-3">
-              <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
                 SPECIALIZATION / FRACTION
               </span>
               <div className="flex flex-col border border-neutral-900 divide-y border-collapse">
                 {specsWithPercentages.map((spec) => (
                   <div 
                     key={spec.specialization} 
-                    className="flex justify-between items-center p-3 bg-neutral-50 text-sm font-medium"
+                    className="flex justify-between items-center p-3 bg-neutral-50 text-xs font-bold"
                   >
                     <span className="uppercase tracking-wider text-neutral-900 truncate mr-2">
                       {spec.specialization || 'GENERAL'}
                     </span>
-                    <span className="text-accent font-semibold shrink-0">
+                    <span className="text-accent font-black shrink-0">
                       {spec.pct}%
                     </span>
                   </div>
@@ -171,7 +171,7 @@ const AdminAnalytics = () => {
 
             {/* Right 8 Columns: Horizontal bar chart proportional block rects */}
             <div className="lg:col-span-8 space-y-4">
-              <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
                 PROPORTIONAL SESSIONS DISTRIBUTION
               </span>
               <div className="space-y-4">
@@ -180,7 +180,7 @@ const AdminAnalytics = () => {
                   return (
                     <div key={specName} className="space-y-1 text-left">
                       {/* Label above */}
-                      <div className="flex justify-between items-center text-sm font-semibold uppercase text-neutral-500 tracking-wider">
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase text-neutral-500 tracking-wider">
                         <span>{specName}</span>
                         <span className="font-mono">{spec.appointmentCount || 0} APPOINTMENTS</span>
                       </div>
@@ -194,7 +194,7 @@ const AdminAnalytics = () => {
                       </div>
 
                       {/* Label below */}
-                      <div className="text-sm font-medium text-neutral-500 uppercase tracking-widest pt-0.5">
+                      <div className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest pt-0.5">
                         {specName} INDEPENDENT PLATFORM SHARE ({spec.pct}%)
                       </div>
                     </div>

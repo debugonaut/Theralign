@@ -431,7 +431,7 @@ const PatientProfile = () => {
       const userObj = response.data?.user || response.user;
       setProfile(prev => ({ ...prev, user: { ...prev.user, profileImage: userObj?.profileImage } }));
       if (userObj && token) {
-        setCredentials({ ...user, ...userObj }, token);
+        setCredentials(userObj, token);
       }
       showToast('success', 'Profile photo updated');
     } catch (error) {
@@ -468,14 +468,14 @@ const PatientProfile = () => {
             {profile?.user?.profileImage ? (
               <img src={profile.user.profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-display-sm font-medium text-neutral-400 uppercase">
+              <span className="text-display-sm font-bold text-neutral-400 uppercase">
                 {profile?.user?.name ? profile.user.name.charAt(0) : 'U'}
               </span>
             )}
             {isUploading && (
               <div className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center">
                 <LoadingSpinner size="sm" />
-                <span className="text-sm font-medium uppercase mt-2 text-black tracking-widest">Uploading...</span>
+                <span className="text-[10px] font-bold uppercase mt-2 text-black tracking-widest">Uploading...</span>
               </div>
             )}
           </div>
@@ -490,7 +490,7 @@ const PatientProfile = () => {
           <Button 
             variant="ghost" 
             onClick={() => fileInputRef.current?.click()}
-            className="mt-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-medium text-ui-sm uppercase tracking-widest transition-all rounded-md shadow-sm"
+            className="mt-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2 font-bold text-ui-xs uppercase tracking-widest transition-all rounded-md shadow-sm"
             disabled={isUploading}
           >
             Upload Photo →
@@ -501,11 +501,11 @@ const PatientProfile = () => {
 
         {/* Identity */}
         <div className="flex flex-col mb-8">
-          <h1 className="text-ui-xl font-medium uppercase truncate mb-2 text-neutral-900">{profile?.user?.name}</h1>
-          <div className="inline-flex px-3 py-1 bg-primary-light text-primary font-medium text-ui-sm uppercase tracking-widest self-start rounded-sm select-none">
+          <h1 className="text-ui-xl font-bold uppercase truncate mb-2 text-neutral-900">{profile?.user?.name}</h1>
+          <div className="inline-flex px-3 py-1 bg-primary-light text-primary font-bold text-ui-xs uppercase tracking-widest self-start rounded-sm select-none">
             PATIENT PORTAL
           </div>
-          <div className="text-ui-sm uppercase text-neutral-400 font-medium tracking-widest mt-2">
+          <div className="text-ui-xs uppercase text-neutral-400 font-bold tracking-widest mt-2">
             MEMBER SINCE {joinDate}
           </div>
         </div>
@@ -514,10 +514,10 @@ const PatientProfile = () => {
 
         {/* Completion */}
         <div className="flex flex-col">
-          <div className="text-ui-sm uppercase text-neutral-400 font-medium tracking-widest mb-1">
+          <div className="text-ui-xs uppercase text-neutral-400 font-bold tracking-widest mb-1">
             PROFILE COMPLETE
           </div>
-          <div className="text-display-xs font-medium text-neutral-900 mb-3">
+          <div className="text-display-xs font-bold text-neutral-900 mb-3">
             {completionScore}%
           </div>
           <div className="w-full h-2 bg-neutral-100 mb-4 rounded-full overflow-hidden relative max-w-[1200px]">
@@ -526,7 +526,7 @@ const PatientProfile = () => {
               style={{ width: `${completionScore}%` }}
             ></div>
           </div>
-          <div className="text-ui-sm text-neutral-500 font-medium">
+          <div className="text-ui-xs text-neutral-500 font-medium">
             Complete your profile so physiotherapists can prepare for your session.
           </div>
         </div>
@@ -542,20 +542,20 @@ const PatientProfile = () => {
             <div className="bg-amber-50 border border-amber-300 text-amber-900 px-4 py-3 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4">
               <div className="flex items-center gap-2.5">
                 <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
-                <span className="text-sm font-medium uppercase tracking-wider">
+                <span className="text-[12px] font-bold uppercase tracking-wider">
                   UNSAVED CHANGES IN {dirtyTab}
                 </span>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => saveTab(dirtyTab)}
-                  className="px-3.5 py-1.5 bg-amber-600 text-white font-medium text-sm uppercase tracking-wider rounded-[4px] hover:bg-amber-700 transition"
+                  className="px-3.5 py-1.5 bg-amber-600 text-white font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-amber-700 transition"
                 >
                   SAVE NOW
                 </button>
                 <button
                   onClick={() => discardTabChanges(dirtyTab)}
-                  className="px-3.5 py-1.5 bg-white border border-amber-300 text-amber-700 font-medium text-sm uppercase tracking-wider rounded-[4px] hover:bg-amber-100 transition"
+                  className="px-3.5 py-1.5 bg-white border border-amber-300 text-amber-700 font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-amber-100 transition"
                 >
                   DISCARD
                 </button>
@@ -567,23 +567,23 @@ const PatientProfile = () => {
           {draftToRestore && (
             <div className="bg-[#E8F4F8] border border-[#0B4F6C]/25 text-[#0B4F6C] px-4 py-3 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4">
               <div className="flex flex-col text-left">
-                <span className="text-sm font-semibold uppercase tracking-wider">
+                <span className="text-[12px] font-black uppercase tracking-wider">
                   Draft Found
                 </span>
-                <span className="text-sm text-neutral-600 mt-0.5">
+                <span className="text-[11px] text-neutral-600 mt-0.5">
                   You have unsaved changes from a previous session.
                 </span>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleRestoreDraft}
-                  className="px-3.5 py-1.5 bg-[#0B4F6C] text-white font-medium text-sm uppercase tracking-wider rounded-[4px] hover:bg-[#083A52] transition cursor-pointer"
+                  className="px-3.5 py-1.5 bg-[#0B4F6C] text-white font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-[#083A52] transition cursor-pointer"
                 >
                   Restore Draft
                 </button>
                 <button
                   onClick={handleDiscardDraft}
-                  className="px-3.5 py-1.5 bg-white border border-neutral-300 text-neutral-600 font-medium text-sm uppercase tracking-wider rounded-[4px] hover:bg-neutral-50 transition cursor-pointer"
+                  className="px-3.5 py-1.5 bg-white border border-neutral-300 text-neutral-600 font-bold text-[11px] uppercase tracking-wider rounded-[4px] hover:bg-neutral-50 transition cursor-pointer"
                 >
                   Discard
                 </button>
@@ -667,7 +667,7 @@ const PatientProfile = () => {
       {showAutosaveChip && (
         <div className="fixed bottom-24 right-6 z-50 bg-[#E8F4F8] border border-[#0B4F6C]/20 text-[#0B4F6C] px-3.5 py-2 rounded-full flex items-center gap-2 shadow-md animate-fade-in font-sans">
           <span className="w-1.5 h-1.5 rounded-full bg-[#0B4F6C] animate-pulse"></span>
-          <span className="text-sm font-medium uppercase tracking-widest leading-none">Draft Autosaved</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Draft Autosaved</span>
         </div>
       )}
     </div>

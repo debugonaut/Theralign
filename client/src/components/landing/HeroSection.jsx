@@ -14,13 +14,13 @@ const HeroSection = () => {
   return (
     <section className="relative w-full bg-white min-h-[70vh] flex items-center pt-8 pb-10 overflow-hidden border-b-2 border-neutral-900">
       {/* Background Grid Pattern */}
-      <div className="absolute inset-0 opacity-30 pointer-events-none" />
+      <div className="absolute inset-0  opacity-30 pointer-events-none" />
 
       <div className="max-w-[1440px] mx-auto w-full px-6 sm:px-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
         
         {/* Left Column - 7/12 width */}
         <div className="lg:col-span-7 flex flex-col items-start text-left gap-4">
-          <h1 className="text-display-sm md:text-[64px] lg:text-[72px] leading-[1.05] font-medium uppercase tracking-[-0.05em] text-neutral-900 font-swiss">
+          <h1 className="text-display-sm md:text-[64px] lg:text-[72px] leading-[1.05] font-black uppercase tracking-[-0.05em] text-neutral-900 font-swiss">
             FIND THE RIGHT<br />
             <span className="text-accent">PHYSIOTHERAPIST</span>,<br />
             NEAR YOU.

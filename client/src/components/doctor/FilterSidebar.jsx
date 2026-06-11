@@ -86,12 +86,12 @@ const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
 
       {/* 1. SPECIALIZATION FILTER */}
       <div className="flex flex-col gap-3 pt-4 border-t border-neutral-200">
-        <span className="text-sm font-normal text-neutral-700 normal-case text-accent block font-semibold">
+        <span className="text-[12px] font-semibold text-neutral-700 normal-case text-accent block font-black">
           SPECIALIZATION
         </span>
         <div className="flex flex-col gap-2">
           {specializations.length === 0 ? (
-            <span className="text-ui-sm text-neutral-500 font-medium uppercase">Loading...</span>
+            <span className="text-ui-xs text-neutral-500 font-bold uppercase">Loading...</span>
           ) : (
             visibleSpecs.map((spec) => {
               const isSelected = specialization === spec.name;
@@ -119,7 +119,7 @@ const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
           <button
             type="button"
             onClick={() => setShowAllSpecs(!showAllSpecs)}
-            className="text-ui-sm font-semibold text-neutral-900 hover:text-accent uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-1"
+            className="text-ui-xs font-black text-neutral-900 hover:text-accent uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-1"
           >
             {showAllSpecs ? '— SHOW LESS' : '+ SHOW MORE'}
           </button>
@@ -128,7 +128,7 @@ const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
 
       {/* 2. LOCATION FILTER */}
       <div className="flex flex-col gap-3 pt-4 border-t border-neutral-200 text-left">
-        <span className="text-sm font-normal text-neutral-700 normal-case text-accent block font-semibold">
+        <span className="text-[12px] font-semibold text-neutral-700 normal-case text-accent block font-black">
           LOCATION
         </span>
         <input
@@ -136,12 +136,12 @@ const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="ENTER CITY"
-          className="w-full h-10 px-4 bg-white border-2 border-neutral-900 text-ui-sm font-medium uppercase tracking-wider text-neutral-900 placeholder-neutral-500 focus:border-4 focus:ring-0 transition-all rounded-none"
+          className="w-full h-10 px-4 bg-white border-2 border-neutral-900 text-ui-sm font-bold uppercase tracking-wider text-neutral-900 placeholder-neutral-500 focus:border-4 focus:ring-0 transition-all rounded-none"
         />
         <button
           type="button"
           onClick={handleGeolocation}
-          className="text-ui-sm font-semibold text-accent hover:underline uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-0.5"
+          className="text-ui-xs font-black text-accent hover:underline uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-0.5"
         >
           NEAR ME →
         </button>
@@ -149,7 +149,7 @@ const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
 
       {/* 3. AVAILABILITY FILTER */}
       <div className="flex flex-col gap-3 pt-4 border-t border-neutral-200 text-left">
-        <span className="text-sm font-normal text-neutral-700 normal-case text-accent block font-semibold">
+        <span className="text-[12px] font-semibold text-neutral-700 normal-case text-accent block font-black">
           AVAILABILITY
         </span>
         {/* Segmented controls */}
@@ -177,31 +177,31 @@ const FilterSidebar = ({ initialFilters, onApply, onClear }) => {
 
       {/* 4. FEE RANGE FILTER */}
       <div className="flex flex-col gap-3 pt-4 border-t border-neutral-200 text-left">
-        <span className="text-sm font-normal text-neutral-700 normal-case text-accent block font-semibold">
+        <span className="text-[12px] font-semibold text-neutral-700 normal-case text-accent block font-black">
           FEE RANGE
         </span>
         <div className="flex items-center gap-2">
           <div className="flex-1">
-            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-1">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
               MIN ₹
             </span>
             <input
               type="number"
               value={minFee}
               onChange={(e) => setMinFee(e.target.value)}
-              className="w-full h-10 px-3 bg-white border-2 border-neutral-900 text-ui-sm font-medium text-neutral-900 rounded-none focus:border-4"
+              className="w-full h-10 px-3 bg-white border-2 border-neutral-900 text-ui-sm font-bold text-neutral-900 rounded-none focus:border-4"
             />
           </div>
-          <span className="text-neutral-500 self-end mb-2.5 font-medium">—</span>
+          <span className="text-neutral-500 self-end mb-2.5 font-bold">—</span>
           <div className="flex-1">
-            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-1">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
               MAX ₹
             </span>
             <input
               type="number"
               value={maxFee}
               onChange={(e) => setMaxFee(e.target.value)}
-              className="w-full h-10 px-3 bg-white border-2 border-neutral-900 text-ui-sm font-medium text-neutral-900 rounded-none focus:border-4"
+              className="w-full h-10 px-3 bg-white border-2 border-neutral-900 text-ui-sm font-bold text-neutral-900 rounded-none focus:border-4"
             />
           </div>
         </div>

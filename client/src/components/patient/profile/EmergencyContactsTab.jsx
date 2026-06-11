@@ -118,16 +118,16 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
       {/* Title block */}
       <div className="flex justify-between items-center mb-2 mt-4 font-sans">
         <div>
-          <span className="text-sm font-medium text-[#F4845F] tracking-[0.1em] uppercase block mb-1">
+          <span className="text-[10px] font-bold text-[#F4845F] tracking-[0.1em] uppercase block mb-1">
             STEP 4 OF 5
           </span>
-          <h2 className="text-[22px] font-medium text-[#1C2B3A] tracking-[-0.02em] leading-tight">
+          <h2 className="text-[22px] font-bold text-[#1C2B3A] tracking-[-0.02em] leading-tight">
             Emergency Contacts
           </h2>
         </div>
         <div className="flex items-center gap-1.5 bg-[#F7F9FB] border border-[#DDE3EA] rounded-[6px] px-3 py-1.5 text-[#6B7C93]">
           <Info size={12} className="shrink-0" />
-          <span className="text-sm font-normal leading-none">
+          <span className="text-[11px] font-normal leading-none">
             This information is shared with your physiotherapist
           </span>
         </div>
@@ -145,10 +145,10 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
             className="flex flex-col items-center justify-center text-center p-8 bg-[#FAFBFC] border border-dashed border-[#DDE3EA] rounded-[12px] cursor-pointer hover:bg-[#E8F4F8] transition-all duration-200"
           >
             <Phone size={24} className="text-[#DDE3EA] mb-2" />
-            <h4 className="text-[13px] font-medium text-[#0B4F6C] uppercase tracking-[0.06em] mb-0.5">
+            <h4 className="text-[13px] font-bold text-[#0B4F6C] uppercase tracking-[0.06em] mb-0.5">
               + Add Emergency Contact
             </h4>
-            <p className="text-sm text-[#6B7C93] mt-0.5">
+            <p className="text-[11px] text-[#6B7C93] mt-0.5">
               Add a contact who can be reached in case of emergency
             </p>
           </div>
@@ -162,14 +162,14 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
               <div className="bg-[#FAFBFC] border-b border-[#EEF2F6] px-6 py-[18px] flex justify-between items-center">
                 <div className="flex items-center gap-2 text-[#0B4F6C]">
                   <Phone size={16} />
-                  <h3 className="text-[13px] font-medium text-[#1C2B3A] uppercase tracking-[0.06em]">
+                  <h3 className="text-[13px] font-bold text-[#1C2B3A] uppercase tracking-[0.06em]">
                     Emergency Contact {index + 1}
                   </h3>
                 </div>
                 <button 
                   type="button" 
                   onClick={() => handleRemoveContact(index)} 
-                  className="text-sm font-normal text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
+                  className="text-[11px] font-semibold text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
                 >
                   REMOVE
                 </button>
@@ -179,7 +179,7 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
                   <div className="md:col-span-4">
-                    <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                    <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                       Contact Name
                     </label>
                     <input
@@ -193,7 +193,7 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
                     />
                   </div>
                   <div className="md:col-span-3">
-                    <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                    <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                       Relationship
                     </label>
                     <input
@@ -207,7 +207,7 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
                     />
                   </div>
                   <div className="md:col-span-5">
-                    <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                    <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                       Phone Number
                     </label>
                     <input
@@ -232,7 +232,7 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
             onClick={handleAddContact}
             className="border border-dashed border-[#DDE3EA] hover:border-[#0B4F6C] bg-[#FAFBFC] hover:bg-[#E8F4F8] rounded-[12px] py-5 flex items-center justify-center cursor-pointer transition-all duration-200"
           >
-            <span className="text-sm font-medium text-[#0B4F6C] uppercase tracking-[0.06em]">
+            <span className="text-[11px] font-bold text-[#0B4F6C] uppercase tracking-[0.06em]">
               + ADD SECOND CONTACT →
             </span>
           </div>
@@ -245,28 +245,28 @@ const EmergencyContactsTab = ({ profile, formData, onChange, onSaveSuccess, onSa
           <button
             type="button"
             onClick={onBack}
-            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-sm font-normal uppercase tracking-[0.06em] transition-colors duration-200"
+            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors duration-200"
           >
             ← BACK
           </button>
           <button
             type="button"
             onClick={handleDraftClick}
-            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-sm font-normal uppercase tracking-[0.06em] transition-colors duration-200"
+            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors duration-200"
           >
             {draftSaved ? '✓ DRAFT SAVED' : 'SAVE DRAFT'}
           </button>
         </div>
 
         <div className="flex flex-col items-center relative">
-          <span className="text-sm text-[#A8B8C8] font-normal mb-1">
+          <span className="text-[10px] text-[#A8B8C8] font-normal mb-1">
             Changes saved automatically
           </span>
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="h-10 px-6 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-[6px] text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 flex items-center justify-center shrink-0 min-w-[170px]"
+            className="h-10 px-6 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-[6px] text-[12px] font-bold uppercase tracking-[0.06em] transition-colors duration-200 flex items-center justify-center shrink-0 min-w-[170px]"
           >
             {isSaving ? 'SAVING...' : saveStatus === 'success' ? '✓ SAVED' : 'SAVE & CONTINUE →'}
           </button>

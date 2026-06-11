@@ -93,18 +93,18 @@ const ForgotPasswordPanel = ({ onBack }) => {
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1 text-neutral-500 hover:text-neutral-900 font-medium text-ui-sm uppercase tracking-widest transition-colors"
+          className="flex items-center gap-1 text-neutral-500 hover:text-neutral-900 font-bold text-ui-xs uppercase tracking-widest transition-colors"
         >
           <ChevronLeft size={14} /> Back
         </button>
-        <span className="text-ui-sm font-semibold text-neutral-900 uppercase tracking-wider">
+        <span className="text-ui-sm font-black text-neutral-900 uppercase tracking-wider">
           {step === 'done' ? 'Password Reset' : 'Forgot Password'}
         </span>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm font-medium">
+        <div className="bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm font-bold">
           {error}
         </div>
       )}
@@ -148,13 +148,13 @@ const ForgotPasswordPanel = ({ onBack }) => {
                 Your reset token is ready. In production this would be emailed — for demo, copy it below:
               </p>
               <div className="bg-neutral-50 border-2 border-dashed border-neutral-300 rounded-lg p-4 flex items-center justify-between gap-3">
-                <code className="text-sm font-mono text-neutral-800 break-all flex-1 select-all">
+                <code className="text-xs font-mono text-neutral-800 break-all flex-1 select-all">
                   {resetToken}
                 </code>
                 <button
                   type="button"
                   onClick={handleCopyToken}
-                  className="shrink-0 flex items-center gap-1 text-primary hover:text-primary/80 font-medium text-ui-sm uppercase tracking-widest transition-colors"
+                  className="shrink-0 flex items-center gap-1 text-primary hover:text-primary/80 font-bold text-ui-xs uppercase tracking-widest transition-colors"
                 >
                   {copied ? <Check size={14} /> : <Copy size={14} />}
                   {copied ? 'Copied!' : 'Copy'}
@@ -232,7 +232,7 @@ const ForgotPasswordPanel = ({ onBack }) => {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-success/10 rounded-full mb-2">
             <Check className="w-7 h-7 text-success" />
           </div>
-          <p className="text-ui-md font-semibold text-neutral-900">Password updated!</p>
+          <p className="text-ui-md font-black text-neutral-900">Password updated!</p>
           <p className="text-ui-sm text-neutral-500 font-medium">
             You can now sign in with your new password.
           </p>
@@ -299,8 +299,8 @@ const LoginPage = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-lg shadow-level-1 mb-4 sm:mb-4">
             <HeartPulse className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-[32px] leading-[1.1] font-medium text-neutral-900 tracking-tight font-swiss text-center">Theralign</h1>
-          <p className="text-neutral-500 mt-2 text-ui-sm font-normal uppercase tracking-wider hidden sm:block">
+          <h1 className="text-[32px] leading-[1.1] font-black text-neutral-900 tracking-tight font-swiss text-center">Theralign</h1>
+          <p className="text-neutral-500 mt-2 text-ui-sm font-semibold uppercase tracking-wider hidden sm:block">
             {showForgot ? 'Reset your password' : 'Sign in to your Theralign account'}
           </p>
         </div>
@@ -319,7 +319,7 @@ const LoginPage = () => {
                 {error && (
                   <div className="mb-5 bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm flex items-start gap-2">
                     <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-                    <span className="font-medium">{error}</span>
+                    <span className="font-bold">{error}</span>
                   </div>
                 )}
 
@@ -367,7 +367,7 @@ const LoginPage = () => {
                       <button
                         type="button"
                         onClick={() => { setShowForgot(true); setError(null); }}
-                        className="text-sm font-medium text-primary hover:underline uppercase tracking-wider transition-colors"
+                        className="text-[11px] font-bold text-primary hover:underline uppercase tracking-wider transition-colors"
                       >
                         Forgot password?
                       </button>
@@ -391,7 +391,7 @@ const LoginPage = () => {
 
                 {/* ─── Demo Account Quick-Login ─────────────────────── */}
                 <div className="mt-6 pt-5 border-t border-neutral-100">
-                  <p className="text-sm font-semibold text-neutral-400 uppercase tracking-widest text-center mb-3">
+                  <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest text-center mb-3">
                     Demo Accounts
                   </p>
                   <div className="grid grid-cols-3 gap-2">
@@ -412,23 +412,23 @@ const LoginPage = () => {
                             <Lock className="w-5 h-5 text-accent group-hover:scale-110 transition-transform duration-200" />
                           )}
                         </span>
-                        <span className="text-sm font-semibold text-neutral-600 uppercase tracking-widest group-hover:text-primary transition-colors">
+                        <span className="text-[9px] font-black text-neutral-600 uppercase tracking-widest group-hover:text-primary transition-colors">
                           {account.label}
                         </span>
                       </button>
                     ))}
                   </div>
-                  <p className="text-sm text-neutral-400 font-medium text-center mt-2">
+                  <p className="text-[9px] text-neutral-400 font-medium text-center mt-2">
                     Click any button to auto-login with demo credentials
                   </p>
                 </div>
 
                 {/* Footer Link */}
-                <p className="mt-6 text-center text-ui-sm text-neutral-500 font-normal">
+                <p className="mt-6 text-center text-ui-sm text-neutral-500 font-semibold">
                   Don&apos;t have an account?{' '}
                   <Link
                     to="/register"
-                    className="text-accent font-medium hover:underline transition"
+                    className="text-accent font-bold hover:underline transition"
                   >
                     Register here
                   </Link>

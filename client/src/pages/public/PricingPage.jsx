@@ -30,10 +30,10 @@ const PricingPage = () => {
         {/* Patient Pricing Card */}
         <Card className="border-2 border-neutral-900 p-8 flex flex-col gap-6 bg-white">
           <div>
-            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-2">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-2">
               PATIENTS PORTAL
             </span>
-            <h3 className="text-display-xs font-medium uppercase text-neutral-900 tracking-tight mb-4">
+            <h3 className="text-display-xs font-black uppercase text-neutral-900 tracking-tight mb-4">
               FREE DISCOVERY
             </h3>
             <div className="h-[1px] bg-neutral-200 w-full mb-6" />
@@ -47,8 +47,8 @@ const PricingPage = () => {
               Pay only the consultation fees set independently by clinicians. No service markup, no platform fee additions, no hidden costs.
             </p>
             <div className="border border-neutral-900 p-4 bg-neutral-50 flex items-center justify-between mt-6">
-              <span className="text-sm font-semibold uppercase tracking-wider text-neutral-900">REGISTRATION & BOOKING</span>
-              <span className="text-xl font-semibold text-success uppercase leading-none">₹0 FREE</span>
+              <span className="text-xs font-black uppercase tracking-wider text-neutral-900">REGISTRATION & BOOKING</span>
+              <span className="text-xl font-black text-success uppercase leading-none">₹0 FREE</span>
             </div>
           </div>
         </Card>
@@ -56,10 +56,10 @@ const PricingPage = () => {
         {/* Clinician Pricing Card */}
         <Card className="border-2 border-neutral-900 p-8 flex flex-col gap-6 bg-white">
           <div>
-            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-2">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-2">
               CLINICIANS PORTAL
             </span>
-            <h3 className="text-display-xs font-medium uppercase text-neutral-900 tracking-tight mb-4">
+            <h3 className="text-display-xs font-black uppercase text-neutral-900 tracking-tight mb-4">
               PAY-ON-COMPLETION
             </h3>
             <div className="h-[1px] bg-neutral-200 w-full mb-6" />
@@ -73,8 +73,8 @@ const PricingPage = () => {
               A single flat commission is withheld only from successfully completed consultations. Cancelled appointments trigger no fees.
             </p>
             <div className="border border-neutral-900 p-4 bg-neutral-50 flex items-center justify-between mt-6">
-              <span className="text-sm font-semibold uppercase tracking-wider text-neutral-900">FLAT PLATFORM COMMISSION</span>
-              <span className="text-xl font-semibold text-neutral-900 uppercase leading-none">10% FLAT</span>
+              <span className="text-xs font-black uppercase tracking-wider text-neutral-900">FLAT PLATFORM COMMISSION</span>
+              <span className="text-xl font-black text-neutral-900 uppercase leading-none">10% FLAT</span>
             </div>
           </div>
         </Card>
@@ -84,13 +84,13 @@ const PricingPage = () => {
       {/* Interactive Payout Calculator */}
       <div className="bg-white border-2 border-neutral-900 p-8 rounded-none shadow-none space-y-6">
         <div className="pb-4 border-b border-neutral-200">
-          <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-1">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
             INTERACTIVE ESTIMATION
           </span>
-          <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
+          <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
             CLINICIAN NET EARNINGS CALCULATOR
           </h3>
-          <p className="text-sm text-neutral-700 mt-1 font-medium">
+          <p className="text-xs text-neutral-700 mt-1 font-medium">
             Enter your custom single-session consultation fee below to calculate your platform splits instantly.
           </p>
         </div>
@@ -100,18 +100,18 @@ const PricingPage = () => {
           {/* Controls - Slider and input (5 columns) */}
           <div className="lg:col-span-5 space-y-6 text-left">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-neutral-900 uppercase tracking-widest">
+              <label className="text-[10px] font-black text-neutral-900 uppercase tracking-widest">
                 CONSULTATION FEE (₹200 - ₹5,000)
               </label>
               <div className="flex items-center gap-4">
-                <span className="text-lg font-semibold text-neutral-900 select-none">₹</span>
+                <span className="text-lg font-black text-neutral-900 select-none">₹</span>
                 <input
                   type="number"
                   min="200"
                   max="10000"
                   value={fee}
                   onChange={handleFeeChange}
-                  className="w-full px-4 py-2 border-2 border-neutral-900 text-sm font-medium focus:outline-none uppercase rounded-none"
+                  className="w-full px-4 py-2 border-2 border-neutral-900 text-sm font-bold focus:outline-none uppercase rounded-none"
                 />
               </div>
             </div>
@@ -138,23 +138,23 @@ const PricingPage = () => {
               
               {/* Gross Patient Fee */}
               <div className="flex-1 p-5 bg-neutral-50 text-left">
-                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block leading-none">PATIENT PAYS</span>
-                <span className="text-2xl font-semibold text-neutral-900 swiss-numeric block mt-3 leading-none">₹{fee.toLocaleString('en-IN')}</span>
-                <span className="text-sm font-medium text-neutral-500 uppercase tracking-wide block mt-2">Gross booking total</span>
+                <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest block leading-none">PATIENT PAYS</span>
+                <span className="text-2xl font-black text-neutral-900 swiss-numeric block mt-3 leading-none">₹{fee.toLocaleString('en-IN')}</span>
+                <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wide block mt-2">Gross booking total</span>
               </div>
 
               {/* Commission split (10%) */}
               <div className="flex-1 p-5 bg-neutral-50 text-left">
-                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block leading-none">COMMISSION (10%)</span>
-                <span className="text-2xl font-semibold text-accent swiss-numeric block mt-3 leading-none">₹{commission.toLocaleString('en-IN')}</span>
-                <span className="text-sm font-medium text-neutral-500 uppercase tracking-wide block mt-2">Platform operational share</span>
+                <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest block leading-none">COMMISSION (10%)</span>
+                <span className="text-2xl font-black text-accent swiss-numeric block mt-3 leading-none">₹{commission.toLocaleString('en-IN')}</span>
+                <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wide block mt-2">Platform operational share</span>
               </div>
 
               {/* Doctor net payout (90%) */}
               <div className="flex-1 p-5 bg-neutral-50 text-left">
-                <span className="text-sm font-semibold text-success uppercase tracking-widest block leading-none">DOCTOR RECEIVES (90%)</span>
-                <span className="text-2xl font-semibold text-success swiss-numeric block mt-3 leading-none">₹{netPayout.toLocaleString('en-IN')}</span>
-                <span className="text-sm font-medium text-success uppercase tracking-wide block mt-2">Direct bank reconciliation</span>
+                <span className="text-[9px] font-black text-success uppercase tracking-widest block leading-none">DOCTOR RECEIVES (90%)</span>
+                <span className="text-2xl font-black text-success swiss-numeric block mt-3 leading-none">₹{netPayout.toLocaleString('en-IN')}</span>
+                <span className="text-[9px] font-bold text-success uppercase tracking-wide block mt-2">Direct bank reconciliation</span>
               </div>
 
             </div>

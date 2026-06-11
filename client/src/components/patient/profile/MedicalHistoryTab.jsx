@@ -129,13 +129,13 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
   const renderCountChip = (count) => {
     if (count === 0) {
       return (
-        <div className="bg-[#F7F9FB] rounded-[4px] px-[10px] py-[3px] text-[#A8B8C8] text-sm font-medium font-sans">
+        <div className="bg-[#F7F9FB] rounded-[4px] px-[10px] py-[3px] text-[#A8B8C8] text-[12px] font-bold font-sans">
           0 added
         </div>
       );
     }
     return (
-      <div className="bg-[#E8F4F8] rounded-[4px] px-[10px] py-[3px] text-[#0B4F6C] text-sm font-medium font-sans animate-slide-in">
+      <div className="bg-[#E8F4F8] rounded-[4px] px-[10px] py-[3px] text-[#0B4F6C] text-[12px] font-bold font-sans animate-slide-in">
         {count} added
       </div>
     );
@@ -164,16 +164,16 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
       {/* Part 2 — The Page Title For This Tab */}
       <div className="flex justify-between items-center mb-2 mt-4 font-sans">
         <div>
-          <span className="text-sm font-medium text-[#F4845F] tracking-[0.1em] uppercase block mb-1">
+          <span className="text-[10px] font-bold text-[#F4845F] tracking-[0.1em] uppercase block mb-1">
             STEP 2 OF 5
           </span>
-          <h2 className="text-[22px] font-medium text-[#1C2B3A] tracking-[-0.02em] leading-tight">
+          <h2 className="text-[22px] font-bold text-[#1C2B3A] tracking-[-0.02em] leading-tight">
             Medical History
           </h2>
         </div>
         <div className="flex items-center gap-1.5 bg-[#F7F9FB] border border-[#DDE3EA] rounded-[6px] px-3 py-1.5 text-[#6B7C93]">
           <Info size={12} className="shrink-0" />
-          <span className="text-sm font-normal leading-none">
+          <span className="text-[11px] font-normal leading-none">
             This information is shared with your physiotherapist
           </span>
         </div>
@@ -192,11 +192,11 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
             <div>
               <div className="flex items-center gap-2 text-[#0B4F6C]">
                 <Activity size={16} />
-                <h3 className="text-[13px] font-medium text-[#1C2B3A] uppercase tracking-[0.06em]">
+                <h3 className="text-[13px] font-bold text-[#1C2B3A] uppercase tracking-[0.06em]">
                   Conditions
                 </h3>
               </div>
-              <p className="text-sm text-[#6B7C93] mt-0.5">
+              <p className="text-[11px] text-[#6B7C93] mt-0.5">
                 Existing diagnoses and chronic conditions
               </p>
             </div>
@@ -208,7 +208,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
             {/* Add Form */}
             <div className="flex items-end gap-3 w-full">
               <div className="w-[45%]">
-                <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                   Condition Name
                 </label>
                 <input
@@ -222,7 +222,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 />
               </div>
               <div className="w-[20%]">
-                <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                   Year
                 </label>
                 <input
@@ -236,7 +236,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 />
               </div>
               <div className="w-[25%]">
-                <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                   Notes
                 </label>
                 <input
@@ -251,7 +251,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 <button
                   type="button"
                   onClick={handleAddCondition}
-                  className="w-full h-[38px] bg-[#0B4F6C] hover:bg-[#083A52] text-white text-sm font-medium uppercase tracking-[0.06em] rounded-[6px] transition-colors duration-200"
+                  className="w-full h-[38px] bg-[#0B4F6C] hover:bg-[#083A52] text-white text-[11px] font-bold uppercase tracking-[0.06em] rounded-[6px] transition-colors duration-200"
                 >
                   ADD →
                 </button>
@@ -267,7 +267,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 <h4 className="text-[13px] font-medium text-[#A8B8C8] mb-0.5">
                   No conditions added
                 </h4>
-                <p className="text-sm text-[#C5CDD5]">
+                <p className="text-[11px] text-[#C5CDD5]">
                   Add any existing diagnoses above
                 </p>
               </div>
@@ -283,19 +283,19 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                       <div className="w-[3px] h-[28px] rounded-[2px] bg-[#E8F4F8] shrink-0" />
                       
                       {/* Segment 1: Condition Name */}
-                      <div className="w-[45%] font-normal text-[13px] text-[#1C2B3A] truncate pr-3">
+                      <div className="w-[45%] font-semibold text-[13px] text-[#1C2B3A] truncate pr-3">
                         {cond.conditionName}
                       </div>
 
                       {/* Segment 2: Year */}
                       <div className="w-[20%]">
-                        <span className="bg-[#F7F9FB] border border-[#EEF2F6] rounded-[4px] px-2 py-0.5 text-[#6B7C93] text-sm font-medium">
+                        <span className="bg-[#F7F9FB] border border-[#EEF2F6] rounded-[4px] px-2 py-0.5 text-[#6B7C93] text-[11px] font-medium">
                           {cond.year}
                         </span>
                       </div>
 
                       {/* Segment 3: Notes */}
-                      <div className="w-[25%] text-sm text-[#6B7C93] italic truncate pr-3" title={cond.notes}>
+                      <div className="w-[25%] text-[12px] text-[#6B7C93] italic truncate pr-3" title={cond.notes}>
                         {cond.notes || '—'}
                       </div>
                     </div>
@@ -304,7 +304,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                     <button
                       type="button"
                       onClick={() => handleRemoveCondition(idx)}
-                      className="text-sm font-normal text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
+                      className="text-[11px] font-semibold text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
                     >
                       REMOVE
                     </button>
@@ -322,11 +322,11 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
             <div>
               <div className="flex items-center gap-2 text-[#0B4F6C]">
                 <Pill size={16} />
-                <h3 className="text-[13px] font-medium text-[#1C2B3A] uppercase tracking-[0.06em]">
+                <h3 className="text-[13px] font-bold text-[#1C2B3A] uppercase tracking-[0.06em]">
                   Current Medications
                 </h3>
               </div>
-              <p className="text-sm text-[#6B7C93] mt-0.5">
+              <p className="text-[11px] text-[#6B7C93] mt-0.5">
                 Medications you are currently taking
               </p>
             </div>
@@ -338,7 +338,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
             {/* Add Form */}
             <div className="flex items-end gap-3 w-full">
               <div className="w-[80%]">
-                <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                   Medication Name
                 </label>
                 <input
@@ -355,7 +355,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 <button
                   type="button"
                   onClick={handleAddMedication}
-                  className="w-full h-[38px] bg-[#0B4F6C] hover:bg-[#083A52] text-white text-sm font-medium uppercase tracking-[0.06em] rounded-[6px] transition-colors duration-200"
+                  className="w-full h-[38px] bg-[#0B4F6C] hover:bg-[#083A52] text-white text-[11px] font-bold uppercase tracking-[0.06em] rounded-[6px] transition-colors duration-200"
                 >
                   ADD →
                 </button>
@@ -371,7 +371,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 <h4 className="text-[13px] font-medium text-[#A8B8C8] mb-0.5">
                   No medications added
                 </h4>
-                <p className="text-sm text-[#C5CDD5]">
+                <p className="text-[11px] text-[#C5CDD5]">
                   Add any current medications above
                 </p>
               </div>
@@ -387,7 +387,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                       <div className="w-[3px] h-[28px] rounded-[2px] bg-[#E8F4F8] shrink-0" />
                       
                       {/* Segment 1: Medication Name */}
-                      <div className="w-[80%] font-normal text-[13px] text-[#1C2B3A] flex items-center gap-2 truncate">
+                      <div className="w-[80%] font-semibold text-[13px] text-[#1C2B3A] flex items-center gap-2 truncate">
                         <span>{med}</span>
                         <Pill size={12} className="text-[#A8B8C8] shrink-0" />
                       </div>
@@ -397,7 +397,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                     <button
                       type="button"
                       onClick={() => handleRemoveMedication(idx)}
-                      className="text-sm font-normal text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
+                      className="text-[11px] font-semibold text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
                     >
                       REMOVE
                     </button>
@@ -415,11 +415,11 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
             <div>
               <div className="flex items-center gap-2 text-[#0B4F6C]">
                 <Stethoscope size={16} />
-                <h3 className="text-[13px] font-medium text-[#1C2B3A] uppercase tracking-[0.06em]">
+                <h3 className="text-[13px] font-bold text-[#1C2B3A] uppercase tracking-[0.06em]">
                   Past Surgeries
                 </h3>
               </div>
-              <p className="text-sm text-[#6B7C93] mt-0.5">
+              <p className="text-[11px] text-[#6B7C93] mt-0.5">
                 Previous surgical procedures and interventions
               </p>
             </div>
@@ -431,7 +431,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
             {/* Add Form */}
             <div className="flex items-end gap-3 w-full">
               <div className="w-[40%]">
-                <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                   Surgery Name
                 </label>
                 <input
@@ -445,7 +445,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 />
               </div>
               <div className="w-[18%]">
-                <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                   Year
                 </label>
                 <input
@@ -459,7 +459,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 />
               </div>
               <div className="w-[28%]">
-                <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+                <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                   Description
                 </label>
                 <input
@@ -474,7 +474,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 <button
                   type="button"
                   onClick={handleAddSurgery}
-                  className="w-full h-[38px] bg-[#0B4F6C] hover:bg-[#083A52] text-white text-sm font-medium uppercase tracking-[0.06em] rounded-[6px] transition-colors duration-200"
+                  className="w-full h-[38px] bg-[#0B4F6C] hover:bg-[#083A52] text-white text-[11px] font-bold uppercase tracking-[0.06em] rounded-[6px] transition-colors duration-200"
                 >
                   ADD →
                 </button>
@@ -490,7 +490,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                 <h4 className="text-[13px] font-medium text-[#A8B8C8] mb-0.5">
                   No surgeries recorded
                 </h4>
-                <p className="text-sm text-[#C5CDD5]">
+                <p className="text-[11px] text-[#C5CDD5]">
                   Add any past surgical procedures above
                 </p>
               </div>
@@ -507,17 +507,17 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                       
                       {/* Segment 1: Surgery Name & Description */}
                       <div className="w-[40%] flex flex-col min-w-0 pr-3">
-                        <span className="font-normal text-[13px] text-[#1C2B3A] truncate">
+                        <span className="font-semibold text-[13px] text-[#1C2B3A] truncate">
                           {surg.surgeryName}
                         </span>
-                        <span className="text-sm text-[#6B7C93] italic truncate">
+                        <span className="text-[11px] text-[#6B7C93] italic truncate">
                           {surg.description || 'No description provided'}
                         </span>
                       </div>
 
                       {/* Segment 2: Year */}
                       <div className="w-[18%]">
-                        <span className="bg-[#F7F9FB] border border-[#EEF2F6] rounded-[4px] px-2 py-0.5 text-[#6B7C93] text-sm font-medium">
+                        <span className="bg-[#F7F9FB] border border-[#EEF2F6] rounded-[4px] px-2 py-0.5 text-[#6B7C93] text-[11px] font-medium">
                           {surg.year}
                         </span>
                       </div>
@@ -527,7 +527,7 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
                     <button
                       type="button"
                       onClick={() => handleRemoveSurgery(idx)}
-                      className="text-sm font-normal text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
+                      className="text-[11px] font-semibold text-[#C0392B] uppercase tracking-[0.06em] hover:underline cursor-pointer select-none"
                     >
                       REMOVE
                     </button>
@@ -545,28 +545,28 @@ const MedicalHistoryTab = ({ profile, formData, onChange, onSaveSuccess, onSaveD
           <button
             type="button"
             onClick={onBack}
-            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-sm font-normal uppercase tracking-[0.06em] transition-colors duration-200"
+            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors duration-200"
           >
             ← BACK
           </button>
           <button
             type="button"
             onClick={handleDraftClick}
-            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-sm font-normal uppercase tracking-[0.06em] transition-colors duration-200"
+            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors duration-200"
           >
             {draftSaved ? '✓ DRAFT SAVED' : 'SAVE DRAFT'}
           </button>
         </div>
 
         <div className="flex flex-col items-center relative">
-          <span className="text-sm text-[#A8B8C8] font-normal mb-1">
+          <span className="text-[10px] text-[#A8B8C8] font-normal mb-1">
             Changes saved automatically
           </span>
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="h-10 px-6 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-[6px] text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 flex items-center justify-center shrink-0 min-w-[170px]"
+            className="h-10 px-6 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-[6px] text-[12px] font-bold uppercase tracking-[0.06em] transition-colors duration-200 flex items-center justify-center shrink-0 min-w-[170px]"
           >
             {isSaving ? 'SAVING...' : saveStatus === 'success' ? '✓ SAVED' : 'SAVE & CONTINUE →'}
           </button>

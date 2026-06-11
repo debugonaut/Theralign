@@ -36,7 +36,7 @@ const UnauthorizedPage = () => {
       <div className="p-4 bg-rose-50 border border-rose-100 rounded-full text-rose-600 mb-6 animate-bounce">
         <ShieldAlert size={48} />
       </div>
-      <h1 className="text-4xl font-medium text-secondary tracking-tight">Access Restricted</h1>
+      <h1 className="text-4xl font-extrabold text-secondary tracking-tight">Access Restricted</h1>
       <p className="text-slate-500 mt-3 max-w-sm font-medium leading-relaxed">
         You don&apos;t have authorization credentials to view this page. If you believe this is in error, please consult platform administration.
       </p>

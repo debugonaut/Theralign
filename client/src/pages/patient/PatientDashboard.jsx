@@ -124,12 +124,12 @@ const PatientDashboard = () => {
       {/* Network Failure Banner */}
       {!isOnline && (
         <div className="w-full bg-white border-2 border-warning rounded-lg p-5 flex items-start gap-4 shadow-level-1 animate-pulse max-w-[1200px]">
-          <div className="w-10 h-10 border-2 border-warning flex items-center justify-center text-warning font-medium rounded bg-warning/5 text-ui-lg select-none shrink-0">
+          <div className="w-10 h-10 border-2 border-warning flex items-center justify-center text-warning font-bold rounded bg-warning/5 text-ui-lg select-none shrink-0">
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div className="text-left flex-grow">
-            <h4 className="text-ui-md font-medium text-neutral-900 uppercase">You're currently offline</h4>
-            <p className="text-ui-sm text-neutral-500 font-normal leading-relaxed mt-1">
+            <h4 className="text-ui-md font-bold text-neutral-900 uppercase">You're currently offline</h4>
+            <p className="text-ui-sm text-neutral-500 font-semibold leading-relaxed mt-1">
               Some features may not be available. We'll reconnect automatically when your connection is restored.
             </p>
           </div>
@@ -138,10 +138,10 @@ const PatientDashboard = () => {
 
       {/* Page Header Greeting */}
       <div className="flex flex-col gap-3">
-        <h1 className="text-display-sm font-medium text-neutral-900 tracking-tighter leading-none mb-1 normal-case">
+        <h1 className="text-display-sm font-black text-neutral-900 tracking-tighter leading-none mb-1 normal-case">
           Good morning, {firstName}.
         </h1>
-        <span className="text-ui-lg font-medium text-neutral-500 tracking-wide block">
+        <span className="text-ui-lg font-semibold text-neutral-500 tracking-wide block">
           {todayFormatted}
         </span>
         <div className="h-[1px] bg-neutral-200 w-full mt-4 max-w-[1200px]" />
@@ -153,18 +153,18 @@ const PatientDashboard = () => {
       ) : spotlightAppt ? (
         <div className="w-full p-6 bg-neutral-100 bg-diagonal border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col gap-4 relative transition-warm max-w-[1200px]">
           <div>
-            <span className="text-ui-sm font-medium text-accent tracking-widest uppercase block mb-2">
+            <span className="text-ui-xs font-bold text-accent tracking-widest uppercase block mb-2">
               Your Next Appointment
             </span>
-            <h3 className="text-display-xs font-medium text-neutral-900 tracking-tighter leading-none mb-2 normal-case">
+            <h3 className="text-display-xs font-black text-neutral-900 tracking-tighter leading-none mb-2 normal-case">
               {spotlightAppt.doctor?.user?.name ? `Dr. ${toTitleCase(spotlightAppt.doctor.user.name)}` : 'Physiotherapist'}
             </h3>
-            <p className="text-ui-xl font-medium text-neutral-900 tracking-wide">
+            <p className="text-ui-xl font-bold text-neutral-900 tracking-wide">
               {formatSpotlightDate(spotlightAppt.date)} · {spotlightAppt.startTime} – {spotlightAppt.endTime}
             </p>
           </div>
 
-          <div className="flex items-center gap-6 text-sm font-normal text-neutral-500 tracking-wide">
+          <div className="flex items-center gap-6 text-xs font-semibold text-neutral-500 tracking-wide">
             <span className="text-accent">
               {toTitleCase(Array.isArray(spotlightAppt.doctor?.specialization)
                 ? spotlightAppt.doctor.specialization[0]
@@ -173,7 +173,7 @@ const PatientDashboard = () => {
             <span>·</span>
             <span>{toTitleCase(spotlightAppt.doctor?.clinicName || 'Clinic')}</span>
             <span>·</span>
-            <span className="text-neutral-900 font-medium">{formatINR(spotlightAppt.consultationFee || spotlightAppt.doctor?.consultationFee)}</span>
+            <span className="text-neutral-900 font-bold">{formatINR(spotlightAppt.consultationFee || spotlightAppt.doctor?.consultationFee)}</span>
           </div>
 
           <div className="flex gap-2 mt-2">
@@ -195,7 +195,7 @@ const PatientDashboard = () => {
         </div>
       ) : (
         <div className="w-full p-6 border border-neutral-200/50 bg-white text-center flex flex-col items-center gap-3 rounded-lg shadow-level-1 transition-warm max-w-[1200px]">
-          <span className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
             No Upcoming Appointments
           </span>
           <p className="text-ui-md text-neutral-500 font-medium max-w-sm">
@@ -223,10 +223,10 @@ const PatientDashboard = () => {
             key={m.label}
             className="group bg-white rounded-lg shadow-level-1 hover:shadow-level-2 border border-neutral-200/40 p-6 transition-warm select-none text-left"
           >
-            <span className="text-sm font-normal text-neutral-500 tracking-wide block mb-2">
+            <span className="text-xs font-semibold text-neutral-500 tracking-wide block mb-2">
               {m.label}
             </span>
-            <h2 className="text-display-sm font-medium text-neutral-900 tracking-tighter leading-none normal-case">
+            <h2 className="text-display-sm font-black text-neutral-900 tracking-tighter leading-none normal-case">
               {loading ? '—' : m.val}
             </h2>
           </div>
@@ -244,7 +244,7 @@ const PatientDashboard = () => {
             ))}
           </div>
         ) : appointments.length === 0 ? (
-          <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg text-ui-sm font-medium text-neutral-400 uppercase tracking-wider">
+          <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg text-ui-xs font-bold text-neutral-400 uppercase tracking-wider">
             No recent system activity recorded.
           </div>
         ) : (
@@ -270,17 +270,17 @@ const PatientDashboard = () => {
                     <span className="text-neutral-500 w-16 shrink-0 text-left">
                       {apptDate}
                     </span>
-                    <span className="text-neutral-900 font-medium w-48 shrink-0 truncate">
+                    <span className="text-neutral-900 font-bold w-48 shrink-0 truncate">
                       {formattedDrName}
                     </span>
-                    <span className="text-accent text-sm font-normal tracking-wide hidden sm:inline">
+                    <span className="text-accent text-xs font-semibold tracking-wide hidden sm:inline">
                       {toTitleCase(spec)}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-6 shrink-0">
                     <Badge variant={appt.status} size="sm" />
-                    <span className="text-sm font-medium text-primary hover:text-accent hover:underline select-none">
+                    <span className="text-xs font-bold text-primary hover:text-accent hover:underline select-none">
                       View →
                     </span>
                   </div>

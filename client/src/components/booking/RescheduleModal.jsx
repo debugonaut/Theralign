@@ -123,8 +123,8 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50 bg-slate-50/50 shrink-0">
           <div>
-            <h3 className="text-sm font-medium text-slate-800">Reschedule Appointment</h3>
-            <p className="text-sm text-slate-500 font-medium mt-0.5">
+            <h3 className="text-sm font-extrabold text-slate-800">Reschedule Appointment</h3>
+            <p className="text-[10px] text-slate-500 font-medium mt-0.5">
               Select a new time slot with Dr. {appointment?.doctor?.user?.name || 'Physiotherapist'}
             </p>
           </div>
@@ -138,7 +138,7 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
           {/* Current Booking Info Alert */}
           <div className="p-3.5 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-2.5">
             <AlertTriangle className="text-amber-500 mt-0.5 shrink-0" size={16} />
-            <div className="text-sm text-amber-800 leading-relaxed font-normal">
+            <div className="text-[11px] text-amber-800 leading-relaxed font-semibold">
               Your current booking is on <strong className="text-amber-900">{formatFullHumanDate(appointment?.date)}</strong> at <strong className="text-amber-900">{appointment?.startTime} – {appointment?.endTime}</strong>. Confirming a new slot will automatically release this time to other patients.
             </div>
           </div>
@@ -146,13 +146,13 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
           {loading ? (
             <div className="py-4 text-center">
               <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-primary mx-auto" />
-              <p className="mt-3 text-sm text-slate-400 font-medium">Fetching therapist's calendar...</p>
+              <p className="mt-3 text-xs text-slate-400 font-bold">Fetching therapist's calendar...</p>
             </div>
           ) : availability.length === 0 ? (
             <div className="py-4 text-center flex flex-col items-center gap-2">
               <Calendar className="h-8 w-8 text-neutral-400 mx-auto" strokeWidth={1.5} />
-              <p className="text-sm font-medium text-slate-700">No Other Slots Available</p>
-              <p className="text-sm text-slate-400 max-w-xs">
+              <p className="text-xs font-bold text-slate-700">No Other Slots Available</p>
+              <p className="text-[10px] text-slate-400 max-w-xs">
                 This doctor doesn't have any other open availability slots at the moment. Keep your current booking or try again later.
               </p>
             </div>
@@ -160,7 +160,7 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
             <div className="space-y-5 select-none">
               {/* Date Pills Selector */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-400 uppercase tracking-wider block">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                   Select a New Date
                 </label>
                 <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide shrink-0">
@@ -186,11 +186,11 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
 
               {/* Time Slots Chips Grid */}
               <div className="space-y-2.5">
-                <label className="text-sm font-medium text-slate-400 uppercase tracking-wider block">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                   Select a New Time Slot
                 </label>
                 {availableSlots.length === 0 ? (
-                  <p className="text-sm text-slate-400 font-normal italic">No active slots left on this day.</p>
+                  <p className="text-xs text-slate-400 font-semibold italic">No active slots left on this day.</p>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1">
                     {availableSlots.map((slot) => {
@@ -224,7 +224,7 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all cursor-pointer disabled:opacity-50"
+            className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-all cursor-pointer disabled:opacity-50"
           >
             Keep Original
           </button>
@@ -232,7 +232,7 @@ const RescheduleModal = ({ isOpen, onClose, appointment, onSuccess }) => {
             type="button"
             onClick={handleReschedule}
             disabled={submitting || !selectedSlot}
-            className="bg-primary hover:bg-primary-dark text-white rounded-xl px-5 py-2.5 font-medium text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary hover:bg-primary-dark text-white rounded-xl px-5 py-2.5 font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? (
               <>

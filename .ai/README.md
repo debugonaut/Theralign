@@ -202,8 +202,7 @@ See `/docs/development-rules.md` for the full set. Key rules:
 | 9 | ✅ | Admin (12) + Notifications (4) |
 | 10–12 | ✅ | UX, Accessibility, Waitlist |
 | 13 | ✅ | Cancellation & Refunds (8) |
-| 14 | ✅ | Pre-Appointment Media Upload & Viewing Flow (4) |
-| **15** | 📋 | **Care Continuity (TBD)** |
+| **14** | 📋 | **Care Continuity (TBD)** |
 
 ---
 

@@ -333,9 +333,8 @@ if (expectedSignature !== receivedSignature) {
 | 11. Patient Experience | ✅ Complete | — | UX enhancements |
 | 12. Accessibility | ✅ Complete | — | WCAG compliance |
 | 13. Refunds & Cancellation | ✅ Complete | 8 | Patient/Doctor/Admin cancel, Refund approval |
-| 14. Pre-Appointment Media | ✅ Complete | 4 | Upload, retrieve, delete media, and count check |
 
-**Next Phase:** Phase 15 — Care Continuity (Session Records, Exercise Tracking)
+**Next Phase:** Phase 14 — Care Continuity (Session Records, Exercise Tracking)
 
 ---
 

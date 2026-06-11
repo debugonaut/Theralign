@@ -48,7 +48,7 @@ const DoctorReviewsSection = ({ doctorId, averageRating = 0, totalReviews = 0 })
   return (
     <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm text-left">
       {/* Section Header */}
-      <h2 className="text-lg font-medium text-slate-800 mb-4 pb-2 border-b border-slate-50 flex items-center gap-2">
+      <h2 className="text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-50 flex items-center gap-2">
         <MessageSquare size={20} className="text-primary" />
         Patient Reviews
       </h2>
@@ -59,11 +59,11 @@ const DoctorReviewsSection = ({ doctorId, averageRating = 0, totalReviews = 0 })
           {renderStars(averageRating, true)}
         </div>
         <div>
-          <p className="text-2xl font-semibold text-slate-800">
+          <p className="text-2xl font-extrabold text-slate-800">
             {totalReviews > 0 ? averageRating.toFixed(1) : '—'}
             <span className="text-sm font-medium text-slate-400 ml-1">/ 5</span>
           </p>
-          <p className="text-sm text-slate-500 font-medium mt-0.5">
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
             Based on {totalReviews} {totalReviews === 1 ? 'review' : 'reviews'}
           </p>
         </div>
@@ -79,8 +79,8 @@ const DoctorReviewsSection = ({ doctorId, averageRating = 0, totalReviews = 0 })
       ) : reviews.length === 0 ? (
         <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-6 text-center flex flex-col items-center gap-2">
           <Star className="w-8 h-8 text-amber-400 fill-amber-400" />
-          <p className="text-sm font-medium text-slate-700">No reviews yet</p>
-          <p className="text-sm text-slate-400 max-w-sm">
+          <p className="text-sm font-bold text-slate-700">No reviews yet</p>
+          <p className="text-xs text-slate-400 max-w-sm">
             No reviews yet. Be the first to share your experience.
           </p>
         </div>
@@ -96,7 +96,7 @@ const DoctorReviewsSection = ({ doctorId, averageRating = 0, totalReviews = 0 })
           {reviews.length > 5 && (
             <button
               onClick={() => setShowAll(!showAll)}
-              className="mt-4 w-full py-2.5 text-sm font-medium text-primary border border-primary/20 bg-blue-50/50 hover:bg-blue-50 rounded-xl transition-colors cursor-pointer"
+              className="mt-4 w-full py-2.5 text-xs font-bold text-primary border border-primary/20 bg-blue-50/50 hover:bg-blue-50 rounded-xl transition-colors cursor-pointer"
             >
               {showAll
                 ? 'Show fewer reviews'

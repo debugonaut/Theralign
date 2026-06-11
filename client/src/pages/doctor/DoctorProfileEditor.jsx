@@ -701,7 +701,7 @@ const DoctorProfileEditor = () => {
         const updatedUser = res.data.profile.user;
         const storedToken = localStorage.getItem('theralign_token');
         if (storedToken && updatedUser) {
-          setCredentials({ ...user, ...updatedUser }, storedToken);
+          setCredentials(updatedUser, storedToken);
         }
 
         fetchProfileData();
@@ -839,7 +839,7 @@ const DoctorProfileEditor = () => {
 
   if (isLoading) {
     return (
-      <div className="py-24 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest bg-white">
+      <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest bg-white">
         LOADING PRACTITIONER SETTINGS PANELS...
       </div>
     );
@@ -871,23 +871,23 @@ const DoctorProfileEditor = () => {
       {draftToRestore && (
         <div className="bg-[#E8F4F8] border border-[#0B4F6C]/25 text-[#0B4F6C] p-4 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4">
           <div className="flex flex-col text-left">
-            <span className="text-sm font-semibold uppercase tracking-wider">
+            <span className="text-[12px] font-black uppercase tracking-wider">
               Saved Draft Found
             </span>
-            <span className="text-sm text-neutral-600 mt-0.5">
+            <span className="text-[11px] text-neutral-600 mt-0.5">
               You have a saved draft from your previous session
             </span>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleRestoreDraft}
-              className="px-4 py-2 bg-[#0B4F6C] text-white font-medium text-sm uppercase tracking-wider rounded-md hover:bg-[#083A52] transition-colors cursor-pointer select-none"
+              className="px-4 py-2 bg-[#0B4F6C] text-white font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-[#083A52] transition-colors cursor-pointer select-none"
             >
               Continue
             </button>
             <button
               onClick={handleDiscardDraft}
-              className="px-4 py-2 bg-white border border-neutral-300 text-neutral-600 font-medium text-sm uppercase tracking-wider rounded-md hover:bg-neutral-50 transition-colors cursor-pointer select-none"
+              className="px-4 py-2 bg-white border border-neutral-300 text-neutral-600 font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-neutral-50 transition-colors cursor-pointer select-none"
             >
               Start Fresh
             </button>
@@ -899,20 +899,20 @@ const DoctorProfileEditor = () => {
       {showUnsavedBanner && (
         <div className="bg-amber-50 border border-amber-300 text-amber-900 p-4 rounded-lg flex items-center justify-between shadow-sm animate-fade-in font-sans mb-4 max-w-4xl w-full">
           <div className="flex items-center gap-2.5">
-            <span className="text-sm font-medium uppercase tracking-wider">
+            <span className="text-[12px] font-bold uppercase tracking-wider">
               UNSAVED CHANGES IN {activeSteps[dirtyStep]?.label}
             </span>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => handleSaveDirtyStep(dirtyStep)}
-              className="px-4 py-2 bg-amber-600 text-white font-medium text-sm uppercase tracking-wider rounded-md hover:bg-amber-700 transition cursor-pointer select-none border-0"
+              className="px-4 py-2 bg-amber-600 text-white font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-amber-700 transition cursor-pointer select-none border-0"
             >
               SAVE NOW
             </button>
             <button
               onClick={() => discardStepChanges(dirtyStep)}
-              className="px-4 py-2 bg-white border border-amber-300 text-amber-700 font-medium text-sm uppercase tracking-wider rounded-md hover:bg-amber-100 transition cursor-pointer select-none"
+              className="px-4 py-2 bg-white border border-amber-300 text-amber-700 font-bold text-[11px] uppercase tracking-wider rounded-md hover:bg-amber-100 transition cursor-pointer select-none"
             >
               DISCARD
             </button>
@@ -923,7 +923,7 @@ const DoctorProfileEditor = () => {
       {/* ── Page Header ── */}
       <div className="max-w-4xl w-full">
         <SectionHeader title="My Profile" size="lg" ruled={true} className="mb-0" />
-        <p className="text-ui-sm text-neutral-500 font-normal uppercase tracking-wider mt-3">
+        <p className="text-ui-sm text-neutral-500 font-semibold uppercase tracking-wider mt-3">
           Configure your professional clinical parameters, update coordinates, set fee charts, and submit license files.
         </p>
       </div>
@@ -967,7 +967,7 @@ const DoctorProfileEditor = () => {
                   showLock={true}
                   placeholder="you@example.com"
                 />
-                <span className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
+                <span className="text-[10px] font-medium text-neutral-400 uppercase tracking-wider">
                   Email cannot be changed. Contact support if needed.
                 </span>
               </div>
@@ -975,11 +975,11 @@ const DoctorProfileEditor = () => {
 
             {/* Phone Input with Internal prefix line */}
             <div className="flex flex-col gap-1.5 w-full md:w-1/2">
-              <label className="text-sm font-normal text-neutral-700">
+              <label className="text-[12px] font-semibold text-neutral-700">
                 Phone Number *
               </label>
               <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
-                <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-medium text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
+                <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
                   +91
                 </div>
                 <input
@@ -987,7 +987,7 @@ const DoctorProfileEditor = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   placeholder="e.g. 9876543210"
-                  className="flex-1 px-3 text-ui-sm font-normal text-neutral-900 focus:outline-none bg-transparent border-0"
+                  className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
                   required
                 />
               </div>
@@ -1008,12 +1008,12 @@ const DoctorProfileEditor = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-ui-sm font-medium text-neutral-400 uppercase">NO PHOTO</span>
+                  <span className="text-ui-xs font-bold text-neutral-400 uppercase">NO PHOTO</span>
                 )}
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="h-10 px-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-medium text-ui-sm flex items-center justify-center uppercase tracking-widest transition-all select-none rounded-md cursor-pointer w-max shadow-sm bg-white">
+                <label className="h-10 px-4 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs flex items-center justify-center uppercase tracking-widest transition-all select-none rounded-md cursor-pointer w-max shadow-sm bg-white">
                   Upload Photo →
                   <input
                     type="file"
@@ -1022,7 +1022,7 @@ const DoctorProfileEditor = () => {
                     className="hidden"
                   />
                 </label>
-                <span className="text-sm text-neutral-400 font-medium uppercase tracking-wider block">
+                <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">
                   JPG or PNG · Max 5MB
                 </span>
               </div>
@@ -1038,14 +1038,14 @@ const DoctorProfileEditor = () => {
           
           {/* Specialization Multi-Select Dropdown */}
           <div className="flex flex-col gap-1.5" ref={specDropdownRef}>
-            <label className="text-sm font-normal text-neutral-700">Specialization *</label>
+            <label className="text-[12px] font-semibold text-neutral-700">Specialization *</label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setSpecDropdownOpen((o) => !o)}
                 className="w-full h-10 px-3 border border-neutral-200 rounded-md bg-white text-left flex items-center justify-between shadow-sm hover:border-primary transition-all focus:outline-none focus:ring-3 focus:ring-primary/12 focus:border-primary"
               >
-                <span className={`text-ui-sm font-normal truncate ${selectedSpecs.length === 0 ? 'text-neutral-400' : 'text-neutral-900'}`}>
+                <span className={`text-ui-sm font-semibold truncate ${selectedSpecs.length === 0 ? 'text-neutral-400' : 'text-neutral-900'}`}>
                   {selectedSpecs.length === 0 ? 'Select specializations...' : selectedSpecs.join(', ')}
                 </span>
                 <svg className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform ${specDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -1068,7 +1068,7 @@ const DoctorProfileEditor = () => {
                         }`}>
                           {isSelected && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                         </div>
-                        <span className={`text-ui-sm font-normal ${isSelected ? 'text-neutral-900' : 'text-neutral-600'}`}>{option}</span>
+                        <span className={`text-ui-sm font-semibold ${isSelected ? 'text-neutral-900' : 'text-neutral-600'}`}>{option}</span>
                       </div>
                     );
                   })}
@@ -1076,7 +1076,7 @@ const DoctorProfileEditor = () => {
               )}
             </div>
             {selectedSpecs.length > 0 && (
-              <span className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
                 {selectedSpecs.length} selected
               </span>
             )}
@@ -1117,7 +1117,7 @@ const DoctorProfileEditor = () => {
               placeholder="Describe your treatment philosophy, academic experience, and physiotherapist patient care methods..."
               required
             />
-            <span className="text-sm font-medium text-neutral-400 text-right uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-neutral-400 text-right uppercase tracking-wider">
               {bio.length} / 1000 characters (minimum 50 chars)
             </span>
           </div>
@@ -1199,20 +1199,20 @@ const DoctorProfileEditor = () => {
               <button
                 type="button"
                 onClick={handleUseMyLocation}
-                className="h-10 px-5 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-md text-sm font-medium uppercase tracking-widest transition-colors flex-1 cursor-pointer select-none"
+                className="h-10 px-5 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-md text-[11px] font-bold uppercase tracking-widest transition-colors flex-1 cursor-pointer select-none"
               >
                 USE MY LOCATION →
               </button>
               <button
                 type="button"
                 onClick={() => setIsManualCoordinates(!isManualCoordinates)}
-                className="h-10 px-4 border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-md text-sm font-medium uppercase tracking-widest transition-colors cursor-pointer select-none bg-white"
+                className="h-10 px-4 border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-md text-[11px] font-bold uppercase tracking-widest transition-colors cursor-pointer select-none bg-white"
               >
                 {isManualCoordinates ? 'Lock Coordinates' : 'Edit Manually'}
               </button>
             </div>
             {locationError && (
-              <span className="text-sm text-[#C0392B] font-medium mt-1">
+              <span className="text-[11px] text-[#C0392B] font-bold mt-1">
                 {locationError}
               </span>
             )}
@@ -1223,11 +1223,11 @@ const DoctorProfileEditor = () => {
             <SectionHeader title="Consultation Fee" size="sm" ruled={true} className="mb-0" />
             
             <div className="flex flex-col gap-1.5 w-[240px]">
-              <label className="text-sm font-normal text-neutral-700">
+              <label className="text-[12px] font-semibold text-neutral-700">
                 Consultation Fee Per Session *
               </label>
               <div className="flex border border-neutral-200 rounded-md bg-white focus-within:ring-3 focus-within:ring-primary/12 focus-within:border-primary transition-all h-10 overflow-hidden shadow-sm">
-                <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-medium text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
+                <div className="bg-neutral-100 px-3.5 border-r border-neutral-200 font-bold text-ui-sm text-neutral-500 flex items-center select-none shrink-0">
                   ₹
                 </div>
                 <input
@@ -1235,12 +1235,12 @@ const DoctorProfileEditor = () => {
                   min="0"
                   value={consultationFee}
                   onChange={(e) => setConsultationFee(e.target.value.replace(/\D/g, ''))}
-                  className="flex-1 px-3 text-ui-sm font-normal text-neutral-900 focus:outline-none bg-transparent border-0"
+                  className="flex-1 px-3 text-ui-sm font-semibold text-neutral-900 focus:outline-none bg-transparent border-0"
                   required
                 />
               </div>
             </div>
-            <p className="text-sm text-neutral-500 font-medium">
+            <p className="text-[11px] text-neutral-500 font-medium">
               This amount is shown to patients on your profile and at booking. You can update it at any time.
             </p>
           </div>
@@ -1258,14 +1258,14 @@ const DoctorProfileEditor = () => {
                 {/* Degree status */}
                 <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 p-4 rounded-md h-16">
                   <div className="flex flex-col">
-                    <span className="text-ui-sm font-medium text-neutral-900 uppercase">
+                    <span className="text-ui-xs font-bold text-neutral-900 uppercase">
                       Degree Certificate
                     </span>
-                    <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider mt-1">
+                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mt-1">
                       {profile?.degreeDocument ? 'DEGREE FILE SUBMITTED ✓' : 'NOT UPLOADED'}
                     </span>
                   </div>
-                  <label className="text-sm font-medium text-neutral-700 border border-neutral-200 px-3 py-1.5 bg-white hover:bg-neutral-50 transition-all cursor-pointer select-none rounded-md shadow-sm">
+                  <label className="text-[10px] font-bold text-neutral-700 border border-neutral-200 px-3 py-1.5 bg-white hover:bg-neutral-50 transition-all cursor-pointer select-none rounded-md shadow-sm">
                     {profile?.degreeDocument ? 'RE-UPLOAD →' : 'UPLOAD →'}
                     <input
                       type="file"
@@ -1279,14 +1279,14 @@ const DoctorProfileEditor = () => {
                 {/* License status */}
                 <div className="flex items-center justify-between bg-neutral-50 border border-neutral-200 p-4 rounded-md h-16">
                   <div className="flex flex-col">
-                    <span className="text-ui-sm font-medium text-neutral-900 uppercase">
+                    <span className="text-ui-xs font-bold text-neutral-900 uppercase">
                       Practitioner License Document
                     </span>
-                    <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider mt-1">
+                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mt-1">
                       {profile?.licenseDocument ? 'LICENSE FILE SUBMITTED ✓' : 'NOT UPLOADED'}
                     </span>
                   </div>
-                  <label className="text-sm font-medium text-neutral-700 border border-neutral-200 px-3 py-1.5 bg-white hover:bg-neutral-50 transition-all cursor-pointer select-none rounded-md shadow-sm">
+                  <label className="text-[10px] font-bold text-neutral-700 border border-neutral-200 px-3 py-1.5 bg-white hover:bg-neutral-50 transition-all cursor-pointer select-none rounded-md shadow-sm">
                     {profile?.licenseDocument ? 'RE-UPLOAD →' : 'UPLOAD →'}
                     <input
                       type="file"
@@ -1301,17 +1301,17 @@ const DoctorProfileEditor = () => {
               {/* Pending uploads banner */}
               {(degreeFile || licenseFile) && (
                 <div className="bg-[#FEF3E2]/40 border border-warning/30 p-4 rounded-md">
-                  <span className="text-sm font-semibold text-warning uppercase tracking-widest block mb-1">
+                  <span className="text-[10px] font-black text-warning uppercase tracking-widest block mb-1">
                     Pending Uploads Attached
                   </span>
                   <div className="space-y-1">
                     {degreeFile && (
-                      <p className="text-ui-sm font-medium text-neutral-700 truncate">
+                      <p className="text-ui-xs font-bold text-neutral-700 truncate">
                         Degree: {degreeFile.name}
                       </p>
                     )}
                     {licenseFile && (
-                      <p className="text-ui-sm font-medium text-neutral-700 truncate">
+                      <p className="text-ui-xs font-bold text-neutral-700 truncate">
                         License: {licenseFile.name}
                       </p>
                     )}
@@ -1347,9 +1347,9 @@ const DoctorProfileEditor = () => {
                         ${isTimelineFuture ? 'bg-white border-neutral-200 text-neutral-400' : ''}
                       `} style={{ width: '22px', height: '22px' }}>
                         {isTimelineCompleted ? (
-                          <span className="text-sm font-semibold">✓</span>
+                          <span className="text-[10px] font-black">✓</span>
                         ) : (
-                          <span className="text-sm font-medium">{idx + 1}</span>
+                          <span className="text-[9px] font-bold">{idx + 1}</span>
                         )}
                       </div>
                       
@@ -1361,7 +1361,7 @@ const DoctorProfileEditor = () => {
                         `}>
                           {step.label}
                         </span>
-                        <span className="text-ui-sm text-neutral-500 mt-1">
+                        <span className="text-ui-xs text-neutral-500 mt-1">
                           {step.desc}
                         </span>
                       </div>
@@ -1383,12 +1383,12 @@ const DoctorProfileEditor = () => {
                 type="button"
                 onClick={() => handleStepChange(editorStep - 1)}
                 disabled={isSaving}
-                className="px-4 py-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-medium text-ui-sm uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50"
               >
                 ← Back
               </button>
             )}
-            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest hidden sm:inline-block">
+            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest hidden sm:inline-block">
               {isDirty ? 'Unsaved profile changes detected.' : 'Profile settings are in sync.'}
             </span>
           </div>
@@ -1399,7 +1399,7 @@ const DoctorProfileEditor = () => {
                 type="button"
                 onClick={handleDiscard}
                 disabled={isSaving}
-                className="px-4 py-2 border-0 text-neutral-500 hover:text-neutral-900 font-medium text-ui-sm uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 border-0 text-neutral-500 hover:text-neutral-900 font-bold text-ui-xs uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50"
               >
                 Discard Changes
               </button>
@@ -1409,7 +1409,7 @@ const DoctorProfileEditor = () => {
               type="button"
               onClick={handleSaveDraft}
               disabled={isSaving}
-              className="px-4 py-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-medium text-ui-sm uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50 bg-white"
+              className="px-4 py-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 font-bold text-ui-xs uppercase tracking-widest transition-all select-none rounded-md cursor-pointer disabled:opacity-50 bg-white"
             >
               Save Draft
             </button>
@@ -1418,7 +1418,7 @@ const DoctorProfileEditor = () => {
               onClick={handleSaveStep}
               disabled={isSaving}
               variant="primary"
-              className="h-10 px-6 font-medium"
+              className="h-10 px-6 font-bold"
             >
               {isSaving 
                 ? 'Saving changes...' 

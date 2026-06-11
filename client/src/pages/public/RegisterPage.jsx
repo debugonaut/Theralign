@@ -109,8 +109,8 @@ const RegisterPage = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-lg shadow-level-1 mb-4">
             <HeartPulse className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-[32px] leading-[1.1] font-medium text-neutral-900 tracking-tight font-swiss text-center">Theralign</h1>
-          <p className="text-neutral-500 mt-2 text-ui-sm font-normal uppercase tracking-wider hidden sm:block">Join Theralign — it&apos;s free</p>
+          <h1 className="text-[32px] leading-[1.1] font-black text-neutral-900 tracking-tight font-swiss text-center">Theralign</h1>
+          <p className="text-neutral-500 mt-2 text-ui-sm font-semibold uppercase tracking-wider hidden sm:block">Join Theralign — it&apos;s free</p>
         </div>
 
         <Card variant="default" className="p-6 rounded-[12px] md:rounded-lg shadow-level-1">
@@ -118,14 +118,14 @@ const RegisterPage = () => {
           {error && (
             <div className="mb-5 bg-accent/5 border border-accent text-accent px-4 py-3 rounded-md text-ui-sm flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-              <span className="font-medium">{error}</span>
+              <span className="font-bold">{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Role Toggle */}
             <div className="flex flex-col gap-1.5 text-left">
-              <label className="text-sm font-normal text-neutral-700 mb-0.5">I am a…</label>
+              <label className="text-[12px] font-semibold text-neutral-700 mb-0.5">I am a…</label>
               <div className="flex w-full border border-neutral-200 rounded-md overflow-hidden bg-neutral-50 p-1">
                 {[
                   { value: 'patient', label: 'Patient' },
@@ -160,7 +160,7 @@ const RegisterPage = () => {
               >
                 <div className="mt-2 flex items-start gap-2 bg-primary/5 border border-primary/20 rounded-md px-3 py-2.5">
                   <Stethoscope className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                  <p className="text-sm font-normal text-primary/90 leading-relaxed">
+                  <p className="text-[11px] font-semibold text-primary/90 leading-relaxed">
                     After registration, complete your clinical profile and submit your license documents.
                     Your profile will be reviewed and activated within 24 hours.
                   </p>
@@ -282,11 +282,11 @@ const RegisterPage = () => {
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-ui-sm text-neutral-500 font-normal">
+          <p className="mt-6 text-center text-ui-sm text-neutral-500 font-semibold">
             Already have an account?{' '}
             <Link
               to="/login"
-              className="text-accent font-medium hover:underline transition"
+              className="text-accent font-bold hover:underline transition"
             >
               Sign in
             </Link>

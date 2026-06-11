@@ -42,7 +42,7 @@ const MyReviews = () => {
 
       {/* Reviews List */}
       {loading ? (
-        <div className="py-6 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest">
+        <div className="py-6 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING SUBMITTED REVIEWS...
         </div>
       ) : reviews.length === 0 ? (
@@ -80,18 +80,18 @@ const MyReviews = () => {
                 className="relative bg-white border border-neutral-200/50 p-6 rounded-lg shadow-level-1 text-left transition-warm"
               >
                 {/* Rating square in top-right corner */}
-                <div className="absolute top-6 right-6 w-10 h-10 border border-neutral-200 bg-neutral-50 flex items-center justify-center text-ui-md font-medium text-neutral-800 rounded-md select-none shadow-level-1">
+                <div className="absolute top-6 right-6 w-10 h-10 border border-neutral-200 bg-neutral-50 flex items-center justify-center text-ui-md font-bold text-neutral-800 rounded-md select-none shadow-level-1">
                   {rev.rating}
                 </div>
 
                 <div className="flex flex-col gap-1 pr-16 mb-4">
-                  <h3 className="font-medium text-neutral-900 text-ui-xl uppercase tracking-tighter">
+                  <h3 className="font-black text-neutral-900 text-ui-xl uppercase tracking-tighter">
                     DR. {docName.toUpperCase()}
                   </h3>
-                  <span className="text-sm text-accent font-semibold uppercase tracking-widest">
+                  <span className="text-[10px] text-accent font-black uppercase tracking-widest">
                     {specText.toUpperCase()}
                   </span>
-                  <span className="text-sm text-neutral-500 font-medium uppercase tracking-widest mt-0.5">
+                  <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest mt-0.5">
                     APPOINTMENT DATE: {apptDate}
                   </span>
                 </div>
@@ -100,7 +100,7 @@ const MyReviews = () => {
                   "{rev.comment}"
                 </p>
 
-                <div className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
+                <div className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">
                   FILED ON {submittedOn}
                 </div>
               </div>

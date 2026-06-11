@@ -148,16 +148,16 @@ const DoctorEarnings = () => {
             {/* Total Earnings */}
             <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
               <div>
-                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block">
+                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
                   TOTAL EARNINGS
                 </span>
-                <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-1">
+                <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-1">
                   LIFETIME EARNINGS
                 </span>
               </div>
               <div className="flex items-baseline select-none">
                 <span className="text-ui-xl text-neutral-900 font-medium mr-1 select-none">₹</span>
-                <span className="text-display-xs font-semibold text-neutral-900 select-none leading-none block">
+                <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
                   {totalEarnings.toLocaleString('en-IN')}
                 </span>
               </div>
@@ -166,28 +166,28 @@ const DoctorEarnings = () => {
             {/* This Month's Earnings (With MoM green/amber comparison text) */}
             <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
               <div>
-                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block">
+                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
                   THIS MONTH
                 </span>
                 {diffEarnings !== 0 ? (
                   isPositiveDiff ? (
-                    <span className="text-sm text-success font-semibold uppercase tracking-wider block mt-1 select-none">
+                    <span className="text-[10px] text-success font-black uppercase tracking-wider block mt-1 select-none">
                       +₹{diffEarnings.toLocaleString('en-IN')} FROM LAST MONTH
                     </span>
                   ) : (
-                    <span className="text-sm text-warning font-semibold uppercase tracking-wider block mt-1 select-none">
+                    <span className="text-[10px] text-warning font-black uppercase tracking-wider block mt-1 select-none">
                       ↓₹{Math.abs(diffEarnings).toLocaleString('en-IN')} FROM LAST MONTH
                     </span>
                   )
                 ) : (
-                  <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-1">
+                  <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-1">
                     CURRENT MONTH
                   </span>
                 )}
               </div>
               <div className="flex items-baseline select-none">
                 <span className="text-ui-xl text-neutral-900 font-medium mr-1 select-none">₹</span>
-                <span className="text-display-xs font-semibold text-neutral-900 select-none leading-none block">
+                <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
                   {currentMonthEarnings.toLocaleString('en-IN')}
                 </span>
               </div>
@@ -196,16 +196,16 @@ const DoctorEarnings = () => {
             {/* Average Per Session */}
             <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
               <div>
-                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block">
+                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
                   AVERAGE PER SESSION
                 </span>
-                <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-1">
+                <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-1">
                   PER SESSION AVG
                 </span>
               </div>
               <div className="flex items-baseline select-none">
                 <span className="text-ui-xl text-neutral-900 font-medium mr-1 select-none">₹</span>
-                <span className="text-display-xs font-semibold text-neutral-900 select-none leading-none block">
+                <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
                   {Math.round(avgPerSession).toLocaleString('en-IN')}
                 </span>
               </div>
@@ -221,11 +221,11 @@ const DoctorEarnings = () => {
               <table className="w-full text-left border-collapse select-none">
                 <thead>
                   <tr className="border-b border-neutral-100 bg-neutral-50">
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest">MONTH</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest text-center">SESSIONS</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest text-right">GROSS FEE</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest text-right">PLATFORM FEE (10%)</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-ui-sm tracking-widest text-right">YOUR EARNINGS</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">MONTH</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest text-center">SESSIONS</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest text-right">GROSS FEE</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest text-right">PLATFORM FEE (10%)</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-ui-sm tracking-widest text-right">YOUR EARNINGS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200">
@@ -238,19 +238,19 @@ const DoctorEarnings = () => {
                           ${isCurrentMonthRow ? 'border-l-4 border-[#0A7E6E]' : ''}
                         `}
                       >
-                        <td className="px-6 py-3 text-ui-sm font-semibold text-neutral-900 uppercase">
+                        <td className="px-6 py-3 text-ui-sm font-black text-neutral-900 uppercase">
                           {formatMonth(row.month)}
                         </td>
-                        <td className="px-6 py-3 text-center text-ui-md font-medium text-neutral-900">
+                        <td className="px-6 py-3 text-center text-ui-md font-bold text-neutral-900">
                           {row.sessions}
                         </td>
-                        <td className="px-6 py-3 text-right text-ui-md font-medium text-neutral-900">
+                        <td className="px-6 py-3 text-right text-ui-md font-bold text-neutral-900">
                           ₹{row.grossFee.toLocaleString('en-IN')}
                         </td>
-                        <td className="px-6 py-3 text-right text-ui-md font-medium text-neutral-900">
+                        <td className="px-6 py-3 text-right text-ui-md font-bold text-neutral-900">
                           ₹{row.commission.toLocaleString('en-IN')}
                         </td>
-                        <td className="px-6 py-3 text-right text-ui-md font-semibold text-neutral-900">
+                        <td className="px-6 py-3 text-right text-ui-md font-black text-neutral-900">
                           ₹{row.earnings.toLocaleString('en-IN')}
                         </td>
                       </tr>
@@ -269,12 +269,12 @@ const DoctorEarnings = () => {
               <table className="w-full text-left border-collapse select-none">
                 <thead>
                   <tr className="border-b border-neutral-100 bg-neutral-50">
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest">DATE</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest">PATIENT</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest text-right">SESSION FEE</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest text-right">PLATFORM FEE</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest text-right">YOUR EARNING</th>
-                    <th className="px-6 py-3.5 text-neutral-500 font-semibold uppercase text-sm tracking-widest">STATUS</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">DATE</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">PATIENT</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest text-right">SESSION FEE</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest text-right">PLATFORM FEE</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest text-right">YOUR EARNING</th>
+                    <th className="px-6 py-3.5 text-neutral-500 font-black uppercase text-[10px] tracking-widest">STATUS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200">
@@ -288,19 +288,19 @@ const DoctorEarnings = () => {
 
                     return (
                       <tr key={appt._id} className="h-12 hover:bg-neutral-50 transition-colors duration-fast select-none">
-                        <td className="px-6 py-3 text-ui-sm font-medium text-neutral-500 uppercase tracking-widest">
+                        <td className="px-6 py-3 text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
                           {formatTransactionDate(appt.date)}
                         </td>
-                        <td className="px-6 py-3 text-ui-sm font-semibold text-neutral-900 uppercase">
+                        <td className="px-6 py-3 text-ui-sm font-black text-neutral-900 uppercase">
                           {displayName.toUpperCase()}
                         </td>
-                        <td className="px-6 py-3 text-right text-ui-md font-medium text-neutral-900">
+                        <td className="px-6 py-3 text-right text-ui-md font-bold text-neutral-900">
                           ₹{(appt.consultationFee || 0).toLocaleString('en-IN')}
                         </td>
-                        <td className="px-6 py-3 text-right text-ui-sm font-medium text-neutral-500">
+                        <td className="px-6 py-3 text-right text-ui-sm font-bold text-neutral-500">
                           ₹{(appt.platformCommission || 0).toLocaleString('en-IN')}
                         </td>
-                        <td className="px-6 py-3 text-right text-ui-md font-semibold text-neutral-900">
+                        <td className="px-6 py-3 text-right text-ui-md font-black text-neutral-900">
                           ₹{(appt.doctorEarnings || 0).toLocaleString('en-IN')}
                         </td>
                         <td className="px-6 py-3">
@@ -324,7 +324,7 @@ const DoctorEarnings = () => {
             {/* Pagination footer */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between border border-neutral-200/50 p-4 bg-white rounded-lg shadow-level-1 select-none">
-                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
+                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                   PAGE {currentPage} OF {totalPages} ({sortedPayments.length} SESSIONS)
                 </span>
                 
@@ -332,14 +332,14 @@ const DoctorEarnings = () => {
                   <button
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="h-10 px-4 border border-neutral-300 text-neutral-950 hover:border-neutral-950 font-medium text-ui-sm uppercase tracking-widest transition-all duration-150 select-none rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-white"
+                    className="h-10 px-4 border border-neutral-300 text-neutral-950 hover:border-neutral-950 font-bold text-ui-xs uppercase tracking-widest transition-all duration-150 select-none rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-white"
                   >
                     ← PREVIOUS
                   </button>
                   <button
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="h-10 px-4 border border-neutral-300 text-neutral-950 hover:border-neutral-950 font-medium text-ui-sm uppercase tracking-widest transition-all duration-150 select-none rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-white"
+                    className="h-10 px-4 border border-neutral-300 text-neutral-950 hover:border-neutral-950 font-bold text-ui-xs uppercase tracking-widest transition-all duration-150 select-none rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-white"
                   >
                     NEXT →
                   </button>

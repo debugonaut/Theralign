@@ -76,7 +76,7 @@ const StarRating = ({ rating, count, showCount = true, size = 'sm' }) => {
         })}
       </div>
       {showCount && (
-        <span className="text-sm text-slate-500 font-medium">
+        <span className="text-xs text-slate-500 font-medium">
           {rating > 0 ? `${Number(rating).toFixed(1)} (${count} reviews)` : 'No reviews yet'}
         </span>
       )}

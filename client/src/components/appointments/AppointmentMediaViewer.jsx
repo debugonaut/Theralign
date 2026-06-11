@@ -47,10 +47,10 @@ const AppointmentMediaViewer = ({ appointmentId, showEmptyState = true }) => {
   if (loading) {
     return (
       <div className="py-4 text-left">
-        <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-2">
+        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-2">
           Appointment Media
         </span>
-        <div className="text-ui-sm font-medium text-neutral-500 uppercase tracking-widest animate-pulse">
+        <div className="text-ui-xs font-bold text-neutral-500 uppercase tracking-widest animate-pulse">
           Loading attached media files...
         </div>
       </div>
@@ -61,10 +61,10 @@ const AppointmentMediaViewer = ({ appointmentId, showEmptyState = true }) => {
     if (!showEmptyState) return null;
     return (
       <div className="py-4 text-left">
-        <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-1">
+        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
           Appointment Media
         </span>
-        <div className="text-ui-sm text-neutral-400 font-medium italic">
+        <div className="text-ui-xs text-neutral-400 font-medium italic">
           No media files uploaded for this appointment.
         </div>
       </div>
@@ -74,10 +74,10 @@ const AppointmentMediaViewer = ({ appointmentId, showEmptyState = true }) => {
   return (
     <div className="py-4 text-left flex flex-col gap-3">
       <div>
-        <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block">
+        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
           Attached Media Files ({mediaList.length})
         </span>
-        <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-0.5">
+        <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
           Patient uploaded photos, clinical videos, or audio recordings.
         </span>
       </div>
@@ -145,15 +145,15 @@ const AppointmentMediaViewer = ({ appointmentId, showEmptyState = true }) => {
 
               {/* Media Details */}
               <div className="p-3 flex flex-col gap-1 select-none flex-grow">
-                <p className="text-ui-sm font-medium text-neutral-900 truncate" title={media.fileName}>
+                <p className="text-ui-sm font-bold text-neutral-900 truncate" title={media.fileName}>
                   {media.fileName}
                 </p>
-                <div className="flex items-center justify-between text-sm text-neutral-500 font-medium">
+                <div className="flex items-center justify-between text-[10px] text-neutral-500 font-medium">
                   <span>{formatFileSize(media.fileSize)}</span>
                   <span>{new Date(media.createdAt).toLocaleDateString('en-IN')}</span>
                 </div>
                 {media.description && (
-                  <p className="text-sm text-neutral-600 italic mt-1 border-t border-neutral-100 pt-1 leading-snug line-clamp-2">
+                  <p className="text-[10px] text-neutral-600 italic mt-1 border-t border-neutral-100 pt-1 leading-snug line-clamp-2">
                     "{media.description}"
                   </p>
                 )}
@@ -207,7 +207,7 @@ const AppointmentMediaViewer = ({ appointmentId, showEmptyState = true }) => {
             {activePreview.type === 'file' && (
               <div className="w-full py-8 px-4 bg-neutral-50 rounded-lg flex flex-col items-center justify-center border border-neutral-200">
                 <FileText size={48} className="text-neutral-400 mb-2" />
-                <p className="text-ui-sm text-neutral-600 font-medium uppercase tracking-wide mb-4">
+                <p className="text-ui-sm text-neutral-600 font-bold uppercase tracking-wide mb-4">
                   Preview not available for this file type
                 </p>
                 <a

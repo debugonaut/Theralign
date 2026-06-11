@@ -70,10 +70,10 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
   return (
     <div className="flex flex-col gap-4 select-none">
       <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
-        <label className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block">
+        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
           AVAILABILITY HEATMAP
         </label>
-        <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest">
+        <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">
           28-DAY GRID
         </span>
       </div>
@@ -82,7 +82,7 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
         {/* Mon-Sun Day Titles */}
         <div className="grid grid-cols-7 gap-1 text-center mb-1">
           {daysHeader.map((day, idx) => (
-            <span key={idx} className="text-sm font-medium text-neutral-500 uppercase tracking-widest">
+            <span key={idx} className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
               {day}
             </span>
           ))}
@@ -124,7 +124,7 @@ const AvailabilityHeatmap = ({ availabilityByDate, selectedDate, onDateSelect })
           { color: 'bg-warning/10 border-warning', label: 'LIMITED' },
           { color: 'bg-neutral-50 border-neutral-200', label: 'FULL' },
         ].map((item) => (
-          <div key={item.label} className="flex items-center gap-1.5 text-sm text-neutral-500 font-medium uppercase tracking-widest">
+          <div key={item.label} className="flex items-center gap-1.5 text-[9px] text-neutral-500 font-bold uppercase tracking-widest">
             <span className={`w-3.5 h-3.5 border-2 rounded-none shrink-0 ${item.color}`} />
             <span>{item.label}</span>
           </div>

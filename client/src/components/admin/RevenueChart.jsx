@@ -50,10 +50,10 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
       {/* Chart Title and Period Control Header */}
       <div className="flex items-center justify-between pb-4 border-b border-neutral-200">
         <div>
-          <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest block mb-1">
+          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
             FINANCIAL INDEX
           </span>
-          <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
+          <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
             REVENUE STREAM TREND
           </h3>
         </div>
@@ -80,7 +80,7 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
       </div>
 
       {!hasData ? (
-        <div className="flex flex-col items-center justify-center h-[240px] text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
+        <div className="flex flex-col items-center justify-center h-[240px] text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
           NO INDEX DATA AVAILABLE
         </div>
       ) : (
@@ -179,10 +179,10 @@ const RevenueChart = ({ data = [], period = 'daily', onPeriodChange }) => {
                 transform: 'translateX(-50%)',
               }}
             >
-              <p className="text-sm font-semibold text-accent uppercase tracking-widest mb-1.5">{tooltip.data.date}</p>
-              <p className="text-ui-sm font-semibold text-neutral-900 uppercase">REVENUE: <span className="swiss-numeric text-neutral-900">₹{(tooltip.data.revenue || 0).toLocaleString('en-IN')}</span></p>
-              <p className="text-ui-sm font-medium text-neutral-700 uppercase mt-0.5">COMMISSION: <span className="swiss-numeric">₹{(tooltip.data.commission || 0).toLocaleString('en-IN')}</span></p>
-              <p className="text-sm font-medium text-neutral-500 uppercase mt-1">{tooltip.data.appointments} SESSIONS COMPLETED</p>
+              <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1.5">{tooltip.data.date}</p>
+              <p className="text-ui-sm font-black text-neutral-900 uppercase">REVENUE: <span className="swiss-numeric text-neutral-900">₹{(tooltip.data.revenue || 0).toLocaleString('en-IN')}</span></p>
+              <p className="text-ui-xs font-bold text-neutral-700 uppercase mt-0.5">COMMISSION: <span className="swiss-numeric">₹{(tooltip.data.commission || 0).toLocaleString('en-IN')}</span></p>
+              <p className="text-[10px] font-bold text-neutral-500 uppercase mt-1">{tooltip.data.appointments} SESSIONS COMPLETED</p>
             </div>
           )}
         </div>

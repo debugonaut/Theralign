@@ -135,7 +135,7 @@ const Modal = ({
         >
           <h2
             id="modal-title"
-            className="font-medium text-neutral-900 leading-normal text-ui-lg"
+            className="font-bold text-neutral-900 leading-normal text-ui-lg"
           >
             {title}
           </h2>

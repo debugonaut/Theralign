@@ -13,8 +13,8 @@ const NotFoundPage = () => {
       <div className="p-4 bg-primary/10 rounded-full text-primary mb-6 animate-pulse">
         <Compass size={48} />
       </div>
-      <h1 className="text-8xl font-medium text-secondary tracking-tighter">404</h1>
-      <h2 className="text-2xl font-medium text-slate-800 mt-4">Oops! Page not found.</h2>
+      <h1 className="text-8xl font-extrabold text-secondary tracking-tighter">404</h1>
+      <h2 className="text-2xl font-bold text-slate-800 mt-4">Oops! Page not found.</h2>
       <p className="text-slate-500 mt-2 max-w-md font-medium leading-relaxed">
         The page you&apos;re looking for doesn&apos;t exist or has been moved. Use the options below to get back on track.
       </p>

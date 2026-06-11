@@ -11,11 +11,11 @@ import AppError from '../utils/AppError.js';
  * Protect: requireAuth, requireRole('patient')
  */
 export const getMyProfile = asyncHandler(async (req, res) => {
-  let profile = await PatientProfile.findOne({ user: req.user.id }).populate('user', 'name phone profileImage email role');
+  let profile = await PatientProfile.findOne({ user: req.user.id }).populate('user', 'name phone profileImage email');
   
   // If no profile exists yet, we return a default structure for the frontend
   if (!profile) {
-    const user = await User.findById(req.user.id).select('name phone profileImage email role');
+    const user = await User.findById(req.user.id).select('name phone profileImage email');
     profile = {
       user,
       medicalHistory: { conditions: [], medications: [], surgeries: [] },
@@ -91,7 +91,7 @@ export const updateMyProfile = asyncHandler(async (req, res) => {
     { user: req.user.id },
     updateDoc,
     { new: true, upsert: true, runValidators: true }
-  ).populate('user', 'name phone profileImage email role');
+  ).populate('user', 'name phone profileImage email');
 
   return successResponse(res, 200, 'Profile updated successfully', { 
     profile: profile.toJSON({ virtuals: true }) 
@@ -116,7 +116,7 @@ export const uploadAvatar = asyncHandler(async (req, res) => {
     req.user.id,
     { profileImage: imageUrl },
     { new: true, runValidators: true }
-  ).select('name phone profileImage email role');
+  ).select('name phone profileImage email');
 
   return successResponse(res, 200, 'Avatar uploaded successfully', { user });
 });

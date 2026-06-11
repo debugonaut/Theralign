@@ -67,13 +67,13 @@ const OnboardingCard = ({ profile, slotCount }) => {
   const progressPercentage = (completedCount / 4) * 100;
 
   return (
-    <div className="w-full bg-neutral-100 border-2 border-neutral-900 rounded-none shadow-none text-left flex flex-col gap-6 relative" style={{ borderTopWidth: '4px' }}>
+    <div className="w-full bg-neutral-100 border-2 border-neutral-900 rounded-none shadow-none text-left flex flex-col gap-6  relative" style={{ borderTopWidth: '4px' }}>
       {/* Card Header */}
       <div>
-        <span className="text-ui-sm font-semibold text-accent tracking-widest uppercase block mb-1">
+        <span className="text-ui-xs font-black text-accent tracking-widest uppercase block mb-1">
           GETTING STARTED
         </span>
-        <h2 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
+        <h2 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
           Complete these steps to start receiving bookings.
         </h2>
         <div className="h-0.5 bg-neutral-900/10 w-full mt-4" />
@@ -109,26 +109,26 @@ const OnboardingCard = ({ profile, slotCount }) => {
                   >
                     {step.title}
                   </span>
-                  <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-0.5 truncate">
+                  <span className="text-[11px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5 truncate">
                     {step.description}
                   </span>
                 </div>
               </div>
 
               {/* Action Link / Confirmation */}
-              <div className="shrink-0 font-semibold text-ui-sm tracking-widest">
+              <div className="shrink-0 font-black text-ui-xs tracking-widest">
                 {step.isComplete ? (
-                  <span className="text-success font-semibold uppercase select-none flex items-center gap-1">
+                  <span className="text-success font-black uppercase select-none flex items-center gap-1">
                     <Check size={12} className="inline text-success" /> DONE
                   </span>
                 ) : isPendingVerificationStep ? (
-                  <span className="text-warning font-semibold uppercase select-none">
+                  <span className="text-warning font-black uppercase select-none">
                     IN REVIEW
                   </span>
                 ) : (
                   <Link
                     to={step.link}
-                    className="text-neutral-900 hover:text-accent flex items-center gap-1 font-semibold transition-colors"
+                    className="text-neutral-900 hover:text-accent flex items-center gap-1 font-black transition-colors"
                   >
                     <span>→</span>
                   </Link>
@@ -147,7 +147,7 @@ const OnboardingCard = ({ profile, slotCount }) => {
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
-        <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block">
+        <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
           {completedCount} of 4 STEPS COMPLETE
         </span>
       </div>

@@ -78,7 +78,7 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex">
             <Link to={getLogoRedirectPath()} className="flex items-center gap-3 text-primary">
-              <span className="font-semibold text-xl tracking-tighter uppercase font-swiss">
+              <span className="font-black text-xl tracking-tighter uppercase font-swiss">
                 THERALIGN
               </span>
               <img src="/theralign-logo.svg" alt="Theralign Logo" className="w-8 h-8 object-contain" />
@@ -115,11 +115,11 @@ const Navbar = () => {
                           }}
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shrink-0">
                           {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                         </div>
                       )}
-                      <span className="text-sm font-normal text-neutral-900 normal-case">{user.name}</span>
+                      <span className="text-sm font-semibold text-neutral-900 normal-case">{user.name}</span>
                       <ChevronDown className="w-4 h-4 text-neutral-500" />
                     </button>
 
@@ -167,7 +167,7 @@ const Navbar = () => {
             {user && <NotificationBell />}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 border border-neutral-200 bg-white text-neutral-900 rounded-md font-medium text-sm hover:bg-neutral-100 transition-colors duration-fast"
+              className="p-2 border border-neutral-200 bg-white text-neutral-900 rounded-md font-bold text-xs hover:bg-neutral-100 transition-colors duration-fast"
             >
               {mobileMenuOpen ? 'Close' : 'Menu'}
             </button>
@@ -183,7 +183,7 @@ const Navbar = () => {
               key={link.to}
               to={link.to}
               onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-base font-normal text-neutral-700 hover:text-primary transition-all pl-2"
+              className="block py-2 text-base font-semibold text-neutral-700 hover:text-primary transition-all pl-2"
             >
               {link.label}
             </Link>
@@ -193,7 +193,7 @@ const Navbar = () => {
 
           {user ? (
             <div className="space-y-4">
-              <div className="py-1 text-sm font-normal text-neutral-500 normal-case">
+              <div className="py-1 text-xs font-semibold text-neutral-500 normal-case">
                 Logged in as {user.name}
               </div>
               <Link

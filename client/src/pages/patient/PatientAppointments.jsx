@@ -209,15 +209,15 @@ const PatientAppointments = () => {
 
       {/* Appointments Ledger Table */}
       {loading ? (
-        <div className="py-6 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest">
+        <div className="py-6 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
           LOADING CLINIC TRANSACTION LEDGERS...
         </div>
       ) : activeAppts.length === 0 ? (
         <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg flex flex-col items-center gap-3 max-w-lg mx-auto bg-neutral-50">
-          <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
             NO SESSIONS FILED
           </span>
-          <p className="text-ui-md text-neutral-700 font-medium max-w-sm">
+          <p className="text-ui-md text-neutral-700 font-bold max-w-sm">
             There are no booking entries recorded in this list status tab.
           </p>
           <Button variant="primary" onClick={() => navigate('/doctors')}>
@@ -266,26 +266,26 @@ const PatientAppointments = () => {
                       expanded={isExpanded}
                       onClick={() => toggleRowExpansion(appt._id)}
                     >
-                      <Table.Cell className="font-medium text-neutral-500">
+                      <Table.Cell className="font-bold text-neutral-500">
                         {dateText}
                       </Table.Cell>
                       <Table.Cell>
                         <div className="flex flex-col text-left">
-                          <span className="font-semibold text-neutral-900 uppercase">
+                          <span className="font-black text-neutral-900 uppercase">
                             DR. {docName.toUpperCase()}
                           </span>
-                          <span className="text-sm text-accent font-semibold tracking-widest mt-0.5">
+                          <span className="text-[10px] text-accent font-black tracking-widest mt-0.5">
                             {specText.toUpperCase()}
                           </span>
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="font-medium">
+                      <Table.Cell className="font-bold">
                         {appt.startTime} – {appt.endTime}
                       </Table.Cell>
-                      <Table.Cell className="hidden md:table-cell text-neutral-500 font-medium">
+                      <Table.Cell className="hidden md:table-cell text-neutral-500 font-bold">
                         30 MIN
                       </Table.Cell>
-                      <Table.Cell numeric className="font-semibold">
+                      <Table.Cell numeric className="font-black">
                         {formatINR(appt.consultationFee || appt.doctor?.consultationFee)}
                       </Table.Cell>
                       <Table.Cell>
@@ -320,26 +320,26 @@ const PatientAppointments = () => {
                             {/* Summary Details */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                               <div>
-                                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
                                   CLINIC NAME
                                 </span>
-                                <span className="text-ui-md font-medium text-neutral-900 uppercase block">
+                                <span className="text-ui-md font-bold text-neutral-900 uppercase block">
                                   {appt.doctor?.clinicName || 'Theralign Clinic Center'}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
                                   CLINIC LOCATION
                                 </span>
-                                <span className="text-ui-md font-medium text-neutral-900 uppercase block">
+                                <span className="text-ui-md font-bold text-neutral-900 uppercase block">
                                   {appt.doctor?.clinicAddress || 'Pune, India'}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-1">
                                   PATIENT NOTES
                                 </span>
-                                <span className="text-ui-md font-medium text-neutral-700 uppercase block leading-relaxed italic">
+                                <span className="text-ui-md font-bold text-neutral-700 uppercase block leading-relaxed italic">
                                   "{appt.patientNotes || 'NO SYMPTOMS FILED ON TRANSACTION RECORD.'}"
                                 </span>
                               </div>
@@ -349,10 +349,10 @@ const PatientAppointments = () => {
                             {appt.sessionDocument?.url && (
                               <div className="pt-4 border-t border-neutral-200 flex items-center justify-between">
                                 <div>
-                                  <span className="text-sm font-semibold text-success uppercase tracking-widest block">
+                                  <span className="text-[10px] font-black text-success uppercase tracking-widest block">
                                     CLINICAL DOCUMENTS ATTACHED
                                   </span>
-                                  <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-0.5">
+                                  <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
                                     Your physiotherapist has uploaded session recovery logs.
                                   </span>
                                 </div>
@@ -360,7 +360,7 @@ const PatientAppointments = () => {
                                   href={appt.sessionDocument.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="h-10 px-4 border-2 border-success text-success bg-white hover:bg-success hover:text-white font-semibold text-ui-sm flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
+                                  className="h-10 px-4 border-2 border-success text-success bg-white hover:bg-success hover:text-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
                                 >
                                   DOWNLOAD NOTES →
                                 </a>
@@ -370,7 +370,7 @@ const PatientAppointments = () => {
                             {/* Cancellation Log */}
                             {appt.status === 'cancelled' && (
                               <div className="p-4 bg-white border-2 border-neutral-200 rounded-none text-left">
-                                <span className="text-sm font-semibold text-accent uppercase tracking-widest block mb-1">
+                                <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
                                   CANCELLATION SUMMARY
                                 </span>
                                 <p className="text-ui-sm text-neutral-700 font-medium">
@@ -383,10 +383,10 @@ const PatientAppointments = () => {
                             {appt.reviewSubmitted && (
                               <div className="pt-4 border-t border-neutral-200 text-left">
                                 <div className="bg-white border border-[#0A7E6E]/10 p-4 rounded-md text-left flex flex-col gap-1.5">
-                                  <span className="text-sm font-semibold text-success uppercase tracking-widest block">
+                                  <span className="text-[10px] font-black text-success uppercase tracking-widest block">
                                     FEEDBACK SUCCESSFULLY RECORDED
                                   </span>
-                                  <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block">
+                                  <span className="text-[11px] text-neutral-500 font-bold uppercase tracking-wider block">
                                     You have submitted a review/rating for this appointment in the sidebar panel.
                                   </span>
                                 </div>
@@ -409,10 +409,10 @@ const PatientAppointments = () => {
         {/* Right Column: Review Sidebar */}
         <div className="lg:col-span-4 flex flex-col gap-5 w-full bg-neutral-50 border-2 border-neutral-900 p-6 shadow-none rounded-lg">
           <div>
-            <span className="text-sm font-semibold text-accent uppercase tracking-widest block mb-1">
+            <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-1">
               REVIEW SYSTEM
             </span>
-            <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
+            <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
               RATE & REVIEW CARE
             </h3>
             <div className="h-[1px] bg-neutral-200 w-full mt-2" />
@@ -437,29 +437,29 @@ const PatientAppointments = () => {
                       setRating(0);
                       setComment('');
                     }}
-                    className="text-sm font-semibold text-neutral-500 hover:text-neutral-950 uppercase tracking-wider self-start flex items-center gap-1 cursor-pointer"
+                    className="text-[10px] font-black text-neutral-500 hover:text-neutral-950 uppercase tracking-wider self-start flex items-center gap-1 cursor-pointer"
                   >
                     ← BACK TO LIST
                   </button>
 
                   <div className="bg-white border border-neutral-200 p-4 rounded-md">
-                    <span className="text-sm font-semibold text-accent uppercase tracking-wider block">
+                    <span className="text-[9px] font-black text-accent uppercase tracking-wider block">
                       {appt.status.toUpperCase()} APPOINTMENT
                     </span>
-                    <h4 className="font-medium text-neutral-900 uppercase text-ui-sm mt-0.5">
+                    <h4 className="font-bold text-neutral-900 uppercase text-ui-sm mt-0.5">
                       Dr. {docName}
                     </h4>
-                    <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block">
+                    <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block">
                       {specText}
                     </span>
-                    <span className="text-sm text-neutral-500 font-mono block mt-1">
+                    <span className="text-[10px] text-neutral-500 font-mono block mt-1">
                       {new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }).toUpperCase()} · {appt.startTime}
                     </span>
                   </div>
 
                   {/* 5-Star Rating Selector */}
                   <div className="flex flex-col gap-2">
-                    <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
+                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                       RATING
                     </span>
                     <div className="flex items-center gap-1">
@@ -492,7 +492,7 @@ const PatientAppointments = () => {
 
                   {/* Review Text */}
                   <div className="flex flex-col gap-2">
-                    <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
+                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
                       YOUR EXPERIENCE
                     </span>
                     <textarea
@@ -501,9 +501,9 @@ const PatientAppointments = () => {
                       placeholder="Describe your session, the physiotherapist's approach, and your recovery progress..."
                       maxLength={1000}
                       rows={4}
-                      className="w-full bg-white border border-neutral-200 focus:border-neutral-900 px-4 py-3 text-ui-sm font-normal text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-neutral-900/10 transition-all rounded-md resize-none transition-warm"
+                      className="w-full bg-white border border-neutral-200 focus:border-neutral-900 px-4 py-3 text-ui-sm font-semibold text-neutral-900 placeholder-neutral-400 focus:ring-2 focus:ring-neutral-900/10 transition-all rounded-md resize-none transition-warm"
                     />
-                    <span className="text-sm font-semibold text-neutral-500 text-right uppercase tracking-widest">
+                    <span className="text-[9px] font-black text-neutral-500 text-right uppercase tracking-widest">
                       {comment.length} / 1000 CHARACTERS (MIN 10)
                     </span>
                   </div>
@@ -555,7 +555,7 @@ const PatientAppointments = () => {
               <div className="flex flex-col gap-3 max-h-[350px] overflow-y-auto pr-1">
                 {sidebarReviewTab === 'ONGOING' ? (
                   ongoingEligible.length === 0 ? (
-                    <p className="text-ui-sm font-medium text-neutral-400 uppercase tracking-wide py-4 text-center">
+                    <p className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wide py-4 text-center">
                       No ongoing care entries to rate.
                     </p>
                   ) : (
@@ -572,17 +572,17 @@ const PatientAppointments = () => {
                           className="bg-white border border-neutral-200 hover:border-neutral-900 p-4 rounded-md cursor-pointer transition-colors text-left"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-semibold text-accent uppercase tracking-wider">
+                            <span className="text-[9px] font-black text-accent uppercase tracking-wider">
                               {appt.status.toUpperCase()}
                             </span>
-                            <span className="text-sm font-mono text-neutral-400">
+                            <span className="text-[9px] font-mono text-neutral-400">
                               {new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }).toUpperCase()}
                             </span>
                           </div>
-                          <h4 className="font-medium text-neutral-900 uppercase text-ui-sm mt-1">
+                          <h4 className="font-bold text-neutral-900 uppercase text-ui-xs mt-1">
                             Dr. {docName}
                           </h4>
-                          <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-0.5">
+                          <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
                             {Array.isArray(appt.doctor?.specialization) ? appt.doctor.specialization[0] : appt.doctor?.specialization || 'Clinical'}
                           </span>
                         </div>
@@ -591,7 +591,7 @@ const PatientAppointments = () => {
                   )
                 ) : (
                   completedEligible.length === 0 ? (
-                    <p className="text-ui-sm font-medium text-neutral-400 uppercase tracking-wide py-4 text-center">
+                    <p className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wide py-4 text-center">
                       No completed sessions to review.
                     </p>
                   ) : (
@@ -608,17 +608,17 @@ const PatientAppointments = () => {
                           className="bg-white border border-neutral-200 hover:border-neutral-900 p-4 rounded-md cursor-pointer transition-colors text-left"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-semibold text-success uppercase tracking-wider">
+                            <span className="text-[9px] font-black text-success uppercase tracking-wider">
                               COMPLETED
                             </span>
-                            <span className="text-sm font-mono text-neutral-400">
+                            <span className="text-[9px] font-mono text-neutral-400">
                               {new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }).toUpperCase()}
                             </span>
                           </div>
-                          <h4 className="font-medium text-neutral-900 uppercase text-ui-sm mt-1">
+                          <h4 className="font-bold text-neutral-900 uppercase text-ui-xs mt-1">
                             Dr. {docName}
                           </h4>
-                          <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider block mt-0.5">
+                          <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
                             {Array.isArray(appt.doctor?.specialization) ? appt.doctor.specialization[0] : appt.doctor?.specialization || 'Clinical'}
                           </span>
                         </div>

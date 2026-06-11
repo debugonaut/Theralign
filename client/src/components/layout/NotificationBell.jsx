@@ -146,7 +146,7 @@ const NotificationBell = () => {
         
         {/* Unread Count Rectangular Badge */}
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 border border-neutral-900 bg-white text-neutral-900 text-sm font-semibold px-1 py-0.5 leading-none select-none rounded-none">
+          <span className="absolute -top-0.5 -right-0.5 border border-neutral-900 bg-white text-neutral-900 text-[9px] font-black px-1 py-0.5 leading-none select-none rounded-none">
             {unreadCount}
           </span>
         )}
@@ -158,12 +158,12 @@ const NotificationBell = () => {
           
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-neutral-50 border-b-2 border-neutral-900 select-none">
-            <span className="font-semibold text-neutral-900 text-sm uppercase tracking-widest">
+            <span className="font-black text-neutral-900 text-[10px] uppercase tracking-widest">
               NOTIFICATIONS
             </span>
             <button
               onClick={handleMarkAllRead}
-              className="text-sm font-semibold text-accent uppercase tracking-widest bg-transparent border-0 hover:underline cursor-pointer select-none"
+              className="text-[9px] font-black text-accent uppercase tracking-widest bg-transparent border-0 hover:underline cursor-pointer select-none"
             >
               MARK ALL READ
             </button>
@@ -172,7 +172,7 @@ const NotificationBell = () => {
           {/* List content */}
           <div className="max-h-[360px] overflow-y-auto divide-y divide-neutral-200">
             {isLoading && (
-              <div className="py-4 text-center text-sm font-medium uppercase tracking-wider text-neutral-500 flex items-center justify-center gap-2">
+              <div className="py-4 text-center text-xs font-bold uppercase tracking-wider text-neutral-500 flex items-center justify-center gap-2">
                 <Loader2 className="animate-spin h-4 w-4" /> LOADING...
               </div>
             )}
@@ -180,8 +180,8 @@ const NotificationBell = () => {
             {!isLoading && notifications.length === 0 && (
               <div className="py-4 px-4 text-center select-none flex flex-col items-center">
                 <BellOff className="h-8 w-8 text-neutral-400 mb-2" strokeWidth={1.5} />
-                <p className="text-sm font-semibold text-neutral-900 uppercase tracking-wider">ALL CAUGHT UP!</p>
-                <p className="text-sm text-neutral-500 font-medium uppercase tracking-wider mt-1">No notifications yet.</p>
+                <p className="text-xs font-black text-neutral-900 uppercase tracking-wider">ALL CAUGHT UP!</p>
+                <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mt-1">No notifications yet.</p>
               </div>
             )}
 
@@ -201,17 +201,17 @@ const NotificationBell = () => {
                   }`}
                 >
                   <div className="flex justify-between items-start gap-2">
-                    <span className="text-sm font-semibold text-accent uppercase tracking-widest truncate max-w-[170px] block leading-none">
+                    <span className="text-[9px] font-black text-accent uppercase tracking-widest truncate max-w-[170px] block leading-none">
                       {category}
                     </span>
                   </div>
 
-                  <p className="text-sm font-medium text-neutral-900 uppercase tracking-wide truncate mt-1 leading-none select-none">
+                  <p className="text-[12px] font-bold text-neutral-900 uppercase tracking-wide truncate mt-1 leading-none select-none">
                     {item.title || item.message}
                   </p>
 
                   <div className="text-right mt-1.5 leading-none">
-                    <span className="text-sm font-medium text-neutral-500 font-mono tracking-wider block">
+                    <span className="text-[9px] font-bold text-neutral-500 font-mono tracking-wider block">
                       {formatTimeAgo(item.createdAt)}
                     </span>
                   </div>

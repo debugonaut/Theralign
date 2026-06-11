@@ -34,7 +34,7 @@ const Footer = () => {
   ];
 
   const SwissNavLink = ({ to, label }) => (
-    <Link to={to} className="swiss-nav-link text-sm font-normal text-neutral-700 normal-case !text-[12px] !font-medium hover:text-primary transition-colors">
+    <Link to={to} className="swiss-nav-link text-[12px] font-semibold text-neutral-700 normal-case !text-[12px] !font-medium hover:text-primary transition-colors">
       {label}
     </Link>
   );
@@ -46,10 +46,10 @@ const Footer = () => {
           
           {/* Brand Column */}
           <div className="col-span-1 flex flex-col items-start gap-4">
-            <span className="font-semibold text-2xl tracking-tighter uppercase font-swiss text-neutral-900">
+            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-neutral-900">
               THERALIGN
             </span>
-            <p className="text-sm text-neutral-700 font-medium">
+            <p className="text-[12px] text-neutral-700 font-medium">
               India's premier verified physiotherapy marketplace. Connect with clinical specialists.
             </p>
           </div>
@@ -57,7 +57,7 @@ const Footer = () => {
           {/* Link Columns */}
           {footerLinks.map((section, index) => (
             <div key={index} className="col-span-1 flex flex-col gap-4">
-              <h4 className="font-medium text-sm text-neutral-900 uppercase tracking-[0.08em] mb-2 font-swiss">
+              <h4 className="font-bold text-[12px] text-neutral-900 uppercase tracking-[0.08em] mb-2 font-swiss">
                 {section.title}
               </h4>
               <ul className="flex flex-col gap-3">
@@ -73,10 +73,10 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="border-t-2 border-neutral-200 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-neutral-500 font-medium">
+          <p className="text-[12px] text-neutral-500 font-medium">
             &copy; {currentYear} Theralign Inc. All rights reserved.
           </p>
-          <p className="text-sm text-neutral-500 font-medium uppercase tracking-[0.08em]">
+          <p className="text-[12px] text-neutral-500 font-medium uppercase tracking-[0.08em]">
             SYSTEM D1.2
           </p>
         </div>

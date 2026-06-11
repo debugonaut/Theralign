@@ -63,24 +63,24 @@ const ClinicalStandardsPage = () => {
             className="border-2 border-neutral-900 p-8 bg-white flex flex-col gap-6"
           >
             <div>
-              <span className="text-sm font-semibold text-accent uppercase tracking-widest block mb-2">
+              <span className="text-[10px] font-black text-accent uppercase tracking-widest block mb-2">
                 {s.prefix} STANDARD PILLAR
               </span>
-              <h3 className="text-ui-md font-medium text-neutral-900 uppercase tracking-tight leading-snug">
+              <h3 className="text-ui-md font-black text-neutral-900 uppercase tracking-tight leading-snug">
                 {s.title}
               </h3>
               <div className="h-[1px] bg-neutral-200 w-full mt-4" />
             </div>
 
-            <p className="text-sm text-swiss-gray-650 font-medium leading-relaxed flex-1">
+            <p className="text-xs text-swiss-gray-650 font-medium leading-relaxed flex-1">
               {s.desc}
             </p>
 
             <div className="border border-neutral-900 p-4 bg-neutral-50 space-y-2">
-              <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block pb-1 border-b">
+              <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest block pb-1 border-b">
                 AUDIT PARAMETERS
               </span>
-              <ul className="text-sm font-medium uppercase text-neutral-900 tracking-wider space-y-1.5 list-disc list-inside">
+              <ul className="text-[9px] font-bold uppercase text-neutral-900 tracking-wider space-y-1.5 list-disc list-inside">
                 {s.items.map((item, idx) => (
                   <li key={idx} className="leading-tight">{item}</li>
                 ))}
