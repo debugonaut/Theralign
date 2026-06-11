@@ -183,9 +183,9 @@ const DoctorDetailPage = () => {
           
           {/* Identity Section */}
           <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-6">
               {/* Doctor Avatar */}
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0 border-2 border-neutral-200 shadow-level-1">
+              <div className="w-28 h-28 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0 border-2 border-neutral-200 shadow-level-1">
                 {profile.user?.profileImage ? (
                   <img
                     src={profile.user.profileImage}
@@ -196,12 +196,12 @@ const DoctorDetailPage = () => {
                     }}
                   />
                 ) : (
-                  <span className="font-extrabold text-[20px] text-white tracking-[-0.02em]">
+                  <span className="font-extrabold text-[48px] text-white tracking-[-0.02em]">
                     {getInitials(formattedDrName)}
                   </span>
                 )}
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 pt-2">
                 <h1 className="text-display-md font-black text-neutral-900 tracking-tighter leading-none normal-case">
                   {formattedDrName}
                 </h1>
