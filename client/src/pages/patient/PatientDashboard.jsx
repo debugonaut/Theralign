@@ -57,24 +57,32 @@ const PatientDashboard = () => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchData(true);
-    }, 15000);
+    const interval = setInterval(() => fetchData(true), 15000);
     return () => clearInterval(interval);
   }, []);
+
+  // Force re-render every minute so the spotlight auto-hides when appointment time passes
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const isUpcoming = (a) => {
+    if (a.status !== 'confirmed') return false;
+    const end = new Date(`${a.date}T${a.endTime}`);
+    return end > new Date();
+  };
 
   // Compute metrics
   const total = appointments.length;
   const completed = appointments.filter((a) => a.status === 'completed').length;
-  const upcomingCount = appointments.filter((a) => a.status === 'confirmed').length;
+  const upcomingAppts = appointments.filter(isUpcoming).sort((a, b) => new Date(a.date) - new Date(b.date));
+  const upcomingCount = upcomingAppts.length;
   const reviewsGiven = appointments.filter((a) => a.reviewSubmitted).length;
   const doctorsSeen = new Set(
     appointments.filter(a => a.doctor).map(a => a.doctor._id || a.doctor)
   ).size;
-
-  const upcomingAppts = appointments
-    .filter((a) => a.status === 'confirmed')
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
   const spotlightAppt = upcomingAppts[0];
 

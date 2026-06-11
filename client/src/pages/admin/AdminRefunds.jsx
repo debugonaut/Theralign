@@ -138,7 +138,20 @@ export default function AdminRefunds() {
                       <tr className="refund-row">
                         <td className="patient-cell">
                           <div className="patient-info">
-                            <div className="patient-avatar">{getPatientInitials(refund.patient?.name)}</div>
+                            <div className="patient-avatar">
+                              {refund.patient?.profileImage ? (
+                                <img 
+                                  src={refund.patient.profileImage} 
+                                  alt={refund.patient.name} 
+                                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                  onError={(e) => {
+                                    e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                                  }}
+                                />
+                              ) : (
+                                getPatientInitials(refund.patient?.name)
+                              )}
+                            </div>
                             <div>
                               <div className="patient-name">{refund.patient?.name}</div>
                               <div className="patient-email">{refund.patient?.email}</div>

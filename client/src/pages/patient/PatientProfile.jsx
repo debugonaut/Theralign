@@ -79,7 +79,7 @@ const isTabDirty = (tabName, currentFormData, baseData) => {
 };
 
 const PatientProfile = () => {
-  const { user } = useAuthStore();
+  const { user, setCredentials, token } = useAuthStore();
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('BASIC INFO');
@@ -430,6 +430,9 @@ const PatientProfile = () => {
       const response = await patientProfileService.uploadAvatar(file);
       const userObj = response.data?.user || response.user;
       setProfile(prev => ({ ...prev, user: { ...prev.user, profileImage: userObj?.profileImage } }));
+      if (userObj && token) {
+        setCredentials(userObj, token);
+      }
       showToast('success', 'Profile photo updated');
     } catch (error) {
       showToast('error', error.response?.data?.message || 'Failed to upload photo');

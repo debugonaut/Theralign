@@ -168,9 +168,20 @@ const AdminLayout = () => {
         {/* Sidebar Footer User Info & Logout */}
         <div className="border-t border-white/15 p-4 bg-primary-dark flex flex-col gap-3 overflow-hidden">
           <div className="flex items-center gap-3 min-w-[200px]">
-            <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center font-bold text-sm select-none shrink-0 border border-white/15">
-              {user?.name ? user.name[0].toUpperCase() : 'A'}
-            </div>
+            {user?.profileImage ? (
+              <img 
+                src={user.profileImage} 
+                alt={user.name || 'Admin'} 
+                className="w-8 h-8 rounded-full object-cover border border-white/15 shrink-0"
+                onError={(e) => {
+                  e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                }}
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center font-bold text-sm select-none shrink-0 border border-white/15">
+                {user?.name ? user.name[0].toUpperCase() : 'A'}
+              </div>
+            )}
             <div className="overflow-hidden flex-1 text-left md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">
               <h4 className="text-sm font-semibold truncate text-white normal-case">
                 {user?.name || 'Admin'}
@@ -214,9 +225,20 @@ const AdminLayout = () => {
                 <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Secure Profile</p>
                 <p className="text-xs font-semibold text-neutral-900">{user?.email}</p>
               </div>
-              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
-                {user?.name ? user.name[0].toUpperCase() : 'A'}
-              </div>
+              {user?.profileImage ? (
+                <img 
+                  src={user.profileImage} 
+                  alt={user.name || 'Admin'} 
+                  className="w-8 h-8 rounded-full object-cover border border-neutral-200 shrink-0"
+                  onError={(e) => {
+                    e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                  }}
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+                  {user?.name ? user.name[0].toUpperCase() : 'A'}
+                </div>
+              )}
             </div>
           </div>
         </header>

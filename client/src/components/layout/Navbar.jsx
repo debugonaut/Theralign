@@ -105,9 +105,20 @@ const Navbar = () => {
                       onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                       className="flex items-center gap-2 px-2 py-1 bg-white border border-transparent hover:border-neutral-200 rounded-md transition-all duration-fast"
                     >
-                      <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
-                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                      </div>
+                      {user.profileImage ? (
+                        <img 
+                          src={user.profileImage} 
+                          alt={user.name} 
+                          className="w-8 h-8 rounded-full object-cover border border-neutral-200 shrink-0"
+                          onError={(e) => {
+                            e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shrink-0">
+                          {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                      )}
                       <span className="text-sm font-semibold text-neutral-900 normal-case">{user.name}</span>
                       <ChevronDown className="w-4 h-4 text-neutral-500" />
                     </button>

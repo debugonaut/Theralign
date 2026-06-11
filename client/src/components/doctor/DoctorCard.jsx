@@ -68,8 +68,21 @@ const DoctorCard = ({ doctor, index = 0 }) => {
       {/* ─── ZONE A: Identity (220px) ─── */}
       <div className="w-[220px] bg-[#0B4F6C] shrink-0 rounded-l-xl flex flex-col justify-center px-6 py-5 relative">
         {/* Avatar */}
-        <div className="w-14 h-14 rounded-full bg-white/12 border-2 border-white/25 flex items-center justify-center font-extrabold text-[18px] text-white tracking-[-0.02em] mb-2.5">
-          {initials}
+        <div className="w-14 h-14 rounded-full bg-white/12 border-2 border-white/25 flex items-center justify-center overflow-hidden mb-2.5 shrink-0">
+          {doctor.user?.profileImage ? (
+            <img 
+              src={doctor.user.profileImage} 
+              alt={formattedDrName} 
+              className="w-full h-full object-cover rounded-full"
+              onError={(e) => {
+                e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+              }}
+            />
+          ) : (
+            <span className="font-extrabold text-[18px] text-white tracking-[-0.02em]">
+              {initials}
+            </span>
+          )}
         </div>
         
         {/* Doctor Name */}

@@ -356,13 +356,18 @@ export const getPendingRefunds = async ({ page = 1, limit = 20 }) => {
   const skip = (page - 1) * limit;
 
   const refunds = await Payment.find({ refundStatus: 'pending' })
+    .populate('patient', 'name email profileImage')
+    .populate({
+      path: 'doctor',
+      populate: { path: 'user', select: 'name profileImage' },
+    })
     .populate({
       path: 'appointment',
       populate: [
-        { path: 'patient', select: 'name email' },
+        { path: 'patient', select: 'name email profileImage' },
         {
           path: 'doctor',
-          populate: { path: 'user', select: 'name' },
+          populate: { path: 'user', select: 'name profileImage' },
         },
       ],
     })

@@ -8,6 +8,33 @@
 
 ## High Impact Changes
 
+### 2026-06-11 — Feature: Profile Image Sync and rendering logic across all roles
+**Author:** Antigravity (AI Coding Assistant)
+
+**Summary:** Fixed the profile image rendering logic across all three roles (Patient, Doctor, Admin). Synchronized patient profile photo upload with Zustand authStore to prevent stale local session state. Replaced name initials placeholder circles with the actual user/doctor/patient profileImage when available in layout headers, sidebars, doctor lists, user list directories, doctor verification queues, and refunds request lists.
+
+**Changed files:**
+- `server/src/services/refund.service.js` [modified] — Added `profileImage` fields to Mongoose populate projections.
+- `client/src/pages/patient/PatientProfile.jsx` [modified] — Synchronized uploaded profile avatar with Zustand `authStore` via `setCredentials`.
+- `client/src/components/layout/Navbar.jsx` [modified] — Render user's `profileImage` if available.
+- `client/src/components/layout/DashboardLayout.jsx` [modified] — Render user's `profileImage` if available in sidebar and top header.
+- `client/src/components/layout/AdminLayout.jsx` [modified] — Render user's `profileImage` if available in sidebar and top header.
+- `client/src/components/doctor/DoctorCard.jsx` [modified] — Render doctor's `profileImage` if available on the card.
+- `client/src/pages/admin/AdminUsers.jsx` [modified] — Render user's `profileImage` if available in user list table.
+- `client/src/pages/admin/AdminDoctorVerification.jsx` [modified] — Render doctor's `profileImage` if available in pending queue and directory ledger list.
+- `client/src/pages/admin/AdminRefunds.jsx` [modified] — Render patient's `profileImage` inside patient-avatar circle.
+
+**Affected subsystems:**
+- user-management
+- discovery-search
+- admin-operations
+- refund-system
+
+**Regression risk:** Low
+- Successfully built frontend production bundle with no Vite or compilation warnings.
+
+---
+
 ### 2026-06-11 — Feature: Two-Step Booking Confirmation Flow & Media Upload Authorization Fix
 **Author:** Antigravity (AI Coding Assistant)
 

@@ -334,9 +334,20 @@ const AdminDoctorVerification = () => {
                   >
                     <div className="flex items-center gap-4">
                       {/* Name initial circle */}
-                      <div className="w-10 h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm uppercase shrink-0">
-                        {docName[0]}
-                      </div>
+                      {doc.user?.profileImage ? (
+                        <img 
+                          src={doc.user.profileImage} 
+                          alt={docName} 
+                          className="w-10 h-10 rounded-full object-cover border border-neutral-200 shrink-0"
+                          onError={(e) => {
+                            e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-sm uppercase shrink-0">
+                          {docName[0]}
+                        </div>
+                      )}
                       
                       <div className="text-left">
                         <span className="font-black text-xs uppercase text-neutral-900 tracking-wide block">
@@ -578,9 +589,20 @@ const AdminDoctorVerification = () => {
                     {/* Doctor with initial circle */}
                     <td className="px-4 py-4 align-middle">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
-                          {docName[0]}
-                        </div>
+                        {doc.user?.profileImage ? (
+                          <img 
+                            src={doc.user.profileImage} 
+                            alt={docName} 
+                            className="w-8 h-8 rounded-full object-cover border border-neutral-200 shrink-0"
+                            onError={(e) => {
+                              e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                            {docName[0]}
+                          </div>
+                        )}
                         <div className="text-left">
                           <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs block">
                             Dr. {docName}

@@ -159,9 +159,20 @@ const DashboardLayout = () => {
         {/* Sidebar Footer User & Logout */}
         <div className="border-t border-neutral-200 p-4 bg-neutral-50 flex flex-col gap-3 overflow-hidden">
           <div className="flex items-center gap-3 min-w-[200px]">
-            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm select-none shrink-0">
-              {user?.name ? user.name[0].toUpperCase() : 'U'}
-            </div>
+            {user?.profileImage ? (
+              <img 
+                src={user.profileImage} 
+                alt={user.name || 'User'} 
+                className="w-8 h-8 rounded-full object-cover border border-neutral-200 shrink-0"
+                onError={(e) => {
+                  e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                }}
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm select-none shrink-0">
+                {user?.name ? user.name[0].toUpperCase() : 'U'}
+              </div>
+            )}
             <div className="overflow-hidden flex-1 text-left md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">
               <h4 className="text-sm font-semibold truncate text-neutral-900 normal-case">
                 {user?.name || 'User'}
@@ -215,9 +226,20 @@ const DashboardLayout = () => {
               <p className="text-xs font-semibold text-neutral-900">{user?.email}</p>
             </div>
             <NotificationBell />
-            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
-              {user?.name ? user.name[0].toUpperCase() : 'U'}
-            </div>
+            {user?.profileImage ? (
+              <img 
+                src={user.profileImage} 
+                alt={user.name || 'User'} 
+                className="w-8 h-8 rounded-full object-cover border border-neutral-200 shrink-0"
+                onError={(e) => {
+                  e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                }}
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+                {user?.name ? user.name[0].toUpperCase() : 'U'}
+              </div>
+            )}
           </div>
         </header>
 

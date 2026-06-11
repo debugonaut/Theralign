@@ -163,9 +163,20 @@ const AdminUsers = () => {
                     {/* User profile initial circle */}
                     <Table.Cell>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
-                          {uName[0]}
-                        </div>
+                        {u.profileImage ? (
+                          <img 
+                            src={u.profileImage} 
+                            alt={uName} 
+                            className="w-8 h-8 rounded-full object-cover border border-neutral-200 shrink-0"
+                            onError={(e) => {
+                              e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                            {uName[0]}
+                          </div>
+                        )}
                         <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
                           {uName}
                         </span>
