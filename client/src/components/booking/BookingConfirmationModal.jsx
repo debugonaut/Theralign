@@ -136,55 +136,55 @@ const BookingConfirmationModal = ({
           
           <dl className="grid grid-cols-1 gap-y-4">
             <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
-              <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 DOCTOR
               </dt>
-              <dd className="text-ui-md font-bold text-neutral-900">
+              <dd className="text-ui-md font-medium text-neutral-900">
                 Dr. {displayDoctorName}
               </dd>
             </div>
 
             <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
-              <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 SPECIALIZATION
               </dt>
-              <dd className="text-[10px] font-black text-accent uppercase tracking-widest">
+              <dd className="text-sm font-semibold text-accent uppercase tracking-widest">
                 CLINICAL PHYSIOTHERAPY
               </dd>
             </div>
 
             <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
-              <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 DATE
               </dt>
-              <dd className="text-ui-md font-bold text-neutral-900">
+              <dd className="text-ui-md font-medium text-neutral-900">
                 {formatHumanDate(slot.date)}
               </dd>
             </div>
 
             <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
-              <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 TIME
               </dt>
-              <dd className="text-ui-md font-bold text-neutral-900">
+              <dd className="text-ui-md font-medium text-neutral-900">
                 {slot.startTime} – {slot.endTime}
               </dd>
             </div>
 
             <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
-              <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 DURATION
               </dt>
-              <dd className="text-ui-md font-bold text-neutral-900">
+              <dd className="text-ui-md font-medium text-neutral-900">
                 30 MINUTES
               </dd>
             </div>
 
             <div className="flex justify-between items-center pt-2">
-              <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 CONSULTATION FEE
               </dt>
-              <dd className="text-display-xs font-black text-neutral-900 tracking-tighter">
+              <dd className="text-display-xs font-semibold text-neutral-900 tracking-tighter">
                 ₹{consultationFee}
               </dd>
             </div>
@@ -195,7 +195,7 @@ const BookingConfirmationModal = ({
           </p>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+            <label className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
               Symptoms / Medical Notes (Optional)
             </label>
             <textarea
@@ -214,7 +214,7 @@ const BookingConfirmationModal = ({
               fullWidth
               onClick={handleBook}
               loading={loading}
-              className="font-bold h-12"
+              className="font-medium h-12"
             >
               {loading ? 'BOOKING...' : 'Book Appointment →'}
             </Button>
@@ -223,7 +223,7 @@ const BookingConfirmationModal = ({
               fullWidth
               onClick={onClose}
               disabled={loading}
-              className="font-bold h-12"
+              className="font-medium h-12"
             >
               Cancel
             </Button>
@@ -235,28 +235,28 @@ const BookingConfirmationModal = ({
           <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-5 flex flex-col gap-4 shadow-level-1">
             <dl className="grid grid-cols-1 gap-y-3">
               <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
-                <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                   DOCTOR
                 </dt>
-                <dd className="text-ui-sm font-bold text-neutral-900">
+                <dd className="text-ui-sm font-medium text-neutral-900">
                   Dr. {displayDoctorName}
                 </dd>
               </div>
 
               <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
-                <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                   DATE & TIME
                 </dt>
-                <dd className="text-ui-sm font-bold text-neutral-900">
+                <dd className="text-ui-sm font-medium text-neutral-900">
                   {formatHumanDate(slot.date)} at {slot.startTime}
                 </dd>
               </div>
 
               <div className="flex justify-between items-center pt-1">
-                <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                <dt className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                   FEE
                 </dt>
-                <dd className="text-ui-md font-extrabold text-neutral-900">
+                <dd className="text-ui-md font-semibold text-neutral-900">
                   ₹{consultationFee}
                 </dd>
               </div>
@@ -266,7 +266,7 @@ const BookingConfirmationModal = ({
           {/* Helper Text */}
           <div className="bg-[#F4F8FA] border border-[#D5E6F0] p-4 rounded-lg flex gap-3 text-left">
             <Info size={16} className="text-[#3182CE] shrink-0 mt-0.5" />
-            <p className="text-ui-xs text-[#2B6CB0] font-semibold leading-relaxed">
+            <p className="text-ui-sm text-[#2B6CB0] font-normal leading-relaxed">
               You can optionally attach X-rays, prescriptions, or any relevant medical documents for your physiotherapist.
             </p>
           </div>
@@ -284,13 +284,13 @@ const BookingConfirmationModal = ({
           </div>
 
           <div className="bg-neutral-50 border border-neutral-200 p-5 rounded-lg flex flex-col gap-2 shadow-level-1">
-            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
               AMOUNT DUE
             </span>
-            <h2 className="text-display-sm font-black text-neutral-900 tracking-tighter leading-none">
+            <h2 className="text-display-sm font-medium text-neutral-900 tracking-tighter leading-none">
               ₹{consultationFee}
             </h2>
-            <span className="text-[9px] font-black text-success uppercase tracking-widest mt-1 block">
+            <span className="text-sm font-semibold text-success uppercase tracking-widest mt-1 block">
               Paid via Razorpay Gateway
             </span>
           </div>
@@ -298,7 +298,7 @@ const BookingConfirmationModal = ({
           <div className="flex flex-col gap-2 mt-2">
             <div className="flex items-center justify-center gap-2 py-2 border border-neutral-200 rounded-md bg-white mb-2 shadow-level-1">
               <Lock size={14} className="text-success" />
-              <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider">Secured by Razorpay</span>
+              <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider">Secured by Razorpay</span>
             </div>
 
             <Button
@@ -307,7 +307,7 @@ const BookingConfirmationModal = ({
               onClick={onPay}
               loading={paymentLoading}
               disabled={mediaLoading}
-              className="font-bold h-12 flex items-center justify-center gap-2"
+              className="font-medium h-12 flex items-center justify-center gap-2"
             >
               {!paymentLoading && <Lock size={16} />}
               {paymentLoading ? 'PROCESSING...' : `Confirm & Pay ₹${consultationFee} →`}
@@ -318,7 +318,7 @@ const BookingConfirmationModal = ({
                 type="button"
                 onClick={onPay}
                 disabled={paymentLoading || mediaLoading}
-                className="text-ui-sm font-bold text-neutral-500 hover:text-primary transition-colors focus:outline-none cursor-pointer"
+                className="text-ui-sm font-medium text-neutral-500 hover:text-primary transition-colors focus:outline-none cursor-pointer"
               >
                 Skip & Pay →
               </button>
@@ -327,7 +327,7 @@ const BookingConfirmationModal = ({
                 type="button"
                 onClick={onClose}
                 disabled={paymentLoading}
-                className="text-ui-xs font-semibold text-danger/80 hover:text-danger transition-colors focus:outline-none cursor-pointer mt-1"
+                className="text-ui-sm font-normal text-danger/80 hover:text-danger transition-colors focus:outline-none cursor-pointer mt-1"
               >
                 Cancel booking
               </button>

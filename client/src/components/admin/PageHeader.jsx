@@ -3,7 +3,7 @@ import React from 'react';
 const PageHeader = ({ title, subtitle, action }) => (
   <div className="flex items-start justify-between mb-6">
     <div>
-      <h1 className="text-2xl font-bold text-slate-100">{title}</h1>
+      <h1 className="text-2xl font-medium text-slate-100">{title}</h1>
       {subtitle && (
         <p className="text-slate-500 text-sm mt-0.5">{subtitle}</p>
       )}

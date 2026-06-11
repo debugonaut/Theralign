@@ -17,6 +17,16 @@ const toTitleCase = (str) => {
     .join(' ');
 };
 
+const getInitials = (name) => {
+  if (!name) return 'PT';
+  const cleanName = name.replace(/^Dr\.\s+/i, '').trim();
+  const parts = cleanName.split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+  return cleanName.charAt(0).toUpperCase();
+};
+
 const formatReviewerName = (fullName) => {
   if (!fullName) return 'Anonymous';
   const parts = fullName.trim().split(/\s+/);
@@ -115,7 +125,7 @@ const DoctorDetailPage = () => {
   if (error || !profile) {
     return (
       <div className="max-w-md mx-auto py-20 px-6 text-left flex flex-col gap-4 select-none">
-        <h2 className="text-display-sm font-black text-danger uppercase tracking-tighter leading-none">
+        <h2 className="text-display-sm font-medium text-danger uppercase tracking-tighter leading-none">
           Profile Unavailable
         </h2>
         <p className="text-ui-md text-neutral-700 font-medium">{error || 'This doctor profile is currently offline.'}</p>
@@ -158,7 +168,7 @@ const DoctorDetailPage = () => {
       <div className="mb-8">
         <button
           onClick={() => navigate('/doctors')}
-          className="inline-flex items-center gap-2 text-ui-xs font-bold text-neutral-500 hover:text-neutral-900 uppercase tracking-widest cursor-pointer select-none bg-transparent border-0"
+          className="inline-flex items-center gap-2 text-ui-sm font-medium text-neutral-500 hover:text-neutral-900 uppercase tracking-widest cursor-pointer select-none bg-transparent border-0"
         >
           <ArrowLeft size={16} />
           ← Back To Doctor Discovery
@@ -172,39 +182,59 @@ const DoctorDetailPage = () => {
         <div className="lg:col-span-7 flex flex-col gap-8 text-left pr-4">
           
           {/* Identity Section */}
-          <div className="flex flex-col gap-3">
-            <h1 className="text-display-md font-black text-neutral-900 tracking-tighter leading-none mb-1 normal-case">
-              {formattedDrName}
-            </h1>
-            <span className="text-ui-xs font-bold text-accent tracking-widest uppercase block">
-              {formattedSpecText}
-            </span>
-            <div className="h-[1px] bg-neutral-200 w-full mt-4" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            {/* Bordered Circular Profile Photo 80x80 */}
+            <div className="w-20 h-20 border-2 border-neutral-900 rounded-full overflow-hidden shrink-0 bg-white shadow-sm flex items-center justify-center">
+              {profile.user?.profileImage ? (
+                <img
+                  src={profile.user.profileImage}
+                  alt={formattedDrName}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                  }}
+                />
+              ) : (
+                <span className="text-display-xs font-semibold text-neutral-400 uppercase tracking-tighter">
+                  {getInitials(formattedDrName)}
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h1 className="text-display-md font-medium text-neutral-900 tracking-tighter leading-none mb-1 normal-case">
+                {formattedDrName}
+              </h1>
+              <span className="text-ui-sm font-medium text-accent tracking-widest uppercase block">
+                {formattedSpecText}
+              </span>
+            </div>
           </div>
+          <div className="h-[1px] bg-neutral-200 w-full mt-4" />
 
           {/* Key Statistics row */}
           <div className="grid grid-cols-3 gap-0 border-y border-neutral-200 py-6 bg-white rounded-lg shadow-level-1">
             <div className="text-center border-r border-neutral-200">
-              <span className="text-display-xs font-black text-neutral-900 block leading-none mb-2">
+              <span className="text-display-xs font-semibold text-neutral-900 block leading-none mb-2">
                 {profile.experience}
               </span>
-              <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">
+              <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider block">
                 Years Experience
               </span>
             </div>
             <div className="text-center border-r border-neutral-200">
-              <span className="text-display-xs font-black text-neutral-900 block leading-none mb-2">
+              <span className="text-display-xs font-semibold text-neutral-900 block leading-none mb-2">
                 {profile.totalAppointmentsCount || '400+'}
               </span>
-              <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">
+              <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider block">
                 Sessions Completed
               </span>
             </div>
             <div className="text-center">
-              <span className="text-display-xs font-black text-neutral-900 block leading-none mb-2">
+              <span className="text-display-xs font-semibold text-neutral-900 block leading-none mb-2">
                 {(profile.averageRating || 0).toFixed(1)}
               </span>
-              <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">
+              <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider block">
                 Patient Rating
               </span>
             </div>
@@ -219,7 +249,7 @@ const DoctorDetailPage = () => {
               <div className="w-8 h-8 border border-neutral-200 flex items-center justify-center rounded-md bg-white shadow-sm">
                 <MapPin className="h-4 w-4 text-primary" />
               </div>
-              <span className="text-ui-sm font-semibold text-neutral-700 normal-case tracking-normal">
+              <span className="text-ui-sm font-normal text-neutral-700 normal-case tracking-normal">
                 {toTitleCase(profile.clinicName)} · {toTitleCase(profile.clinicAddress.split(',').pop().trim())}
               </span>
             </div>
@@ -229,17 +259,17 @@ const DoctorDetailPage = () => {
           {aiSummary && (
             <div className="p-6 bg-white border border-neutral-200/50 rounded-lg shadow-level-1 text-left flex flex-col gap-4 mt-4 transition-warm">
               <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
-                <span className="text-ui-xs font-bold text-accent tracking-widest uppercase">
+                <span className="text-ui-sm font-medium text-accent tracking-widest uppercase">
                   ✨ AI Summary
                 </span>
-                <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">
+                <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider">
                   Synthesized Profile
                 </span>
               </div>
               <p className="text-ui-lg text-neutral-900 font-medium leading-relaxed italic">
                 "{aiSummary}"
               </p>
-              <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider mt-2 block">
+              <span className="text-sm font-medium text-neutral-400 uppercase tracking-wider mt-2 block">
                 Generated from verified professional information
               </span>
             </div>
@@ -255,7 +285,7 @@ const DoctorDetailPage = () => {
               <button
                 type="button"
                 onClick={() => setBioExpanded(!bioExpanded)}
-                className="text-ui-xs font-bold text-neutral-900 hover:text-accent uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-3 block"
+                className="text-ui-sm font-medium text-neutral-900 hover:text-accent uppercase tracking-widest text-left select-none cursor-pointer border-0 bg-transparent mt-3 block"
               >
                 {bioExpanded ? '— Read Less' : 'Read More →'}
               </button>
@@ -269,13 +299,13 @@ const DoctorDetailPage = () => {
             {/* Rating Summary Row */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border border-neutral-200/50 p-6 rounded-lg bg-white gap-6 mb-6 shadow-level-1 transition-warm">
               <div className="flex items-baseline gap-2">
-                <h2 className="text-display-sm font-black text-neutral-900 tracking-tighter leading-none">
+                <h2 className="text-display-sm font-medium text-neutral-900 tracking-tighter leading-none">
                   {(profile.averageRating || 0).toFixed(1)}
                 </h2>
-                <span className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wider">
+                <span className="text-ui-sm font-medium text-neutral-400 uppercase tracking-wider">
                   out of 5
                 </span>
-                <span className="text-ui-xs font-bold text-neutral-400 uppercase tracking-wider ml-2">
+                <span className="text-ui-sm font-medium text-neutral-400 uppercase tracking-wider ml-2">
                   ({profile.totalReviews || 0} reviews)
                 </span>
               </div>
@@ -299,7 +329,7 @@ const DoctorDetailPage = () => {
 
             {/* Reviews Stack */}
             {reviews.length === 0 ? (
-              <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg text-ui-xs font-bold text-neutral-500 uppercase tracking-wider">
+              <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg text-ui-sm font-medium text-neutral-500 uppercase tracking-wider">
                 No patient reviews filed yet.
               </div>
             ) : (
@@ -324,14 +354,14 @@ const DoctorDetailPage = () => {
                         ))}
                       </div>
 
-                      <span className="text-display-sm text-accent font-black block leading-none mb-1 select-none">
+                      <span className="text-display-sm text-accent font-semibold block leading-none mb-1 select-none">
                         “
                       </span>
                       <p className="text-ui-lg text-neutral-900 font-medium italic leading-relaxed mb-4 -mt-2">
                         {rev.comment}
                       </p>
 
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
+                      <div className="flex items-center gap-2 text-sm font-medium text-neutral-500 uppercase tracking-wider">
                         <span>{reviewerName}</span>
                         <span>·</span>
                         <span>{revDate}</span>
@@ -344,7 +374,7 @@ const DoctorDetailPage = () => {
                   <Button
                     onClick={() => setReviewsExpanded(!reviewsExpanded)}
                     variant="secondary"
-                    className="w-full font-bold mt-2"
+                    className="w-full font-medium mt-2"
                   >
                     {reviewsExpanded ? 'Show Fewer Reviews' : `Show All Reviews (${reviews.length}) →`}
                   </Button>
@@ -369,17 +399,17 @@ const DoctorDetailPage = () => {
       {/* Mobile Fixed Bottom CTA Bar (lg:hidden) */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-white border-t border-neutral-200 px-6 py-3 flex items-center justify-between z-40">
         <div className="flex flex-col text-left">
-          <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest leading-none mb-1">
+          <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest leading-none mb-1">
             CONSULTATION FEE
           </span>
-          <span className="text-ui-md font-black text-neutral-900 leading-none">
-            ₹{new Intl.NumberFormat('en-IN').format(profile.consultationFee)} <span className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider">/ session</span>
+          <span className="text-ui-md font-semibold text-neutral-900 leading-none">
+            ₹{new Intl.NumberFormat('en-IN').format(profile.consultationFee)} <span className="text-sm text-neutral-500 font-normal uppercase tracking-wider">/ session</span>
           </span>
         </div>
         <Button 
           variant="primary" 
           onClick={() => setShowMobileBooking(true)}
-          className="h-10 px-6 font-black text-ui-xs tracking-widest"
+          className="h-10 px-6 font-semibold text-ui-sm tracking-widest"
         >
           BOOK NOW →
         </Button>
@@ -398,12 +428,12 @@ const DoctorDetailPage = () => {
             {/* Drawer pill/bar drag handle and header */}
             <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-neutral-200">
               <div className="flex flex-col text-left">
-                <span className="text-[10px] font-black text-accent tracking-widest uppercase">SELECT APPOINTMENT SLOT</span>
-                <h3 className="text-ui-md font-bold text-neutral-900 uppercase">{formattedDrName}</h3>
+                <span className="text-sm font-semibold text-accent tracking-widest uppercase">SELECT APPOINTMENT SLOT</span>
+                <h3 className="text-ui-md font-medium text-neutral-900 uppercase">{formattedDrName}</h3>
               </div>
               <button 
                 onClick={() => setShowMobileBooking(false)}
-                className="text-neutral-500 hover:text-danger p-1 cursor-pointer focus:outline-none text-ui-lg font-bold"
+                className="text-neutral-500 hover:text-danger p-1 cursor-pointer focus:outline-none text-ui-lg font-medium"
               >
                 ✕
               </button>

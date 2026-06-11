@@ -48,7 +48,7 @@ const AdminAITools = () => {
 
       {/* Main Container */}
       <div className="space-y-6 text-left">
-        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+        <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
           DOCTOR PROFILE SUMMARIES
         </span>
 
@@ -63,7 +63,7 @@ const AdminAITools = () => {
             {/* Left Description and Trigger (7 columns) */}
             <div className="lg:col-span-7 space-y-6">
               <div>
-                <span className="text-ui-xs font-black text-accent uppercase tracking-widest block mb-2">
+                <span className="text-ui-sm font-semibold text-accent uppercase tracking-widest block mb-2">
                   GENERATE AI SUMMARIES
                 </span>
                 <p className="text-ui-lg text-neutral-900 font-medium leading-relaxed">
@@ -75,7 +75,7 @@ const AdminAITools = () => {
                 <button
                   onClick={handleBatchGenerate}
                   disabled={generating}
-                  className="px-6 py-3.5 bg-neutral-900 text-white border-2 border-neutral-900 text-xs font-black uppercase tracking-widest hover:bg-neutral-900 transition-all select-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-6 py-3.5 bg-neutral-900 text-white border-2 border-neutral-900 text-sm font-semibold uppercase tracking-widest hover:bg-neutral-900 transition-all select-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {generating ? 'PROCESSING PIPELINE...' : 'GENERATE SUMMARIES →'}
                 </button>
@@ -86,22 +86,22 @@ const AdminAITools = () => {
             <div className="lg:col-span-5 w-full max-w-[1200px]">
               {result ? (
                 <div className="border-2 border-neutral-900 bg-white p-6 space-y-4 animate-fade-in">
-                  <span className="text-[10px] font-black text-success uppercase tracking-widest flex items-center gap-1.5 pb-2 border-b border-neutral-200">
+                  <span className="text-sm font-semibold text-success uppercase tracking-widest flex items-center gap-1.5 pb-2 border-b border-neutral-200">
                     <CheckCircle2 className="w-4 h-4" /> PIPELINE RUN COMPLETE
                   </span>
                   
                   {/* Stats adjacent cells row */}
                   <div className="flex border border-neutral-900 divide-x border-collapse text-center">
                     <div className="flex-1 p-4 bg-neutral-50">
-                      <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">PROCESSED</span>
-                      <span className="text-2xl font-black text-neutral-900 swiss-numeric block mt-1">{result.processed}</span>
+                      <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider block">PROCESSED</span>
+                      <span className="text-2xl font-semibold text-neutral-900 swiss-numeric block mt-1">{result.processed}</span>
                     </div>
                     <div className="flex-1 p-4 bg-neutral-50">
-                      <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">SUCCESSFUL</span>
-                      <span className="text-2xl font-black text-success swiss-numeric block mt-1">{result.successful}</span>
+                      <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider block">SUCCESSFUL</span>
+                      <span className="text-2xl font-semibold text-success swiss-numeric block mt-1">{result.successful}</span>
                     </div>
                     <div className="flex-1 p-4 bg-neutral-50">
-                      <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">FAILED</span>
+                      <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider block">FAILED</span>
                       <span className={`text-2xl font-black swiss-numeric block mt-1 ${
                         result.failed > 0 ? 'text-accent' : 'text-neutral-900'
                       }`}>
@@ -112,15 +112,15 @@ const AdminAITools = () => {
                 </div>
               ) : error ? (
                 <div className="border-2 border-accent bg-white p-6 space-y-2 animate-fade-in">
-                  <span className="text-[10px] font-black text-accent uppercase tracking-widest flex items-center gap-1.5 pb-2 border-b border-neutral-200">
+                  <span className="text-sm font-semibold text-accent uppercase tracking-widest flex items-center gap-1.5 pb-2 border-b border-neutral-200">
                     <AlertTriangle className="w-4 h-4" /> PIPELINE EXECUTION FAILED
                   </span>
-                  <p className="text-xs text-swiss-gray-650 leading-relaxed font-bold">
+                  <p className="text-sm text-swiss-gray-650 leading-relaxed font-medium">
                     {error}
                   </p>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-neutral-500 p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest h-full flex flex-col justify-center items-center">
+                <div className="border-2 border-dashed border-neutral-500 p-6 text-center text-neutral-500 text-sm font-medium uppercase tracking-widest h-full flex flex-col justify-center items-center">
                   PIPELINE RUN STATISTICS WILL APPEAR UPON BATCH EXECUTION.
                 </div>
               )}

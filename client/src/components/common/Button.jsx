@@ -93,7 +93,7 @@ const Button = ({
       className={[
         // Shape & layout
         'inline-flex items-center justify-center gap-2',
-        'font-bold transition-all cubic-bezier(0.4, 0, 0.2, 1) transition-warm',
+        'font-medium transition-all cubic-bezier(0.4, 0, 0.2, 1) transition-warm',
         'active:scale-[0.97] active:duration-[80ms] active:shadow-none',
         'rounded-md',                // 6px border-radius
         // Variant

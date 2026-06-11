@@ -26,10 +26,10 @@ const PatientReviewsSection = () => {
   return (
     <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
       <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-16">
-        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
+        <span className="font-medium text-sm tracking-[0.06em] uppercase text-accent font-swiss">
           05.
         </span>
-        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
+        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-medium uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
           PATIENT OUTCOMES
         </h2>
       </div>
@@ -52,14 +52,14 @@ const PatientReviewsSection = () => {
               
               <div className="flex items-end justify-between border-t-2 border-neutral-200 pt-6">
                 <div>
-                  <h4 className="font-bold text-[14px] text-neutral-900 uppercase tracking-widest">
+                  <h4 className="font-medium text-[14px] text-neutral-900 uppercase tracking-widest">
                     {review.name}
                   </h4>
-                  <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-[0.08em] mt-1 block">
+                  <span className="text-sm font-medium text-neutral-500 uppercase tracking-[0.08em] mt-1 block">
                     {review.condition}
                   </span>
                 </div>
-                <div className="font-black text-[16px] text-neutral-900 tracking-tight flex items-center gap-1">
+                <div className="font-semibold text-[16px] text-neutral-900 tracking-tight flex items-center gap-1">
                   {review.rating} <span className="text-accent">★</span>
                 </div>
               </div>

@@ -30,10 +30,10 @@ const FeaturedDoctorsSection = () => {
     return (
       <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
         <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-12">
-          <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
+          <span className="font-medium text-sm tracking-[0.06em] uppercase text-accent font-swiss">
             03.
           </span>
-          <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
+          <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-medium uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
             FEATURED SPECIALISTS
           </h2>
         </div>
@@ -66,10 +66,10 @@ const FeaturedDoctorsSection = () => {
   return (
     <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
       <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-12">
-        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
+        <span className="font-medium text-sm tracking-[0.06em] uppercase text-accent font-swiss">
           03.
         </span>
-        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
+        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-medium uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
           FEATURED SPECIALISTS
         </h2>
       </div>

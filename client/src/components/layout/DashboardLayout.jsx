@@ -108,7 +108,7 @@ const DashboardLayout = () => {
         <div className="flex items-center justify-between py-5 px-5 border-b border-neutral-200 overflow-hidden h-[73px]">
           <Link to={user?.role === 'doctor' ? '/doctor/dashboard' : '/patient/dashboard'} className="flex items-center gap-3 shrink-0">
             <img src="/theralign-logo.svg" alt="Theralign" className="w-8 h-8 object-contain shrink-0" />
-            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-primary md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
+            <span className="font-semibold text-2xl tracking-tighter uppercase font-swiss text-primary md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
               THERALIGN
             </span>
           </Link>
@@ -169,26 +169,26 @@ const DashboardLayout = () => {
                 }}
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm select-none shrink-0">
+              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-medium text-sm select-none shrink-0">
                 {user?.name ? user.name[0].toUpperCase() : 'U'}
               </div>
             )}
             <div className="overflow-hidden flex-1 text-left md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">
-              <h4 className="text-sm font-semibold truncate text-neutral-900 normal-case">
+              <h4 className="text-sm font-normal truncate text-neutral-900 normal-case">
                 {user?.name || 'User'}
               </h4>
               {user?.role === 'doctor' ? (
                 verificationStatus === 'verified' ? (
-                  <span className="inline-block bg-primary-light text-primary text-[9px] font-bold px-1.5 py-0.5 mt-1 rounded-sm select-none uppercase tracking-wider">
+                  <span className="inline-block bg-primary-light text-primary text-sm font-medium px-1.5 py-0.5 mt-1 rounded-sm select-none uppercase tracking-wider">
                     Verified Specialist
                   </span>
                 ) : (
-                  <span className="inline-block bg-warning/10 text-warning text-[9px] font-bold px-1.5 py-0.5 mt-1 rounded-sm select-none uppercase tracking-wider">
+                  <span className="inline-block bg-warning/10 text-warning text-sm font-medium px-1.5 py-0.5 mt-1 rounded-sm select-none uppercase tracking-wider">
                     Pending Verification
                   </span>
                 )
               ) : (
-                <span className="inline-block bg-neutral-100 text-neutral-500 text-[9px] font-bold px-1.5 py-0.5 mt-1 rounded-sm select-none uppercase tracking-wider">
+                <span className="inline-block bg-neutral-100 text-neutral-500 text-sm font-medium px-1.5 py-0.5 mt-1 rounded-sm select-none uppercase tracking-wider">
                   Patient Portal
                 </span>
               )}
@@ -196,7 +196,7 @@ const DashboardLayout = () => {
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center justify-start gap-3 h-10 px-3 w-full text-sm font-semibold text-neutral-900 border border-neutral-300 rounded-md hover:border-danger hover:text-danger hover:bg-danger/5 transition-all duration-300 select-none cursor-pointer overflow-hidden min-w-[200px]"
+            className="flex items-center justify-start gap-3 h-10 px-3 w-full text-sm font-normal text-neutral-900 border border-neutral-300 rounded-md hover:border-danger hover:text-danger hover:bg-danger/5 transition-all duration-300 select-none cursor-pointer overflow-hidden min-w-[200px]"
           >
             <LogOut className="w-4 h-4 shrink-0" />
             <span className="md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">Logout</span>
@@ -215,15 +215,15 @@ const DashboardLayout = () => {
             >
               <Menu className="w-6 h-6" />
             </button>
-            <h2 className="font-bold text-base text-neutral-900 normal-case tracking-wide hidden md:block">
+            <h2 className="font-medium text-base text-neutral-900 normal-case tracking-wide hidden md:block">
               {user?.role === 'doctor' ? 'Practitioner Portal' : 'Patient Portal'}
             </h2>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Logged In As</p>
-              <p className="text-xs font-semibold text-neutral-900">{user?.email}</p>
+              <p className="text-sm text-neutral-500 font-medium uppercase tracking-wider">Logged In As</p>
+              <p className="text-sm font-normal text-neutral-900">{user?.email}</p>
             </div>
             <NotificationBell />
             {user?.profileImage ? (
@@ -236,7 +236,7 @@ const DashboardLayout = () => {
                 }}
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-medium text-sm">
                 {user?.name ? user.name[0].toUpperCase() : 'U'}
               </div>
             )}
@@ -285,19 +285,19 @@ const DashboardLayout = () => {
           >
             {/* Verified Badge Check Icon */}
             <div className="w-16 h-16 rounded-full bg-[#E8F8F5] border border-success/30 text-success flex items-center justify-center shrink-0 shadow-sm animate-circle-pop">
-              <span className="text-3xl font-black leading-none">✓</span>
+              <span className="text-3xl font-semibold leading-none">✓</span>
             </div>
             
             <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-black text-neutral-900 uppercase tracking-tighter leading-tight">
+              <h2 className="text-xl font-medium text-neutral-900 uppercase tracking-tighter leading-tight">
                 YOUR APPLICATION IS ACCEPTED!
               </h2>
-              <p className="text-[11px] font-black text-success uppercase tracking-widest mt-1">
+              <p className="text-sm font-semibold text-success uppercase tracking-widest mt-1">
                 Verified Specialist Status Active
               </p>
             </div>
 
-            <p className="text-xs text-neutral-500 font-bold uppercase tracking-wide leading-relaxed">
+            <p className="text-sm text-neutral-500 font-medium uppercase tracking-wide leading-relaxed">
               Your professional qualifications and clinic details have been successfully verified. Your clinic profile is now live on the public directory map and search radar!
             </p>
 
@@ -307,7 +307,7 @@ const DashboardLayout = () => {
                 setShowVerificationSuccessModal(false);
                 window.location.reload(); // Re-sync layouts
               }}
-              className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-bold text-xs uppercase tracking-widest transition-all select-none rounded-xl cursor-pointer shadow-md border-0 active-press"
+              className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-medium text-sm uppercase tracking-widest transition-all select-none rounded-xl cursor-pointer shadow-md border-0 active-press"
             >
               GO LIVE & ENTER DASHBOARD →
             </button>

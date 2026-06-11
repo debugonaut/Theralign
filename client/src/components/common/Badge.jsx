@@ -32,8 +32,8 @@ const VARIANT_CONFIG = {
 };
 
 const SIZE_STYLES = {
-  sm: { padding: '4px 8px',   fontSize: '11px', letterSpacing: '0.08em' },
-  md: { padding: '6px 12px',  fontSize: '12px', letterSpacing: '0.08em' },
+  sm: { padding: '4px 8px',   fontSize: '14px', letterSpacing: '0.08em' },
+  md: { padding: '6px 12px',  fontSize: '14px', letterSpacing: '0.08em' },
 };
 
 const Badge = ({
@@ -83,10 +83,10 @@ const Badge = ({
             e.stopPropagation();
             onRemove(e);
           }}
-          className="hover:scale-110 active:scale-95 transition-transform cursor-pointer font-bold focus:outline-none flex items-center justify-center"
+          className="hover:scale-110 active:scale-95 transition-transform cursor-pointer font-medium focus:outline-none flex items-center justify-center"
           style={{
             color: config.color,
-            fontSize: '10px',
+            fontSize: '14px',
             lineHeight: '1',
             background: 'none',
             border: 'none',

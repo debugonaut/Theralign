@@ -28,20 +28,20 @@ const ReviewCard = ({ review }) => {
       {/* Header row: avatar + name + rating + date */}
       <div className="flex items-start gap-3">
         {/* Patient initial avatar */}
-        <div className="w-10 h-10 rounded-full bg-blue-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-blue-100">
+        <div className="w-10 h-10 rounded-full bg-blue-50 text-primary flex items-center justify-center font-medium text-base shrink-0 border border-blue-100">
           {initial}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-sm font-bold text-slate-800 truncate">{patientName}</p>
-            <span className="text-xs text-slate-400 font-medium shrink-0">{formattedDate}</span>
+            <p className="text-sm font-medium text-slate-800 truncate">{patientName}</p>
+            <span className="text-sm text-slate-400 font-medium shrink-0">{formattedDate}</span>
           </div>
 
           {/* Star rating row */}
           <div className="flex items-center gap-1 mt-0.5">
             <span className="text-base leading-none">{renderStars(review.rating)}</span>
-            <span className="text-xs text-slate-500 font-semibold ml-1">{review.rating}.0</span>
+            <span className="text-sm text-slate-500 font-normal ml-1">{review.rating}.0</span>
           </div>
         </div>
       </div>

@@ -81,10 +81,10 @@ const AppointmentsTable = ({ limit = 10, onMetricsFetched }) => {
       {/* Table Header Wrapper */}
       <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-base text-slate-100">All Clinic Bookings</h3>
-          <p className="text-xs text-slate-500 mt-1">Audit and monitor all platform scheduled consultations.</p>
+          <h3 className="font-medium text-base text-slate-100">All Clinic Bookings</h3>
+          <p className="text-sm text-slate-500 mt-1">Audit and monitor all platform scheduled consultations.</p>
         </div>
-        <span className="bg-primary/10 text-primary border border-primary/20 text-xs font-bold px-3 py-1 rounded-full">
+        <span className="bg-primary/10 text-primary border border-primary/20 text-sm font-medium px-3 py-1 rounded-full">
           {totalCount} Total
         </span>
       </div>
@@ -93,19 +93,19 @@ const AppointmentsTable = ({ limit = 10, onMetricsFetched }) => {
       {loading ? (
         <div className="p-6 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-xs font-semibold text-slate-500">Retrieving system bookings...</p>
+          <p className="mt-4 text-sm font-normal text-slate-500">Retrieving system bookings...</p>
         </div>
       ) : appointments.length === 0 ? (
         <div className="p-6 text-center flex flex-col items-center gap-3">
           <AlertCircle className="text-slate-600" size={32} />
-          <p className="text-sm font-bold text-slate-400">No Appointments Recorded</p>
-          <p className="text-xs text-slate-600">No bookings have been made across the platform yet.</p>
+          <p className="text-sm font-medium text-slate-400">No Appointments Recorded</p>
+          <p className="text-sm text-slate-600">No bookings have been made across the platform yet.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-slate-300 text-sm">
             <thead>
-              <tr className="bg-slate-900/50 border-b border-slate-800 text-slate-400 text-xs font-extrabold uppercase tracking-wider">
+              <tr className="bg-slate-900/50 border-b border-slate-800 text-slate-400 text-sm font-semibold uppercase tracking-wider">
                 <th className="px-4 py-2">Patient</th>
                 <th className="px-4 py-2">Physiotherapist</th>
                 <th className="px-4 py-2">Specialization</th>
@@ -127,23 +127,23 @@ const AppointmentsTable = ({ limit = 10, onMetricsFetched }) => {
                   <tr key={appt._id} className="hover:bg-slate-900/20 transition-all font-medium">
                     <td className="px-4 py-3">
                       <div>
-                        <p className="font-extrabold text-slate-200">{patName}</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">{patEmail}</p>
+                        <p className="font-semibold text-slate-200">{patName}</p>
+                        <p className="text-sm text-slate-500 mt-0.5">{patEmail}</p>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-extrabold text-slate-200">Dr. {docName}</p>
+                      <p className="font-semibold text-slate-200">Dr. {docName}</p>
                     </td>
-                    <td className="px-4 py-3 text-slate-400 text-xs font-bold">{specialization}</td>
-                    <td className="px-4 py-3 text-xs font-bold">{formatHumanDate(appt.date)}</td>
-                    <td className="px-4 py-3 text-xs font-bold">{appt.startTime} – {appt.endTime}</td>
-                    <td className="px-4 py-3 text-slate-200 font-extrabold">₹{appt.consultationFee}</td>
-                    <td className="px-4 py-3 text-primary font-extrabold">
+                    <td className="px-4 py-3 text-slate-400 text-sm font-medium">{specialization}</td>
+                    <td className="px-4 py-3 text-sm font-medium">{formatHumanDate(appt.date)}</td>
+                    <td className="px-4 py-3 text-sm font-medium">{appt.startTime} – {appt.endTime}</td>
+                    <td className="px-4 py-3 text-slate-200 font-semibold">₹{appt.consultationFee}</td>
+                    <td className="px-4 py-3 text-primary font-semibold">
                       ₹{appt.platformCommission}
-                      <span className="text-[9px] text-slate-500 font-bold block">(10%)</span>
+                      <span className="text-sm text-slate-500 font-medium block">(10%)</span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <span className={`inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${getStatusStyle(appt.status)}`}>
+                      <span className={`inline-block text-sm font-semibold uppercase px-2.5 py-0.5 rounded-full ${getStatusStyle(appt.status)}`}>
                         {appt.status}
                       </span>
                     </td>
@@ -158,7 +158,7 @@ const AppointmentsTable = ({ limit = 10, onMetricsFetched }) => {
       {/* Table Pagination */}
       {!loading && totalPages > 1 && (
         <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/10 flex items-center justify-between">
-          <p className="text-xs text-slate-500 font-bold">
+          <p className="text-sm text-slate-500 font-medium">
             Page {currentPage} of {totalPages}
           </p>
           <div className="flex gap-2">

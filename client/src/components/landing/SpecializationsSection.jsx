@@ -17,10 +17,10 @@ const SpecializationsSection = () => {
   return (
     <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
       <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-12">
-        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
+        <span className="font-medium text-sm tracking-[0.06em] uppercase text-accent font-swiss">
           01.
         </span>
-        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
+        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-medium uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
           AREAS OF CARE
         </h2>
       </div>
@@ -35,7 +35,7 @@ const SpecializationsSection = () => {
               className="group relative h-48 bg-neutral-100 border-2 border-neutral-900 p-6 flex flex-col justify-between cursor-pointer hover:bg-neutral-900 transition-colors duration-fast overflow-hidden"
             >
               {/* Dot Matrix Pattern */}
-              <div className="absolute inset-0  pointer-events-none group-hover:opacity-0 transition-opacity duration-fast"></div>
+              <div className="absolute inset-0 pointer-events-none group-hover:opacity-0 transition-opacity duration-fast"></div>
 
               {/* Icon in bordered square */}
               <div className="w-10 h-10 border-2 border-neutral-900 bg-white flex items-center justify-center relative z-10 group-hover:border-white group-hover:bg-neutral-900 transition-colors duration-fast">
@@ -43,7 +43,7 @@ const SpecializationsSection = () => {
               </div>
 
               {/* Specialization Name */}
-              <h3 className="font-bold text-[16px] text-neutral-900 uppercase tracking-widest relative z-10 group-hover:text-white transition-colors duration-fast w-[80%]">
+              <h3 className="font-medium text-[16px] text-neutral-900 uppercase tracking-widest relative z-10 group-hover:text-white transition-colors duration-fast w-[80%]">
                 {spec.name}
               </h3>
             </Link>

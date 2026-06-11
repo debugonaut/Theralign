@@ -37,10 +37,10 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
         {/* Left Side: 6 columns */}
         <div className="flex flex-col gap-4">
           <div>
-            <span className="text-display-md font-black text-neutral-900 select-none leading-none block">
+            <span className="text-display-md font-semibold text-neutral-900 select-none leading-none block">
               {percentage}%
             </span>
-            <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block mt-2">
+            <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block mt-2">
               PROFILE COMPLETE
             </span>
           </div>
@@ -56,7 +56,7 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
 
         {/* Right Side: 6 columns (Missing checklist) */}
         <div className="flex flex-col gap-3">
-          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block">
             REMAINING ACTIONS
           </span>
           
@@ -87,7 +87,7 @@ const ProfileCompletionCard = ({ doctorProfile, slotCount }) => {
                 </div>
 
                 {!item.met && (
-                  <span className="text-[11px] font-black text-accent tracking-wider shrink-0 select-none">
+                  <span className="text-sm font-semibold text-accent tracking-wider shrink-0 select-none">
                     +{item.weight}%
                   </span>
                 )}

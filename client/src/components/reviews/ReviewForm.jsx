@@ -53,7 +53,7 @@ const ReviewForm = ({ appointmentId, doctorName, onSuccess }) => {
       onSubmit={handleSubmit}
       className="mt-3 pt-3 border-t border-slate-100 space-y-3 text-left"
     >
-      <p className="text-xs font-bold text-slate-700">
+      <p className="text-sm font-medium text-slate-700">
         How was your experience with Dr. {doctorName}?
       </p>
 
@@ -79,7 +79,7 @@ const ReviewForm = ({ appointmentId, doctorName, onSuccess }) => {
           </button>
         ))}
         {(hoverRating || rating) > 0 && (
-          <span className="text-xs text-slate-500 font-bold ml-1">
+          <span className="text-sm text-slate-500 font-medium ml-1">
             {hoverRating || rating} / 5
           </span>
         )}
@@ -93,16 +93,16 @@ const ReviewForm = ({ appointmentId, doctorName, onSuccess }) => {
           placeholder="Share your experience... (min 10 characters)"
           maxLength={1000}
           rows={3}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all resize-none"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all resize-none"
         />
-        <p className="text-[10px] text-slate-400 text-right font-medium">
+        <p className="text-sm text-slate-400 text-right font-medium">
           {comment.length}/1000
         </p>
       </div>
 
       {/* Error display */}
       {error && (
-        <p className="text-[11px] text-rose-600 font-semibold bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
+        <p className="text-sm text-rose-600 font-normal bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
           {error}
         </p>
       )}
@@ -111,7 +111,7 @@ const ReviewForm = ({ appointmentId, doctorName, onSuccess }) => {
       <button
         type="submit"
         disabled={submitting || rating === 0 || comment.trim().length < 10}
-        className="w-full py-2.5 bg-primary text-white rounded-xl text-xs font-bold transition-all shadow-sm hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+        className="w-full py-2.5 bg-primary text-white rounded-xl text-sm font-medium transition-all shadow-sm hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
       >
         {submitting ? (
           <>

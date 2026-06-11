@@ -92,7 +92,7 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
         {/* Section label */}
         <p
           style={{
-            fontSize: '11px',
+            fontSize: '14px',
             fontWeight: 700,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
@@ -136,7 +136,7 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
               }}
             />
             {/* Length counter */}
-            <span className={`absolute bottom-3 right-4 text-[10px] font-bold ${remainingChars < 50 ? 'text-accent' : 'text-neutral-500'}`}>
+            <span className={`absolute bottom-3 right-4 text-sm font-medium ${remainingChars < 50 ? 'text-accent' : 'text-neutral-500'}`}>
               {remainingChars}
             </span>
           </div>
@@ -153,9 +153,9 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
                     setError(null);
                   }
                 }}
-                className="text-xs transition-all duration-fast select-none cursor-pointer"
+                className="text-sm transition-all duration-fast select-none cursor-pointer"
                 style={{
-                  fontSize: '12px',
+                  fontSize: '14px',
                   padding: '4px 10px',
                   border: '1.5px solid #000000',
                   borderRadius: 0,
@@ -182,7 +182,7 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
             <button
               type="submit"
               disabled={loading || symptoms.trim().length < 5}
-              className="flex-1 bg-neutral-900 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 px-6 rounded-none font-bold uppercase tracking-widest text-[12px] transition-all duration-fast inline-flex items-center justify-center gap-2 select-none cursor-pointer border border-transparent"
+              className="flex-1 bg-neutral-900 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 px-6 rounded-none font-medium uppercase tracking-widest text-sm transition-all duration-fast inline-flex items-center justify-center gap-2 select-none cursor-pointer border border-transparent"
             >
               {loading ? (
                 <>
@@ -203,13 +203,13 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
           <div className="mt-4 p-4 bg-accent/5 border border-accent flex gap-3 text-left">
             <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
             <div>
-              <h5 className="text-[11px] font-black text-accent uppercase tracking-wider">Triage Query Warning</h5>
-              <p className="text-[12px] text-accent font-medium mt-0.5">{error}</p>
+              <h5 className="text-sm font-medium text-accent uppercase tracking-wider">Triage Query Warning</h5>
+              <p className="text-sm text-accent font-medium mt-0.5">{error}</p>
               {(!isAuthenticated || user?.role !== 'patient') && (
                 <Link
                   to="/login"
                   state={{ from: window.location.pathname }}
-                  className="inline-block mt-2 text-[11px] font-bold text-primary hover:underline uppercase tracking-wider"
+                  className="inline-block mt-2 text-sm font-medium text-primary hover:underline uppercase tracking-wider"
                 >
                   Sign in as a patient →
                 </Link>
@@ -219,7 +219,7 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
         )}
 
         {/* Small Legal Disclaimer */}
-        <p className="text-[10px] text-neutral-500 mt-4 text-center leading-relaxed font-swiss">
+        <p className="text-sm text-neutral-500 mt-4 text-center leading-relaxed font-swiss">
           AI triage analysis is provided for educational advice only and is not a formal medical diagnosis.
         </p>
       </div>

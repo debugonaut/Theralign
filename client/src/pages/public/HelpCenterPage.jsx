@@ -12,7 +12,7 @@ const FAQItem = ({ question, answer }) => {
       className="border-2 border-neutral-900 rounded-none shadow-none p-5 text-left bg-white hover:bg-neutral-50 transition-all select-none cursor-pointer flex flex-col gap-3"
     >
       <div className="flex justify-between items-center w-full">
-        <h4 className="text-xs font-black uppercase text-neutral-900 tracking-wide pr-6">
+        <h4 className="text-sm font-medium uppercase text-neutral-900 tracking-wide pr-6">
           {question}
         </h4>
         <span className="text-neutral-900 shrink-0">
@@ -21,7 +21,7 @@ const FAQItem = ({ question, answer }) => {
       </div>
 
       {isOpen && (
-        <div className="border-t border-swiss-gray-250 pt-4 text-xs text-swiss-gray-650 font-medium leading-relaxed animate-fade-in">
+        <div className="border-t border-swiss-gray-250 pt-4 text-sm text-swiss-gray-650 font-medium leading-relaxed animate-fade-in">
           {answer}
         </div>
       )}
@@ -73,7 +73,7 @@ const HelpCenterPage = () => {
         
         {/* Left Column: Patient FAQ Accordion */}
         <div className="space-y-6">
-          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+          <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
             PATIENT INQUIRY FAQS
           </span>
           <div className="space-y-4">
@@ -85,7 +85,7 @@ const HelpCenterPage = () => {
 
         {/* Right Column: Clinician FAQ Accordion */}
         <div className="space-y-6">
-          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+          <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
             CLINICIAN WORKSPACE FAQS
           </span>
           <div className="space-y-4">

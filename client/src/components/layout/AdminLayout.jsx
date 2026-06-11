@@ -75,7 +75,7 @@ const AdminLayout = () => {
   const renderNavGroup = (title, items) => {
     return (
       <div className="border-b border-white/15 pb-4 mb-4 last:border-b-0 last:pb-0 last:mb-0 overflow-x-hidden">
-        <span className="block px-6 mb-2 text-[9px] uppercase tracking-wider text-white/40 font-bold md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
+        <span className="block px-6 mb-2 text-sm uppercase tracking-wider text-white/40 font-medium md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
           {title}
         </span>
         <div className="space-y-1">
@@ -107,7 +107,7 @@ const AdminLayout = () => {
                 
                 <div className="flex items-center gap-1.5 md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 shrink-0">
                   {item.showBadge && pendingCount > 0 && (
-                    <span className="bg-accent text-white font-bold text-[10px] px-1.5 py-0.5 rounded-sm leading-none border-0 shadow-sm">
+                    <span className="bg-accent text-white font-medium text-sm px-1.5 py-0.5 rounded-sm leading-none border-0 shadow-sm">
                       {pendingCount}
                     </span>
                   )}
@@ -146,7 +146,7 @@ const AdminLayout = () => {
         <div className="flex items-center justify-between py-5 px-5 border-b border-white/15 bg-primary-dark overflow-hidden h-[73px]">
           <Link to="/admin/dashboard" className="flex items-center gap-3 shrink-0">
             <img src="/theralign-logo.svg" alt="Theralign" className="w-8 h-8 object-contain shrink-0 brightness-0 invert" />
-            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-white md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
+            <span className="font-semibold text-2xl tracking-tighter uppercase font-swiss text-white md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300 truncate">
               THERALIGN
             </span>
           </Link>
@@ -178,22 +178,22 @@ const AdminLayout = () => {
                 }}
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center font-bold text-sm select-none shrink-0 border border-white/15">
+              <div className="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center font-medium text-sm select-none shrink-0 border border-white/15">
                 {user?.name ? user.name[0].toUpperCase() : 'A'}
               </div>
             )}
             <div className="overflow-hidden flex-1 text-left md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">
-              <h4 className="text-sm font-semibold truncate text-white normal-case">
+              <h4 className="text-sm font-normal truncate text-white normal-case">
                 {user?.name || 'Admin'}
               </h4>
-              <span className="text-[9px] text-white/60 font-bold uppercase tracking-wider block mt-0.5">
+              <span className="text-sm text-white/60 font-medium uppercase tracking-wider block mt-0.5">
                 Admin Control Center
               </span>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center justify-start gap-3 h-10 px-3 w-full text-sm font-semibold text-white/75 border border-white/30 rounded-md hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 select-none cursor-pointer overflow-hidden min-w-[200px]"
+            className="flex items-center justify-start gap-3 h-10 px-3 w-full text-sm font-normal text-white/75 border border-white/30 rounded-md hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 select-none cursor-pointer overflow-hidden min-w-[200px]"
           >
             <LogOut className="w-4 h-4 shrink-0" />
             <span className="md:opacity-0 md:group-hover/sidebar:opacity-100 transition-opacity duration-300">Logout</span>
@@ -222,8 +222,8 @@ const AdminLayout = () => {
 
             <div className="flex items-center gap-3 border-l border-neutral-200 pl-6 h-8">
               <div className="text-right hidden sm:block">
-                <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Secure Profile</p>
-                <p className="text-xs font-semibold text-neutral-900">{user?.email}</p>
+                <p className="text-sm text-neutral-500 font-medium uppercase tracking-wider">Secure Profile</p>
+                <p className="text-sm font-normal text-neutral-900">{user?.email}</p>
               </div>
               {user?.profileImage ? (
                 <img 
@@ -235,7 +235,7 @@ const AdminLayout = () => {
                   }}
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-medium text-sm">
                   {user?.name ? user.name[0].toUpperCase() : 'A'}
                 </div>
               )}

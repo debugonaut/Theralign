@@ -56,16 +56,16 @@ const RecentActivityFeed = ({ activity = [], loading }) => {
     <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
       {/* Feed Header */}
       <div className="p-6 border-b border-neutral-200">
-        <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
+        <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest block mb-1">
           PLATFORM AUDIT LOG
         </span>
-        <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
+        <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
           RECENT ACTIVITY FEED
         </h3>
       </div>
 
       {activity.length === 0 ? (
-        <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+        <div className="p-6 text-center text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
           NO SYSTEM ACTIVITIES FILED
         </div>
       ) : (
@@ -89,13 +89,13 @@ const RecentActivityFeed = ({ activity = [], loading }) => {
 
               return (
                 <Table.Row key={index} hoverable={true}>
-                  <Table.Cell className="font-mono text-neutral-700 text-xs whitespace-nowrap">
+                  <Table.Cell className="font-mono text-neutral-700 text-sm whitespace-nowrap">
                     {formatTimeAgo(item.timestamp || item.createdAt)}
                   </Table.Cell>
                   <Table.Cell>
                     <Badge variant="neutral" label={displayType} size="sm" />
                   </Table.Cell>
-                  <Table.Cell className="font-bold text-neutral-900 uppercase tracking-wider text-xs">
+                  <Table.Cell className="font-medium text-neutral-900 uppercase tracking-wider text-sm">
                     {actorName}
                   </Table.Cell>
                   <Table.Cell className="text-neutral-700 font-medium" title={details}>

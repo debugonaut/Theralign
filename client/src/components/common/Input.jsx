@@ -184,7 +184,7 @@ const Input = forwardRef(({
         <label
           htmlFor={inputId}
           className={[
-            'text-[12px] font-semibold uppercase tracking-wide transition-colors',
+            'text-sm font-normal uppercase tracking-wide transition-colors',
             error ? 'text-danger' : 'text-neutral-500',
           ].join(' ')}
         >
@@ -202,7 +202,7 @@ const Input = forwardRef(({
       {error && (
         <p
           id={`${inputId}-error`}
-          className="text-[11px] text-danger mt-1 normal-case leading-tight font-medium"
+          className="text-sm text-danger mt-1 normal-case leading-tight font-medium"
           role="alert"
         >
           ↑ {error}

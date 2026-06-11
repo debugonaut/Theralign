@@ -86,7 +86,7 @@ const AdminUsers = () => {
             placeholder="SEARCH USERS BY NAME OR EMAIL..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-9 pr-4 py-2 bg-white border-2 border-neutral-900 text-xs font-bold uppercase placeholder-neutral-500 focus:outline-none transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-white border-2 border-neutral-900 text-sm font-medium uppercase placeholder-neutral-500 focus:outline-none transition-colors"
           />
         </div>
 
@@ -129,11 +129,11 @@ const AdminUsers = () => {
       {/* Directory Table */}
       <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {loading ? (
-          <div className="p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+          <div className="p-6 text-center text-neutral-500 text-sm font-medium uppercase tracking-wider flex items-center justify-center gap-2">
             <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING USER ACCOUNTS...
           </div>
         ) : users.length === 0 ? (
-          <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-6 text-center text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
             NO USER REGISTRATIONS MATCH FILTERS
           </div>
         ) : (
@@ -173,18 +173,18 @@ const AdminUsers = () => {
                             }}
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-medium text-sm uppercase shrink-0">
                             {uName[0]}
                           </div>
                         )}
-                        <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
+                        <span className="font-medium text-neutral-900 uppercase tracking-wide text-sm">
                           {uName}
                         </span>
                       </div>
                     </Table.Cell>
 
                     {/* Email */}
-                    <Table.Cell className="font-mono text-xs text-neutral-500">
+                    <Table.Cell className="font-mono text-sm text-neutral-500">
                       {u.email}
                     </Table.Cell>
 
@@ -194,7 +194,7 @@ const AdminUsers = () => {
                     </Table.Cell>
 
                     {/* Joined */}
-                    <Table.Cell className="font-mono text-xs text-neutral-500">
+                    <Table.Cell className="font-mono text-sm text-neutral-500">
                       {createdDate}
                     </Table.Cell>
 
@@ -203,14 +203,14 @@ const AdminUsers = () => {
                       {isUserActive ? (
                         <span 
                           style={{ borderColor: '#0F0F0F', color: '#0F0F0F' }}
-                          className="border-2 bg-white font-bold uppercase text-[11px] tracking-widest px-2 py-0.5"
+                          className="border-2 bg-white font-medium uppercase text-sm tracking-widest px-2 py-0.5"
                         >
                           ACTIVE
                         </span>
                       ) : (
                         <span 
                           style={{ borderColor: '#A3A3A3', color: '#A3A3A3' }}
-                          className="border-2 bg-white font-bold uppercase text-[11px] tracking-widest px-2 py-0.5"
+                          className="border-2 bg-white font-medium uppercase text-sm tracking-widest px-2 py-0.5"
                         >
                           INACTIVE
                         </span>
@@ -220,7 +220,7 @@ const AdminUsers = () => {
                     {/* Actions column: Protected for Admin accounts */}
                     <Table.Cell actions={true}>
                       {isUserAdmin ? (
-                        <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest italic pr-4">
+                        <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest italic pr-4">
                           PROTECTED
                         </span>
                       ) : isUserActive ? (
@@ -249,7 +249,7 @@ const AdminUsers = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
+        <div className="flex items-center justify-between text-sm font-medium uppercase tracking-wider pt-2 select-none">
           <span className="text-neutral-500">
             PAGE {page} OF {totalPages} · {total} TOTAL REGISTERED ACCOUNTS
           </span>

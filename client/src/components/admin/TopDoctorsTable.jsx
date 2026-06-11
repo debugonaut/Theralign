@@ -22,10 +22,10 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
       {/* Header with Sort Controls */}
       <div className="p-6 border-b border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
+          <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest block mb-1">
             PERFORMANCE METRICS
           </span>
-          <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
+          <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
             CLINICIAN LEADERBOARD
           </h3>
         </div>
@@ -52,7 +52,7 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
       </div>
 
       {doctors.length === 0 ? (
-        <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+        <div className="p-6 text-center text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
           NO CLASSIFIED CLINICIAN RECORDS
         </div>
       ) : (
@@ -83,7 +83,7 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
                   className="group"
                 >
                   {/* Rank */}
-                  <Table.Cell className="font-bold text-neutral-900">
+                  <Table.Cell className="font-medium text-neutral-900">
                     {index < 3 ? (
                       <span className="text-lg leading-none" role="img" aria-label="medal">
                         {RANK_ICONS[index]}
@@ -96,34 +96,34 @@ const TopDoctorsTable = ({ doctors = [], metric = 'earnings', onMetricChange }) 
                   {/* Doctor Name and Initial circle */}
                   <Table.Cell>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase select-none shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-neutral-900 text-white flex items-center justify-center font-medium text-sm uppercase select-none shrink-0">
                         {docName[0]}
                       </div>
-                      <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
+                      <span className="font-medium text-neutral-900 uppercase tracking-wide text-sm">
                         Dr. {docName}
                       </span>
                     </div>
                   </Table.Cell>
 
                   {/* Specialization tag */}
-                  <Table.Cell className="font-bold text-accent uppercase tracking-widest text-[10px]">
+                  <Table.Cell className="font-medium text-accent uppercase tracking-widest text-sm">
                     {specText.toUpperCase()}
                   </Table.Cell>
 
                   {/* Appointments */}
-                  <Table.Cell numeric={true} className="font-bold">
+                  <Table.Cell numeric={true} className="font-medium">
                     {doc.totalAppointments || doc.appointmentsCount || 0}
                   </Table.Cell>
 
                   {/* Total Earnings */}
-                  <Table.Cell numeric={true} className="font-black text-neutral-900">
+                  <Table.Cell numeric={true} className="font-semibold text-neutral-900">
                     ₹{(doc.totalEarnings || 0).toLocaleString('en-IN')}
                   </Table.Cell>
 
                   {/* Rating square with zero border radius */}
                   <Table.Cell numeric={true}>
                     <div className="flex justify-end">
-                      <div className="w-8 h-8 border-2 border-neutral-900 bg-white flex items-center justify-center text-xs font-black text-neutral-900 rounded-none">
+                      <div className="w-8 h-8 border-2 border-neutral-900 bg-white flex items-center justify-center text-sm font-semibold text-neutral-900 rounded-none">
                         {ratingVal}
                       </div>
                     </div>

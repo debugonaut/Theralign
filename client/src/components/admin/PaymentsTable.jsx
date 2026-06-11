@@ -121,7 +121,7 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
             placeholder="FILTER BY PATIENT, DOCTOR, OR PAYMENT ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-white border-2 border-neutral-900 text-xs font-bold uppercase placeholder-neutral-500 focus:outline-none transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-white border-2 border-neutral-900 text-sm font-medium uppercase placeholder-neutral-500 focus:outline-none transition-colors"
           />
         </div>
 
@@ -131,14 +131,14 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="px-3 py-1.5 border-2 border-neutral-900 bg-white text-xs font-bold focus:outline-none uppercase"
+            className="px-3 py-1.5 border-2 border-neutral-900 bg-white text-sm font-medium focus:outline-none uppercase"
           />
-          <span className="text-xs font-bold text-neutral-900">—</span>
+          <span className="text-sm font-medium text-neutral-900">—</span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="px-3 py-1.5 border-2 border-neutral-900 bg-white text-xs font-bold focus:outline-none uppercase"
+            className="px-3 py-1.5 border-2 border-neutral-900 bg-white text-sm font-medium focus:outline-none uppercase"
           />
         </div>
 
@@ -164,11 +164,11 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
       {/* Bordered Table wrapper */}
       <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {loading ? (
-          <div className="p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+          <div className="p-6 text-center text-neutral-500 text-sm font-medium uppercase tracking-wider flex items-center justify-center gap-2">
             <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING TRANSACTIONS...
           </div>
         ) : filteredPayments.length === 0 ? (
-          <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-6 text-center text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
             NO TRANSACTION RECORDS MATCH FILTERS
           </div>
         ) : (
@@ -199,46 +199,46 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
                 return (
                   <Table.Row key={payment._id}>
                     {/* Date */}
-                    <Table.Cell className="font-mono text-xs whitespace-nowrap text-neutral-700">
+                    <Table.Cell className="font-mono text-sm whitespace-nowrap text-neutral-700">
                       {formatHumanDate(appt.date || payment.createdAt)}
                     </Table.Cell>
 
                     {/* Patient */}
                     <Table.Cell>
                       <div className="text-left">
-                        <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs block">
+                        <span className="font-medium text-neutral-900 uppercase tracking-wide text-sm block">
                           {patName}
                         </span>
-                        <span className="text-[10px] text-neutral-500 font-mono block">
+                        <span className="text-sm text-neutral-500 font-mono block">
                           {patEmail}
                         </span>
                       </div>
                     </Table.Cell>
 
                     {/* Doctor */}
-                    <Table.Cell className="font-bold text-neutral-900 uppercase tracking-wide text-xs">
+                    <Table.Cell className="font-medium text-neutral-900 uppercase tracking-wide text-sm">
                       Dr. {docName}
                     </Table.Cell>
 
                     {/* Amount */}
-                    <Table.Cell numeric={true} className="font-bold text-neutral-900">
+                    <Table.Cell numeric={true} className="font-medium text-neutral-900">
                       ₹{payment.amount}
                     </Table.Cell>
 
                     {/* Commission */}
-                    <Table.Cell numeric={true} className="font-bold text-neutral-700">
+                    <Table.Cell numeric={true} className="font-medium text-neutral-700">
                       ₹{payment.platformCommission}
-                      <span className="text-[9px] text-neutral-500 font-bold block">(10%)</span>
+                      <span className="text-sm text-neutral-500 font-medium block">(10%)</span>
                     </Table.Cell>
 
                     {/* Doctor net earnings */}
-                    <Table.Cell numeric={true} className="font-black text-neutral-900">
+                    <Table.Cell numeric={true} className="font-semibold text-neutral-900">
                       ₹{payment.doctorEarnings}
-                      <span className="text-[9px] text-neutral-500 font-bold block">(90%)</span>
+                      <span className="text-sm text-neutral-500 font-medium block">(90%)</span>
                     </Table.Cell>
 
                     {/* Payment ID with tooltip */}
-                    <Table.Cell className="font-mono text-xs text-neutral-500 whitespace-nowrap" title={paymentId}>
+                    <Table.Cell className="font-mono text-sm text-neutral-500 whitespace-nowrap" title={paymentId}>
                       {paymentIdShort}
                     </Table.Cell>
 
@@ -256,7 +256,7 @@ const PaymentsTable = ({ onRevenueAggregates }) => {
 
       {/* Pagination */}
       {!loading && totalPages > 1 && (
-        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
+        <div className="flex items-center justify-between text-sm font-medium uppercase tracking-wider pt-2 select-none">
           <span className="text-neutral-500">
             PAGE {page} OF {totalPages} · {filteredPayments.length} TRANSACTIONS
           </span>

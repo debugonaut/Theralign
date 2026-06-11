@@ -72,7 +72,7 @@ const DoctorDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest bg-white">
+      <div className="py-24 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest bg-white">
         LOADING PRACTITIONER LEDGER PANELS...
       </div>
     );
@@ -144,10 +144,10 @@ const DoctorDashboard = () => {
       
       {/* ── Page Header ── */}
       <div>
-        <h1 className="font-black text-display-sm text-neutral-900 uppercase leading-none tracking-tighter">
+        <h1 className="font-medium text-display-sm text-neutral-900 uppercase leading-none tracking-tighter">
           Good morning, DR. {surname}.
         </h1>
-        <p className="text-ui-lg text-neutral-500 font-bold uppercase tracking-wider mt-2">
+        <p className="text-ui-lg text-neutral-500 font-medium uppercase tracking-wider mt-2">
           {currentFullDateStr}
         </p>
         <div className="w-full h-1 bg-neutral-900 mt-6 max-w-[1200px]" />
@@ -157,10 +157,10 @@ const DoctorDashboard = () => {
       {status !== 'verified' && (
         <div className="w-full p-6 bg-white border border-neutral-200/50 border-l-4 border-l-warning rounded-lg shadow-level-1 flex flex-col md:flex-row md:items-center justify-between gap-4 select-none transition-warm max-w-[1200px]">
           <div>
-            <span className="text-[10px] font-black text-warning tracking-widest uppercase block mb-1">
+            <span className="text-sm font-semibold text-warning tracking-widest uppercase block mb-1">
               PENDING VERIFICATION
             </span>
-            <p className="text-ui-md text-neutral-900 font-bold uppercase tracking-wide">
+            <p className="text-ui-md text-neutral-900 font-medium uppercase tracking-wide">
               Your profile is awaiting admin review. Complete your profile to accelerate the process.
             </p>
           </div>
@@ -186,22 +186,22 @@ const DoctorDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Today's Appointments */}
         <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block">
             TODAY'S APPOINTMENTS
           </span>
-          <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
+          <span className="text-display-xs font-semibold text-neutral-900 select-none leading-none block">
             {todayAppts.length}
           </span>
         </div>
 
         {/* This Month's Earnings */}
         <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block">
             THIS MONTH'S EARNINGS
           </span>
           <div className="flex items-baseline select-none">
             <span className="text-ui-xl text-neutral-900 font-medium mr-1 select-none">₹</span>
-            <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
+            <span className="text-display-xs font-semibold text-neutral-900 select-none leading-none block">
               {thisMonthEarnings.toLocaleString('en-IN')}
             </span>
           </div>
@@ -209,20 +209,20 @@ const DoctorDashboard = () => {
 
         {/* Total Patients */}
         <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block">
             TOTAL PATIENTS
           </span>
-          <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
+          <span className="text-display-xs font-semibold text-neutral-900 select-none leading-none block">
             {uniquePatients}
           </span>
         </div>
 
         {/* Your Rating */}
         <div className="p-6 bg-white border border-neutral-200/40 rounded-lg shadow-level-1 hover:shadow-level-2 transition-warm flex flex-col justify-between h-32 select-none">
-          <span className="text-ui-xs font-black text-neutral-500 uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-neutral-500 uppercase tracking-widest block">
             YOUR RATING
           </span>
-          <span className="text-display-xs font-black text-neutral-900 select-none leading-none block">
+          <span className="text-display-xs font-semibold text-neutral-900 select-none leading-none block">
             {profile?.averageRating ? `${parseFloat(profile.averageRating).toFixed(1)}/5` : '0/5'}
           </span>
         </div>
@@ -235,13 +235,13 @@ const DoctorDashboard = () => {
         <div className="grid grid-cols-12 gap-5 items-start">
           {/* Left 2 Columns: Vertical Date Stack */}
           <div className="col-span-12 md:col-span-2 flex md:flex-col items-baseline md:items-start justify-between md:justify-start gap-1 border-b md:border-b-0 md:border-r border-neutral-200 pb-4 md:pb-0 md:pr-4">
-            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
+            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block">
               {dayName}
             </span>
-            <span className="text-display-lg font-black text-neutral-900 select-none leading-none block md:my-1">
+            <span className="text-display-lg font-semibold text-neutral-900 select-none leading-none block md:my-1">
               {dayNum}
             </span>
-            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block">
+            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block">
               {monthName}
             </span>
           </div>
@@ -250,7 +250,7 @@ const DoctorDashboard = () => {
           <div className="col-span-12 md:col-span-10 flex flex-col gap-4">
             {todaySchedule.length === 0 ? (
               <div className="py-6 flex flex-col gap-3">
-                <p className="text-ui-md text-neutral-500 uppercase font-bold italic">
+                <p className="text-ui-md text-neutral-500 uppercase font-medium italic">
                   No appointments scheduled for today.
                 </p>
                 <Button
@@ -270,7 +270,7 @@ const DoctorDashboard = () => {
                   >
                     {/* Time Column (far left of row) */}
                     <div className="flex items-center gap-4 min-w-0">
-                      <span className="text-ui-xs font-black text-neutral-900 uppercase tracking-wider shrink-0 w-28">
+                      <span className="text-ui-sm font-semibold text-neutral-900 uppercase tracking-wider shrink-0 w-28">
                         {appt.startTime} – {appt.endTime}
                       </span>
                       {/* Thin vertical separator line inside the row */}
@@ -278,10 +278,10 @@ const DoctorDashboard = () => {
                       
                       {/* Card Content block */}
                       <div className="flex items-center gap-3 truncate">
-                        <span className="text-ui-sm font-black text-neutral-900 uppercase truncate">
+                        <span className="text-ui-sm font-semibold text-neutral-900 uppercase truncate">
                           {appt.patient?.name || 'Patient'}
                         </span>
-                        <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                        <span className="text-sm text-neutral-500 font-medium uppercase tracking-wider">
                           (30 MIN)
                         </span>
                         <Badge variant={appt.status} />
@@ -295,7 +295,7 @@ const DoctorDashboard = () => {
                       </ActionLink>
                       <button
                         onClick={() => handleMarkComplete(appt._id)}
-                        className="h-8 px-3 border border-neutral-300 hover:border-neutral-900 text-neutral-700 hover:text-neutral-900 font-bold text-[10px] flex items-center uppercase tracking-wider transition-all duration-150 select-none rounded-md cursor-pointer bg-white"
+                        className="h-8 px-3 border border-neutral-300 hover:border-neutral-900 text-neutral-700 hover:text-neutral-900 font-medium text-sm flex items-center uppercase tracking-wider transition-all duration-150 select-none rounded-md cursor-pointer bg-white"
                       >
                         MARK COMPLETE →
                       </button>
@@ -314,7 +314,7 @@ const DoctorDashboard = () => {
         
         {recentBookings.length === 0 ? (
           <div className="py-6 flex flex-col gap-3">
-            <p className="text-ui-md text-neutral-500 uppercase font-bold italic">
+            <p className="text-ui-md text-neutral-500 uppercase font-medium italic">
               No recent bookings registered in records.
             </p>
           </div>
@@ -337,13 +337,13 @@ const DoctorDashboard = () => {
                     .toUpperCase();
                   return (
                     <Table.Row key={appt._id} hoverable={true}>
-                      <Table.Cell className="font-bold text-neutral-500">
+                      <Table.Cell className="font-medium text-neutral-500">
                         {dateText}
                       </Table.Cell>
-                      <Table.Cell className="font-black text-neutral-900 uppercase">
+                      <Table.Cell className="font-semibold text-neutral-900 uppercase">
                         {appt.patient?.name || 'Patient'}
                       </Table.Cell>
-                      <Table.Cell className="font-bold">
+                      <Table.Cell className="font-medium">
                         {appt.startTime} – {appt.endTime}
                       </Table.Cell>
                       <Table.Cell>

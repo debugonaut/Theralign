@@ -14,11 +14,11 @@ const TrustBar = () => {
         <div className="flex items-center justify-center min-w-max mx-auto gap-4 sm:gap-6 md:gap-12">
           {signals.map((signal, index) => (
             <React.Fragment key={index}>
-              <span className="font-bold text-[11px] sm:text-xs uppercase tracking-[0.08em] font-swiss">
+              <span className="font-medium text-sm sm:text-xs uppercase tracking-[0.08em] font-swiss">
                 {signal}
               </span>
               {index < signals.length - 1 && (
-                <span className="text-accent font-bold text-xs sm:text-sm mx-1 sm:mx-2">•</span>
+                <span className="text-accent font-medium text-sm sm:text-sm mx-1 sm:mx-2">•</span>
               )}
             </React.Fragment>
           ))}

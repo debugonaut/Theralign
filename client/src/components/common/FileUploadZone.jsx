@@ -131,7 +131,7 @@ const FileUploadZone = ({
           <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-sm">
             <FileText size={20} className="text-red-500 shrink-0" />
             <span className="truncate max-w-[200px] font-medium">{selectedFile.name}</span>
-            <span className="text-xs text-slate-400">({(selectedFile.size / 1024).toFixed(1)} KB)</span>
+            <span className="text-sm text-slate-400">({(selectedFile.size / 1024).toFixed(1)} KB)</span>
           </div>
         );
       }
@@ -196,12 +196,12 @@ const FileUploadZone = ({
         {selectedFile || previewUrl ? (
           <div className="flex flex-col items-center">
             <CheckCircle2 size={36} className="text-emerald-500 mb-2" />
-            <p className="text-sm font-semibold text-emerald-800">File Selected Successfully</p>
+            <p className="text-sm font-normal text-emerald-800">File Selected Successfully</p>
             {renderPreview()}
             <button
               type="button"
               onClick={handleRemove}
-              className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded-full transition-all"
+              className="mt-4 inline-flex items-center gap-1 text-sm font-normal text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded-full transition-all"
             >
               <X size={12} /> Remove file
             </button>
@@ -215,9 +215,9 @@ const FileUploadZone = ({
               }`}
             />
             <p className="text-sm font-medium text-slate-600">
-              Drag & drop file here, or <span className="text-primary font-semibold">browse</span>
+              Drag & drop file here, or <span className="text-primary font-normal">browse</span>
             </p>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-sm text-slate-400 mt-1">
               Supports JPEG, PNG, PDF up to {maxSizeMB}MB
             </p>
           </div>
@@ -225,7 +225,7 @@ const FileUploadZone = ({
       </div>
 
       {error && (
-        <div className="flex items-center gap-1.5 mt-1.5 text-xs text-rose-600 font-medium">
+        <div className="flex items-center gap-1.5 mt-1.5 text-sm text-rose-600 font-medium">
           <AlertTriangle size={14} className="shrink-0" />
           <span>{error}</span>
         </div>

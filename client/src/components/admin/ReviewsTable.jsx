@@ -65,20 +65,20 @@ const ReviewsTable = () => {
       <div className="bg-white border-2 border-neutral-900 rounded-none shadow-none text-left">
         {/* Table Header block */}
         <div className="p-6 border-b border-neutral-200">
-          <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
+          <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest block mb-1">
             PATIENT FEEDBACK AUDIT
           </span>
-          <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
+          <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
             REVIEWS MODERATION LEDGER
           </h3>
         </div>
 
         {loading ? (
-          <div className="p-6 text-center text-neutral-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+          <div className="p-6 text-center text-neutral-500 text-sm font-medium uppercase tracking-wider flex items-center justify-center gap-2">
             <Loader2 className="animate-spin h-4 w-4" /> RETRIEVING REVIEWS LEDGER...
           </div>
         ) : reviews.length === 0 ? (
-          <div className="p-6 text-center text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+          <div className="p-6 text-center text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
             NO REVIEWS SUBMITTED YET.
           </div>
         ) : (
@@ -117,10 +117,10 @@ const ReviewsTable = () => {
                     {/* Patient */}
                     <Table.Cell>
                       <div className="text-left">
-                        <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs block">
+                        <span className="font-medium text-neutral-900 uppercase tracking-wide text-sm block">
                           {patientName}
                         </span>
-                        <span className="text-[10px] text-neutral-500 font-mono block">
+                        <span className="text-sm text-neutral-500 font-mono block">
                           {rev.patient?.email || ''}
                         </span>
                       </div>
@@ -129,10 +129,10 @@ const ReviewsTable = () => {
                     {/* Doctor */}
                     <Table.Cell>
                       <div className="text-left">
-                        <span className="font-bold text-neutral-900 uppercase tracking-wide text-xs block">
+                        <span className="font-medium text-neutral-900 uppercase tracking-wide text-sm block">
                           Dr. {doctorName}
                         </span>
-                        <span className="text-[10px] text-accent font-bold block uppercase tracking-widest text-[9px] mt-0.5">
+                        <span className="text-sm text-accent font-medium block uppercase tracking-widest text-sm mt-0.5">
                           {specialization.toUpperCase()}
                         </span>
                       </div>
@@ -141,7 +141,7 @@ const ReviewsTable = () => {
                     {/* Rating square */}
                     <Table.Cell numeric={true}>
                       <div className="flex justify-end">
-                        <div className="w-8 h-8 border-2 border-neutral-900 bg-white flex items-center justify-center text-xs font-black text-neutral-900 rounded-none">
+                        <div className="w-8 h-8 border-2 border-neutral-900 bg-white flex items-center justify-center text-sm font-semibold text-neutral-900 rounded-none">
                           {rev.rating}
                         </div>
                       </div>
@@ -153,7 +153,7 @@ const ReviewsTable = () => {
                     </Table.Cell>
 
                     {/* Date */}
-                    <Table.Cell className="font-mono text-xs text-neutral-500 whitespace-nowrap">
+                    <Table.Cell className="font-mono text-sm text-neutral-500 whitespace-nowrap">
                       {reviewDate}
                     </Table.Cell>
 
@@ -187,7 +187,7 @@ const ReviewsTable = () => {
 
       {/* Pagination */}
       {!loading && totalPages > 1 && (
-        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider pt-2 select-none">
+        <div className="flex items-center justify-between text-sm font-medium uppercase tracking-wider pt-2 select-none">
           <span className="text-neutral-500">
             PAGE {currentPage} OF {totalPages} · {totalCount} REVIEWS
           </span>

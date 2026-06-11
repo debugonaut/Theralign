@@ -19,7 +19,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 1 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-accent uppercase tracking-widest block">
             01. SCHEDULING & BOOKINGS REGULATION
           </span>
           <p className="text-ui-md text-swiss-gray-650">
@@ -29,7 +29,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 2 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-accent uppercase tracking-widest block">
             02. CANCELLATIONS & REFUND PARAMETERS
           </span>
           <p className="text-ui-md text-swiss-gray-650">
@@ -39,7 +39,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 3 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-accent uppercase tracking-widest block">
             03. REVENUE SPLITS & COMMISSION RULES
           </span>
           <p className="text-ui-md text-swiss-gray-650">
@@ -49,7 +49,7 @@ const TermsOfServicePage = () => {
 
         {/* Section 4 */}
         <div className="space-y-3">
-          <span className="text-ui-xs font-black text-accent uppercase tracking-widest block">
+          <span className="text-ui-sm font-semibold text-accent uppercase tracking-widest block">
             04. PROFESSIONAL INTEGRITY CHARTER
           </span>
           <p className="text-ui-md text-swiss-gray-650">

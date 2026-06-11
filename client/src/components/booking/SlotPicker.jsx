@@ -303,17 +303,17 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     <div className="flex flex-col gap-5 select-none w-full">
       {/* ── Consultation Fee Header ── */}
       <div className="text-left pb-3 border-b border-neutral-200">
-        <h2 className="text-display-sm font-black text-neutral-900 tracking-tighter leading-none">
+        <h2 className="text-display-sm font-medium text-neutral-900 tracking-tighter leading-none">
           ₹{consultationFee}
         </h2>
-        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mt-1.5 block">
+        <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest mt-1.5 block">
           PER SESSION
         </span>
       </div>
 
       {/* ── Loading / Auth Gates ── */}
       {loading && (
-        <div className="w-full py-4 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+        <div className="w-full py-4 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest">
           Loading clinic availability...
         </div>
       )}
@@ -330,11 +330,11 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
           {/* Time slot grid selector */}
           <div className="flex flex-col gap-3 pt-4 border-t border-neutral-200">
             <div className="flex justify-between items-baseline mb-1">
-              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <label className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 SELECT TIME SLOT
               </label>
               {selectedDate && (
-                <span className="text-ui-sm font-bold text-primary">
+                <span className="text-ui-sm font-medium text-primary">
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-IN', {
                     weekday: 'long',
                     day: 'numeric',
@@ -346,7 +346,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
             {selectedDate ? (
               slotsForSelectedDate.length === 0 ? (
-                <span className="text-ui-xs text-neutral-500 font-bold uppercase">
+                <span className="text-ui-sm text-neutral-500 font-medium uppercase">
                   No slots scheduled for this date.
                 </span>
               ) : (
@@ -372,7 +372,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
                 </div>
               )
             ) : (
-              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+              <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
                 SELECT A DATE TO SEE AVAILABLE TIMES →
               </span>
             )}
@@ -385,11 +385,11 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
               fullWidth
               disabled={!selectedSlot}
               onClick={handleOpenBookingModal}
-              className="font-bold h-12"
+              className="font-medium h-12"
             >
               {selectedSlot ? 'CONFIRM & PAY →' : 'SELECT A TIME SLOT'}
             </Button>
-            <p className="text-[9px] font-bold text-neutral-500 mt-2 text-center tracking-wider">
+            <p className="text-sm font-medium text-neutral-500 mt-2 text-center tracking-wider">
               Secure payment via Razorpay. Confirmation sent by email.
             </p>
           </div>

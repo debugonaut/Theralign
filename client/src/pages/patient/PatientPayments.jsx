@@ -219,10 +219,10 @@ const PatientPayments = () => {
             key={m.label}
             className="group bg-white border border-neutral-200/40 hover:shadow-level-2 shadow-level-1 p-6 transition-warm select-none rounded-lg text-left"
           >
-            <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block mb-2">
+            <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block mb-2">
               {m.label}
             </span>
-            <h2 className="text-display-sm font-black text-neutral-900 uppercase tracking-tighter leading-none">
+            <h2 className="text-display-sm font-medium text-neutral-900 uppercase tracking-tighter leading-none">
               {loading ? '—' : m.val}
             </h2>
           </div>
@@ -231,15 +231,15 @@ const PatientPayments = () => {
 
       {/* Payments Ledger Table */}
       {loading ? (
-        <div className="py-6 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+        <div className="py-6 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest">
           LOADING TRANSACTIONS LEDGER...
         </div>
       ) : payments.length === 0 ? (
         <div className="border border-neutral-200 border-dashed p-6 text-center rounded-lg flex flex-col items-center gap-3 max-w-lg mx-auto bg-neutral-50 shadow-level-1">
-          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+          <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest">
             NO TRANSACTION ENTRIES
           </span>
-          <p className="text-ui-md text-neutral-700 font-bold max-w-sm">
+          <p className="text-ui-md text-neutral-700 font-medium max-w-sm">
             Your billing receipts and clinical payouts history will appear automatically.
           </p>
         </div>
@@ -276,23 +276,23 @@ const PatientPayments = () => {
 
                 return (
                   <Table.Row key={payment._id} hoverable={true}>
-                    <Table.Cell className="font-bold text-neutral-500">
+                    <Table.Cell className="font-medium text-neutral-500">
                       {payDateText}
                     </Table.Cell>
                     <Table.Cell>
                       <div className="flex flex-col text-left">
-                        <span className="font-black text-neutral-900 uppercase">
+                        <span className="font-semibold text-neutral-900 uppercase">
                           DR. {docName.toUpperCase()}
                         </span>
-                        <span className="text-[10px] text-accent font-black tracking-widest mt-0.5">
+                        <span className="text-sm text-accent font-semibold tracking-widest mt-0.5">
                           {specText.toUpperCase()}
                         </span>
                       </div>
                     </Table.Cell>
-                    <Table.Cell numeric className="font-black">
+                    <Table.Cell numeric className="font-semibold">
                       {formatINR(payment.amount)}
                     </Table.Cell>
-                    <Table.Cell className="font-mono text-ui-xs font-bold text-neutral-500 swiss-numeric">
+                    <Table.Cell className="font-mono text-ui-sm font-medium text-neutral-500 swiss-numeric">
                       <span title={payment.razorpayPaymentId || 'N/A'}>
                         {shortId}
                       </span>
@@ -312,17 +312,17 @@ const PatientPayments = () => {
                     </Table.Cell>
                     <Table.Cell actions>
                       {refundState === 'approved' ? (
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">REFUNDED</span>
+                        <span className="text-sm font-semibold text-emerald-600 uppercase tracking-widest">REFUNDED</span>
                       ) : refundState === 'initiated' ? (
-                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">REFUND INITIATED</span>
+                        <span className="text-sm font-semibold text-amber-500 uppercase tracking-widest">REFUND INITIATED</span>
                       ) : refundState === 'cancel' ? (
-                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">REFUND CANCEL</span>
+                        <span className="text-sm font-semibold text-rose-500 uppercase tracking-widest">REFUND CANCEL</span>
                       ) : payment.appointment?.status === 'cancelled' ? (
                         <button
                           type="button"
                           onClick={() => handleRequestRefund(payment._id, payment.appointment?.cancellationReason)}
                           disabled={refundingId === payment._id}
-                          className="text-[10px] font-black text-accent hover:underline uppercase tracking-widest cursor-pointer bg-transparent border-0 disabled:opacity-50"
+                          className="text-sm font-semibold text-accent hover:underline uppercase tracking-widest cursor-pointer bg-transparent border-0 disabled:opacity-50"
                         >
                           {refundingId === payment._id ? 'REQUESTING...' : 'REQUEST REFUND →'}
                         </button>

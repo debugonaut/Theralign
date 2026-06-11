@@ -108,10 +108,12 @@ export default {
     },
 
     fontWeight: {
-      regular: '400',
-      medium:  '500',
-      bold:    '700',
-      black:   '900',
+      regular:  '400',
+      normal:   '400',
+      medium:   '500',
+      semibold: '600',
+      bold:     '700',
+      black:    '900',
     },
 
     spacing: {

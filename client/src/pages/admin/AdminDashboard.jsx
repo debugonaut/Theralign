@@ -149,12 +149,12 @@ const AdminDashboard = () => {
       {serverWarm && (
         <div className="absolute top-0 right-0 z-10">
           {serverWarm === 'warm' ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 border border-teal-200 text-teal-700 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm animate-fade-in">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 border border-teal-200 text-teal-700 text-sm font-medium uppercase tracking-wider rounded-full shadow-sm animate-fade-in">
               <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse" />
               SERVER WARM
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm animate-fade-in">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-sm font-medium uppercase tracking-wider rounded-full shadow-sm animate-fade-in">
               <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping" />
               WARMING UP
             </span>

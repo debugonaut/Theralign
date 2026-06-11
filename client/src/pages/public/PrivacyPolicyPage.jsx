@@ -21,14 +21,14 @@ const PrivacyPolicyPage = () => {
           This privacy charter outlines what information we collect, how it is secured, and the technical mechanisms we enforce to protect clinical histories, patient case details, and financial transactions.
         </p>
 
-        <h3 className="text-xs font-black text-neutral-900 uppercase tracking-widest pt-4 border-b pb-2">
+        <h3 className="text-sm font-medium text-neutral-900 uppercase tracking-widest pt-4 border-b pb-2">
           01. CLINICAL SECURITY PROTOCOLS
         </h3>
         <p>
           All diagnostic entries, symptoms analysis queries, and case notes entered during appointment bookings are encrypted both in transit (using secure SSL/TLS channels) and at rest (using AES-256 standard encryption keys). Our databases align with HIPAA frameworks to guarantee clinical integrity.
         </p>
 
-        <h3 className="text-xs font-black text-neutral-900 uppercase tracking-widest pt-4 border-b pb-2">
+        <h3 className="text-sm font-medium text-neutral-900 uppercase tracking-widest pt-4 border-b pb-2">
           02. REGULATORY RIGHTS & CONTROLS
         </h3>
         <p>
@@ -38,7 +38,7 @@ const PrivacyPolicyPage = () => {
 
       {/* Data Classification Swiss Table */}
       <div className="space-y-4">
-        <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
+        <span className="text-sm font-semibold text-neutral-500 uppercase tracking-widest block pb-2 border-b border-swiss-gray-250">
           INFORMATION CLASSIFICATION LEDGER
         </span>
 
@@ -54,58 +54,58 @@ const PrivacyPolicyPage = () => {
             </Table.Head>
             <Table.Body>
               <Table.Row>
-                <Table.Cell className="font-bold text-neutral-900 text-xs uppercase tracking-wide">
+                <Table.Cell className="font-medium text-neutral-900 text-sm uppercase tracking-wide">
                   USER ACCOUNT DETAILS
                 </Table.Cell>
-                <Table.Cell className="text-swiss-gray-650 text-xs">
+                <Table.Cell className="text-swiss-gray-650 text-sm">
                   User login validation, notifications dispatch, and profile matching.
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-neutral-700">
+                <Table.Cell className="font-mono text-sm text-neutral-700">
                   DURATION OF ACTIVE ACCOUNT
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-success">
+                <Table.Cell className="font-mono text-sm text-success">
                   AES-256 ENCRYPTED
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
-                <Table.Cell className="font-bold text-neutral-900 text-xs uppercase tracking-wide">
+                <Table.Cell className="font-medium text-neutral-900 text-sm uppercase tracking-wide">
                   CLINICAL CASE LOGS
                 </Table.Cell>
-                <Table.Cell className="text-swiss-gray-650 text-xs">
+                <Table.Cell className="text-swiss-gray-650 text-sm">
                   Patient diagnostics history, symptoms interpretations, and case notes.
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-neutral-700">
+                <Table.Cell className="font-mono text-sm text-neutral-700">
                   DURATION OF ACTIVE ACCOUNT
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-success">
+                <Table.Cell className="font-mono text-sm text-success">
                   HIPAA AES-256 + SSL
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
-                <Table.Cell className="font-bold text-neutral-900 text-xs uppercase tracking-wide">
+                <Table.Cell className="font-medium text-neutral-900 text-sm uppercase tracking-wide">
                   CLINICIAN CERTIFICATES
                 </Table.Cell>
-                <Table.Cell className="text-swiss-gray-650 text-xs">
+                <Table.Cell className="text-swiss-gray-650 text-sm">
                   Degrees validation and license checking with state registries.
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-neutral-700">
+                <Table.Cell className="font-mono text-sm text-neutral-700">
                   PERMANENT FOR VERIFICATION
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-success">
+                <Table.Cell className="font-mono text-sm text-success">
                   SECURE PRIVATE S3 BUCKETS
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
-                <Table.Cell className="font-bold text-neutral-900 text-xs uppercase tracking-wide">
+                <Table.Cell className="font-medium text-neutral-900 text-sm uppercase tracking-wide">
                   FINANCIAL LEDGER
                 </Table.Cell>
-                <Table.Cell className="text-swiss-gray-650 text-xs">
+                <Table.Cell className="text-swiss-gray-650 text-sm">
                   Commission split verification, payments receipts, and bank payouts.
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-neutral-700">
+                <Table.Cell className="font-mono text-sm text-neutral-700">
                   7 YEARS (TAX COMPLIANCE)
                 </Table.Cell>
-                <Table.Cell className="font-mono text-xs text-success">
+                <Table.Cell className="font-mono text-sm text-success">
                   RAZORPAY GATEWAY LOCK
                 </Table.Cell>
               </Table.Row>

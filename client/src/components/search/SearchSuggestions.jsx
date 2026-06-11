@@ -60,7 +60,7 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
   return (
     <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-neutral-900 z-50 overflow-hidden max-min-h-0 overflow-y-auto rounded-none shadow-none animate-none">
       {isLoading && (
-        <div className="px-4 py-3 text-ui-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+        <div className="px-4 py-3 text-ui-sm font-medium text-neutral-500 uppercase tracking-widest flex items-center gap-2">
           <Loader2 className="animate-spin h-4 w-4" /> SEARCHING OPTIONS...
         </div>
       )}
@@ -91,10 +91,10 @@ const SearchSuggestions = ({ query, onSelect, visible }) => {
             </div>
             
             <div className="min-w-0 flex-1">
-              <p className="text-ui-sm font-black uppercase tracking-wider truncate">
+              <p className="text-ui-sm font-semibold uppercase tracking-wider truncate">
                 {s.label}
               </p>
-              <p className="text-[10px] font-bold uppercase tracking-widest truncate mt-0.5 text-neutral-500">
+              <p className="text-sm font-medium uppercase tracking-widest truncate mt-0.5 text-neutral-500">
                 {s.subLabel}
               </p>
             </div>

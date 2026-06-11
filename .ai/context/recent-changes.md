@@ -8,6 +8,27 @@
 
 ## High Impact Changes
 
+### 2026-06-11 — Bug Fix: Profile Upload Redirection Bug & Doctor Detail Photo Display
+**Author:** Antigravity (AI Coding Assistant)
+
+**Summary:** Resolved the redirect/unauthorized bug occurring after patient or doctor profile image uploads. This issue was caused by the `setCredentials` call in `PatientProfile.jsx` and `DoctorProfileEditor.jsx` overwriting the Zustand and localStorage user credentials state with a user object lacking the `role` field. We fixed this by ensuring the backend user query selections and populations include the `role` field and by merging the existing user state with the updated user details in the frontend before updating credentials. Additionally, we added the doctor's profile picture to the Identity Section of the public doctor detail page with proper border styling and an initials fallback.
+
+**Changed files:**
+- `server/src/controllers/patientProfile.controller.js` [modified] — Included the `role` field in all user query selects and populations.
+- `server/src/services/doctor.service.js` [modified] — Added `role` to user populate fields in `getDoctorProfileById`.
+- `client/src/pages/patient/PatientProfile.jsx` [modified] — Merged existing user credentials before updating authStore with uploaded photo.
+- `client/src/pages/doctor/DoctorProfileEditor.jsx` [modified] — Merged existing user credentials before updating authStore on onboarding save.
+- `client/src/pages/public/DoctorDetailPage.jsx` [modified] — Defined `getInitials` helper and rendered bordered profile image in Identity Section.
+
+**Affected subsystems:**
+- user-management
+- discovery-search
+
+**Regression risk:** Low
+- Successfully built frontend production bundle with no Vite or compilation warnings.
+
+---
+
 ### 2026-06-11 — Feature: Profile Image Sync and rendering logic across all roles
 **Author:** Antigravity (AI Coding Assistant)
 

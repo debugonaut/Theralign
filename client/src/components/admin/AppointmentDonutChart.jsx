@@ -15,7 +15,7 @@ const AppointmentDonutChart = ({ data = [] }) => {
 
   if (total === 0) {
     return (
-      <div className="bg-white border-2 border-neutral-900 p-6 flex flex-col items-center justify-center h-[280px] text-neutral-500 text-ui-sm font-bold uppercase tracking-wider">
+      <div className="bg-white border-2 border-neutral-900 p-6 flex flex-col items-center justify-center h-[280px] text-neutral-500 text-ui-sm font-medium uppercase tracking-wider">
         NO BOOKING DATA AVAILABLE
       </div>
     );
@@ -61,10 +61,10 @@ const AppointmentDonutChart = ({ data = [] }) => {
     <div className="bg-white border-2 border-neutral-900 p-6 rounded-none shadow-none text-left flex flex-col gap-6">
       {/* Header */}
       <div className="pb-4 border-b border-neutral-200">
-        <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest block mb-1">
+        <span className="text-sm font-medium text-neutral-500 uppercase tracking-widest block mb-1">
           OPERATIONAL METRICS
         </span>
-        <h3 className="text-ui-lg font-black text-neutral-900 uppercase tracking-tight">
+        <h3 className="text-ui-lg font-medium text-neutral-900 uppercase tracking-tight">
           APPOINTMENT STATUS INDEX
         </h3>
       </div>
@@ -122,11 +122,11 @@ const AppointmentDonutChart = ({ data = [] }) => {
                     className="w-3.5 h-3.5 border border-neutral-900 shrink-0 rounded-none"
                     style={{ backgroundColor: color }}
                   />
-                  <span className="text-[11px] font-black uppercase text-neutral-900 tracking-widest">{item.status}</span>
+                  <span className="text-sm font-semibold uppercase text-neutral-900 tracking-widest">{item.status}</span>
                 </div>
                 <div className="text-right flex items-baseline gap-1">
-                  <span className="text-ui-sm font-black text-neutral-900 swiss-numeric">{item.count}</span>
-                  <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">({item.percentage}%)</span>
+                  <span className="text-ui-sm font-semibold text-neutral-900 swiss-numeric">{item.count}</span>
+                  <span className="text-sm font-medium text-neutral-500 uppercase tracking-wider">({item.percentage}%)</span>
                 </div>
               </div>
             );

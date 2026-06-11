@@ -84,16 +84,16 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
       {/* Title block */}
       <div className="flex justify-between items-center mb-2 mt-4 font-sans">
         <div>
-          <span className="text-[10px] font-bold text-[#F4845F] tracking-[0.1em] uppercase block mb-1">
+          <span className="text-sm font-medium text-[#F4845F] tracking-[0.1em] uppercase block mb-1">
             STEP 1 OF 5
           </span>
-          <h2 className="text-[22px] font-bold text-[#1C2B3A] tracking-[-0.02em] leading-tight">
+          <h2 className="text-[22px] font-medium text-[#1C2B3A] tracking-[-0.02em] leading-tight">
             Basic Info
           </h2>
         </div>
         <div className="flex items-center gap-1.5 bg-[#F7F9FB] border border-[#DDE3EA] rounded-[6px] px-3 py-1.5 text-[#6B7C93]">
           <Info size={12} className="shrink-0" />
-          <span className="text-[11px] font-normal leading-none">
+          <span className="text-sm font-normal leading-none">
             This information is shared with your physiotherapist
           </span>
         </div>
@@ -110,11 +110,11 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
           <div>
             <div className="flex items-center gap-2 text-[#0B4F6C]">
               <User size={16} />
-              <h3 className="text-[13px] font-bold text-[#1C2B3A] uppercase tracking-[0.06em]">
+              <h3 className="text-[13px] font-medium text-[#1C2B3A] uppercase tracking-[0.06em]">
                 Personal Details
               </h3>
             </div>
-            <p className="text-[11px] text-[#6B7C93] mt-0.5">
+            <p className="text-sm text-[#6B7C93] mt-0.5">
               Your primary contact and identification information
             </p>
           </div>
@@ -126,7 +126,7 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
           {/* 2x2 grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+              <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                 Full Name
               </label>
               <input
@@ -138,7 +138,7 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
               />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+              <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                 Date of Birth
               </label>
               <input
@@ -149,7 +149,7 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
               />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+              <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                 Phone Number
               </label>
               <input
@@ -161,7 +161,7 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
               />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
+              <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-1.5 block">
                 Gender
               </label>
               <select
@@ -180,7 +180,7 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
 
           {/* Blood group selection */}
           <div>
-            <label className="text-[10px] font-semibold text-[#6B7C93] uppercase tracking-[0.07em] mb-2.5 block">
+            <label className="text-sm font-normal text-[#6B7C93] uppercase tracking-[0.07em] mb-2.5 block">
               Blood Group
             </label>
             <div className="grid grid-cols-4 sm:grid-cols-8 gap-2.5">
@@ -212,28 +212,28 @@ const BasicInfoTab = ({ profile, formData, onChange, onSaveSuccess, onSaveDraft,
           <button
             type="button"
             disabled={true}
-            className="h-10 px-5 border border-[#DDE3EA] text-[#A8B8C8] bg-transparent rounded-[6px] text-[12px] font-semibold uppercase tracking-[0.06em] opacity-50 cursor-not-allowed"
+            className="h-10 px-5 border border-[#DDE3EA] text-[#A8B8C8] bg-transparent rounded-[6px] text-sm font-normal uppercase tracking-[0.06em] opacity-50 cursor-not-allowed"
           >
             ← BACK
           </button>
           <button
             type="button"
             onClick={handleDraftClick}
-            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors duration-200"
+            className="h-10 px-5 border border-[#DDE3EA] hover:border-[#0B4F6C] text-[#6B7C93] hover:text-[#0B4F6C] bg-transparent rounded-[6px] text-sm font-normal uppercase tracking-[0.06em] transition-colors duration-200"
           >
             {draftSaved ? '✓ DRAFT SAVED' : 'SAVE DRAFT'}
           </button>
         </div>
 
         <div className="flex flex-col items-center relative">
-          <span className="text-[10px] text-[#A8B8C8] font-normal mb-1">
+          <span className="text-sm text-[#A8B8C8] font-normal mb-1">
             Changes saved automatically
           </span>
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="h-10 px-6 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-[6px] text-[12px] font-bold uppercase tracking-[0.06em] transition-colors duration-200 flex items-center justify-center shrink-0 min-w-[170px]"
+            className="h-10 px-6 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-[6px] text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 flex items-center justify-center shrink-0 min-w-[170px]"
           >
             {isSaving ? 'SAVING...' : saveStatus === 'success' ? '✓ SAVED' : 'SAVE & CONTINUE →'}
           </button>

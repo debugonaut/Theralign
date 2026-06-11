@@ -37,10 +37,10 @@ const MetricCard = ({ title = '', value, subtitle, loading }) => {
       className={`p-6 flex flex-col justify-between h-28 transition-all duration-fast ${borderClass}`}
     >
       <div className="text-left">
-        <span className={`text-[11px] font-bold uppercase tracking-widest block leading-none mb-2 ${titleColorClass}`}>
+        <span className={`text-sm font-medium uppercase tracking-widest block leading-none mb-2 ${titleColorClass}`}>
           {cleanTitle}
         </span>
-        <span className={`text-display-xs font-black tracking-tighter leading-none block ${valueColorClass}`}>
+        <span className={`text-display-xs font-semibold tracking-tighter leading-none block ${valueColorClass}`}>
           {value}
         </span>
       </div>
@@ -48,7 +48,7 @@ const MetricCard = ({ title = '', value, subtitle, loading }) => {
       <div>
         <div className="border-t border-neutral-200 my-1" />
         {subtitle && (
-          <span className="text-[11px] text-neutral-700 font-bold uppercase tracking-wider block mt-1.5 leading-none">
+          <span className="text-sm text-neutral-700 font-medium uppercase tracking-wider block mt-1.5 leading-none">
             {subtitle}
           </span>
         )}

@@ -186,7 +186,7 @@ const DoctorAvailability = () => {
 
   if (loading) {
     return (
-      <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest">
+      <div className="py-24 text-center text-ui-sm font-medium text-neutral-500 uppercase tracking-widest">
         LOADING SCHEDULE CONFIGURATION...
       </div>
     );
@@ -198,7 +198,7 @@ const DoctorAvailability = () => {
       {/* ── Page Header ── */}
       <div>
         <SectionHeader title="WEEKLY SCHEDULE" size="lg" ruled={true} className="mb-0" />
-        <p className="text-ui-sm text-neutral-700 font-bold uppercase tracking-wide mt-3">
+        <p className="text-ui-sm text-neutral-700 font-medium uppercase tracking-wide mt-3">
           Set your recurring weekly hours. Patients will see available slots based on this schedule.
         </p>
       </div>
@@ -253,11 +253,11 @@ const DoctorAvailability = () => {
                 {day.enabled ? (
                   <div className="flex items-center gap-2 flex-1">
                     <TimeSelect value={day.startTime} onChange={(v) => setDayTime(key, 'startTime', v)} />
-                    <span className="text-neutral-400 font-bold text-xs">—</span>
+                    <span className="text-neutral-400 font-medium text-sm">—</span>
                     <TimeSelect value={day.endTime} onChange={(v) => setDayTime(key, 'endTime', v)} />
                   </div>
                 ) : (
-                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest flex-1">
+                  <span className="text-sm font-medium text-neutral-400 uppercase tracking-widest flex-1">
                     Day Off
                   </span>
                 )}
@@ -267,7 +267,7 @@ const DoctorAvailability = () => {
                   <button
                     type="button"
                     onClick={() => copyToAllDays(key)}
-                    className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest shrink-0 transition-colors"
+                    className="text-sm font-medium text-primary hover:underline uppercase tracking-widest shrink-0 transition-colors"
                   >
                     Copy to all →
                   </button>
@@ -285,13 +285,13 @@ const DoctorAvailability = () => {
         <div className="border border-neutral-200 rounded-lg px-5 py-4 bg-white shadow-level-1">
           <div className="flex items-center gap-4 flex-wrap">
             <Toggle checked={breakEnabled} onChange={setBreakEnabled} />
-            <span className={`text-ui-xs font-black uppercase tracking-wider ${breakEnabled ? 'text-neutral-900' : 'text-neutral-400'}`}>
+            <span className={`text-ui-sm font-semibold uppercase tracking-wider ${breakEnabled ? 'text-neutral-900' : 'text-neutral-400'}`}>
               Enable lunch break (slots will not be generated during this window)
             </span>
             {breakEnabled && (
               <div className="flex items-center gap-2 ml-2">
                 <TimeSelect value={breakStart} onChange={setBreakStart} />
-                <span className="text-neutral-400 font-bold text-xs">—</span>
+                <span className="text-neutral-400 font-medium text-sm">—</span>
                 <TimeSelect value={breakEnd} onChange={setBreakEnd} />
               </div>
             )}
@@ -305,7 +305,7 @@ const DoctorAvailability = () => {
           variant="primary"
           onClick={handleSave}
           disabled={saving}
-          className="h-10 px-6 font-bold"
+          className="h-10 px-6 font-medium"
         >
           {saving ? 'SAVING...' : 'SAVE SCHEDULE →'}
         </Button>
@@ -328,13 +328,13 @@ const DoctorAvailability = () => {
             min={today}
             value={newBlockDate}
             onChange={(e) => setNewBlockDate(e.target.value)}
-            className="h-10 px-4 border border-neutral-200 rounded-md text-ui-sm font-semibold text-neutral-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-white focus:outline-none"
+            className="h-10 px-4 border border-neutral-200 rounded-md text-ui-sm font-normal text-neutral-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-white focus:outline-none"
           />
           <Button
             variant="ghost"
             onClick={handleBlockDate}
             disabled={!newBlockDate || blockingDate}
-            className="h-10 px-6 border-2 border-accent text-accent hover:bg-accent hover:text-white font-bold"
+            className="h-10 px-6 border-2 border-accent text-accent hover:bg-accent hover:text-white font-medium"
           >
             {blockingDate ? 'BLOCKING...' : 'BLOCK DATE →'}
           </Button>
@@ -350,7 +350,7 @@ const DoctorAvailability = () => {
               >
                 <div className="flex items-center gap-3">
                   <span className="w-2.5 h-2.5 rounded-full bg-accent shrink-0" />
-                  <span className="text-ui-sm font-black text-neutral-900 uppercase">
+                  <span className="text-ui-sm font-semibold text-neutral-900 uppercase">
                     {new Date(date + 'T00:00:00').toLocaleDateString('en-IN', {
                       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
                     })}
@@ -359,7 +359,7 @@ const DoctorAvailability = () => {
                 <button
                   type="button"
                   onClick={() => handleUnblockDate(date)}
-                  className="text-[10px] font-black text-neutral-500 hover:text-accent uppercase tracking-widest transition-colors cursor-pointer"
+                  className="text-sm font-semibold text-neutral-500 hover:text-accent uppercase tracking-widest transition-colors cursor-pointer"
                 >
                   REMOVE ×
                 </button>
@@ -368,7 +368,7 @@ const DoctorAvailability = () => {
           </div>
         ) : (
           <div className="border border-dashed border-neutral-200 rounded-md p-6 text-center">
-            <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+            <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest">
               No blocked dates — all scheduled days are available to patients
             </span>
           </div>

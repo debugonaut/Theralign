@@ -174,7 +174,7 @@ const BookingSuccessPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6">
-        <div className="text-center font-bold text-neutral-500 uppercase tracking-widest text-ui-xs">
+        <div className="text-center font-medium text-neutral-500 uppercase tracking-widest text-ui-sm">
           Verifying payment transaction...
         </div>
       </div>
@@ -186,8 +186,8 @@ const BookingSuccessPage = () => {
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6">
         <Card className="max-w-[480px] w-full p-6 text-center rounded-[12px] shadow-level-1">
           <ShieldAlert className="w-12 h-12 text-danger mx-auto mb-4" />
-          <h2 className="text-display-xs font-black text-neutral-900 tracking-tight">Booking Not Found</h2>
-          <p className="text-neutral-500 mt-2 text-ui-sm font-semibold">
+          <h2 className="text-display-xs font-medium text-neutral-900 tracking-tight">Booking Not Found</h2>
+          <p className="text-neutral-500 mt-2 text-ui-sm font-normal">
             We couldn't verify this scheduled slot.
           </p>
           <div className="mt-6">
@@ -229,10 +229,10 @@ const BookingSuccessPage = () => {
           {/* Header/Success Alert */}
           <div className="text-center flex flex-col items-center gap-3">
             <CheckCircle className="w-16 h-16 text-success animate-scaleIn" />
-            <h1 className="text-display-sm font-black text-neutral-900 tracking-tighter uppercase leading-none mt-2">
+            <h1 className="text-display-sm font-medium text-neutral-900 tracking-tighter uppercase leading-none mt-2">
               Appointment Confirmed
             </h1>
-            <p className="text-ui-sm font-semibold text-neutral-500 max-w-sm">
+            <p className="text-ui-sm font-normal text-neutral-500 max-w-sm">
               Your payment has been successfully verified. A confirmation email has been dispatched.
             </p>
           </div>
@@ -242,10 +242,10 @@ const BookingSuccessPage = () => {
             {/* Header info */}
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 border-b border-neutral-100">
               <div className="text-left">
-                <span className="text-[10px] text-accent font-black tracking-widest uppercase block mb-1">
+                <span className="text-sm text-accent font-semibold tracking-widest uppercase block mb-1">
                   {specText}
                 </span>
-                <h2 className="text-ui-xl font-black text-neutral-900 uppercase">
+                <h2 className="text-ui-xl font-medium text-neutral-900 uppercase">
                   Dr. {docName}
                 </h2>
                 <p className="text-ui-sm font-medium text-neutral-500 mt-0.5">
@@ -263,10 +263,10 @@ const BookingSuccessPage = () => {
               <div className="flex items-start gap-3">
                 <Calendar className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block">
+                  <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest block">
                     Date
                   </span>
-                  <span className="text-ui-md font-bold text-neutral-900">
+                  <span className="text-ui-md font-medium text-neutral-900">
                     {apptDateStr}
                   </span>
                 </div>
@@ -275,10 +275,10 @@ const BookingSuccessPage = () => {
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block">
+                  <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest block">
                     Scheduled Time
                   </span>
-                  <span className="text-ui-md font-bold text-neutral-900">
+                  <span className="text-ui-md font-medium text-neutral-900">
                     {appointment.startTime} – {appointment.endTime} (30 MIN)
                   </span>
                 </div>
@@ -287,10 +287,10 @@ const BookingSuccessPage = () => {
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block">
+                  <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest block">
                     Location
                   </span>
-                  <span className="text-ui-md font-bold text-neutral-900">
+                  <span className="text-ui-md font-medium text-neutral-900">
                     {clinicAddress}
                   </span>
                 </div>
@@ -300,26 +300,26 @@ const BookingSuccessPage = () => {
             {/* Financials & Transaction Info */}
             <div className="py-6 border-b border-neutral-100 flex flex-col gap-3 text-left">
               <div className="flex justify-between items-baseline">
-                <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest">
                   Consultation Fee
                 </span>
-                <span className="text-ui-md font-black text-neutral-900">
+                <span className="text-ui-md font-semibold text-neutral-900">
                   {formatINR(fee)}
                 </span>
               </div>
               <div className="flex justify-between items-baseline">
-                <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest">
                   Transaction ID
                 </span>
-                <span className="text-ui-xs font-mono font-bold text-neutral-500">
+                <span className="text-ui-sm font-mono font-medium text-neutral-500">
                   {paymentId}
                 </span>
               </div>
               <div className="flex justify-between items-baseline">
-                <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest">
                   Payment Status
                 </span>
-                <span className="text-[10px] font-black text-success uppercase tracking-widest">
+                <span className="text-sm font-semibold text-success uppercase tracking-widest">
                   CONFIRMED / PAID
                 </span>
               </div>
@@ -331,13 +331,13 @@ const BookingSuccessPage = () => {
                 variant="secondary" 
                 onClick={handlePrint}
                 fullWidth
-                className="h-12 font-bold flex items-center justify-center gap-2 border-neutral-300 hover:bg-neutral-50"
+                className="h-12 font-medium flex items-center justify-center gap-2 border-neutral-300 hover:bg-neutral-50"
               >
                 <Printer size={16} />
                 <span>Print Receipt</span>
               </Button>
               <Link to="/patient/appointments" className="w-full">
-                <Button variant="primary" fullWidth className="h-12 font-bold flex items-center justify-center gap-2">
+                <Button variant="primary" fullWidth className="h-12 font-medium flex items-center justify-center gap-2">
                   <span>View My Appointments</span>
                   <ArrowRight size={16} />
                 </Button>

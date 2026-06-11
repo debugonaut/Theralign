@@ -79,25 +79,25 @@ const DoctorCard = ({ doctor, index = 0 }) => {
               }}
             />
           ) : (
-            <span className="font-extrabold text-[18px] text-white tracking-[-0.02em]">
+            <span className="font-semibold text-[18px] text-white tracking-[-0.02em]">
               {initials}
             </span>
           )}
         </div>
         
         {/* Doctor Name */}
-        <h3 className="font-bold text-[15px] text-white leading-[1.3] max-w-[170px] overflow-hidden line-clamp-2">
+        <h3 className="font-medium text-[15px] text-white leading-[1.3] max-w-[170px] overflow-hidden line-clamp-2">
           {formattedDrName}
         </h3>
 
         {/* Specialization */}
-        <p className="font-medium text-[11px] text-white/70 mt-1 truncate max-w-[170px] block whitespace-nowrap">
+        <p className="font-medium text-sm text-white/70 mt-1 truncate max-w-[170px] block whitespace-nowrap">
           {primarySpec}
         </p>
 
         {/* Verified Badge */}
         {doctor.verificationStatus === 'verified' && (
-          <div className="absolute bottom-4 left-6 flex items-center gap-1 bg-white/15 border border-white/25 rounded px-2 py-0.5 text-[9px] font-bold tracking-[0.08em] text-white">
+          <div className="absolute bottom-4 left-6 flex items-center gap-1 bg-white/15 border border-white/25 rounded px-2 py-0.5 text-sm font-medium tracking-[0.08em] text-white">
             <BadgeCheck size={10} className="text-white fill-white/10" />
             <span>VERIFIED</span>
           </div>
@@ -111,10 +111,10 @@ const DoctorCard = ({ doctor, index = 0 }) => {
           <div className="flex items-center justify-between">
             <Star size={13} fill="#F4845F" stroke="#F4845F" className="shrink-0" />
             <div className="flex items-center gap-0.5">
-              <span className="font-bold text-[14px] text-[#1C2B3A]">{(doctor.averageRating || 0).toFixed(1)}</span>
-              <span className="text-[#DDE3EA] text-[12px]">/</span>
-              <span className="font-normal text-[12px] text-[#A8B8C8]">5</span>
-              <span className="font-normal text-[11px] text-[#6B7C93] ml-1">({doctor.totalReviews || 0})</span>
+              <span className="font-medium text-[14px] text-[#1C2B3A]">{(doctor.averageRating || 0).toFixed(1)}</span>
+              <span className="text-[#DDE3EA] text-sm">/</span>
+              <span className="font-normal text-sm text-[#A8B8C8]">5</span>
+              <span className="font-normal text-sm text-[#6B7C93] ml-1">({doctor.totalReviews || 0})</span>
             </div>
           </div>
 
@@ -123,7 +123,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
           {/* Stat 2: Experience */}
           <div className="flex items-center justify-between">
             <Briefcase size={13} className="text-[#6B7C93] shrink-0" />
-            <span className="font-bold text-[14px] text-[#1C2B3A]">{doctor.experience} yrs</span>
+            <span className="font-medium text-[14px] text-[#1C2B3A]">{doctor.experience} yrs</span>
           </div>
 
           <div className="h-[1px] bg-[#EEF2F6] w-full" />
@@ -131,7 +131,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
           {/* Stat 3: Fee */}
           <div className="flex items-center justify-between">
             <IndianRupee size={13} className="text-[#0B4F6C] shrink-0" />
-            <span className="font-bold text-[14px] text-[#0B4F6C]">₹{doctor.consultationFee}</span>
+            <span className="font-medium text-[14px] text-[#0B4F6C]">₹{doctor.consultationFee}</span>
           </div>
         </div>
       </div>
@@ -147,7 +147,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
             <span className="text-[#A8B8C8] text-[13px]">Location not specified</span>
           )}
           {doctor.distanceKm !== undefined && doctor.distanceKm !== null && (
-            <span className="bg-[#E8F4F8] rounded-[4px] px-2 py-8px ml-2 font-semibold text-[11px] text-[#0B4F6C] whitespace-nowrap" style={{ padding: '2px 8px' }}>
+            <span className="bg-[#E8F4F8] rounded-[4px] px-2 py-8px ml-2 font-normal text-sm text-[#0B4F6C] whitespace-nowrap" style={{ padding: '2px 8px' }}>
               {doctor.distanceKm} km away
             </span>
           )}
@@ -167,14 +167,14 @@ const DoctorCard = ({ doctor, index = 0 }) => {
             {remainingSpecs.slice(0, 3).map((spec, idx) => (
               <span
                 key={idx}
-                className="bg-[#F0F4F7] rounded-[4px] px-[10px] py-[3px] font-medium text-[11px] text-[#6B7C93] whitespace-nowrap"
+                className="bg-[#F0F4F7] rounded-[4px] px-[10px] py-[3px] font-medium text-sm text-[#6B7C93] whitespace-nowrap"
               >
                 {toTitleCase(spec)}
               </span>
             ))}
             {remainingSpecs.length > 3 && (
               <span
-                className="bg-[#F0F4F7] rounded-[4px] px-[10px] py-[3px] font-medium text-[11px] text-[#A8B8C8] whitespace-nowrap"
+                className="bg-[#F0F4F7] rounded-[4px] px-[10px] py-[3px] font-medium text-sm text-[#A8B8C8] whitespace-nowrap"
               >
                 +{remainingSpecs.length - 3}
               </span>
@@ -191,7 +191,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
         <button
           type="button"
           onClick={handleCardClick}
-          className="w-full h-10 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-lg font-semibold text-[13px] transition-colors cursor-pointer focus:outline-none"
+          className="w-full h-10 bg-[#0B4F6C] hover:bg-[#083A52] text-white rounded-lg font-normal text-[13px] transition-colors cursor-pointer focus:outline-none"
         >
           View Profile
         </button>
@@ -200,7 +200,7 @@ const DoctorCard = ({ doctor, index = 0 }) => {
         <button
           type="button"
           onClick={handleCardClick}
-          className="font-semibold text-[12px] text-[#F4845F] hover:underline bg-transparent border-0 cursor-pointer p-0"
+          className="font-normal text-sm text-[#F4845F] hover:underline bg-transparent border-0 cursor-pointer p-0"
         >
           Book Now →
         </button>
