@@ -17,6 +17,16 @@ const toTitleCase = (str) => {
     .join(' ');
 };
 
+const getInitials = (name) => {
+  if (!name) return 'PT';
+  const cleanName = name.replace(/^Dr\.\s+/i, '').trim();
+  const parts = cleanName.split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+  return cleanName.charAt(0).toUpperCase();
+};
+
 const formatReviewerName = (fullName) => {
   if (!fullName) return 'Anonymous';
   const parts = fullName.trim().split(/\s+/);
@@ -173,12 +183,33 @@ const DoctorDetailPage = () => {
           
           {/* Identity Section */}
           <div className="flex flex-col gap-3">
-            <h1 className="text-display-md font-black text-neutral-900 tracking-tighter leading-none mb-1 normal-case">
-              {formattedDrName}
-            </h1>
-            <span className="text-ui-xs font-bold text-accent tracking-widest uppercase block">
-              {formattedSpecText}
-            </span>
+            <div className="flex items-center gap-4">
+              {/* Doctor Avatar */}
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0 border-2 border-neutral-200 shadow-level-1">
+                {profile.user?.profileImage ? (
+                  <img
+                    src={profile.user.profileImage}
+                    alt={formattedDrName}
+                    className="w-full h-full object-cover rounded-full"
+                    onError={(e) => {
+                      e.target.src = 'https://res.cloudinary.com/demo/image/upload/v1/doctor_docs/default-avatar.png';
+                    }}
+                  />
+                ) : (
+                  <span className="font-extrabold text-[20px] text-white tracking-[-0.02em]">
+                    {getInitials(formattedDrName)}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <h1 className="text-display-md font-black text-neutral-900 tracking-tighter leading-none normal-case">
+                  {formattedDrName}
+                </h1>
+                <span className="text-ui-xs font-bold text-accent tracking-widest uppercase block">
+                  {formattedSpecText}
+                </span>
+              </div>
+            </div>
             <div className="h-[1px] bg-neutral-200 w-full mt-4" />
           </div>
 
