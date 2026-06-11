@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
-import { Lock } from 'lucide-react';
+import { Lock, Info } from 'lucide-react';
 import MediaUploadSection from './MediaUploadSection';
 import { uploadAppointmentMedia, deleteAppointmentMedia, getAppointmentMedia } from '../../api/appointmentMedia.api';
 import { toast } from 'react-hot-toast';
@@ -232,25 +232,44 @@ const BookingConfirmationModal = ({
       ) : (
         <div className="flex flex-col gap-6 text-left select-none">
           {/* Compact Summary Card */}
-          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 flex flex-col gap-2.5 text-ui-sm">
-            <div className="flex justify-between items-baseline pb-1.5 border-b border-neutral-200/60">
-              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">DOCTOR</span>
-              <span className="text-ui-sm font-bold text-neutral-900">Dr. {displayDoctorName}</span>
-            </div>
-            <div className="flex justify-between items-baseline pb-1.5 border-b border-neutral-200/60">
-              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">DATE & TIME</span>
-              <span className="text-ui-sm font-bold text-neutral-900">{formatHumanDate(slot.date)} at {slot.startTime}</span>
-            </div>
-            <div className="flex justify-between items-baseline">
-              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">FEE</span>
-              <span className="text-ui-sm font-extrabold text-neutral-900">₹{consultationFee}</span>
-            </div>
+          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-5 flex flex-col gap-4 shadow-level-1">
+            <dl className="grid grid-cols-1 gap-y-3">
+              <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
+                <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                  DOCTOR
+                </dt>
+                <dd className="text-ui-sm font-bold text-neutral-900">
+                  Dr. {displayDoctorName}
+                </dd>
+              </div>
+
+              <div className="flex justify-between items-baseline border-b border-neutral-200 pb-2">
+                <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                  DATE & TIME
+                </dt>
+                <dd className="text-ui-sm font-bold text-neutral-900">
+                  {formatHumanDate(slot.date)} at {slot.startTime}
+                </dd>
+              </div>
+
+              <div className="flex justify-between items-center pt-1">
+                <dt className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
+                  FEE
+                </dt>
+                <dd className="text-ui-md font-extrabold text-neutral-900">
+                  ₹{consultationFee}
+                </dd>
+              </div>
+            </dl>
           </div>
 
           {/* Helper Text */}
-          <p className="text-ui-xs text-neutral-500 font-semibold leading-relaxed -mb-2 bg-blue-50/40 border border-blue-100/60 p-3 rounded-md">
-            ℹ️ You can optionally attach X-rays, prescriptions, or any relevant medical documents for your physiotherapist.
-          </p>
+          <div className="bg-[#F4F8FA] border border-[#D5E6F0] p-4 rounded-lg flex gap-3 text-left">
+            <Info size={16} className="text-[#3182CE] shrink-0 mt-0.5" />
+            <p className="text-ui-xs text-[#2B6CB0] font-semibold leading-relaxed">
+              You can optionally attach X-rays, prescriptions, or any relevant medical documents for your physiotherapist.
+            </p>
+          </div>
 
           {/* MediaUploadSection */}
           <div className="border-t border-neutral-200 pt-2">

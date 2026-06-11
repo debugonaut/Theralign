@@ -1,0 +1,218 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-11T18:00:00Z",
+  "nodes": {
+    "model_Appointment": {
+      "type": "model",
+      "path": "server/src/models/Appointment.model.js",
+      "label": "Appointment Model"
+    },
+    "model_Payment": {
+      "type": "model",
+      "path": "server/src/models/Payment.model.js",
+      "label": "Payment Model"
+    },
+    "model_DoctorProfile": {
+      "type": "model",
+      "path": "server/src/models/DoctorProfile.model.js",
+      "label": "DoctorProfile Model"
+    },
+    "model_AvailabilitySlot": {
+      "type": "model",
+      "path": "server/src/models/AvailabilitySlot.model.js",
+      "label": "AvailabilitySlot Model"
+    },
+    "model_Review": {
+      "type": "model",
+      "path": "server/src/models/Review.model.js",
+      "label": "Review Model"
+    },
+    "model_User": {
+      "type": "model",
+      "path": "server/src/models/User.model.js",
+      "label": "User Model"
+    },
+    "controller_appointment": {
+      "type": "controller",
+      "path": "server/src/controllers/appointment.controller.js",
+      "label": "Appointment Controller"
+    },
+    "controller_payment": {
+      "type": "controller",
+      "path": "server/src/controllers/payment.controller.js",
+      "label": "Payment Controller"
+    },
+    "controller_availability": {
+      "type": "controller",
+      "path": "server/src/controllers/availability.controller.js",
+      "label": "Availability Controller"
+    },
+    "controller_discovery": {
+      "type": "controller",
+      "path": "server/src/controllers/discovery.controller.js",
+      "label": "Discovery Controller"
+    },
+    "controller_admin": {
+      "type": "controller",
+      "path": "server/src/controllers/admin.controller.js",
+      "label": "Admin Controller"
+    },
+    "service_refund": {
+      "type": "service",
+      "path": "server/src/services/refund.service.js",
+      "label": "Refund Service"
+    },
+    "service_analytics": {
+      "type": "service",
+      "path": "server/src/services/analytics.service.js",
+      "label": "Analytics Service"
+    },
+    "external_razorpay": {
+      "type": "external",
+      "label": "Razorpay API"
+    },
+    "external_cloudinary": {
+      "type": "external",
+      "label": "Cloudinary Storage"
+    },
+    "external_openai": {
+      "type": "external",
+      "label": "OpenAI API"
+    }
+  },
+  "edges": [
+    {
+      "source": "controller_appointment",
+      "target": "model_Appointment",
+      "type": "uses-model",
+      "label": "Creates and updates appointments"
+    },
+    {
+      "source": "controller_appointment",
+      "target": "model_AvailabilitySlot",
+      "type": "uses-model",
+      "label": "Locks slots via findOneAndUpdate"
+    },
+    {
+      "source": "controller_appointment",
+      "target": "model_DoctorProfile",
+      "type": "uses-model",
+      "label": "Snapshots consultation fee"
+    },
+    {
+      "source": "controller_payment",
+      "target": "model_Payment",
+      "type": "uses-model",
+      "label": "Creates and verifies payments"
+    },
+    {
+      "source": "controller_payment",
+      "target": "model_Appointment",
+      "type": "uses-model",
+      "label": "Updates payment status on appointment"
+    },
+    {
+      "source": "controller_payment",
+      "target": "external_razorpay",
+      "type": "depends-on-external",
+      "label": "Creates orders, captures payments"
+    },
+    {
+      "source": "service_refund",
+      "target": "model_Payment",
+      "type": "uses-model",
+      "label": "Updates refund status"
+    },
+    {
+      "source": "service_refund",
+      "target": "model_Appointment",
+      "type": "uses-model",
+      "label": "Cancels appointments"
+    },
+    {
+      "source": "service_refund",
+      "target": "external_razorpay",
+      "type": "depends-on-external",
+      "label": "Processes refunds"
+    },
+    {
+      "source": "controller_admin",
+      "target": "service_refund",
+      "type": "calls",
+      "label": "Calls refund approval logic"
+    },
+    {
+      "source": "controller_admin",
+      "target": "service_analytics",
+      "type": "calls",
+      "label": "Queries analytics data"
+    },
+    {
+      "source": "service_analytics",
+      "target": "model_Payment",
+      "type": "uses-model",
+      "label": "Aggregates payment data"
+    },
+    {
+      "source": "service_analytics",
+      "target": "model_Appointment",
+      "type": "uses-model",
+      "label": "Aggregates appointment data"
+    },
+    {
+      "source": "controller_availability",
+      "target": "model_AvailabilitySlot",
+      "type": "uses-model",
+      "label": "CRUD for slots"
+    },
+    {
+      "source": "controller_discovery",
+      "target": "model_DoctorProfile",
+      "type": "uses-model",
+      "label": "Retrieves verified doctors"
+    },
+    {
+      "source": "controller_discovery",
+      "target": "model_Review",
+      "type": "uses-model",
+      "label": "Aggregates ratings"
+    },
+    {
+      "source": "controller_payment",
+      "target": "service_refund",
+      "type": "calls",
+      "label": "May trigger refund on payment failure"
+    }
+  ],
+  "queries": {
+    "affected_by_appointment_change": {
+      "description": "What files are affected if Appointment model changes?",
+      "traversal": "BFS from model_Appointment, depth 2",
+      "expectedResult": [
+        "controller_appointment",
+        "controller_payment",
+        "service_refund",
+        "service_analytics",
+        "controller_admin"
+      ]
+    },
+    "payment_dependencies": {
+      "description": "What does payment system depend on?",
+      "traversal": "BFS from controller_payment, depth 3",
+      "expectedResult": [
+        "model_Payment",
+        "model_Appointment",
+        "model_DoctorProfile",
+        "external_razorpay"
+      ]
+    },
+    "refund_impact": {
+      "description": "What is impacted by refund service changes?",
+      "traversal": "Reverse BFS from service_refund, depth 2",
+      "expectedResult": [
+        "controller_admin",
+        "controller_payment"
+      ]
+    }
+  }
+}

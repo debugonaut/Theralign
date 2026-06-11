@@ -1,0 +1,655 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-11T18:00:00Z",
+  "subsystems": [
+    {
+      "id": "authentication",
+      "name": "Authentication & Authorization",
+      "purpose": "JWT token generation, verification, and role-based access control",
+      "responsibilities": [
+        "User registration and login with bcrypt password hashing",
+        "JWT token generation and validation",
+        "Role-based route guards (patient, doctor, admin)",
+        "Token expiration and refresh handling"
+      ],
+      "entryPoints": [
+        "server/src/routes/auth.routes.js",
+        "server/src/controllers/auth.controller.js",
+        "server/src/middleware/auth.middleware.js",
+        "server/src/middleware/role.middleware.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/User.model.js",
+        "server/src/services/auth.service.js",
+        "server/src/validations/auth.validation.js",
+        "server/src/utils/asyncHandler.js",
+        "server/src/utils/AppError.js"
+      ],
+      "dependsOn": [
+        "user-management"
+      ],
+      "consumedBy": [
+        "patient-profiles",
+        "doctor-profiles",
+        "appointment-booking",
+        "admin-operations"
+      ],
+      "externalServices": [],
+      "criticalConstraints": [
+        "All controller functions must be wrapped with asyncHandler",
+        "Role guards enforced at route level, not controller level",
+        "JWT tokens contain user ID and role only",
+        "Password hashing uses bcrypt with salt rounds = 10"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "abc123def456",
+      "stale": false
+    },
+    {
+      "id": "user-management",
+      "name": "User Management",
+      "purpose": "User entity creation, profile management, and role assignment",
+      "responsibilities": [
+        "User registration with email validation",
+        "User profile retrieval and updates",
+        "Role assignment (patient, doctor, admin)",
+        "User status management (active/inactive)",
+        "Admin user listing and status toggling"
+      ],
+      "entryPoints": [
+        "server/src/models/User.model.js",
+        "server/src/services/auth.service.js",
+        "server/src/services/user.service.js"
+      ],
+      "relatedFiles": [
+        "server/src/controllers/auth.controller.js",
+        "server/src/controllers/admin.controller.js",
+        "server/src/validations/auth.validation.js"
+      ],
+      "dependsOn": [],
+      "consumedBy": [
+        "authentication",
+        "patient-profiles",
+        "doctor-profiles"
+      ],
+      "externalServices": [],
+      "criticalConstraints": [
+        "Email must be unique across User collection",
+        "Role is immutable after user creation",
+        "Admin can toggle user active status but not delete"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "def456ghi789",
+      "stale": false
+    },
+    {
+      "id": "doctor-profiles",
+      "name": "Doctor Profiles & Verification",
+      "purpose": "Manage doctor professional information, verification status, credentials, and specialization",
+      "responsibilities": [
+        "Doctor profile creation during onboarding",
+        "Credentials and license document upload to Cloudinary",
+        "Professional verification workflow (pending → verified/rejected)",
+        "Doctor profile updates (profile, consultationFee, specialization)",
+        "Doctor suspension and reconsideration",
+        "Doctor profile display in public discovery"
+      ],
+      "entryPoints": [
+        "server/src/routes/doctor.routes.js",
+        "server/src/controllers/doctor.controller.js",
+        "server/src/controllers/admin.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/DoctorProfile.model.js",
+        "server/src/services/doctor.service.js",
+        "server/src/middleware/upload.middleware.js",
+        "server/src/services/upload.service.js",
+        "server/src/validations/auth.validation.js"
+      ],
+      "dependsOn": [
+        "user-management",
+        "document-storage"
+      ],
+      "consumedBy": [
+        "appointment-booking",
+        "discovery-search",
+        "availability-management",
+        "admin-operations",
+        "ai-integration"
+      ],
+      "externalServices": [
+        "Cloudinary: credential document storage"
+      ],
+      "criticalConstraints": [
+        "Only verified doctors appear in public discovery",
+        "consultationFee is snapshotted to Appointment at booking time",
+        "Doctor cannot have duplicate specializations",
+        "Suspended doctors cannot accept new bookings",
+        "ADR-003: Cloudinary resource_type 'raw' for credentials"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "ghi789jkl012",
+      "stale": false
+    },
+    {
+      "id": "patient-profiles",
+      "name": "Patient Profiles",
+      "purpose": "Manage patient medical information, contact details, and profile customization",
+      "responsibilities": [
+        "Patient profile creation on first login",
+        "Profile updates (name, phone, medical history, address)",
+        "Avatar upload to Cloudinary",
+        "Profile retrieval for authenticated patient"
+      ],
+      "entryPoints": [
+        "server/src/routes/patientProfile.routes.js",
+        "server/src/controllers/patientProfile.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/PatientProfile.model.js",
+        "server/src/services/upload.service.js",
+        "server/src/middleware/upload.middleware.js"
+      ],
+      "dependsOn": [
+        "user-management",
+        "document-storage"
+      ],
+      "consumedBy": [
+        "appointment-booking",
+        "review-system"
+      ],
+      "externalServices": [
+        "Cloudinary: avatar image storage"
+      ],
+      "criticalConstraints": [
+        "One PatientProfile per User",
+        "Medical history is patient-controlled and never visible to doctor",
+        "Avatar is optional"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "jkl012mno345",
+      "stale": false
+    },
+    {
+      "id": "availability-management",
+      "name": "Availability Management",
+      "purpose": "Doctor availability scheduling with weekly recurring patterns and slot management",
+      "responsibilities": [
+        "Create WeeklySchedule for recurring availability",
+        "Generate AvailabilitySlots from WeeklySchedule",
+        "Mark slots as booked during appointment creation",
+        "Unlock slots if appointment creation fails",
+        "Provide available slot list for booking flow",
+        "Allow doctor to update or delete slots"
+      ],
+      "entryPoints": [
+        "server/src/routes/availability.routes.js",
+        "server/src/controllers/availability.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/AvailabilitySlot.model.js",
+        "server/src/models/WeeklySchedule.model.js",
+        "server/src/services/analytics.service.js"
+      ],
+      "dependsOn": [
+        "doctor-profiles"
+      ],
+      "consumedBy": [
+        "appointment-booking",
+        "discovery-search"
+      ],
+      "externalServices": [],
+      "criticalConstraints": [
+        "ADR-001: Slot locking uses findOneAndUpdate with isBooked:false condition",
+        "Slots must be unlocked if Appointment creation fails after lock",
+        "Time format is HH:mm string, date is YYYY-MM-DD string",
+        "Slots cannot be created in the past",
+        "One WeeklySchedule per doctor per day-of-week"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "mno345pqr678",
+      "stale": false
+    },
+    {
+      "id": "discovery-search",
+      "name": "Doctor Discovery & Search",
+      "purpose": "Find verified doctors through listing, geospatial proximity, full-text search, and AI recommendations",
+      "responsibilities": [
+        "Paginated doctor listing with filtering",
+        "Geospatial proximity search (nearby doctors)",
+        "Full-text search by name, specialization, clinic name",
+        "Autocomplete suggestions for search",
+        "Doctor public profile display",
+        "AI-powered recommendations based on symptoms"
+      ],
+      "entryPoints": [
+        "server/src/routes/discovery.routes.js",
+        "server/src/controllers/discovery.controller.js",
+        "server/src/routes/search.routes.js",
+        "server/src/controllers/search.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/services/discovery.service.js",
+        "server/src/models/DoctorProfile.model.js",
+        "server/src/models/Review.model.js"
+      ],
+      "dependsOn": [
+        "doctor-profiles",
+        "review-system"
+      ],
+      "consumedBy": [
+        "public-browsing",
+        "appointment-booking"
+      ],
+      "externalServices": [
+        "MongoDB geospatial queries"
+      ],
+      "criticalConstraints": [
+        "Only verified doctors appear in results",
+        "Results include aggregated review ratings",
+        "Geospatial queries require 2dsphere index on coordinates",
+        "Search suggestions are real-time, not cached",
+        "Public endpoints (no auth required)"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "pqr678stu901",
+      "stale": false
+    },
+    {
+      "id": "appointment-booking",
+      "name": "Appointment Booking & Management",
+      "purpose": "Core booking flow with atomic slot locking, fee snapshotting, and appointment lifecycle",
+      "responsibilities": [
+        "Atomic slot locking during booking",
+        "Fee snapshot from DoctorProfile at booking time",
+        "Appointment creation with financial snapshot",
+        "Appointment status management (pending → confirmed → completed/cancelled)",
+        "Patient-initiated cancellation with refund request",
+        "Doctor-initiated cancellation with auto-refund",
+        "Admin appointment viewing and analytics"
+      ],
+      "entryPoints": [
+        "server/src/routes/appointment.routes.js",
+        "server/src/controllers/appointment.controller.js",
+        "server/src/routes/booking.routes.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/Appointment.model.js",
+        "server/src/services/analytics.service.js",
+        "server/src/models/AvailabilitySlot.model.js",
+        "server/src/models/DoctorProfile.model.js",
+        "server/src/validations/appointment.validation.js"
+      ],
+      "dependsOn": [
+        "availability-management",
+        "doctor-profiles",
+        "patient-profiles"
+      ],
+      "consumedBy": [
+        "payment-system",
+        "refund-system",
+        "review-system",
+        "notification-system",
+        "admin-operations"
+      ],
+      "externalServices": [],
+      "criticalConstraints": [
+        "ADR-001: Use findOneAndUpdate with isBooked:false for atomic locking",
+        "ADR-004: Fee snapshot from DoctorProfile, never recalculate",
+        "ADR-006: platformCommission always 10%, doctorEarnings always 90%",
+        "Appointment cannot proceed without payment",
+        "Date format is YYYY-MM-DD string, time format is HH:mm string",
+        "Cancellation reason must be provided by cancelling user",
+        "ADR-002: Payment is separate collection, not embedded in Appointment"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "stu901uvw234",
+      "stale": false
+    },
+    {
+      "id": "payment-system",
+      "name": "Payment Processing (Razorpay)",
+      "purpose": "Razorpay integration for order creation, payment capture, and signature verification",
+      "responsibilities": [
+        "Create Razorpay orders linked to appointments",
+        "Verify HMAC-SHA256 payment signatures",
+        "Capture and store payment records",
+        "Store financial snapshots with payment",
+        "Provide payment history to patients and admin",
+        "Prevent payment manipulation via signature verification"
+      ],
+      "entryPoints": [
+        "server/src/routes/payment.routes.js",
+        "server/src/controllers/payment.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/Payment.model.js",
+        "server/src/models/Appointment.model.js",
+        "server/src/config/razorpay.js",
+        "server/src/validations/payment.validation.js"
+      ],
+      "dependsOn": [
+        "appointment-booking"
+      ],
+      "consumedBy": [
+        "refund-system",
+        "admin-operations",
+        "notification-system"
+      ],
+      "externalServices": [
+        "Razorpay: order creation, payment capture, refunds"
+      ],
+      "criticalConstraints": [
+        "ADR-006: Amount must be converted to paise (multiply by 100) before Razorpay API",
+        "ADR-009: Signature must be verified before updating payment status",
+        "ADR-004: Fee snapshot must be read from Appointment, never recalculated",
+        "Payment status transitions: created → paid (or failed)",
+        "Razorpay signature verification uses HMAC-SHA256",
+        "Database stores amounts in rupees, Razorpay API expects paise"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "uvw234xyz567",
+      "stale": false
+    },
+    {
+      "id": "refund-system",
+      "name": "Refund Management & Processing",
+      "purpose": "Request, approve, and process refunds with Razorpay integration",
+      "responsibilities": [
+        "Patient-initiated refund requests",
+        "Doctor auto-refund on cancellation",
+        "Admin refund approval workflow",
+        "Admin refund rejection with explanation",
+        "Razorpay refund processing",
+        "Refund status tracking and history"
+      ],
+      "entryPoints": [
+        "server/src/controllers/refund.controller.js",
+        "server/src/services/refund.service.js",
+        "server/src/controllers/admin.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/Payment.model.js",
+        "server/src/models/Appointment.model.js",
+        "server/src/config/razorpay.js"
+      ],
+      "dependsOn": [
+        "payment-system",
+        "appointment-booking",
+        "admin-operations"
+      ],
+      "consumedBy": [
+        "notification-system",
+        "admin-operations"
+      ],
+      "externalServices": [
+        "Razorpay: refund processing"
+      ],
+      "criticalConstraints": [
+        "Refund rejection must include explanation in refundAdminNote",
+        "Doctor cancellation auto-refunds without admin approval",
+        "Patient cancellation requires admin approval",
+        "Refund status flow: none → requested → pending → approved/rejected → processed",
+        "Once processed, refund is irreversible",
+        "ADR-006: Razorpay API expects paise, database stores rupees"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "xyz567abc890",
+      "stale": false
+    },
+    {
+      "id": "review-system",
+      "name": "Reviews & Ratings",
+      "purpose": "Patient review submission, visibility control, and review-based doctor discovery",
+      "responsibilities": [
+        "Patient review submission for completed appointments",
+        "Review rating and comment storage",
+        "Review verification status (verified purchase)",
+        "Admin review visibility toggling",
+        "Public review display on doctor profiles",
+        "Review-based doctor aggregation and sorting"
+      ],
+      "entryPoints": [
+        "server/src/routes/review.routes.js",
+        "server/src/controllers/review.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/Review.model.js",
+        "server/src/models/Appointment.model.js",
+        "server/src/validations/review.validation.js"
+      ],
+      "dependsOn": [
+        "appointment-booking",
+        "patient-profiles",
+        "doctor-profiles"
+      ],
+      "consumedBy": [
+        "discovery-search",
+        "admin-operations"
+      ],
+      "externalServices": [],
+      "criticalConstraints": [
+        "Reviews can only be submitted for completed appointments",
+        "One review per appointment (prevent duplicates)",
+        "Rating is 1-5 integer",
+        "Only visible reviews appear in public discovery",
+        "Admin can toggle review visibility",
+        "Review is marked isVerified=true when linked to completed appointment"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "abc890def123",
+      "stale": false
+    },
+    {
+      "id": "ai-integration",
+      "name": "AI Integration & Recommendations",
+      "purpose": "OpenAI-powered symptom triage and doctor profile summaries",
+      "responsibilities": [
+        "Free-text symptom interpretation and specialization recommendation",
+        "Doctor profile summary generation",
+        "Batch summary generation for all verified doctors",
+        "Summary caching to reduce API calls",
+        "AI-powered doctor recommendations"
+      ],
+      "entryPoints": [
+        "server/src/routes/ai.routes.js",
+        "server/src/controllers/ai.controller.js",
+        "server/src/services/aiService.js"
+      ],
+      "relatedFiles": [
+        "server/src/config/openai.js",
+        "server/src/models/DoctorProfile.model.js"
+      ],
+      "dependsOn": [
+        "doctor-profiles",
+        "discovery-search"
+      ],
+      "consumedBy": [
+        "discovery-search",
+        "admin-operations"
+      ],
+      "externalServices": [
+        "OpenAI: GPT-3.5 for text generation"
+      ],
+      "criticalConstraints": [
+        "Symptom interpretation is free (no auth required)",
+        "Doctor summaries are cached per doctor",
+        "Batch summary generation is admin-only",
+        "Summary cache is invalidated when doctor profile changes",
+        "AI responses must be deterministic (use temperature=0.3)"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "def123ghi456",
+      "stale": false
+    },
+    {
+      "id": "admin-operations",
+      "name": "Admin Dashboard & Operations",
+      "purpose": "Platform-wide management: doctor verification, user management, analytics, and refunds",
+      "responsibilities": [
+        "Doctor verification workflow (pending → verified/rejected)",
+        "Doctor suspension and reconsideration",
+        "User status management and listing",
+        "Real-time analytics (revenue, appointments, users, specializations)",
+        "Refund approval and rejection workflow",
+        "Review visibility control",
+        "Batch AI summary generation",
+        "Recent activity audit feed"
+      ],
+      "entryPoints": [
+        "server/src/routes/admin.routes.js",
+        "server/src/controllers/admin.controller.js",
+        "server/src/controllers/analytics.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/services/admin.service.js",
+        "server/src/services/analytics.service.js",
+        "server/src/models/DoctorProfile.model.js",
+        "server/src/models/Payment.model.js",
+        "server/src/models/Appointment.model.js",
+        "server/src/models/User.model.js"
+      ],
+      "dependsOn": [
+        "doctor-profiles",
+        "appointment-booking",
+        "payment-system",
+        "refund-system",
+        "review-system",
+        "ai-integration"
+      ],
+      "consumedBy": [],
+      "externalServices": [],
+      "criticalConstraints": [
+        "All admin endpoints require role: admin",
+        "Role guard enforced at route level",
+        "Analytics aggregations must not impact live transaction performance",
+        "Audit logs capture all admin actions",
+        "Doctor verification workflow is irreversible once approved/rejected"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "ghi456jkl789",
+      "stale": false
+    },
+    {
+      "id": "notification-system",
+      "name": "Notifications & Email",
+      "purpose": "In-app and email notifications for appointments, payments, reviews, and admin actions",
+      "responsibilities": [
+        "Create in-app notifications",
+        "Mark notifications as read",
+        "Provide notification history and unread count",
+        "Send transactional emails (bookings, cancellations, payments)",
+        "Fire-and-forget email sending (never await in critical flows)"
+      ],
+      "entryPoints": [
+        "server/src/routes/notification.routes.js",
+        "server/src/controllers/notification.controller.js",
+        "server/src/services/notificationService.js",
+        "server/src/services/emailService.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/Notification.model.js",
+        "server/src/config/mailer.js"
+      ],
+      "dependsOn": [
+        "appointment-booking",
+        "payment-system",
+        "refund-system",
+        "user-management"
+      ],
+      "consumedBy": [],
+      "externalServices": [
+        "Email service: transactional email delivery"
+      ],
+      "criticalConstraints": [
+        "ADR-008: Never await email sending in critical flows",
+        "Email is sent asynchronously via job queue or background worker",
+        "In-app notifications are created synchronously",
+        "Notification type includes: booking, cancellation, payment, refund, review",
+        "Email must include appointment details and action links"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "jkl789mno012",
+      "stale": false
+    },
+    {
+      "id": "document-storage",
+      "name": "Document & Media Storage",
+      "purpose": "Cloudinary integration for credentials, session notes, avatars, and media files",
+      "responsibilities": [
+        "Doctor credential document uploads",
+        "Session notes PDF uploads",
+        "Patient avatar uploads",
+        "Media file storage and retrieval",
+        "Secure file deletion from Cloudinary"
+      ],
+      "entryPoints": [
+        "server/src/routes/appointmentMedia.routes.js",
+        "server/src/routes/document.routes.js",
+        "server/src/controllers/appointmentMedia.controller.js",
+        "server/src/controllers/document.controller.js",
+        "server/src/services/upload.service.js"
+      ],
+      "relatedFiles": [
+        "server/src/config/cloudinary.js",
+        "server/src/middleware/upload.middleware.js",
+        "server/src/models/AppointmentMedia.model.js"
+      ],
+      "dependsOn": [],
+      "consumedBy": [
+        "doctor-profiles",
+        "patient-profiles",
+        "appointment-booking"
+      ],
+      "externalServices": [
+        "Cloudinary: file storage, transformation, and delivery"
+      ],
+      "criticalConstraints": [
+        "ADR-003: Use resource_type: 'raw' for PDF credentials",
+        "ADR-003: Use resource_type: 'auto' for images",
+        "All file uploads must validate file type and size",
+        "Cloudinary public_id stores file reference for deletion",
+        "Doctor cannot access patient media, and vice versa"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "mno012pqr345",
+      "stale": false
+    },
+    {
+      "id": "waitlist-system",
+      "name": "Waitlist Management",
+      "purpose": "Patient interest tracking for unavailable doctors with notification on availability",
+      "responsibilities": [
+        "Patient join waitlist for unavailable doctor",
+        "Patient leave waitlist",
+        "Waitlist status tracking (active, notified)",
+        "Notification on doctor availability",
+        "Patient view waitlisted doctors"
+      ],
+      "entryPoints": [
+        "server/src/routes/waitlist.routes.js",
+        "server/src/controllers/waitlist.controller.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/Waitlist.model.js",
+        "server/src/models/DoctorProfile.model.js"
+      ],
+      "dependsOn": [
+        "doctor-profiles",
+        "patient-profiles"
+      ],
+      "consumedBy": [
+        "notification-system"
+      ],
+      "externalServices": [],
+      "criticalConstraints": [
+        "One waitlist entry per patient-doctor pair",
+        "Duplicate join attempts should be idempotent",
+        "Status transitions: active → notified → completed/expired"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "sourceFilesHash": "pqr345stu678",
+      "stale": false
+    }
+  ]
+}

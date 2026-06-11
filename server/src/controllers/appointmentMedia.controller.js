@@ -103,7 +103,7 @@ export const uploadAppointmentMedia = asyncHandler(async (req, res) => {
   let uploadedBy = null;
   let isAuthorized = false;
 
-  if (appointment.patient.toString() === req.user.id) {
+  if (appointment.patient.toString() === req.user.id.toString()) {
     uploadedBy = 'patient';
     // Patients can upload ONLY during pending/confirmed status, before or up to the appointment
     if (!['pending', 'confirmed'].includes(appointment.status)) {
@@ -209,7 +209,7 @@ export const getAppointmentMedia = asyncHandler(async (req, res) => {
 
   // Check authorization: patient, assigned doctor, or admin
   let isAuthorized = false;
-  if (appointment.patient.toString() === req.user.id) {
+  if (appointment.patient.toString() === req.user.id.toString()) {
     isAuthorized = true;
   } else if (req.user.role === 'doctor') {
     const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
@@ -295,7 +295,7 @@ export const getAppointmentMediaCount = asyncHandler(async (req, res) => {
 
   // Check authorization
   let isAuthorized = false;
-  if (appointment.patient.toString() === req.user.id) {
+  if (appointment.patient.toString() === req.user.id.toString()) {
     isAuthorized = true;
   } else if (req.user.role === 'doctor') {
     const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });

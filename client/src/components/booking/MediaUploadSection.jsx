@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, X, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, X, AlertCircle, CheckCircle, Video, Mic, FileText, Eye, Lightbulb, Paperclip } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const MediaUploadSection = ({
@@ -99,11 +99,14 @@ const MediaUploadSection = ({
 
   return (
     <div className="flex flex-col gap-4 py-4 px-0">
-      <div className="flex flex-col gap-1">
-        <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">
-          📸 Condition Media (Optional)
-        </label>
-        <p className="text-ui-xs text-neutral-600 font-medium leading-relaxed">
+      <div className="flex flex-col gap-1 text-left">
+        <div className="flex items-center gap-1.5 text-neutral-500">
+          <Paperclip size={14} className="text-neutral-500 shrink-0" />
+          <label className="text-[10px] font-black uppercase tracking-widest">
+            Condition Media (Optional)
+          </label>
+        </div>
+        <p className="text-ui-xs text-neutral-600 font-medium leading-relaxed mt-1">
           Help your doctor prepare — share photos, videos, or audio describing your condition before the session. 
           <br />
           Max 5 files, 25MB each.
@@ -200,15 +203,17 @@ const MediaUploadSection = ({
                         className="w-full h-full object-cover"
                       />
                     ) : mediaType === 'video' ? (
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-2xl">
-                        🎬
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                        <Video size={32} className="text-white" />
                       </div>
                     ) : mediaType === 'audio' ? (
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-2xl">
-                        🎙️
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                        <Mic size={32} className="text-white" />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center text-3xl">📎</div>
+                      <div className="flex items-center justify-center">
+                        <FileText size={32} className="text-neutral-400" />
+                      </div>
                     )}
 
                     {media.cloudinaryUrl && (
@@ -218,7 +223,7 @@ const MediaUploadSection = ({
                         rel="noopener noreferrer"
                         className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100"
                       >
-                        <span className="text-white text-2xl">👁️</span>
+                        <Eye size={24} className="text-white" />
                       </a>
                     )}
                   </div>
@@ -247,9 +252,10 @@ const MediaUploadSection = ({
       )}
 
       {uploadedMedia.length === 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-[11px] text-blue-900 font-medium leading-relaxed">
-            💡 <strong>Tip:</strong> Uploading media helps your doctor understand your condition better and prepare 
+        <div className="bg-[#F7FAFC] border border-neutral-200 rounded-lg p-4 flex gap-3 text-left">
+          <Lightbulb size={16} className="text-[#D69E2E] shrink-0 mt-0.5" />
+          <p className="text-ui-xs text-neutral-600 font-medium leading-relaxed">
+            <strong>Tip:</strong> Uploading media helps your doctor understand your condition better and prepare 
             an effective treatment plan. Examples: photos of swelling, videos of movements, audio descriptions.
           </p>
         </div>

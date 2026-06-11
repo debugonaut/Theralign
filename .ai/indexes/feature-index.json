@@ -1,0 +1,696 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-11T18:00:00Z",
+  "features": [
+    {
+      "id": "user-registration",
+      "name": "User Registration",
+      "phase": 2,
+      "description": "New user account creation with email validation and role assignment. Supports patient, doctor, and admin roles.",
+      "userRoles": ["public"],
+      "routes": ["/register"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/auth/register" }
+      ],
+      "components": [
+        "client/src/pages/public/Register.jsx",
+        "client/src/components/auth/RegisterForm.jsx"
+      ],
+      "models": ["User"],
+      "controllers": ["server/src/controllers/auth.controller.js"],
+      "services": ["server/src/services/auth.service.js"],
+      "relatedFeatures": ["user-login", "doctor-onboarding", "patient-profile-setup"],
+      "knownConstraints": [
+        "Email must be unique across User collection",
+        "Role is immutable after user creation",
+        "Password hashing uses bcrypt with 10 salt rounds"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "user-login",
+      "name": "User Login & Authentication",
+      "phase": 2,
+      "description": "User login with email and password. Returns JWT token for authenticated requests.",
+      "userRoles": ["public"],
+      "routes": ["/login"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/auth/login" }
+      ],
+      "components": [
+        "client/src/pages/public/Login.jsx",
+        "client/src/components/auth/LoginForm.jsx"
+      ],
+      "models": ["User"],
+      "controllers": ["server/src/controllers/auth.controller.js"],
+      "services": ["server/src/services/auth.service.js"],
+      "relatedFeatures": ["user-registration"],
+      "knownConstraints": [
+        "JWT token valid for 7 days (configurable)",
+        "Password verification uses bcrypt compare",
+        "Failed login attempts not throttled (rate limiting not implemented)"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "doctor-onboarding",
+      "name": "Doctor Onboarding & Verification",
+      "phase": 3,
+      "description": "Doctor profile creation with credential uploads. Pending verification status until admin approves.",
+      "userRoles": ["doctor"],
+      "routes": ["/doctor/onboard"],
+      "apiEndpoints": [
+        { "method": "PUT", "path": "/api/doctors/profile/onboard" }
+      ],
+      "components": [
+        "client/src/pages/doctor/OnboardingFlow.jsx",
+        "client/src/components/doctor/DocumentUpload.jsx"
+      ],
+      "models": ["DoctorProfile", "User"],
+      "controllers": ["server/src/controllers/doctor.controller.js"],
+      "services": ["server/src/services/doctor.service.js", "server/src/services/upload.service.js"],
+      "relatedFeatures": ["doctor-profile-management", "admin-doctor-verification"],
+      "knownConstraints": [
+        "Only one DoctorProfile per User",
+        "Credentials uploaded as PDFs to Cloudinary (resource_type: raw)",
+        "ADR-003: Cloudinary resource_type raw for credentials"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "doctor-profile-management",
+      "name": "Doctor Profile Management",
+      "phase": 3,
+      "description": "Doctor profile updates (specialization, consultation fee, clinic details) after verification.",
+      "userRoles": ["doctor"],
+      "routes": ["/doctor/profile"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/doctors/profile/me" },
+        { "method": "PUT", "path": "/api/doctors/profile/me" }
+      ],
+      "components": [
+        "client/src/pages/doctor/ProfileSettings.jsx",
+        "client/src/components/doctor/ProfileForm.jsx"
+      ],
+      "models": ["DoctorProfile"],
+      "controllers": ["server/src/controllers/doctor.controller.js"],
+      "services": ["server/src/services/doctor.service.js"],
+      "relatedFeatures": ["doctor-onboarding", "availability-management"],
+      "knownConstraints": [
+        "consultationFee changes apply to future appointments only",
+        "ADR-004: Fee is snapshotted to Appointment at booking time"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "patient-profile-setup",
+      "name": "Patient Profile Setup",
+      "phase": 3,
+      "description": "Patient profile creation with medical history, contact details, and avatar upload.",
+      "userRoles": ["patient"],
+      "routes": ["/patient/profile"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/patients/profile/me" },
+        { "method": "PUT", "path": "/api/patients/profile/me" },
+        { "method": "POST", "path": "/api/patients/profile/avatar" }
+      ],
+      "components": [
+        "client/src/pages/patient/ProfileSetup.jsx",
+        "client/src/components/patient/ProfileForm.jsx",
+        "client/src/components/patient/AvatarUpload.jsx"
+      ],
+      "models": ["PatientProfile"],
+      "controllers": ["server/src/controllers/patientProfile.controller.js"],
+      "services": ["server/src/services/upload.service.js"],
+      "relatedFeatures": ["appointment-booking"],
+      "knownConstraints": [
+        "One PatientProfile per User",
+        "Medical history is patient-controlled, never visible to doctor",
+        "Avatar is optional"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "doctor-discovery",
+      "name": "Doctor Discovery & Listing",
+      "phase": 4,
+      "description": "Paginated listing of verified doctors with filtering by specialization and ratings.",
+      "userRoles": ["public", "patient"],
+      "routes": ["/doctors", "/explore"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/discover" }
+      ],
+      "components": [
+        "client/src/pages/public/DoctorListing.jsx",
+        "client/src/components/discovery/DoctorCard.jsx",
+        "client/src/components/discovery/FilterBar.jsx"
+      ],
+      "models": ["DoctorProfile", "Review"],
+      "controllers": ["server/src/controllers/discovery.controller.js"],
+      "services": ["server/src/services/discovery.service.js"],
+      "relatedFeatures": ["doctor-geospatial-search", "doctor-fulltext-search", "doctor-public-profile"],
+      "knownConstraints": [
+        "Only verified doctors appear in listing",
+        "Results include aggregated review ratings",
+        "Pagination with limit and offset"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "doctor-geospatial-search",
+      "name": "Nearby Doctor Search (Geospatial)",
+      "phase": 4,
+      "description": "Find verified doctors near patient's location using geospatial proximity queries.",
+      "userRoles": ["public", "patient"],
+      "routes": ["/discover/nearby"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/discover/nearby" }
+      ],
+      "components": [
+        "client/src/pages/public/NearbyDoctors.jsx",
+        "client/src/components/discovery/LocationMap.jsx"
+      ],
+      "models": ["DoctorProfile"],
+      "controllers": ["server/src/controllers/discovery.controller.js"],
+      "services": ["server/src/services/discovery.service.js"],
+      "relatedFeatures": ["doctor-discovery"],
+      "knownConstraints": [
+        "Requires 2dsphere index on coordinates",
+        "Distance returned in kilometers",
+        "Only verified doctors appear in results"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "doctor-fulltext-search",
+      "name": "Doctor Full-Text Search",
+      "phase": 4,
+      "description": "Search verified doctors by name, specialization, and clinic details.",
+      "userRoles": ["public", "patient"],
+      "routes": ["/search"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/discover/search" },
+        { "method": "GET", "path": "/api/search/suggestions" }
+      ],
+      "components": [
+        "client/src/components/discovery/SearchBox.jsx",
+        "client/src/components/discovery/SearchResults.jsx"
+      ],
+      "models": ["DoctorProfile"],
+      "controllers": ["server/src/controllers/search.controller.js"],
+      "services": [],
+      "relatedFeatures": ["doctor-discovery"],
+      "knownConstraints": [
+        "Full-text index required on name, specialization, clinicName",
+        "Suggestions are real-time, not cached",
+        "Only verified doctors in results"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "doctor-public-profile",
+      "name": "Doctor Public Profile",
+      "phase": 4,
+      "description": "Public-facing doctor profile with specialization, ratings, reviews, and available slots.",
+      "userRoles": ["public", "patient"],
+      "routes": ["/doctors/:id"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/discover/:id" }
+      ],
+      "components": [
+        "client/src/pages/public/DoctorProfile.jsx",
+        "client/src/components/discovery/DoctorProfileHeader.jsx",
+        "client/src/components/discovery/ReviewsSection.jsx",
+        "client/src/components/booking/SlotPicker.jsx"
+      ],
+      "models": ["DoctorProfile", "Review", "AvailabilitySlot"],
+      "controllers": ["server/src/controllers/discovery.controller.js"],
+      "services": [],
+      "relatedFeatures": ["doctor-discovery", "appointment-booking"],
+      "knownConstraints": [
+        "Only verified doctors have public profiles",
+        "Ratings are aggregated from Review collection",
+        "Slot picker embedded for booking flow"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "availability-slot-creation",
+      "name": "Availability Slot Creation",
+      "phase": 5,
+      "description": "Doctor creates availability slots from weekly schedule pattern.",
+      "userRoles": ["doctor"],
+      "routes": ["/doctor/availability"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/availability/slots" }
+      ],
+      "components": [
+        "client/src/pages/doctor/AvailabilityManagement.jsx",
+        "client/src/components/availability/SlotCreationForm.jsx"
+      ],
+      "models": ["AvailabilitySlot", "WeeklySchedule"],
+      "controllers": ["server/src/controllers/availability.controller.js"],
+      "services": [],
+      "relatedFeatures": ["availability-slot-management"],
+      "knownConstraints": [
+        "ADR-001: Slot locking uses findOneAndUpdate with isBooked:false",
+        "Slots cannot be created in the past",
+        "Date format: YYYY-MM-DD, time format: HH:mm"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "availability-slot-management",
+      "name": "Availability Slot Management",
+      "phase": 5,
+      "description": "Doctor update or delete availability slots.",
+      "userRoles": ["doctor"],
+      "routes": ["/doctor/availability"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/availability/slots/mine" },
+        { "method": "PUT", "path": "/api/availability/slots/:slotId" },
+        { "method": "DELETE", "path": "/api/availability/slots/:slotId" }
+      ],
+      "components": [
+        "client/src/pages/doctor/AvailabilityManagement.jsx",
+        "client/src/components/availability/SlotList.jsx"
+      ],
+      "models": ["AvailabilitySlot"],
+      "controllers": ["server/src/controllers/availability.controller.js"],
+      "services": [],
+      "relatedFeatures": ["availability-slot-creation"],
+      "knownConstraints": [
+        "Booked slots cannot be deleted (must cancel appointment first)",
+        "Update does not affect already-booked slots"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "appointment-booking",
+      "name": "Appointment Booking",
+      "phase": 5,
+      "description": "Patient books an available appointment slot with atomic slot locking and fee snapshotting.",
+      "userRoles": ["patient"],
+      "routes": ["/book"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/appointments/book" },
+        { "method": "GET", "path": "/api/availability/:doctorId/available" }
+      ],
+      "components": [
+        "client/src/components/booking/SlotPicker.jsx",
+        "client/src/components/booking/BookingConfirmationModal.jsx",
+        "client/src/pages/public/DoctorProfile.jsx"
+      ],
+      "models": ["Appointment", "AvailabilitySlot", "DoctorProfile"],
+      "controllers": ["server/src/controllers/appointment.controller.js"],
+      "services": [],
+      "relatedFeatures": ["appointment-management", "payment-flow"],
+      "knownConstraints": [
+        "ADR-001: Slot locking uses findOneAndUpdate with isBooked:false",
+        "ADR-004: Fee is snapshotted from DoctorProfile at booking time",
+        "ADR-006: platformCommission is always 10%, doctorEarnings is 90%",
+        "Slot must be unlocked if Appointment creation fails",
+        "Only confirmed after payment is captured"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "appointment-management",
+      "name": "Appointment Management (Patient & Doctor)",
+      "phase": 5,
+      "description": "Patient and doctor view their appointments, mark as completed.",
+      "userRoles": ["patient", "doctor"],
+      "routes": ["/appointments"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/appointments/mine" },
+        { "method": "GET", "path": "/api/appointments/doctor/mine" },
+        { "method": "PATCH", "path": "/api/appointments/:id/complete" }
+      ],
+      "components": [
+        "client/src/pages/patient/MyAppointments.jsx",
+        "client/src/pages/doctor/DoctorAppointments.jsx",
+        "client/src/components/appointments/AppointmentCard.jsx"
+      ],
+      "models": ["Appointment"],
+      "controllers": ["server/src/controllers/appointment.controller.js"],
+      "services": [],
+      "relatedFeatures": ["appointment-booking", "appointment-cancellation"],
+      "knownConstraints": [
+        "Only doctor can mark appointment as completed",
+        "Completed appointments can be reviewed by patient"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "payment-flow",
+      "name": "Payment Flow (Razorpay)",
+      "phase": 6,
+      "description": "Patient initiates payment via Razorpay. Signature verification prevents tampering.",
+      "userRoles": ["patient"],
+      "routes": ["/checkout"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/payments/create-order" },
+        { "method": "POST", "path": "/api/payments/verify" }
+      ],
+      "components": [
+        "client/src/pages/patient/CheckoutPage.jsx",
+        "client/src/components/payment/RazorpayCheckout.jsx"
+      ],
+      "models": ["Payment", "Appointment"],
+      "controllers": ["server/src/controllers/payment.controller.js"],
+      "services": [],
+      "relatedFeatures": ["appointment-booking", "payment-history"],
+      "knownConstraints": [
+        "ADR-006: Amount converted to paise before Razorpay API",
+        "ADR-009: Signature verified before updating payment status",
+        "ADR-004: platformCommission and doctorEarnings snapshotted at booking"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "payment-history",
+      "name": "Payment History & Receipts",
+      "phase": 6,
+      "description": "Patient view payment history with receipt details. Admin view all payments and revenue metrics.",
+      "userRoles": ["patient", "admin"],
+      "routes": ["/payments"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/payments/mine" },
+        { "method": "GET", "path": "/api/payments/admin/all" }
+      ],
+      "components": [
+        "client/src/pages/patient/PaymentHistory.jsx",
+        "client/src/pages/admin/PaymentsTable.jsx"
+      ],
+      "models": ["Payment"],
+      "controllers": ["server/src/controllers/payment.controller.js"],
+      "services": [],
+      "relatedFeatures": ["payment-flow"],
+      "knownConstraints": [
+        "Patient can only view own payments",
+        "Admin can view all payments with filtering"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "review-submission",
+      "name": "Review Submission",
+      "phase": 7,
+      "description": "Patient submit a review for completed appointments.",
+      "userRoles": ["patient"],
+      "routes": ["/reviews/write"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/reviews" }
+      ],
+      "components": [
+        "client/src/components/reviews/ReviewModal.jsx",
+        "client/src/pages/patient/MyAppointments.jsx"
+      ],
+      "models": ["Review", "Appointment"],
+      "controllers": ["server/src/controllers/review.controller.js"],
+      "services": [],
+      "relatedFeatures": ["appointment-management"],
+      "knownConstraints": [
+        "Only completed appointments can be reviewed",
+        "One review per appointment",
+        "Rating is 1-5 integer",
+        "ADR-007: Review only for verified/completed appointments"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "review-display",
+      "name": "Review Display & Admin Control",
+      "phase": 7,
+      "description": "Public view doctor reviews. Admin manage review visibility.",
+      "userRoles": ["public", "patient", "admin"],
+      "routes": ["/reviews"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/reviews/doctor/:doctorId" },
+        { "method": "GET", "path": "/api/reviews/mine" },
+        { "method": "GET", "path": "/api/reviews/admin/all" },
+        { "method": "PATCH", "path": "/api/reviews/:id/visibility" }
+      ],
+      "components": [
+        "client/src/components/discovery/ReviewsSection.jsx",
+        "client/src/pages/admin/ReviewsTable.jsx"
+      ],
+      "models": ["Review"],
+      "controllers": ["server/src/controllers/review.controller.js"],
+      "services": [],
+      "relatedFeatures": ["review-submission"],
+      "knownConstraints": [
+        "Only visible reviews appear in public listings",
+        "Admin can toggle visibility of individual reviews",
+        "Reviews marked isVerified:true if from completed appointment"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "ai-symptom-triage",
+      "name": "AI Symptom Triage",
+      "phase": 8,
+      "description": "Free-text symptom analysis via OpenAI to recommend specialization.",
+      "userRoles": ["public", "patient"],
+      "routes": ["/ai/symptoms"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/ai/interpret-symptoms" }
+      ],
+      "components": [
+        "client/src/components/ai/SymptomSearchBox.jsx",
+        "client/src/components/ai/AIRecommendationCard.jsx"
+      ],
+      "models": [],
+      "controllers": ["server/src/controllers/ai.controller.js"],
+      "services": ["server/src/services/aiService.js"],
+      "relatedFeatures": ["doctor-discovery"],
+      "knownConstraints": [
+        "Public endpoint (no auth required)",
+        "OpenAI API call on each request (no caching)",
+        "Response includes recommended specializations"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "ai-doctor-summaries",
+      "name": "AI Doctor Summaries",
+      "phase": 8,
+      "description": "Generate and cache doctor profile summaries using OpenAI.",
+      "userRoles": ["public", "admin"],
+      "routes": ["/doctors/:id/summary"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/ai/doctor-summary/:doctorId" },
+        { "method": "POST", "path": "/api/ai/admin/batch-summaries" }
+      ],
+      "components": [
+        "client/src/components/discovery/DoctorProfileHeader.jsx"
+      ],
+      "models": ["DoctorProfile"],
+      "controllers": ["server/src/controllers/ai.controller.js"],
+      "services": ["server/src/services/aiService.js"],
+      "relatedFeatures": ["doctor-discovery", "doctor-public-profile"],
+      "knownConstraints": [
+        "Summary cached per doctor profile",
+        "Cache invalidated when doctor profile changes",
+        "Batch generation is admin-only"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "admin-doctor-verification",
+      "name": "Admin Doctor Verification",
+      "phase": 9,
+      "description": "Admin approve or reject pending doctor applications.",
+      "userRoles": ["admin"],
+      "routes": ["/admin/doctors"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/admin/doctors/pending" },
+        { "method": "PATCH", "path": "/api/admin/doctors/:profileId/verify" },
+        { "method": "PATCH", "path": "/api/admin/doctors/:profileId/reject" },
+        { "method": "PATCH", "path": "/api/admin/doctors/:profileId/suspend" }
+      ],
+      "components": [
+        "client/src/pages/admin/DoctorVerification.jsx",
+        "client/src/components/admin/DoctorVerificationCard.jsx"
+      ],
+      "models": ["DoctorProfile"],
+      "controllers": ["server/src/controllers/admin.controller.js"],
+      "services": ["server/src/services/admin.service.js"],
+      "relatedFeatures": ["doctor-onboarding"],
+      "knownConstraints": [
+        "Only verified doctors appear in public discovery",
+        "Suspended doctors cannot accept new bookings",
+        "Rejection feedback required"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "admin-analytics",
+      "name": "Admin Analytics Dashboard",
+      "phase": 9,
+      "description": "Real-time analytics: revenue, appointments, users, specializations.",
+      "userRoles": ["admin"],
+      "routes": ["/admin/analytics"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/admin/analytics/overview" },
+        { "method": "GET", "path": "/api/admin/analytics/revenue" },
+        { "method": "GET", "path": "/api/admin/analytics/appointments" },
+        { "method": "GET", "path": "/api/admin/analytics/top-doctors" },
+        { "method": "GET", "path": "/api/admin/analytics/specializations" },
+        { "method": "GET", "path": "/api/admin/analytics/user-growth" },
+        { "method": "GET", "path": "/api/admin/analytics/recent-activity" }
+      ],
+      "components": [
+        "client/src/pages/admin/Analytics.jsx",
+        "client/src/components/admin/RevenueChart.jsx",
+        "client/src/components/admin/AppointmentDonutChart.jsx",
+        "client/src/components/admin/TopDoctorsTable.jsx"
+      ],
+      "models": ["Payment", "Appointment", "User", "DoctorProfile"],
+      "controllers": ["server/src/controllers/analytics.controller.js"],
+      "services": ["server/src/services/analytics.service.js"],
+      "relatedFeatures": [],
+      "knownConstraints": [
+        "ADR-004: Revenue calculated from Appointment.platformCommission and doctorEarnings",
+        "Analytics are real-time aggregations (not cached for performance)",
+        "Admin-only endpoints"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "appointment-cancellation",
+      "name": "Appointment Cancellation",
+      "phase": 13,
+      "description": "Patient request cancellation with refund. Doctor cancel with auto-refund.",
+      "userRoles": ["patient", "doctor"],
+      "routes": ["/appointments"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/appointments/:appointmentId/cancel-patient" },
+        { "method": "POST", "path": "/api/appointments/:appointmentId/cancel-doctor" }
+      ],
+      "components": [
+        "client/src/components/appointments/CancellationModal.jsx",
+        "client/src/pages/patient/AppointmentDetail.jsx"
+      ],
+      "models": ["Appointment", "Payment"],
+      "controllers": ["server/src/controllers/appointment.controller.js"],
+      "services": ["server/src/services/refund.service.js"],
+      "relatedFeatures": ["refund-workflow"],
+      "knownConstraints": [
+        "Patient cancellation requires admin approval",
+        "Doctor cancellation auto-refunds immediately",
+        "Cancellation reason required",
+        "ADR-008: Fire-and-forget email on cancellation"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "refund-workflow",
+      "name": "Refund Request & Approval",
+      "phase": 13,
+      "description": "Admin approve or reject patient refund requests. Doctor cancellation auto-refunds.",
+      "userRoles": ["admin"],
+      "routes": ["/admin/refunds"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/admin/refunds/stats" },
+        { "method": "GET", "path": "/api/admin/refunds" },
+        { "method": "PATCH", "path": "/api/admin/refunds/:paymentId/approve" },
+        { "method": "PATCH", "path": "/api/admin/refunds/:paymentId/reject" }
+      ],
+      "components": [
+        "client/src/pages/admin/RefundManagement.jsx",
+        "client/src/components/admin/RefundQueue.jsx"
+      ],
+      "models": ["Payment", "Appointment"],
+      "controllers": ["server/src/controllers/admin.controller.js"],
+      "services": ["server/src/services/refund.service.js"],
+      "relatedFeatures": ["appointment-cancellation"],
+      "knownConstraints": [
+        "Refund rejection requires explanation note",
+        "Doctor auto-refunds do not require admin approval",
+        "ADR-006: Amount converted to paise for Razorpay API"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "waitlist-management",
+      "name": "Waitlist Management",
+      "phase": 12,
+      "description": "Patient join/leave waitlist for unavailable doctors.",
+      "userRoles": ["patient"],
+      "routes": ["/waitlist"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/waitlist/mine" },
+        { "method": "GET", "path": "/api/waitlist/status/:doctorId" },
+        { "method": "POST", "path": "/api/waitlist/join/:doctorId" },
+        { "method": "DELETE", "path": "/api/waitlist/leave/:doctorId" }
+      ],
+      "components": [
+        "client/src/components/discovery/WaitlistButton.jsx",
+        "client/src/pages/patient/WaitlistPage.jsx"
+      ],
+      "models": ["Waitlist"],
+      "controllers": ["server/src/controllers/waitlist.controller.js"],
+      "services": [],
+      "relatedFeatures": ["appointment-booking"],
+      "knownConstraints": [
+        "One waitlist entry per patient-doctor pair",
+        "Duplicate join attempts are idempotent"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "notification-system",
+      "name": "Notifications & Email",
+      "phase": 9,
+      "description": "In-app notifications and transactional email delivery.",
+      "userRoles": ["patient", "doctor", "admin"],
+      "routes": ["/notifications"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/notifications/mine" },
+        { "method": "GET", "path": "/api/notifications/unread-count" },
+        { "method": "PATCH", "path": "/api/notifications/read-all" },
+        { "method": "PATCH", "path": "/api/notifications/:id/read" }
+      ],
+      "components": [
+        "client/src/components/common/NotificationCenter.jsx",
+        "client/src/pages/patient/NotificationsPage.jsx"
+      ],
+      "models": ["Notification"],
+      "controllers": ["server/src/controllers/notification.controller.js"],
+      "services": ["server/src/services/notificationService.js", "server/src/services/emailService.js"],
+      "relatedFeatures": ["appointment-booking", "payment-flow"],
+      "knownConstraints": [
+        "ADR-008: Email sent fire-and-forget (not awaited)",
+        "In-app notifications synchronous",
+        "Email templates include appointment details"
+      ],
+      "lastUpdated": "2026-06-11T18:00:00Z",
+      "stale": false
+    }
+  ]
+}

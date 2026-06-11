@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-11T18:00:00Z",
+  "lastRefreshTime": "2026-06-11T18:00:00Z",
+  "totalEntries": 32,
+  "staleCount": 0,
+  "freshCount": 32,
+  "staleEntries": [],
+  "notes": "All indexes are current. No stale entries detected.",
+  "refreshInterval": "on_commit",
+  "refreshPolicy": "Automatic refresh triggered on git commit via pre-commit hook",
+  "nextManualRefresh": "2026-06-18T18:00:00Z"
+}
