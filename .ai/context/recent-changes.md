@@ -8,6 +8,26 @@
 
 ## High Impact Changes
 
+### 2026-06-11 — Bug Fix: Doctor Profile Photo Size Adjustment
+**Author:** Aadesh Khande
+
+**Summary:** Enlarged the doctor's profile avatar on [DoctorDetailPage.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/pages/public/DoctorDetailPage.jsx) from `w-16 h-16` to `w-28 h-28` to improve visual hierarchy and appearance. Adjusted flex container alignment to `items-start` with a `gap-6` spacing and added `pt-2` to the text labels to ensure clean vertical alignment. Scaled initials fallback font size to `text-[48px]`.
+
+**Changed files:**
+- `client/src/pages/public/DoctorDetailPage.jsx` [modified] — Increased avatar width/height, updated layout alignment and typography.
+
+---
+
+### 2026-06-11 — Feature: Doctor Profile Photo on Detail Page
+**Author:** Antigravity (AI Coding Assistant)
+
+**Summary:** Added the doctor's actual profile image next to their name on the public Doctor Detail page. Included the `getInitials` helper to render the standard initials fallback avatar when no custom profile image is available.
+
+**Changed files:**
+- `client/src/pages/public/DoctorDetailPage.jsx` [modified] — Implemented initials utility helper and modified layout to render profileImage next to the doctor's name.
+
+---
+
 ### 2026-06-11 — Feature: Profile Image Sync and rendering logic across all roles
 **Author:** Antigravity (AI Coding Assistant)
 

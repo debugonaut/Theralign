@@ -958,17 +958,18 @@ router.post('/book', validate(schema), controller);
 - ✅ Integrated media viewing in doctor/admin/patient appointments pages
 - ✅ 4 new API endpoints for media management
 
-### Profile Image Sync
+### Profile Image Sync & Doctor Detail Avatar
 - ✅ Patient profile avatar upload synchronized with Zustand authStore
 - ✅ Profile images rendering across all layouts (patient, doctor, admin)
 - ✅ Initials fallback for users without profile images
-- ✅ Profile image added to doctor detail page
+- ✅ Doctor profile image added to DoctorDetailPage with w-28 h-28 dimensions and alignment adjustments
 
 ### Recent Bug Fixes
 - ✅ Profile upload redirection bug (role field missing in user queries)
 - ✅ Modal auto-close during background polling (showModalRef check)
 - ✅ Font family mismatch in modal header
 - ✅ Media upload authorization type mismatch (ObjectId.toString())
+- ✅ Doctor profile image size increase on public profile
 
 ## Known Issues Being Tracked
 
@@ -978,7 +979,9 @@ router.post('/book', validate(schema), controller);
 ## Git Commit History (Recent)
 
 ```
-2026-06-11 — Bug Fix: Profile Upload Redirection & Doctor Photo Display
+2026-06-11 — Bug Fix: Doctor's profile photo on his profile has increased length and width
+2026-06-11 — Feature: Add doctor profile image on detail page
+2026-06-11 — Revert: Rollback typography redesign
 2026-06-11 — Feature: Profile Image Sync & rendering across roles
 2026-06-11 — Feature: Two-Step Booking + Media Upload + Authorization Fix
 2026-06-10 — Phase 13 Complete: Refund System & Cancellation Workflow
