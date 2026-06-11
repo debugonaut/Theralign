@@ -205,6 +205,10 @@ Client runs at: `http://localhost:5173`
 | `PATCH /api/admin/refunds/:paymentId/reject` | ✅ Live | Admin: Reject pending refund with required explanation note |
 | `POST /api/documents/upload/:appointmentId` | ✅ Live | Doctor: Upload clinical session notes PDF document |
 | `DELETE /api/documents/:appointmentId` | ✅ Live | Doctor: Remove clinical session notes PDF document |
+| `POST /api/appointment-media/upload/:appointmentId` | ✅ Live | Patient/Doctor: Upload media file (image, video, audio) for an appointment |
+| `GET /api/appointment-media/:appointmentId` | ✅ Live | Patient/Doctor/Admin: Retrieve all media for an appointment |
+| `DELETE /api/appointment-media/:mediaId` | ✅ Live | Uploader/Doctor/Admin: Delete a specific media file |
+| `GET /api/appointment-media/count/:appointmentId` | ✅ Live | Patient/Doctor/Admin: Get media upload count check |
 | `GET /api/notifications/mine` | ✅ Live | User: Fetch in-app notifications |
 | `GET /api/notifications/unread-count` | ✅ Live | User: Get count of unread notifications |
 | `PATCH /api/notifications/read-all` | ✅ Live | User: Mark all notifications as read |
@@ -233,6 +237,7 @@ Client runs at: `http://localhost:5173`
 | Phase 11 | Patient Experience (Design Phase 3) | ✅ Complete |
 | Phase 12 | Universal Accessibility & UI/UX Humanization | ✅ Complete |
 | Phase 13 | Cancellation & Refund System with Razorpay Integration | ✅ Complete |
+| Phase 14 | Pre-Appointment Media Upload & Viewing Flow | ✅ Complete |
 
 ---
 
