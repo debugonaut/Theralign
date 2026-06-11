@@ -18,7 +18,11 @@
 - `client/src/components/booking/MediaUploadSection.jsx` [modified] — Replaced all emojis with corresponding Lucide SVG icons and polished styling.
 - `client/src/components/booking/SlotPicker.jsx` [modified] — Separated booking/payment actions, added paymentLoading state, auto-cleanup on exit, and showModalRef check to prevent auto-close during background availability polling.
 - `client/src/components/common/Modal.jsx` [modified] — Removed hardcoded font family style override from modal header.
-- `server/src/controllers/appointmentMedia.controller.js` [modified] — Fixed patient ID Mongoose ObjectId to string type mismatch in authorization checks.
+- `client/src/components/appointments/AppointmentMediaViewer.jsx` [new] — Reusable component for fetching, displaying, and previewing (image lightbox, inline HTML5 video/audio players) uploaded appointment media files.
+- `client/src/pages/doctor/DoctorAppointments.jsx` [modified] — Integrated `AppointmentMediaViewer` in expanded appointments row details.
+- `client/src/pages/admin/AdminBookings.jsx` [modified] — Integrated `AppointmentMediaViewer` in expanded bookings row details.
+- `client/src/pages/patient/AppointmentDetailsPage.jsx` [modified] — Integrated `AppointmentMediaViewer` in the single column appointment details layout.
+- `server/src/controllers/appointmentMedia.controller.js` [modified] — Fixed patient ID Mongoose ObjectId to string type mismatch in upload authorization checks, fixed uploader ID Mongoose ObjectId to string type mismatch in delete authorization checks (`mediaDocument.uploader.toString() === req.user.id.toString()`), and added proper DoctorProfile authorization checks for deletion.
 - `server/src/routes/appointmentMedia.routes.js` [modified] — Configured local memoryStorage Multer instance with 25MB limit to populate req.file.buffer for Cloudinary stream uploads.
 
 **Affected subsystems:**

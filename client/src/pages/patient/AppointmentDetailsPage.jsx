@@ -6,6 +6,7 @@ import { getMyAppointments } from '../../api/appointment.api';
 import Card from '../../components/common/Card';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/common/Button';
+import AppointmentMediaViewer from '../../components/appointments/AppointmentMediaViewer.jsx';
 
 /**
  * AppointmentDetailsPage — Lightweight Single Column Handoff View
@@ -199,6 +200,11 @@ const AppointmentDetailsPage = () => {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Attached Media Files */}
+          <div className="py-6 border-b border-neutral-100">
+            <AppointmentMediaViewer appointmentId={appointment._id} showEmptyState={false} />
           </div>
 
           {/* Recovery Documents F3 */}

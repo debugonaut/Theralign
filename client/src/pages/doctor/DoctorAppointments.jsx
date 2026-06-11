@@ -9,6 +9,7 @@ import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
 import DoctorCancellationModal from '../../components/appointments/DoctorCancellationModal.jsx';
+import AppointmentMediaViewer from '../../components/appointments/AppointmentMediaViewer.jsx';
 
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -458,6 +459,9 @@ const DoctorAppointments = () => {
                                 </span>
                               </div>
                             </div>
+
+                            {/* Patient Uploaded Media Files */}
+                            <AppointmentMediaViewer appointmentId={appt._id} showEmptyState={false} />
 
                             {/* Cancellation Summary */}
                             {appt.status === 'cancelled' && (

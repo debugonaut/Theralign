@@ -5,6 +5,7 @@ import { getAllAppointments } from '../../api/admin.api';
 import SectionHeader from '../../components/common/SectionHeader';
 import Table from '../../components/common/Table';
 import Badge from '../../components/common/Badge';
+import AppointmentMediaViewer from '../../components/appointments/AppointmentMediaViewer.jsx';
 
 const AdminBookings = () => {
   const [appointments, setAppointments] = useState([]);
@@ -186,32 +187,39 @@ const AdminBookings = () => {
                     {/* Collapsible Details Drawer */}
                     {isExpanded && (
                       <tr className="bg-neutral-50 border-b border-neutral-900">
-                        <td colSpan={9} className="px-6 py-3 text-left">
-                          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs">
-                            <div>
-                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT EMAIL</span>
-                              <span className="text-neutral-900 font-bold uppercase">{appt.patient?.email || '—'}</span>
-                            </div>
-                            
-                            <div>
-                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">CLINIC FACILITY</span>
-                              <span className="text-neutral-900 font-bold uppercase">{appt.doctor?.clinicName || '—'}</span>
+                        <td colSpan={9} className="px-6 py-6 text-left">
+                          <div className="flex flex-col gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-xs">
+                              <div>
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT EMAIL</span>
+                                <span className="text-neutral-900 font-bold uppercase">{appt.patient?.email || '—'}</span>
+                              </div>
+                              
+                              <div>
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">CLINIC FACILITY</span>
+                                <span className="text-neutral-900 font-bold uppercase">{appt.doctor?.clinicName || '—'}</span>
+                              </div>
+
+                              <div>
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT NOTES</span>
+                                <span className="text-neutral-700 font-bold uppercase italic">“{appt.patientNotes || 'NO ADDITIONAL NOTES'}”</span>
+                              </div>
+
+                              <div>
+                                <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">
+                                  {appt.status === 'cancelled' ? 'CANCELLATION REASON' : 'TRANSACTION ID'}
+                                </span>
+                                <span className="text-neutral-900 font-bold uppercase font-mono text-[10px]">
+                                  {appt.status === 'cancelled'
+                                    ? (appt.cancellationReason || 'NOT REGISTERED')
+                                    : (appt.paymentId || '—')}
+                                </span>
+                              </div>
                             </div>
 
-                            <div>
-                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">PATIENT NOTES</span>
-                              <span className="text-neutral-700 font-bold uppercase italic">“{appt.patientNotes || 'NO ADDITIONAL NOTES'}”</span>
-                            </div>
-
-                            <div>
-                              <span className="text-neutral-500 uppercase font-black tracking-widest block mb-1">
-                                {appt.status === 'cancelled' ? 'CANCELLATION REASON' : 'TRANSACTION ID'}
-                              </span>
-                              <span className="text-neutral-900 font-bold uppercase font-mono text-[10px]">
-                                {appt.status === 'cancelled'
-                                  ? (appt.cancellationReason || 'NOT REGISTERED')
-                                  : (appt.paymentId || '—')}
-                              </span>
+                            {/* Patient Uploaded Media Files */}
+                            <div className="border-t border-neutral-200 pt-4">
+                              <AppointmentMediaViewer appointmentId={appt._id} showEmptyState={false} />
                             </div>
                           </div>
                         </td>

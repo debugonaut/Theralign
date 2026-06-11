@@ -253,8 +253,13 @@ export const deleteAppointmentMedia = asyncHandler(async (req, res) => {
 
   // Authorization: uploader can delete their own, doctor can delete any
   let isAuthorized = false;
-  if (mediaDocument.uploader.toString() === req.user.id) {
+  if (mediaDocument.uploader.toString() === req.user.id.toString()) {
     isAuthorized = true;
+  } else if (req.user.role === 'doctor') {
+    const doctorProfile = await DoctorProfile.findOne({ user: req.user.id });
+    if (doctorProfile && appointment.doctor.toString() === doctorProfile._id.toString()) {
+      isAuthorized = true;
+    }
   } else if (req.user.role === 'admin') {
     isAuthorized = true;
   }
