@@ -136,7 +136,6 @@ const Modal = ({
           <h2
             id="modal-title"
             className="font-bold text-neutral-900 leading-normal text-ui-lg"
-            style={{ fontFamily: 'Inter, sans-serif' }}
           >
             {title}
           </h2>

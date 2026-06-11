@@ -81,6 +81,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
 
   const selectedDateRef = useRef(selectedDate);
   const selectedSlotRef = useRef(selectedSlot);
+  const showModalRef = useRef(showModal);
 
   useEffect(() => {
     selectedDateRef.current = selectedDate;
@@ -89,6 +90,10 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   useEffect(() => {
     selectedSlotRef.current = selectedSlot;
   }, [selectedSlot]);
+
+  useEffect(() => {
+    showModalRef.current = showModal;
+  }, [showModal]);
 
   // Fetch available slots
   const fetchAvailability = async (isBackground = false) => {
@@ -108,7 +113,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
           if (currentSelectedSlot) {
             const dateEntry = res.data.find(d => d.date === currentSelectedDate);
             const slotStillAvailable = dateEntry?.slots?.some(s => s._id === currentSelectedSlot._id);
-            if (!slotStillAvailable) {
+            if (!slotStillAvailable && !showModalRef.current) {
               setSelectedSlot(null);
             }
           }
@@ -134,7 +139,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
           if (currentSelectedSlot) {
             const dateEntry = fallback.find(d => d.date === currentSelectedDate);
             const slotStillAvailable = dateEntry?.slots?.some(s => s._id === currentSelectedSlot._id);
-            if (!slotStillAvailable) {
+            if (!slotStillAvailable && !showModalRef.current) {
               setSelectedSlot(null);
             }
           }
@@ -162,7 +167,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
         if (currentSelectedSlot) {
           const dateEntry = fallback.find(d => d.date === currentSelectedDate);
           const slotStillAvailable = dateEntry?.slots?.some(s => s._id === currentSelectedSlot._id);
-          if (!slotStillAvailable) {
+          if (!slotStillAvailable && !showModalRef.current) {
             setSelectedSlot(null);
           }
         }

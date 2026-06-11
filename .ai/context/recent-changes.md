@@ -11,13 +11,15 @@
 ### 2026-06-11 — Feature: Two-Step Booking Confirmation Flow & Media Upload Authorization Fix
 **Author:** Antigravity (AI Coding Assistant)
 
-**Summary:** Transitioned the single-step booking confirmation modal into a two-step wizard flow, allowing patients to upload media files after booking but before payment. Also fixed a critical type mismatch bug in server-side authorization check for media uploads.
+**Summary:** Transitioned the single-step booking confirmation modal into a two-step wizard flow, allowing patients to upload media files after booking but before payment. Also fixed a critical type mismatch bug in server-side authorization checks, resolved auto-closing modal due to background polling, fixed the modal title font family mismatch, and switched media upload routes to memory storage to support up to 25MB uploads.
 
 **Changed files:**
 - `client/src/components/booking/BookingConfirmationModal.jsx` [modified] — Added step state, restructured compact details summary, and replaced emojis with Lucide SVG icons.
 - `client/src/components/booking/MediaUploadSection.jsx` [modified] — Replaced all emojis with corresponding Lucide SVG icons and polished styling.
-- `client/src/components/booking/SlotPicker.jsx` [modified] — Separated booking and payment actions, added paymentLoading state, and added auto-cleanup for unpaid appointments on modal exit.
+- `client/src/components/booking/SlotPicker.jsx` [modified] — Separated booking/payment actions, added paymentLoading state, auto-cleanup on exit, and showModalRef check to prevent auto-close during background availability polling.
+- `client/src/components/common/Modal.jsx` [modified] — Removed hardcoded font family style override from modal header.
 - `server/src/controllers/appointmentMedia.controller.js` [modified] — Fixed patient ID Mongoose ObjectId to string type mismatch in authorization checks.
+- `server/src/routes/appointmentMedia.routes.js` [modified] — Configured local memoryStorage Multer instance with 25MB limit to populate req.file.buffer for Cloudinary stream uploads.
 
 **Affected subsystems:**
 - appointment-booking

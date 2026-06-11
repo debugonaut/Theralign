@@ -1,6 +1,6 @@
 import express from 'express';
+import multer from 'multer';
 import { requireAuth } from '../middleware/auth.middleware.js';
-import { upload } from '../middleware/upload.middleware.js';
 import {
   uploadAppointmentMedia,
   getAppointmentMedia,
@@ -9,6 +9,11 @@ import {
 } from '../controllers/appointmentMedia.controller.js';
 
 const router = express.Router();
+
+const uploadMedia = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 25 * 1024 * 1024 } // 25MB max
+});
 
 /**
  * Media upload routes
@@ -22,7 +27,7 @@ const router = express.Router();
 router.post(
   '/upload/:appointmentId',
   requireAuth,
-  upload.single('media'),
+  uploadMedia.single('media'),
   uploadAppointmentMedia
 );
 
