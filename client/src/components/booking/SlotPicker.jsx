@@ -76,6 +76,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const [tempAppointmentId, setTempAppointmentId] = useState(null);
 
   const selectedDateRef = useRef(selectedDate);
@@ -220,7 +221,7 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
     setShowModal(true);
   };
 
-  const handleConfirmBooking = async (patientNotes) => {
+  const handleBookAppointment = async (patientNotes) => {
     setBookingLoading(true);
     try {
       const res = await bookAppointment({
@@ -231,30 +232,9 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       if (res.success && res.data) {
         const appointmentId = res.data._id;
         setTempAppointmentId(appointmentId);
-        await initiatePayment({
-          appointmentId,
-          onSuccess: () => {
-            setShowModal(false);
-            setTempAppointmentId(null);
-            navigate(`/booking-success/${appointmentId}`);
-          },
-          onFailure: async () => {
-            setShowModal(false);
-            setTempAppointmentId(null);
-            try {
-              await cancelAppointment(appointmentId, 'Payment failed or cancelled');
-              toast.error('Payment was not completed. Your booking has not been confirmed.', { duration: 5000 });
-            } catch (err) {
-              console.error('Failed to auto-cancel unpaid appointment:', err);
-            }
-            await fetchAvailability();
-          },
-        });
       }
     } catch (err) {
       console.error(err);
-      setShowModal(false);
-      setTempAppointmentId(null);
       if (err.response?.status === 409) {
         toast.error('Slot concurrently claimed. Retrying...');
         await fetchAvailability();
@@ -263,6 +243,54 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       }
     } finally {
       setBookingLoading(false);
+    }
+  };
+
+  const handleProceedToPayment = async () => {
+    if (!tempAppointmentId) return;
+    setPaymentLoading(true);
+    try {
+      const appointmentId = tempAppointmentId;
+      await initiatePayment({
+        appointmentId,
+        onSuccess: () => {
+          setTempAppointmentId(null);
+          setShowModal(false);
+          setPaymentLoading(false);
+          navigate(`/booking-success/${appointmentId}`);
+        },
+        onFailure: async () => {
+          setPaymentLoading(false);
+          setShowModal(false);
+          setTempAppointmentId(null);
+          try {
+            await cancelAppointment(appointmentId, 'Payment failed or cancelled');
+            toast.error('Payment was not completed. Your booking has not been confirmed.', { duration: 5000 });
+          } catch (err) {
+            console.error('Failed to auto-cancel unpaid appointment:', err);
+          }
+          await fetchAvailability();
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      setPaymentLoading(false);
+      toast.error('Payment initiation failed. Please try again.');
+    }
+  };
+
+  const handleCloseModal = async () => {
+    setShowModal(false);
+    if (tempAppointmentId) {
+      const idToCancel = tempAppointmentId;
+      setTempAppointmentId(null);
+      try {
+        await cancelAppointment(idToCancel, 'Booking abandoned before payment');
+        toast.error('Booking abandoned before payment.');
+      } catch (err) {
+        console.error('Failed to auto-cancel unpaid appointment:', err);
+      }
+      await fetchAvailability();
     }
   };
 
@@ -366,12 +394,14 @@ const SlotPicker = ({ doctorId, doctorName, consultationFee }) => {
       {/* Confirmation Modal */}
       <BookingConfirmationModal
         isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={handleConfirmBooking}
+        onClose={handleCloseModal}
+        onBook={handleBookAppointment}
+        onPay={handleProceedToPayment}
         slot={selectedSlot}
         doctorName={doctorName}
         consultationFee={consultationFee}
         loading={bookingLoading}
+        paymentLoading={paymentLoading}
         appointmentId={tempAppointmentId}
       />
     </div>
