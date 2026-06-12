@@ -519,7 +519,7 @@ export default function PatientCareTimeline() {
                     <div className="flex items-stretch select-none">
                       {/* Left identity zone */}
                       <div className="w-[200px] bg-[#0B4F6C] shrink-0 p-5 flex flex-col justify-center items-center text-center gap-2 relative select-none rounded-none border-r-2 border-neutral-900">
-                        <div className="w-11 h-11 rounded-full bg-white/15 border border-white/20 flex items-center justify-center overflow-hidden shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-white/15 border border-white/20 flex items-center justify-center overflow-hidden shrink-0">
                           {rec.doctor?.user?.profileImage ? (
                             <img
                               src={rec.doctor.user.profileImage}
@@ -530,7 +530,7 @@ export default function PatientCareTimeline() {
                               }}
                             />
                           ) : (
-                            <span className="font-extrabold text-[18px] text-white tracking-tight" style={{ fontWeight: 900 }}>
+                            <span className="font-extrabold text-[14px] text-white tracking-tight" style={{ fontWeight: 900 }}>
                               {docName
                                 .replace(/^Dr\.\s+/i, '')
                                 .split(' ')
@@ -543,13 +543,13 @@ export default function PatientCareTimeline() {
                         </div>
 
                         <div className="flex flex-col min-w-0 w-full items-center">
-                          <h4 className="font-bold text-[14px] text-white leading-snug truncate w-full" style={{ fontWeight: 700 }}>
+                          <h4 className="font-bold text-[15px] text-white leading-snug truncate w-full" style={{ fontWeight: 700 }}>
                             {docName.toUpperCase()}
                           </h4>
-                          <span className="text-[11px] text-white/70 tracking-wide mt-0.5 truncate block w-full" style={{ fontWeight: 700 }}>
+                          <span className="text-[13px] text-white/70 tracking-wide mt-0.5 truncate block w-full" style={{ fontWeight: 700 }}>
                             {primarySpec.toUpperCase()}
                           </span>
-                          <span className="text-[11px] text-white/55 block mt-1 font-bold">
+                          <span className="text-[13px] text-white/55 block mt-1 font-bold">
                             {formatDate(rec.appointment?.date)}
                           </span>
                         </div>
@@ -580,15 +580,15 @@ export default function PatientCareTimeline() {
                         </div>
 
                         {/* Row 2: Treatment excerpt */}
-                        <p className="text-[#3D5166] text-[13px] font-normal line-clamp-2 leading-relaxed mt-1">
+                        <p className="text-[#3D5166] text-[14px] font-normal line-clamp-2 leading-relaxed mt-1">
                           {rec.treatmentProvided}
                         </p>
 
                         {/* Row 3: Exercise, medications, followup */}
                         <div className="flex flex-wrap items-center gap-4 mt-1 select-none">
                           {exCount > 0 && (
-                            <span className="inline-flex items-center gap-1.5 text-[12px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
-                              <Activity size={14} className="text-[#0B4F6C]" />
+                            <span className="inline-flex items-center gap-1.5 text-[13px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
+                              <Activity size={16} className="text-[#0B4F6C]" />
                               <span>{exCount} EXERCISE{exCount !== 1 ? 'S' : ''} PRESCRIBED</span>
                             </span>
                           )}
@@ -599,8 +599,8 @@ export default function PatientCareTimeline() {
                               const extraCount = rec.medications.length - 2;
                               const medsText = displayedMeds.join(', ') + (extraCount > 0 ? ` +${extraCount} more` : '');
                               return (
-                                <span className="inline-flex items-center gap-1.5 text-[12px] text-[#6B7C93] font-bold uppercase tracking-wider">
-                                  <Pill size={14} className="text-[#6B7C93]" />
+                                <span className="inline-flex items-center gap-1.5 text-[13px] text-[#6B7C93] font-bold uppercase tracking-wider">
+                                  <Pill size={16} className="text-[#6B7C93]" />
                                   <span>{medsText.toUpperCase()}</span>
                                 </span>
                               );
@@ -609,8 +609,8 @@ export default function PatientCareTimeline() {
 
                           {showFollowup && rec.followUpRecommendation?.suggestedDate && (
                             <div className="border-2 border-neutral-900 bg-[#E8F4F8] rounded-none py-1.5 px-3 inline-flex items-center gap-2 select-none">
-                              <span className="inline-flex items-center gap-1 text-[12px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
-                                <Calendar size={14} className="text-[#0B4F6C]" />
+                              <span className="inline-flex items-center gap-1 text-[13px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
+                                <Calendar size={16} className="text-[#0B4F6C]" />
                                 <span>FOLLOW-UP: {formatDate(rec.followUpRecommendation.suggestedDate)}</span>
                               </span>
                               <span className="text-[#A8B8C8]">·</span>
@@ -619,7 +619,7 @@ export default function PatientCareTimeline() {
                                   e.stopPropagation();
                                   navigate(`/doctors/${rec.doctor?._id || rec.doctor}#book`);
                                 }}
-                                className="text-[12px] text-[#F4845F] hover:text-[#D96840] hover:underline bg-transparent border-0 cursor-pointer select-none transition-colors duration-150 ease-swiss font-bold uppercase tracking-wider"
+                                className="text-[13px] text-[#F4845F] hover:text-[#D96840] hover:underline bg-transparent border-0 cursor-pointer select-none transition-colors duration-150 ease-swiss font-bold uppercase tracking-wider"
                               >
                                 BOOK NOW →
                               </button>
@@ -631,11 +631,11 @@ export default function PatientCareTimeline() {
                         <div className="flex justify-end items-center mt-2 select-none">
                           <button
                             onClick={() => toggleExpand(rec._id)}
-                            className="inline-flex items-center gap-1 text-[12px] text-[#0B4F6C] hover:text-[#083A52] bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
+                            className="inline-flex items-center gap-1 text-[13px] text-[#0B4F6C] hover:text-[#083A52] bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
                           >
                             <span>{isExpanded ? 'COLLAPSE' : 'VIEW FULL RECORD'}</span>
                             <ChevronDown
-                              size={14}
+                              size={16}
                               className={`transition-transform duration-200 ease-swiss ${isExpanded ? 'rotate-180' : ''}`}
                             />
                           </button>
@@ -681,7 +681,7 @@ export default function PatientCareTimeline() {
                                   padding: '16px 8px',
                                   cursor: 'pointer',
                                   fontWeight: 900,
-                                  fontSize: '16.5px',
+                                  fontSize: '15px',
                                   textTransform: 'uppercase',
                                   letterSpacing: '0.08em',
                                   textAlign: 'center',
@@ -718,7 +718,7 @@ export default function PatientCareTimeline() {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                               <div>
                                 <span style={{
-                                  fontSize: '14.3px',
+                                  fontSize: '20px',
                                   fontWeight: 900,
                                   color: '#1C2B3A',
                                   textTransform: 'uppercase',
@@ -741,7 +741,7 @@ export default function PatientCareTimeline() {
                               {rec.clinicalObservations && (
                                 <div>
                                   <span style={{
-                                    fontSize: '14.3px',
+                                    fontSize: '20px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -765,7 +765,7 @@ export default function PatientCareTimeline() {
                               {rec.medications?.length > 0 && (
                                 <div>
                                   <span style={{
-                                    fontSize: '14.3px',
+                                    fontSize: '20px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -782,7 +782,7 @@ export default function PatientCareTimeline() {
                                           border: '2px solid #000000',
                                           borderRadius: '0px',
                                           padding: '6px 14px',
-                                          fontSize: '12px',
+                                          fontSize: '11px',
                                           fontWeight: 700,
                                           color: '#1C2B3A',
                                           textTransform: 'uppercase',
@@ -804,7 +804,7 @@ export default function PatientCareTimeline() {
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                   <span style={{
-                                    fontSize: '14.3px',
+                                    fontSize: '20px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -814,7 +814,7 @@ export default function PatientCareTimeline() {
                                   </span>
                                   {exCount > 0 && (
                                     <span style={{
-                                      fontSize: '11px',
+                                      fontSize: '10px',
                                       fontWeight: 700,
                                       color: '#6B7C93',
                                       textTransform: 'uppercase',
@@ -857,7 +857,7 @@ export default function PatientCareTimeline() {
 
                               {exCount === 0 ? (
                                 <p style={{
-                                  fontSize: '13px',
+                                  fontSize: '14px',
                                   fontWeight: 400,
                                   color: '#A8B8C8',
                                   fontStyle: 'italic',
@@ -881,7 +881,7 @@ export default function PatientCareTimeline() {
                                         padding: '10px 16px',
                                       }}>
                                         <span style={{
-                                          fontSize: '14.3px',
+                                          fontSize: '20px',
                                           fontWeight: 900,
                                           color: '#6B7C93',
                                           textTransform: 'uppercase',
@@ -920,7 +920,7 @@ export default function PatientCareTimeline() {
                                             }}
                                           >
                                             <span style={{
-                                              fontSize: '13px',
+                                              fontSize: '20px',
                                               fontWeight: 900,
                                               color: '#6B7C93',
                                               textTransform: 'uppercase',
@@ -929,7 +929,7 @@ export default function PatientCareTimeline() {
                                               marginBottom: '6px',
                                             }}>{param.label}</span>
                                             <span style={{
-                                              fontSize: '16px',
+                                              fontSize: '18px',
                                               fontWeight: 900,
                                               color: '#1C2B3A',
                                               letterSpacing: '-0.01em',
@@ -944,7 +944,7 @@ export default function PatientCareTimeline() {
                                       {ex.notes && (
                                         <div style={{ padding: '10px 16px' }}>
                                           <span style={{
-                                            fontSize: '13px',
+                                            fontSize: '20px',
                                             fontWeight: 900,
                                             color: '#6B7C93',
                                             textTransform: 'uppercase',
@@ -953,7 +953,7 @@ export default function PatientCareTimeline() {
                                             marginBottom: '4px',
                                           }}>NOTES</span>
                                           <span style={{
-                                            fontSize: '13px',
+                                            fontSize: '14px',
                                             fontWeight: 400,
                                             color: '#3D5166',
                                             fontStyle: 'italic',
@@ -976,7 +976,7 @@ export default function PatientCareTimeline() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                                   <div>
                                     <span style={{
-                                      fontSize: '14.3px',
+                                      fontSize: '20px',
                                       fontWeight: 900,
                                       color: '#1C2B3A',
                                       textTransform: 'uppercase',
@@ -1005,7 +1005,7 @@ export default function PatientCareTimeline() {
                                         </span>
                                         {rec.followUpRecommendation.sessionGoal && (
                                           <span style={{
-                                            fontSize: '13px',
+                                            fontSize: '14px',
                                             fontWeight: 400,
                                             color: '#3D5166',
                                             lineHeight: '1.5',
@@ -1026,7 +1026,7 @@ export default function PatientCareTimeline() {
                                           height: '40px',
                                           padding: '0 16px',
                                           fontWeight: 900,
-                                          fontSize: '12px',
+                                          fontSize: '13px',
                                           cursor: 'pointer',
                                           whiteSpace: 'nowrap',
                                           transition: '150ms',
@@ -1041,7 +1041,7 @@ export default function PatientCareTimeline() {
                                 </div>
                               ) : (
                                 <p style={{
-                                  fontSize: '13px',
+                                  fontSize: '14px',
                                   fontWeight: 400,
                                   color: '#A8B8C8',
                                   fontStyle: 'italic',
