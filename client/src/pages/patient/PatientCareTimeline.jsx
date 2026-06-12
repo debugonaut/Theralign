@@ -681,7 +681,7 @@ export default function PatientCareTimeline() {
                                   padding: '16px 8px',
                                   cursor: 'pointer',
                                   fontWeight: 900,
-                                  fontSize: '11px',
+                                  fontSize: '16.5px',
                                   textTransform: 'uppercase',
                                   letterSpacing: '0.08em',
                                   textAlign: 'center',
@@ -701,7 +701,7 @@ export default function PatientCareTimeline() {
                           {(activeSteps[rec._id] ?? 0) === 0 && (
                             <div>
                               <p style={{
-                                fontSize: '30px',
+                                fontSize: '14px',
                                 fontWeight: 400,
                                 color: '#3D5166',
                                 lineHeight: '1.7',
@@ -718,7 +718,7 @@ export default function PatientCareTimeline() {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                               <div>
                                 <span style={{
-                                  fontSize: '11px',
+                                  fontSize: '14.3px',
                                   fontWeight: 900,
                                   color: '#1C2B3A',
                                   textTransform: 'uppercase',
@@ -741,7 +741,7 @@ export default function PatientCareTimeline() {
                               {rec.clinicalObservations && (
                                 <div>
                                   <span style={{
-                                    fontSize: '11px',
+                                    fontSize: '14.3px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -765,7 +765,7 @@ export default function PatientCareTimeline() {
                               {rec.medications?.length > 0 && (
                                 <div>
                                   <span style={{
-                                    fontSize: '11px',
+                                    fontSize: '14.3px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -804,7 +804,7 @@ export default function PatientCareTimeline() {
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                   <span style={{
-                                    fontSize: '11px',
+                                    fontSize: '14.3px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -881,7 +881,7 @@ export default function PatientCareTimeline() {
                                         padding: '10px 16px',
                                       }}>
                                         <span style={{
-                                          fontSize: '11px',
+                                          fontSize: '14.3px',
                                           fontWeight: 900,
                                           color: '#6B7C93',
                                           textTransform: 'uppercase',
@@ -920,7 +920,7 @@ export default function PatientCareTimeline() {
                                             }}
                                           >
                                             <span style={{
-                                              fontSize: '10px',
+                                              fontSize: '13px',
                                               fontWeight: 900,
                                               color: '#6B7C93',
                                               textTransform: 'uppercase',
@@ -944,7 +944,7 @@ export default function PatientCareTimeline() {
                                       {ex.notes && (
                                         <div style={{ padding: '10px 16px' }}>
                                           <span style={{
-                                            fontSize: '10px',
+                                            fontSize: '13px',
                                             fontWeight: 900,
                                             color: '#6B7C93',
                                             textTransform: 'uppercase',
@@ -976,7 +976,7 @@ export default function PatientCareTimeline() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                                   <div>
                                     <span style={{
-                                      fontSize: '11px',
+                                      fontSize: '14.3px',
                                       fontWeight: 900,
                                       color: '#1C2B3A',
                                       textTransform: 'uppercase',
