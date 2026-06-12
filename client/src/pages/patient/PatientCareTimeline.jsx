@@ -6,12 +6,9 @@ import {
   Dumbbell,
   Pill,
   ChevronDown,
-  ChevronUp,
-  Download,
   Loader2,
   Filter,
   Activity,
-  ArrowRight,
   X,
   CheckCircle,
 } from 'lucide-react';
@@ -23,11 +20,29 @@ import SectionHeader from '../../components/common/SectionHeader';
 import Pagination from '../../components/common/Pagination';
 
 const PROGRESS_RATING_BADGES = {
-  worse: { label: 'WORSE', bg: 'bg-[#C0392B] text-white border-[#C0392B]' },
-  no_change: { label: 'NO CHANGE', bg: 'bg-[#B45309] text-white border-[#B45309]' },
-  slight_improvement: { label: 'SLIGHT IMPROVEMENT', bg: 'bg-[#0B4F6C] text-white border-[#0B4F6C]' },
-  significant_improvement: { label: 'SIGNIFICANT IMPROVEMENT', bg: 'bg-[#0A7E6E] text-white border-[#0A7E6E]' },
-  resolved: { label: 'RESOLVED', bg: 'bg-[#0A7E6E] text-white border-[#0A7E6E]', showCheck: true },
+  worse:                   { label: 'Worse',                  background: '#FDF2F2', color: '#C0392B' },
+  no_change:               { label: 'No Change',              background: '#F0F4F7', color: '#6B7C93' },
+  slight_improvement:      { label: 'Slight Improvement',     background: '#FEF3E2', color: '#B45309' },
+  significant_improvement: { label: 'Significant Improvement',background: '#E8F8F5', color: '#0A7E6E' },
+  resolved:                { label: 'Resolved',               background: '#E8F4F8', color: '#0B4F6C' },
+};
+
+const progressBadgeStyle = (key) => {
+  const c = PROGRESS_RATING_BADGES[key];
+  if (!c) return null;
+  return {
+    background: c.background,
+    color: c.color,
+    borderRadius: '4px',
+    padding: '4px 12px',
+    fontSize: '11px',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: '0.08em',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+  };
 };
 
 const formatDate = (dateString) => {
@@ -285,16 +300,24 @@ export default function PatientCareTimeline() {
     document.head.removeChild(style);
   };
 
-  const getPainDeltaInfo = (before, after) => {
-    if (before === null || after === null || before === undefined || after === undefined) return null;
-    const delta = Math.abs(before - after);
-    if (after < before) {
-      return { text: `Pain: ${before}/10 → ${after}/10`, color: 'text-[#0A7E6E]', direction: 'better' };
-    } else if (after > before) {
-      return { text: `Pain: ${before}/10 → ${after}/10`, color: 'text-[#C0392B]', direction: 'worse' };
-    } else {
-      return { text: `Pain: ${before}/10 → ${after}/10`, color: 'text-[#6B7C93]', direction: 'unchanged' };
-    }
+  const getPainChipStyle = (before, after) => {
+    if (before == null || after == null) return null;
+    const improved = after < before;
+    const worsened = after > before;
+    return {
+      style: {
+        background: improved ? '#E8F8F5' : worsened ? '#FDF2F2' : '#F0F4F7',
+        color: improved ? '#0A7E6E' : worsened ? '#C0392B' : '#6B7C93',
+        borderRadius: '4px',
+        padding: '4px 10px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        fontSize: '12px',
+        fontWeight: 600,
+      },
+      arrow: improved ? '↓' : worsened ? '↑' : '=',
+    };
   };
 
   const getDoctorNameDisplay = (doc) => {
@@ -371,18 +394,10 @@ export default function PatientCareTimeline() {
               </div>
               <div className="flex items-center mt-2">
                 {summary.latestProgressRating ? (
-                  (() => {
-                    const badge = PROGRESS_RATING_BADGES[summary.latestProgressRating];
-                    const isResolved = summary.latestProgressRating === 'resolved';
-                    return (
-                      <span
-                        className={`${badge?.bg || ''} rounded-none border-2 border-neutral-900 text-[10px] uppercase tracking-[0.08em] py-[3px] px-[10px] inline-flex items-center gap-1 font-bold`}
-                      >
-                        {isResolved && <CheckCircle size={10} />}
-                        {badge?.label}
-                      </span>
-                    );
-                  })()
+                  <span style={progressBadgeStyle(summary.latestProgressRating)}>
+                    {summary.latestProgressRating === 'resolved' && <CheckCircle size={10} />}
+                    {PROGRESS_RATING_BADGES[summary.latestProgressRating]?.label}
+                  </span>
                 ) : (
                   <span className="text-[28px] text-[#A8B8C8] leading-none block font-black" style={{ fontWeight: 900 }}>
                     —
@@ -481,7 +496,6 @@ export default function PatientCareTimeline() {
                 const docName = getDoctorNameDisplay(rec.doctor);
                 const specArray = rec.doctor?.specialization || ['General Physiotherapy'];
                 const primarySpec = specArray[0] || 'General Physiotherapy';
-                const ratingBadge = PROGRESS_RATING_BADGES[rec.progressRating];
                 const exCount = rec.exercisePrescription?.length || 0;
                 const showFollowup = rec.followUpRecommendation?.recommended;
 
@@ -542,32 +556,23 @@ export default function PatientCareTimeline() {
                         {/* Row 1: progress, pain */}
                         <div className="flex items-center justify-between">
                           <div>
-                            {ratingBadge && (
-                              <span
-                                className={`${ratingBadge.bg} rounded-none border-2 border-neutral-900 text-[10px] uppercase tracking-[0.08em] py-[3px] px-[10px] inline-flex items-center gap-1 font-bold`}
-                              >
+                            {rec.progressRating && progressBadgeStyle(rec.progressRating) && (
+                              <span style={progressBadgeStyle(rec.progressRating)}>
                                 {rec.progressRating === 'resolved' && <CheckCircle size={10} />}
-                                {ratingBadge.label}
+                                {PROGRESS_RATING_BADGES[rec.progressRating]?.label}
                               </span>
                             )}
                           </div>
 
-                          {rec.painScoreBefore !== null && rec.painScoreAfter !== null && rec.painScoreBefore !== undefined && rec.painScoreAfter !== undefined && (
-                            <div className="flex items-center gap-1.5 text-[12px] text-[#6B7C93] uppercase font-bold">
-                              <span>PAIN: {rec.painScoreBefore}/10</span>
-                              <ArrowRight
-                                size={12}
-                                className={
-                                  rec.painScoreAfter < rec.painScoreBefore
-                                    ? 'text-[#0A7E6E]'
-                                    : rec.painScoreAfter > rec.painScoreBefore
-                                    ? 'text-[#C0392B]'
-                                    : 'text-[#6B7C93]'
-                                }
-                              />
-                              <span>{rec.painScoreAfter}/10</span>
-                            </div>
-                          )}
+                          {(() => {
+                            const chip = getPainChipStyle(rec.painScoreBefore, rec.painScoreAfter);
+                            if (!chip) return null;
+                            return (
+                              <span style={chip.style}>
+                                {chip.arrow} {rec.painScoreBefore}/10 → {rec.painScoreAfter}/10
+                              </span>
+                            );
+                          })()}
                         </div>
 
                         {/* Row 2: Treatment excerpt */}
@@ -636,148 +641,208 @@ export default function PatientCareTimeline() {
 
                     {/* Inline Expanded Record Details */}
                     {isExpanded && (
-                      <div className="border-t-2 border-neutral-900 p-5 px-6 bg-white flex flex-col gap-5 select-none transition-all rounded-none">
-                        
-                        {/* Presenting condition */}
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                            PRESENTING CONDITION
-                          </span>
-                          <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
-                            {rec.presentingCondition}
-                          </p>
-                        </div>
+                      <div className="border-t-2 border-neutral-900 select-none overflow-hidden" style={{ borderRadius: '0 0 0 0' }}>
 
-                        {/* Treatment Provided */}
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                            TREATMENT PROVIDED
+                        {/* Zone A — What Happened */}
+                        <div style={{ background: '#FFFFFF', padding: '24px', borderBottom: '1px solid #EEF2F6' }}>
+                          <span style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '10px', color: '#6B7C93', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '16px' }}>
+                            WHAT HAPPENED THIS SESSION
                           </span>
-                          <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
-                            {rec.treatmentProvided}
-                          </p>
-                        </div>
 
-                        {/* Clinical Observations */}
-                        {rec.clinicalObservations && (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                              CLINICAL OBSERVATIONS
-                            </span>
-                            <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
-                              {rec.clinicalObservations}
-                            </p>
+                          {/* Progress badge in Zone A header */}
+                          {rec.progressRating && progressBadgeStyle(rec.progressRating) && (
+                            <div style={{ marginBottom: '16px' }}>
+                              <span style={progressBadgeStyle(rec.progressRating)}>
+                                {rec.progressRating === 'resolved' && <CheckCircle size={10} />}
+                                {PROGRESS_RATING_BADGES[rec.progressRating]?.label}
+                              </span>
+                            </div>
+                          )}
+
+                          <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                                PRESENTING CONDITION
+                              </span>
+                              <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
+                                {rec.presentingCondition}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                                TREATMENT PROVIDED
+                              </span>
+                              <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
+                                {rec.treatmentProvided}
+                              </p>
+                            </div>
+
+                            {rec.clinicalObservations && (
+                              <div className="flex flex-col gap-1">
+                                <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                                  CLINICAL OBSERVATIONS
+                                </span>
+                                <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
+                                  {rec.clinicalObservations}
+                                </p>
+                              </div>
+                            )}
+
+                            {rec.medications?.length > 0 && (
+                              <div className="flex flex-col gap-1.5">
+                                <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                                  PRESCRIBED MEDICATIONS / SUPPLEMENTS
+                                </span>
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {rec.medications.map((med, medIdx) => (
+                                    <span key={medIdx} className="bg-[#E8F4F8] text-[#0B4F6C] border-2 border-neutral-900 rounded-none px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider">
+                                      {med.toUpperCase()}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
 
-                        {/* Exercises Table */}
-                        {exCount > 0 && (
-                          <div className="flex flex-col gap-2">
-                            <div className="flex items-center justify-between select-none">
-                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em]" style={{ fontWeight: 700 }}>
+                        {/* Zone B — Your Action Plan */}
+                        <div style={{ background: '#E8F4F8', padding: '24px', borderRadius: '0 0 12px 12px' }}>
+                          <span style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '10px', color: '#0B4F6C', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '16px' }}>
+                            YOUR ACTION PLAN
+                          </span>
+
+                          <div className="flex flex-col gap-4">
+                            {/* Exercise Section */}
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-2 block" style={{ fontWeight: 700 }}>
                                 HOME EXERCISE PRESCRIPTIONS
                               </span>
-                              <button
-                                onClick={(e) => handlePrintExercisePlan(e, rec)}
-                                className="bg-transparent border-2 border-neutral-900 text-neutral-900 rounded-none h-9 px-3 text-[12px] hover:bg-neutral-900 hover:text-white flex items-center gap-1.5 transition-all duration-150 ease-swiss cursor-pointer select-none font-bold uppercase"
-                              >
-                                <Download size={14} /> DOWNLOAD EXERCISE PLAN
-                              </button>
-                            </div>
 
-                            <div className="w-full overflow-hidden border-2 border-neutral-900 rounded-none bg-white select-none">
-                              <table className="w-full text-left border-collapse select-none">
-                                <thead>
-                                  <tr className="bg-neutral-100 border-b-2 border-neutral-900">
-                                    <th className="px-3 py-2.5 text-[#6B7C93] uppercase text-[11px] tracking-[0.06em]" style={{ fontWeight: 700 }}>EXERCISE</th>
-                                    <th className="px-3 py-2.5 text-[#6B7C93] uppercase text-[11px] tracking-[0.06em] text-center" style={{ fontWeight: 700 }}>SETS</th>
-                                    <th className="px-3 py-2.5 text-[#6B7C93] uppercase text-[11px] tracking-[0.06em] text-center" style={{ fontWeight: 700 }}>REPS</th>
-                                    <th className="px-3 py-2.5 text-[#6B7C93] uppercase text-[11px] tracking-[0.06em]" style={{ fontWeight: 700 }}>FREQUENCY</th>
-                                    <th className="px-3 py-2.5 text-[#6B7C93] uppercase text-[11px] tracking-[0.06em]" style={{ fontWeight: 700 }}>DURATION</th>
-                                  </tr>
-                                </thead>
-                                <tbody className="divide-y divide-neutral-900">
-                                  {rec.exercisePrescription.map((ex, exIdx) => (
-                                    <tr key={ex._id || exIdx} className="h-12 border-b border-neutral-900 hover:bg-[#F7F9FB] transition-colors duration-150 select-none">
-                                      <td className="px-3 py-3 text-[13px] text-[#1C2B3A] font-normal">
-                                        <div className="font-bold">{ex.exerciseName.toUpperCase()}</div>
-                                        {ex.notes && (
-                                          <div className="text-[11px] text-[#6B7C93] mt-0.5 normal-case font-normal">
-                                            {ex.notes}
+                              {exCount > 0 ? (
+                                <>
+                                  {rec.exercisePrescription.map((ex, exIdx) => {
+                                    const setsReps = ex.sets && ex.reps
+                                      ? `${ex.sets} sets × ${ex.reps} reps`
+                                      : ex.sets
+                                      ? `${ex.sets} sets`
+                                      : ex.reps
+                                      ? `${ex.reps} reps`
+                                      : '—';
+                                    return (
+                                      <div
+                                        key={ex._id || exIdx}
+                                        style={{
+                                          background: '#FFFFFF',
+                                          border: '1px solid #DDE3EA',
+                                          borderRadius: '8px',
+                                          padding: '14px 20px',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'space-between',
+                                          marginBottom: '10px',
+                                        }}
+                                      >
+                                        {/* Name */}
+                                        <div style={{ flex: 1 }}>
+                                          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '14px', color: '#1C2B3A', textTransform: 'uppercase' }}>
+                                            {ex.exerciseName}
                                           </div>
-                                        )}
-                                      </td>
-                                      <td className="px-3 py-3 text-center text-[13px] text-[#1C2B3A] font-bold">
-                                        {ex.sets || '—'}
-                                      </td>
-                                      <td className="px-3 py-3 text-center text-[13px] text-[#1C2B3A] font-bold">
-                                        {ex.reps || '—'}
-                                      </td>
-                                      <td className="px-3 py-3 text-[13px] text-[#1C2B3A] font-bold uppercase">
-                                        {ex.frequency || '—'}
-                                      </td>
-                                      <td className="px-3 py-3 text-[13px] text-[#1C2B3A] font-bold uppercase">
-                                        {ex.duration || '—'}
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
+                                          {ex.notes && (
+                                            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '11px', color: '#6B7C93', fontStyle: 'italic', marginTop: '2px' }}>
+                                              {ex.notes}
+                                            </div>
+                                          )}
+                                        </div>
+                                        {/* Sets × Reps */}
+                                        <div style={{ width: '100px', textAlign: 'center', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '13px', color: '#0B4F6C' }}>
+                                          {setsReps}
+                                        </div>
+                                        {/* Frequency */}
+                                        <div style={{ width: '120px', textAlign: 'center' }}>
+                                          {ex.frequency && (
+                                            <span style={{ background: '#F0F4F7', borderRadius: '4px', padding: '4px 10px', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: '11px', color: '#6B7C93' }}>
+                                              {ex.frequency}
+                                            </span>
+                                          )}
+                                        </div>
+                                        {/* Duration */}
+                                        <div style={{ width: '100px', textAlign: 'center' }}>
+                                          {ex.duration && (
+                                            <span style={{ background: '#F0F4F7', borderRadius: '4px', padding: '4px 10px', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: '11px', color: '#6B7C93' }}>
+                                              {ex.duration}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                  <button
+                                    onClick={(e) => handlePrintExercisePlan(e, rec)}
+                                    style={{
+                                      width: '100%',
+                                      background: 'transparent',
+                                      border: '1.5px solid #0B4F6C',
+                                      color: '#0B4F6C',
+                                      borderRadius: '6px',
+                                      height: '40px',
+                                      fontFamily: 'Inter, sans-serif',
+                                      fontWeight: 600,
+                                      fontSize: '13px',
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      gap: '6px',
+                                      marginTop: '4px',
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.background = '#E8F4F8'}
+                                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                  >
+                                    ↓ Download Exercise Plan
+                                  </button>
+                                </>
+                              ) : (
+                                <div style={{ border: '1px dashed #DDE3EA', borderRadius: '8px', padding: '20px', textAlign: 'center', color: '#6B7C93', fontSize: '13px' }}>
+                                  No exercises prescribed
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        )}
 
-                        {/* Medications */}
-                        {rec.medications?.length > 0 && (
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                              PRESCRIBED MEDICATIONS / SUPPLEMENTS
-                            </span>
-                            <div className="flex flex-wrap gap-1.5 mt-1 select-none">
-                              {rec.medications.map((med, medIdx) => (
-                                <span
-                                  key={medIdx}
-                                  className="bg-[#E8F4F8] text-[#0B4F6C] border-2 border-neutral-900 rounded-none px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider"
-                                >
-                                  {med.toUpperCase()}
+                            {/* Follow-up Goal */}
+                            {showFollowup && rec.followUpRecommendation?.sessionGoal && (
+                              <div className="flex flex-col gap-1">
+                                <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                                  FOLLOW-UP FOCUS & GOAL
                                 </span>
-                              ))}
-                            </div>
+                                <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed">
+                                  {rec.followUpRecommendation.sessionGoal}
+                                </p>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
 
-                        {/* Follow up goal */}
-                        {showFollowup && rec.followUpRecommendation?.sessionGoal && (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                              FOLLOW-UP FOCUS & GOAL
-                            </span>
-                            <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed">
-                              {rec.followUpRecommendation.sessionGoal}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Audit Details */}
-                        <div className="border-t-2 border-neutral-900 pt-3 mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 select-none">
-                          <span className="text-[11px] text-[#A8B8C8] font-bold uppercase tracking-wider">
-                            Signed by Dr. {rec.doctor?.user?.name || 'Physiotherapist'} on {formatMetadataDate(rec.doctorSignedAt)} at {formatMetadataTime(rec.doctorSignedAt)}
-                          </span>
-
-                          {rec.editHistory?.length > 0 && (
-                            (() => {
-                              const lastEdit = rec.editHistory[rec.editHistory.length - 1];
-                              return (
-                                <span className="text-[11px] text-[#A8B8C8] font-bold uppercase tracking-wider">
-                                  Last edited: {formatMetadataDate(lastEdit.editedAt)} at {formatMetadataTime(lastEdit.editedAt)}
-                                </span>
-                              );
-                            })()
-                          )}
+                        {/* Footer */}
+                        <div style={{ borderTop: '1px solid #EEF2F6', padding: '12px 24px', textAlign: 'center', fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '11px', color: '#A8B8C8' }}>
+                          Signed by {getDoctorNameDisplay(rec.doctor)}
+                          {' · '}
+                          {(() => {
+                            const lastEdit = rec.editHistory?.length > 0 ? rec.editHistory[rec.editHistory.length - 1] : null;
+                            const signedFormatted = rec.doctorSignedAt
+                              ? `${formatMetadataDate(rec.doctorSignedAt)} at ${formatMetadataTime(rec.doctorSignedAt)}`
+                              : '—';
+                            const editFormatted = lastEdit
+                              ? `Last edited: ${formatMetadataDate(lastEdit.editedAt)} at ${formatMetadataTime(lastEdit.editedAt)}`
+                              : null;
+                            return editFormatted
+                              ? <span title={editFormatted}>{signedFormatted}</span>
+                              : <span>{signedFormatted}</span>;
+                          })()}
                         </div>
 
                         {/* Collapse trigger */}
-                        <div className="flex justify-end mt-4 select-none">
+                        <div className="flex justify-end px-6 pb-4 bg-white select-none">
                           <button
                             onClick={() => toggleExpand(rec._id)}
                             className="inline-flex items-center gap-1 text-[12px] text-[#6B7C93] hover:text-accent bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
