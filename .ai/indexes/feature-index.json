@@ -691,6 +691,60 @@
       ],
       "lastUpdated": "2026-06-11T18:00:00Z",
       "stale": false
+    },
+    {
+      "id": "session-notes-creation",
+      "name": "Session Notes & Exercise Prescription",
+      "phase": 14,
+      "description": "Doctor completes clinical session records, including presenting conditions, progress ratings, pain scores, exercise prescriptions, and medications.",
+      "userRoles": ["doctor"],
+      "routes": ["/doctor/appointments/:appointmentId/session-record"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/session-records/:appointmentId" },
+        { "method": "GET", "path": "/api/session-records/:appointmentId" },
+        { "method": "PUT", "path": "/api/session-records/:appointmentId" }
+      ],
+      "components": [
+        "client/src/pages/doctor/SessionRecordForm.jsx"
+      ],
+      "models": ["SessionRecord", "Appointment"],
+      "controllers": ["server/src/controllers/sessionRecord.controller.js"],
+      "services": ["server/src/services/sessionRecord.service.js"],
+      "relatedFeatures": ["care-history-timeline", "appointment-management"],
+      "knownConstraints": [
+        "Only completed appointments can have session records",
+        "Only owning doctor can create/edit notes",
+        "Autosave drafts preserved in localStorage",
+        "Edit window locked after 24 hours from doctorSignedAt",
+        "Share toggle ON/OFF requires confirm modal intervention"
+      ],
+      "lastUpdated": "2026-06-12T12:00:00Z",
+      "stale": false
+    },
+    {
+      "id": "care-history-timeline",
+      "name": "Care History Timeline",
+      "phase": 14,
+      "description": "Patient views complete care continuity timeline detailing treatment history, home exercise plans, and doctor follow-up suggestions.",
+      "userRoles": ["patient"],
+      "routes": ["/patient/care-timeline"],
+      "apiEndpoints": [
+        { "method": "GET", "path": "/api/session-records/patient/timeline" }
+      ],
+      "components": [
+        "client/src/pages/patient/PatientCareTimeline.jsx"
+      ],
+      "models": ["SessionRecord"],
+      "controllers": ["server/src/controllers/sessionRecord.controller.js"],
+      "services": ["server/src/services/sessionRecord.service.js"],
+      "relatedFeatures": ["session-notes-creation"],
+      "knownConstraints": [
+        "Only shared, unarchived records visible to patients",
+        "Inline doctor and date filters re-trigger pagination queries",
+        "Exercise prescriptions downloadable as print-friendly views"
+      ],
+      "lastUpdated": "2026-06-12T12:00:00Z",
+      "stale": false
     }
   ]
 }

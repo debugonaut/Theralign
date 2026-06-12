@@ -650,6 +650,52 @@
       "lastUpdated": "2026-06-11T18:00:00Z",
       "sourceFilesHash": "pqr345stu678",
       "stale": false
+    },
+    {
+      "id": "session-records",
+      "name": "Session Records & Care Continuity",
+      "purpose": "Clinical documentation layer linking completed appointments to recovery plans",
+      "responsibilities": [
+        "Create session record linked to completed appointment",
+        "Maintain progress rating, presenting condition, and pain score deltas",
+        "Prescribe and detail exercises (sets, reps, frequency, duration, notes)",
+        "Log recommended medications and supplemental clinical notes",
+        "Enable HIPAA-aligned visibility toggles (share with patient)",
+        "Provide patient-facing care timelines with paginated progress summaries",
+        "Enforce 24-hour edit signature locks"
+      ],
+      "entryPoints": [
+        "server/src/routes/sessionRecord.routes.js",
+        "server/src/controllers/sessionRecord.controller.js",
+        "server/src/services/sessionRecord.service.js"
+      ],
+      "relatedFiles": [
+        "server/src/models/SessionRecord.model.js",
+        "server/src/validations/sessionRecord.validation.js",
+        "client/src/api/sessionRecord.api.js",
+        "client/src/pages/doctor/SessionRecordForm.jsx",
+        "client/src/pages/patient/PatientCareTimeline.jsx"
+      ],
+      "dependsOn": [
+        "appointment-booking",
+        "doctor-profiles",
+        "user-management",
+        "notification-system"
+      ],
+      "consumedBy": [
+        "patient-experience"
+      ],
+      "externalServices": [],
+      "criticalConstraints": [
+        "One SessionRecord per Appointment (enforced at DB level)",
+        "Records can only be edited within 24 hours of signature (measured from doctorSignedAt)",
+        "All edits within the 24-hour window append metadata changes to editHistory array",
+        "Archived records are soft-deleted (hidden from facing lists, kept for admin compliance review)",
+        "Timeline and history queries use parallelized aggregations"
+      ],
+      "lastUpdated": "2026-06-12T12:00:00Z",
+      "sourceFilesHash": "sesrec14hash",
+      "stale": false
     }
   ]
 }

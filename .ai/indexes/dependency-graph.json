@@ -78,6 +78,21 @@
     "external_openai": {
       "type": "external",
       "label": "OpenAI API"
+    },
+    "model_SessionRecord": {
+      "type": "model",
+      "path": "server/src/models/SessionRecord.model.js",
+      "label": "SessionRecord Model"
+    },
+    "controller_sessionRecord": {
+      "type": "controller",
+      "path": "server/src/controllers/sessionRecord.controller.js",
+      "label": "SessionRecord Controller"
+    },
+    "service_sessionRecord": {
+      "type": "service",
+      "path": "server/src/services/sessionRecord.service.js",
+      "label": "SessionRecord Service"
     }
   },
   "edges": [
@@ -182,6 +197,42 @@
       "target": "service_refund",
       "type": "calls",
       "label": "May trigger refund on payment failure"
+    },
+    {
+      "source": "controller_sessionRecord",
+      "target": "service_sessionRecord",
+      "type": "calls",
+      "label": "Calls clinical records logic"
+    },
+    {
+      "source": "controller_sessionRecord",
+      "target": "model_SessionRecord",
+      "type": "uses-model",
+      "label": "Retrieves records"
+    },
+    {
+      "source": "service_sessionRecord",
+      "target": "model_SessionRecord",
+      "type": "uses-model",
+      "label": "CRUD operations on session notes"
+    },
+    {
+      "source": "service_sessionRecord",
+      "target": "model_Appointment",
+      "type": "uses-model",
+      "label": "Validates status and snapshots details"
+    },
+    {
+      "source": "service_sessionRecord",
+      "target": "model_DoctorProfile",
+      "type": "uses-model",
+      "label": "Validates owning doctor"
+    },
+    {
+      "source": "service_sessionRecord",
+      "target": "model_User",
+      "type": "uses-model",
+      "label": "Populates recipient information"
     }
   ],
   "queries": {
