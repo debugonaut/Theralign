@@ -36,7 +36,7 @@ const progressBadgeStyle = (key) => {
     color: c.color,
     borderRadius: '4px',
     padding: '4px 12px',
-    fontSize: '22px', // doubled (from 11px)
+    fontSize: '11px',
     fontWeight: 700,
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
@@ -317,7 +317,7 @@ export default function PatientCareTimeline() {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '6px',
-        fontSize: '24px', // doubled (from 12px)
+        fontSize: '12px',
         fontWeight: 600,
       },
       arrow: improved ? '↓' : worsened ? '↑' : '=',
@@ -355,15 +355,15 @@ export default function PatientCareTimeline() {
             {/* Total Sessions Card */}
             <div className="bg-white rounded-none border-2 border-neutral-900 shadow-none p-5 px-6 min-h-[100px] flex flex-col justify-between">
               <div>
-                <span className="text-[22px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
+                <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
                   TOTAL SESSIONS
                 </span>
-                <span className="text-[22px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
+                <span className="text-[11px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
                   COMPLETED APPOINTMENTS
                 </span>
               </div>
               <div className="flex items-baseline select-none mt-2">
-                <span className="text-[50px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
+                <span className="text-[28px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
                   {summary.totalSessions}
                 </span>
               </div>
@@ -372,15 +372,15 @@ export default function PatientCareTimeline() {
             {/* Doctors Seen Card */}
             <div className="bg-white rounded-none border-2 border-neutral-900 shadow-none p-5 px-6 min-h-[100px] flex flex-col justify-between">
               <div>
-                <span className="text-[22px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
+                <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
                   DOCTORS SEEN
                 </span>
-                <span className="text-[22px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
+                <span className="text-[11px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
                   UNIQUE PHYSIOTHERAPISTS
                 </span>
               </div>
               <div className="flex items-baseline select-none mt-2">
-                <span className="text-[50px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
+                <span className="text-[28px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
                   {summary.doctorsSeen}
                 </span>
               </div>
@@ -389,21 +389,21 @@ export default function PatientCareTimeline() {
             {/* Latest Progress Card */}
             <div className="bg-white rounded-none border-2 border-neutral-900 shadow-none p-5 px-6 min-h-[100px] flex flex-col justify-between">
               <div>
-                <span className="text-[22px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
+                <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
                   LATEST PROGRESS
                 </span>
-                <span className="text-[22px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
+                <span className="text-[11px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
                   LAST REPORTED CONDITION
                 </span>
               </div>
               <div className="flex items-center mt-2">
                 {summary.latestProgressRating ? (
                   <span style={progressBadgeStyle(summary.latestProgressRating)}>
-                    {summary.latestProgressRating === 'resolved' && <CheckCircle size={20} />}
+                    {summary.latestProgressRating === 'resolved' && <CheckCircle size={10} />}
                     {PROGRESS_RATING_BADGES[summary.latestProgressRating]?.label}
                   </span>
                 ) : (
-                  <span className="text-[50px] text-[#A8B8C8] leading-none block font-black" style={{ fontWeight: 900 }}>
+                  <span className="text-[28px] text-[#A8B8C8] leading-none block font-black" style={{ fontWeight: 900 }}>
                     —
                   </span>
                 )}
@@ -416,7 +416,7 @@ export default function PatientCareTimeline() {
             <div className="flex flex-wrap items-center gap-4 flex-1">
               {/* Doctor Dropdown */}
               <div className="flex flex-col flex-1 min-w-[200px]">
-                <label className="text-[24px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
+                <label className="text-[12px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
                   FILTER BY DOCTOR
                 </label>
                 <select
@@ -425,7 +425,7 @@ export default function PatientCareTimeline() {
                     setSelectedDoctorId(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="border-2 border-neutral-900 rounded-none px-3 h-14 text-[25px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss cursor-pointer uppercase font-bold"
+                  className="border-2 border-neutral-900 rounded-none px-3 h-10 text-[14px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss cursor-pointer uppercase font-bold"
                 >
                   <option value="">ALL DOCTORS</option>
                   {doctorsList.map((doc) => (
@@ -438,7 +438,7 @@ export default function PatientCareTimeline() {
 
               {/* Date From */}
               <div className="flex flex-col flex-1 min-w-[150px]">
-                <label className="text-[24px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
+                <label className="text-[12px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
                   FROM DATE
                 </label>
                 <input
@@ -448,13 +448,13 @@ export default function PatientCareTimeline() {
                     setDateFrom(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="border-2 border-neutral-900 rounded-none px-3 h-14 text-[25px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
+                  className="border-2 border-neutral-900 rounded-none px-3 h-10 text-[14px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
                 />
               </div>
 
               {/* Date To */}
               <div className="flex flex-col flex-1 min-w-[150px]">
-                <label className="text-[24px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
+                <label className="text-[12px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
                   TO DATE
                 </label>
                 <input
@@ -464,7 +464,7 @@ export default function PatientCareTimeline() {
                     setDateTo(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="border-2 border-neutral-900 rounded-none px-3 h-14 text-[25px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
+                  className="border-2 border-neutral-900 rounded-none px-3 h-10 text-[14px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
                 />
               </div>
             </div>
@@ -473,9 +473,9 @@ export default function PatientCareTimeline() {
             {isFilterActive && (
               <button
                 onClick={handleClearFilters}
-                className="bg-transparent border-2 border-neutral-900 text-neutral-900 rounded-none h-14 px-6 text-[24px] hover:bg-neutral-900 hover:text-white flex items-center gap-1.5 transition-colors duration-150 ease-swiss cursor-pointer select-none font-bold uppercase"
+                className="bg-transparent border-2 border-neutral-900 text-neutral-900 rounded-none h-10 px-4 text-[12px] hover:bg-neutral-900 hover:text-white flex items-center gap-1.5 transition-colors duration-150 ease-swiss cursor-pointer select-none font-bold uppercase"
               >
-                <X size={20} /> CLEAR FILTERS
+                <X size={14} /> CLEAR FILTERS
               </button>
             )}
           </div>
@@ -518,8 +518,8 @@ export default function PatientCareTimeline() {
                     {/* Primary Row Summary */}
                     <div className="flex items-stretch select-none">
                       {/* Left identity zone */}
-                      <div className="w-[260px] bg-[#0B4F6C] shrink-0 p-5 flex flex-col justify-center items-center text-center gap-2 relative select-none rounded-none border-r-2 border-neutral-900">
-                        <div className="w-16 h-16 rounded-full bg-white/15 border border-white/20 flex items-center justify-center overflow-hidden shrink-0">
+                      <div className="w-[200px] bg-[#0B4F6C] shrink-0 p-5 flex flex-col justify-center items-center text-center gap-2 relative select-none rounded-none border-r-2 border-neutral-900">
+                        <div className="w-11 h-11 rounded-full bg-white/15 border border-white/20 flex items-center justify-center overflow-hidden shrink-0">
                           {rec.doctor?.user?.profileImage ? (
                             <img
                               src={rec.doctor.user.profileImage}
@@ -530,7 +530,7 @@ export default function PatientCareTimeline() {
                               }}
                             />
                           ) : (
-                            <span className="font-extrabold text-[28px] text-white tracking-tight" style={{ fontWeight: 900 }}>
+                            <span className="font-extrabold text-[18px] text-white tracking-tight" style={{ fontWeight: 900 }}>
                               {docName
                                 .replace(/^Dr\.\s+/i, '')
                                 .split(' ')
@@ -543,13 +543,13 @@ export default function PatientCareTimeline() {
                         </div>
 
                         <div className="flex flex-col min-w-0 w-full items-center">
-                          <h4 className="font-bold text-[25px] text-white leading-snug truncate w-full" style={{ fontWeight: 700 }}>
+                          <h4 className="font-bold text-[14px] text-white leading-snug truncate w-full" style={{ fontWeight: 700 }}>
                             {docName.toUpperCase()}
                           </h4>
-                          <span className="text-[22px] text-white/70 tracking-wide mt-0.5 truncate block w-full" style={{ fontWeight: 700 }}>
+                          <span className="text-[11px] text-white/70 tracking-wide mt-0.5 truncate block w-full" style={{ fontWeight: 700 }}>
                             {primarySpec.toUpperCase()}
                           </span>
-                          <span className="text-[22px] text-white/55 block mt-1 font-bold">
+                          <span className="text-[11px] text-white/55 block mt-1 font-bold">
                             {formatDate(rec.appointment?.date)}
                           </span>
                         </div>
@@ -562,7 +562,7 @@ export default function PatientCareTimeline() {
                           <div>
                             {rec.progressRating && progressBadgeStyle(rec.progressRating) && (
                               <span style={progressBadgeStyle(rec.progressRating)}>
-                                {rec.progressRating === 'resolved' && <CheckCircle size={20} />}
+                                {rec.progressRating === 'resolved' && <CheckCircle size={10} />}
                                 {PROGRESS_RATING_BADGES[rec.progressRating]?.label}
                               </span>
                             )}
@@ -580,15 +580,15 @@ export default function PatientCareTimeline() {
                         </div>
 
                         {/* Row 2: Treatment excerpt */}
-                        <p className="text-[#3D5166] text-[23px] font-normal line-clamp-2 leading-relaxed mt-1">
+                        <p className="text-[#3D5166] text-[13px] font-normal line-clamp-2 leading-relaxed mt-1">
                           {rec.treatmentProvided}
                         </p>
 
                         {/* Row 3: Exercise, medications, followup */}
                         <div className="flex flex-wrap items-center gap-4 mt-1 select-none">
                           {exCount > 0 && (
-                            <span className="inline-flex items-center gap-1.5 text-[24px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
-                              <Activity size={20} className="text-[#0B4F6C]" />
+                            <span className="inline-flex items-center gap-1.5 text-[12px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
+                              <Activity size={14} className="text-[#0B4F6C]" />
                               <span>{exCount} EXERCISE{exCount !== 1 ? 'S' : ''} PRESCRIBED</span>
                             </span>
                           )}
@@ -599,8 +599,8 @@ export default function PatientCareTimeline() {
                               const extraCount = rec.medications.length - 2;
                               const medsText = displayedMeds.join(', ') + (extraCount > 0 ? ` +${extraCount} more` : '');
                               return (
-                                <span className="inline-flex items-center gap-1.5 text-[24px] text-[#6B7C93] font-bold uppercase tracking-wider">
-                                  <Pill size={20} className="text-[#6B7C93]" />
+                                <span className="inline-flex items-center gap-1.5 text-[12px] text-[#6B7C93] font-bold uppercase tracking-wider">
+                                  <Pill size={14} className="text-[#6B7C93]" />
                                   <span>{medsText.toUpperCase()}</span>
                                 </span>
                               );
@@ -609,8 +609,8 @@ export default function PatientCareTimeline() {
 
                           {showFollowup && rec.followUpRecommendation?.suggestedDate && (
                             <div className="border-2 border-neutral-900 bg-[#E8F4F8] rounded-none py-1.5 px-3 inline-flex items-center gap-2 select-none">
-                              <span className="inline-flex items-center gap-1 text-[24px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
-                                <Calendar size={20} className="text-[#0B4F6C]" />
+                              <span className="inline-flex items-center gap-1 text-[12px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
+                                <Calendar size={14} className="text-[#0B4F6C]" />
                                 <span>FOLLOW-UP: {formatDate(rec.followUpRecommendation.suggestedDate)}</span>
                               </span>
                               <span className="text-[#A8B8C8]">·</span>
@@ -619,7 +619,7 @@ export default function PatientCareTimeline() {
                                   e.stopPropagation();
                                   navigate(`/doctors/${rec.doctor?._id || rec.doctor}#book`);
                                 }}
-                                className="text-[24px] text-[#F4845F] hover:text-[#D96840] hover:underline bg-transparent border-0 cursor-pointer select-none transition-colors duration-150 ease-swiss font-bold uppercase tracking-wider"
+                                className="text-[12px] text-[#F4845F] hover:text-[#D96840] hover:underline bg-transparent border-0 cursor-pointer select-none transition-colors duration-150 ease-swiss font-bold uppercase tracking-wider"
                               >
                                 BOOK NOW →
                               </button>
@@ -631,11 +631,11 @@ export default function PatientCareTimeline() {
                         <div className="flex justify-end items-center mt-2 select-none">
                           <button
                             onClick={() => toggleExpand(rec._id)}
-                            className="inline-flex items-center gap-1 text-[24px] text-[#0B4F6C] hover:text-[#083A52] bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
+                            className="inline-flex items-center gap-1 text-[12px] text-[#0B4F6C] hover:text-[#083A52] bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
                           >
                             <span>{isExpanded ? 'COLLAPSE' : 'VIEW FULL RECORD'}</span>
                             <ChevronDown
-                              size={20}
+                              size={14}
                               className={`transition-transform duration-200 ease-swiss ${isExpanded ? 'rotate-180' : ''}`}
                             />
                           </button>
@@ -681,7 +681,7 @@ export default function PatientCareTimeline() {
                                   padding: '16px 8px',
                                   cursor: 'pointer',
                                   fontWeight: 900,
-                                  fontSize: '22px', // doubled (from 11px)
+                                  fontSize: '11px',
                                   textTransform: 'uppercase',
                                   letterSpacing: '0.08em',
                                   textAlign: 'center',
@@ -701,7 +701,7 @@ export default function PatientCareTimeline() {
                           {(activeSteps[rec._id] ?? 0) === 0 && (
                             <div>
                               <p style={{
-                                fontSize: '25px', // increased by 80% (from 14px)
+                                fontSize: '14px',
                                 fontWeight: 400,
                                 color: '#3D5166',
                                 lineHeight: '1.7',
@@ -718,7 +718,7 @@ export default function PatientCareTimeline() {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                               <div>
                                 <span style={{
-                                  fontSize: '22px', // doubled (from 11px)
+                                  fontSize: '11px',
                                   fontWeight: 900,
                                   color: '#1C2B3A',
                                   textTransform: 'uppercase',
@@ -727,7 +727,7 @@ export default function PatientCareTimeline() {
                                   marginBottom: '12px'
                                 }}>TREATMENT PROVIDED</span>
                                 <p style={{
-                                  fontSize: '25px', // increased by 80% (from 14px)
+                                  fontSize: '14px',
                                   fontWeight: 400,
                                   color: '#3D5166',
                                   lineHeight: '1.7',
@@ -741,7 +741,7 @@ export default function PatientCareTimeline() {
                               {rec.clinicalObservations && (
                                 <div>
                                   <span style={{
-                                    fontSize: '22px', // doubled
+                                    fontSize: '11px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -750,7 +750,7 @@ export default function PatientCareTimeline() {
                                     marginBottom: '12px'
                                   }}>CLINICAL OBSERVATIONS</span>
                                   <p style={{
-                                    fontSize: '25px', // increased by 80%
+                                    fontSize: '14px',
                                     fontWeight: 400,
                                     color: '#3D5166',
                                     lineHeight: '1.7',
@@ -765,7 +765,7 @@ export default function PatientCareTimeline() {
                               {rec.medications?.length > 0 && (
                                 <div>
                                   <span style={{
-                                    fontSize: '22px', // doubled
+                                    fontSize: '11px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -782,7 +782,7 @@ export default function PatientCareTimeline() {
                                           border: '2px solid #000000',
                                           borderRadius: '0px',
                                           padding: '6px 14px',
-                                          fontSize: '24px', // doubled (from 12px)
+                                          fontSize: '12px',
                                           fontWeight: 700,
                                           color: '#1C2B3A',
                                           textTransform: 'uppercase',
@@ -804,7 +804,7 @@ export default function PatientCareTimeline() {
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                   <span style={{
-                                    fontSize: '22px', // doubled
+                                    fontSize: '11px',
                                     fontWeight: 900,
                                     color: '#1C2B3A',
                                     textTransform: 'uppercase',
@@ -814,7 +814,7 @@ export default function PatientCareTimeline() {
                                   </span>
                                   {exCount > 0 && (
                                     <span style={{
-                                      fontSize: '22px', // doubled
+                                      fontSize: '11px',
                                       fontWeight: 700,
                                       color: '#6B7C93',
                                       textTransform: 'uppercase',
@@ -850,14 +850,14 @@ export default function PatientCareTimeline() {
                                       e.currentTarget.style.color = '#1C2B3A';
                                     }}
                                   >
-                                    <Download size={20} />
+                                    <Download size={14} />
                                   </button>
                                 )}
                               </div>
 
                               {exCount === 0 ? (
                                 <p style={{
-                                  fontSize: '23px', // increased by 80% (from 13px)
+                                  fontSize: '13px',
                                   fontWeight: 400,
                                   color: '#A8B8C8',
                                   fontStyle: 'italic',
@@ -881,7 +881,7 @@ export default function PatientCareTimeline() {
                                         padding: '10px 16px',
                                       }}>
                                         <span style={{
-                                          fontSize: '22px', // doubled (from 11px)
+                                          fontSize: '11px',
                                           fontWeight: 900,
                                           color: '#6B7C93',
                                           textTransform: 'uppercase',
@@ -890,7 +890,7 @@ export default function PatientCareTimeline() {
                                           marginBottom: '4px',
                                         }}>EXERCISE NAME</span>
                                         <span style={{
-                                          fontSize: '25px', // increased by 80% (from 14px)
+                                          fontSize: '14px',
                                           fontWeight: 700,
                                           color: '#1C2B3A',
                                           textTransform: 'uppercase',
@@ -920,7 +920,7 @@ export default function PatientCareTimeline() {
                                             }}
                                           >
                                             <span style={{
-                                              fontSize: '20px', // doubled (from 10px)
+                                              fontSize: '10px',
                                               fontWeight: 900,
                                               color: '#6B7C93',
                                               textTransform: 'uppercase',
@@ -929,7 +929,7 @@ export default function PatientCareTimeline() {
                                               marginBottom: '6px',
                                             }}>{param.label}</span>
                                             <span style={{
-                                              fontSize: '29px', // increased by 80% (from 16px)
+                                              fontSize: '16px',
                                               fontWeight: 900,
                                               color: '#1C2B3A',
                                               letterSpacing: '-0.01em',
@@ -944,7 +944,7 @@ export default function PatientCareTimeline() {
                                       {ex.notes && (
                                         <div style={{ padding: '10px 16px' }}>
                                           <span style={{
-                                            fontSize: '20px', // doubled (from 10px)
+                                            fontSize: '10px',
                                             fontWeight: 900,
                                             color: '#6B7C93',
                                             textTransform: 'uppercase',
@@ -953,7 +953,7 @@ export default function PatientCareTimeline() {
                                             marginBottom: '4px',
                                           }}>NOTES</span>
                                           <span style={{
-                                            fontSize: '23px', // increased by 80% (from 13px)
+                                            fontSize: '13px',
                                             fontWeight: 400,
                                             color: '#3D5166',
                                             fontStyle: 'italic',
@@ -976,7 +976,7 @@ export default function PatientCareTimeline() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                                   <div>
                                     <span style={{
-                                      fontSize: '22px', // doubled (from 11px)
+                                      fontSize: '11px',
                                       fontWeight: 900,
                                       color: '#1C2B3A',
                                       textTransform: 'uppercase',
@@ -995,7 +995,7 @@ export default function PatientCareTimeline() {
                                     }}>
                                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                         <span style={{
-                                          fontSize: '32px', // increased by 80% (from 18px)
+                                          fontSize: '18px',
                                           fontWeight: 900,
                                           color: '#0B4F6C',
                                           textTransform: 'uppercase',
@@ -1005,7 +1005,7 @@ export default function PatientCareTimeline() {
                                         </span>
                                         {rec.followUpRecommendation.sessionGoal && (
                                           <span style={{
-                                            fontSize: '23px', // increased by 80% (from 13px)
+                                            fontSize: '13px',
                                             fontWeight: 400,
                                             color: '#3D5166',
                                             lineHeight: '1.5',
@@ -1023,10 +1023,10 @@ export default function PatientCareTimeline() {
                                           color: 'white',
                                           borderRadius: '0px',
                                           border: '2px solid #000000',
-                                          height: '56px',
-                                          padding: '0 28px',
+                                          height: '40px',
+                                          padding: '0 16px',
                                           fontWeight: 900,
-                                          fontSize: '24px', // doubled (from 12px)
+                                          fontSize: '12px',
                                           cursor: 'pointer',
                                           whiteSpace: 'nowrap',
                                           transition: '150ms',
@@ -1041,7 +1041,7 @@ export default function PatientCareTimeline() {
                                 </div>
                               ) : (
                                 <p style={{
-                                  fontSize: '23px', // increased by 80% (from 13px)
+                                  fontSize: '13px',
                                   fontWeight: 400,
                                   color: '#A8B8C8',
                                   fontStyle: 'italic',
@@ -1077,7 +1077,7 @@ export default function PatientCareTimeline() {
                               <span
                                 title={formattedLastEditedDate ? `Last edited: ${formattedLastEditedDate}` : undefined}
                                 style={{
-                                  fontSize: '22px', // doubled (from 11px)
+                                  fontSize: '11px',
                                   fontWeight: 400,
                                   color: '#A8B8C8',
                                   cursor: 'default',
@@ -1093,7 +1093,7 @@ export default function PatientCareTimeline() {
                                   background: 'transparent',
                                   border: 'none',
                                   color: '#6B7C93',
-                                  fontSize: '22px', // doubled (from 11px)
+                                  fontSize: '11px',
                                   fontWeight: 900,
                                   cursor: 'pointer',
                                   display: 'flex',

@@ -8,14 +8,15 @@
 
 ## High Impact Changes
 
-### 2026-06-12 — Complete Implementation of Phase 14: Session Records & Care Continuity
+### 2026-06-12 — Complete Implementation & Redesign of Phase 14: Session Records & Care Continuity
 **Author:** Antigravity (AI Coding Assistant)
 
-**Summary:** Built the full frontend and integrated the notification service for clinical Session Records and Care continuity. Key details include the development of the multi-section doctor clinical record form (with autosave draft capabilities, pain delta pills, return date calculation, and share-confirmation modals) and the patient care history timeline (with parallelized API queries, search filters, download/print templates, and deep-link booking redirections).
+**Summary:** Built the full frontend, integrated the notification service, and fully redesigned the patient care timeline page. Key updates include a 4-tab stepper wizard layout for expanded clinical records, custom Swiss Minimalist styles, 50% scale-down layout refinement, and a compact download icon button. In addition, configured gitignore to ignore all markdown files except README.md.
 
 **Changed files:**
-- `client/src/pages/doctor/SessionRecordForm.jsx` [new] — Form enabling doctors to create/edit session notes and home exercise plans with built-in draft recovery and visibility controls.
-- `client/src/pages/patient/PatientCareTimeline.jsx` [new] — Paginated summary metrics view displaying treatment records, medications, and exercise prescriptions, with export printing options.
+- `client/src/pages/doctor/SessionRecordForm.jsx` [new] — Form enabling doctors to create/edit session notes and home exercise plans.
+- `client/src/pages/patient/PatientCareTimeline.jsx` [new] — Paginated care history timeline, rewritten to use a side-by-side 4-tab stepper, compact print icons, and scaled typography.
+- `.gitignore` [modified] — Configured to ignore all markdown files globally, except for README.md.
 - `server/src/services/notificationService.js` [modified] — Added support to pass the `relatedDoctor` parameter during notification creation to link follow-up triggers directly to doctor profiles.
 
 ---
