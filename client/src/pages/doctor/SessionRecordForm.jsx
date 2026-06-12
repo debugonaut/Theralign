@@ -29,11 +29,11 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 
 const PROGRESS_RATING_OPTIONS = [
-  { value: 'worse', label: 'Worse', bg: 'bg-[#C0392B] text-white border-[#C0392B]' },
-  { value: 'no_change', label: 'No Change', bg: 'bg-[#B45309] text-white border-[#B45309]' },
-  { value: 'slight_improvement', label: 'Slight Improvement', bg: 'bg-[#0B4F6C] text-white border-[#0B4F6C]' },
-  { value: 'significant_improvement', label: 'Significant Improvement', bg: 'bg-[#0A7E6E] text-white border-[#0A7E6E]' },
-  { value: 'resolved', label: 'Resolved', bg: 'bg-[#0A7E6E] text-white border-[#0A7E6E]', icon: CheckCircle },
+  { value: 'worse', label: 'WORSE', bg: 'bg-[#C0392B] text-white border-[#C0392B]' },
+  { value: 'no_change', label: 'NO CHANGE', bg: 'bg-[#B45309] text-white border-[#B45309]' },
+  { value: 'slight_improvement', label: 'SLIGHT IMPROVEMENT', bg: 'bg-[#0B4F6C] text-white border-[#0B4F6C]' },
+  { value: 'significant_improvement', label: 'SIGNIFICANT IMPROVEMENT', bg: 'bg-[#0A7E6E] text-white border-[#0A7E6E]' },
+  { value: 'resolved', label: 'RESOLVED', bg: 'bg-[#0A7E6E] text-white border-[#0A7E6E]', icon: CheckCircle },
 ];
 
 const PRESETS = [
@@ -545,19 +545,19 @@ export default function SessionRecordForm() {
     const delta = Math.abs(painBefore - painAfter);
     if (painAfter < painBefore) {
       painDeltaPill = (
-        <span className="bg-[#EAFDF8] border border-[#0A7E6E] text-[#0A7E6E] rounded px-2 py-1 text-[11px] font-black uppercase tracking-wider">
+        <span className="bg-[#EAFDF8] border-2 border-neutral-900 text-[#0A7E6E] rounded-none px-2 py-1 text-[11px] font-black uppercase tracking-wider">
           ↓ {delta} BETTER
         </span>
       );
     } else if (painAfter > painBefore) {
       painDeltaPill = (
-        <span className="bg-[#FDF2F2] border border-[#C0392B] text-[#C0392B] rounded px-2 py-1 text-[11px] font-black uppercase tracking-wider">
+        <span className="bg-[#FDF2F2] border-2 border-neutral-900 text-[#C0392B] rounded-none px-2 py-1 text-[11px] font-black uppercase tracking-wider">
           ↑ {delta} WORSE
         </span>
       );
     } else {
       painDeltaPill = (
-        <span className="bg-neutral-50 border border-neutral-300 text-neutral-600 rounded px-2 py-1 text-[11px] font-black uppercase tracking-wider">
+        <span className="bg-neutral-50 border-2 border-neutral-900 text-neutral-600 rounded-none px-2 py-1 text-[11px] font-black uppercase tracking-wider">
           NO CHANGE
         </span>
       );
@@ -580,7 +580,7 @@ export default function SessionRecordForm() {
 
 
       {/* Context Bar */}
-      <div className="bg-white rounded-xl shadow-level-1 p-4 px-6 mb-6 flex items-center justify-between select-none">
+      <div className="bg-white rounded-none border-2 border-neutral-900 p-4 px-6 mb-6 flex items-center justify-between select-none shadow-none">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-[#0B4F6C] border border-[#0B4F6C] flex items-center justify-center overflow-hidden shrink-0">
             {appointment.patient?.profileImage ? (
@@ -599,19 +599,19 @@ export default function SessionRecordForm() {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[15px] text-[#1C2B3A]" style={{ fontWeight: 600 }}>
+            <span className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
               {patientName}
             </span>
             <span className="text-[#A8B8C8] text-xs font-light">·</span>
-            <span className="text-[13px] text-[#6B7C93] font-medium">
+            <span className="text-[13px] text-[#6B7C93] font-bold uppercase tracking-wider">
               {getDisplayDateString(appointment.date)}
             </span>
             <span className="text-[#A8B8C8] text-xs font-light">·</span>
-            <span className="text-[13px] text-[#6B7C93] font-medium">
+            <span className="text-[13px] text-[#6B7C93] font-bold uppercase tracking-wider">
               {formatApptTime(appointment.startTime)} – {formatApptTime(appointment.endTime)}
             </span>
             <span className="text-[#A8B8C8] text-xs font-light">·</span>
-            <span className="text-[13px] text-primary" style={{ fontWeight: 600 }}>
+            <span className="text-[13px] text-primary font-bold uppercase tracking-wider">
               ₹{appointment.consultationFee}
             </span>
           </div>
@@ -619,14 +619,14 @@ export default function SessionRecordForm() {
 
         <div className="flex items-center gap-2">
           {isEditMode && (
-            <span className="bg-[#FEF3E2] text-[#B45309] rounded-sm px-[10px] py-[3px] text-[10px] font-bold uppercase tracking-[0.08em] flex items-center gap-1.5">
+            <span className="bg-[#FEF3E2] text-[#B45309] rounded-none border border-neutral-900 px-[10px] py-[3px] text-[10px] font-bold uppercase tracking-[0.08em] flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#B45309] animate-pulse"></span>
-              Editing Mode
+              EDITING MODE
             </span>
           )}
           {isReadOnly && (
-            <span className="bg-[#FDF2F2] text-[#C0392B] rounded-sm px-[10px] py-[3px] text-[10px] font-bold uppercase tracking-[0.08em] flex items-center gap-1">
-              Read-Only
+            <span className="bg-[#FDF2F2] text-[#C0392B] rounded-none border border-neutral-900 px-[10px] py-[3px] text-[10px] font-bold uppercase tracking-[0.08em] flex items-center gap-1">
+              READ-ONLY
             </span>
           )}
         </div>
@@ -634,25 +634,25 @@ export default function SessionRecordForm() {
 
       {/* Read Only Banner */}
       {isReadOnly && signedDate && (
-        <div className="bg-[#FDF2F2] text-[#C0392B] rounded-md p-4 mb-6 text-ui-sm font-bold uppercase tracking-wide">
+        <div className="bg-[#FDF2F2] text-[#C0392B] rounded-none border-2 border-neutral-900 p-4 mb-6 text-ui-sm font-bold uppercase tracking-wide">
           This record was finalized on {new Date(signedDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}. The 24-hour edit window has closed.
         </div>
       )}
 
       {/* Draft Resume Banner */}
       {hasDraft && !isEditMode && (
-        <div className="bg-[#E8F4F8] border border-[#B3D5E4] rounded-lg p-4 mb-6 flex items-center justify-between select-none">
+        <div className="bg-[#E8F4F8] border-2 border-neutral-900 rounded-none p-4 mb-6 flex items-center justify-between select-none">
           <div className="flex items-center gap-2">
             <RotateCcw className="h-4 w-4 text-[#0B4F6C]" />
-            <span className="text-[13px] text-[#0B4F6C] font-semibold">
-              Draft restored from your last session
+            <span className="text-[13px] text-[#0B4F6C] font-bold uppercase tracking-wider">
+              DRAFT RESTORED FROM YOUR LAST SESSION
             </span>
           </div>
           <button
             onClick={handleDiscardDraft}
-            className="text-[12px] text-[#6B7C93] hover:text-[#C0392B] bg-transparent border-0 cursor-pointer select-none font-semibold transition-colors duration-150 ease-swiss"
+            className="text-[12px] text-[#6B7C93] hover:text-[#C0392B] bg-transparent border-0 cursor-pointer select-none font-bold uppercase transition-colors duration-150 ease-swiss"
           >
-            Discard Draft
+            DISCARD DRAFT
           </button>
         </div>
       )}
@@ -661,23 +661,23 @@ export default function SessionRecordForm() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         
         {/* Accordion 1: Clinical Assessment */}
-        <div className="bg-white rounded-xl shadow-level-1 mb-4 overflow-hidden">
+        <div className="bg-white rounded-none border-2 border-neutral-900 mb-4 overflow-hidden shadow-none">
           <div
             onClick={() => toggleSection('clinical')}
-            className="group flex items-center justify-between p-4 px-6 border-b border-[#EEF2F6] bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
+            className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A]" style={{ fontWeight: 600 }}>
-              Clinical Assessment
+            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+              CLINICAL ASSESSMENT
             </h3>
             <div className="flex items-center gap-3">
               <span 
-                className={`rounded-sm text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] ${
+                className={`rounded-none border border-neutral-900 text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] ${
                   formData.progressRating 
                     ? `${getProgressBadgeStyle(formData.progressRating).bg} ${getProgressBadgeStyle(formData.progressRating).text}`
                     : 'bg-[#F0F4F7] text-[#6B7C93]'
                 }`}
               >
-                {selectedProgressOption ? selectedProgressOption.label : 'Required'}
+                {selectedProgressOption ? selectedProgressOption.label : 'REQUIRED'}
               </span>
               <ChevronDown
                 className={`h-4 w-4 text-[#6B7C93] group-hover:text-neutral-700 transition-transform duration-200 ease-swiss motion-reduce:duration-[0.01ms] ${
@@ -696,8 +696,8 @@ export default function SessionRecordForm() {
               
               {/* Presenting Condition */}
               <div className="flex flex-col relative">
-                <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                  Presenting Condition <span className="text-danger">*</span>
+                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                  PRESENTING CONDITION <span className="text-danger">*</span>
                 </label>
                 <textarea
                   required
@@ -707,10 +707,10 @@ export default function SessionRecordForm() {
                   value={formData.presentingCondition}
                   onChange={(e) => handleFieldChange('presentingCondition', e.target.value)}
                   placeholder="What brought the patient in today? Describe their primary complaint."
-                  className={`w-full border-[1.5px] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-500 transition-all duration-200 ease-swiss ${
+                  className={`w-full border-2 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-500 transition-all duration-200 ease-swiss ${
                     showValidation && !formData.presentingCondition.trim()
-                      ? 'border-danger focus:border-danger focus:ring-danger/10'
-                      : 'border-[#DDE3EA]'
+                      ? 'border-danger focus:border-danger'
+                      : 'border-neutral-200'
                   }`}
                 />
                 <span 
@@ -721,14 +721,14 @@ export default function SessionRecordForm() {
                   {formData.presentingCondition.length}/500
                 </span>
                 {showValidation && !formData.presentingCondition.trim() && (
-                  <p className="text-[11px] font-medium text-danger mt-1">↑ Presenting condition is required.</p>
+                  <p className="text-[11px] font-bold text-danger mt-1 uppercase tracking-wider">↑ Presenting condition is required.</p>
                 )}
               </div>
 
               {/* Treatment Provided */}
               <div className="flex flex-col relative mt-2">
-                <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                  Treatment Provided <span className="text-danger">*</span>
+                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                  TREATMENT PROVIDED <span className="text-danger">*</span>
                 </label>
                 <textarea
                   required
@@ -738,10 +738,10 @@ export default function SessionRecordForm() {
                   value={formData.treatmentProvided}
                   onChange={(e) => handleFieldChange('treatmentProvided', e.target.value)}
                   placeholder="Describe the treatment, techniques, and interventions used during this session."
-                  className={`w-full border-[1.5px] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-500 transition-all duration-200 ease-swiss ${
+                  className={`w-full border-2 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-500 transition-all duration-200 ease-swiss ${
                     showValidation && !formData.treatmentProvided.trim()
-                      ? 'border-danger focus:border-danger focus:ring-danger/10'
-                      : 'border-[#DDE3EA]'
+                      ? 'border-danger focus:border-danger'
+                      : 'border-neutral-200'
                   }`}
                 />
                 <span 
@@ -752,19 +752,18 @@ export default function SessionRecordForm() {
                   {formData.treatmentProvided.length}/1000
                 </span>
                 {showValidation && !formData.treatmentProvided.trim() && (
-                  <p className="text-[11px] font-medium text-danger mt-1">↑ Treatment provided is required.</p>
+                  <p className="text-[11px] font-bold text-danger mt-1 uppercase tracking-wider">↑ Treatment provided is required.</p>
                 )}
               </div>
 
               {/* Progress Rating */}
               <div className="flex flex-col mt-2">
-                <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                  Progress Rating <span className="text-danger">*</span>
+                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                  PROGRESS RATING <span className="text-danger">*</span>
                 </label>
-                <div className="border-[1.5px] border-neutral-200 rounded-md h-11 flex overflow-hidden bg-white select-none p-0.5 gap-0.5">
+                <div className="border-2 border-neutral-900 rounded-none h-11 flex overflow-hidden bg-white select-none p-0.5 gap-0.5">
                   {PROGRESS_RATING_OPTIONS.map((opt, optIdx) => {
                     const isSelected = formData.progressRating === opt.value;
-                    const Icon = opt.icon;
                     
                     let selectedStyle = '';
                     if (isSelected) {
@@ -784,8 +783,8 @@ export default function SessionRecordForm() {
                           isSelected
                             ? selectedStyle
                             : 'bg-white text-neutral-500 hover:bg-[#F0F4F7] hover:text-[#3D5166]'
-                        } ${optIdx < PROGRESS_RATING_OPTIONS.length - 1 ? 'border-r-[1.5px] border-neutral-200' : ''}`}
-                        style={{ fontWeight: 600 }}
+                        } ${optIdx < PROGRESS_RATING_OPTIONS.length - 1 ? 'border-r-2 border-neutral-900' : ''}`}
+                        style={{ fontWeight: 700 }}
                       >
                         {isSelected && opt.value === 'resolved' && <CheckCircle size={14} />}
                         {opt.label}
@@ -794,18 +793,18 @@ export default function SessionRecordForm() {
                   })}
                 </div>
                 {showValidation && !formData.progressRating && (
-                  <p className="text-[11px] font-medium text-danger mt-1">↑ Progress rating is required.</p>
+                  <p className="text-[11px] font-bold text-danger mt-1 uppercase tracking-wider">↑ Progress rating is required.</p>
                 )}
               </div>
 
               {/* Pain Scores */}
               <div className="flex flex-col mt-2">
-                <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                  Pain Scores (Optional)
+                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                  PAIN SCORES (OPTIONAL)
                 </label>
                 <div className="flex items-center gap-4 select-none">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider text-center">PAIN BEFORE</span>
+                    <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider text-center">PAIN BEFORE</span>
                     <input
                       type="number"
                       disabled={isReadOnly}
@@ -813,14 +812,14 @@ export default function SessionRecordForm() {
                       max={10}
                       value={formData.painScoreBefore}
                       onChange={(e) => handleFieldChange('painScoreBefore', e.target.value === '' ? '' : Math.min(10, Math.max(0, parseInt(e.target.value, 10))))}
-                      className="w-20 h-12 text-center border-[1.5px] border-[#DDE3EA] rounded-md text-[18px] font-bold text-neutral-900 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50"
+                      className="w-20 h-12 text-center border-2 border-neutral-900 rounded-none text-[18px] font-bold text-neutral-900 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50"
                     />
                   </div>
 
                   <ArrowRight size={16} className="text-[#A8B8C8] mt-4 shrink-0" />
 
                   <div className="flex flex-col gap-1">
-                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider text-center">PAIN AFTER</span>
+                    <span className="text-[10px] text-neutral-600 font-bold uppercase tracking-wider text-center">PAIN AFTER</span>
                     <input
                       type="number"
                       disabled={isReadOnly}
@@ -828,7 +827,7 @@ export default function SessionRecordForm() {
                       max={10}
                       value={formData.painScoreAfter}
                       onChange={(e) => handleFieldChange('painScoreAfter', e.target.value === '' ? '' : Math.min(10, Math.max(0, parseInt(e.target.value, 10))))}
-                      className="w-20 h-12 text-center border-[1.5px] border-[#DDE3EA] rounded-md text-[18px] font-bold text-neutral-900 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50"
+                      className="w-20 h-12 text-center border-2 border-neutral-900 rounded-none text-[18px] font-bold text-neutral-900 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50"
                     />
                   </div>
 
@@ -840,23 +839,23 @@ export default function SessionRecordForm() {
                         const delta = Math.abs(before - after);
                         if (after < before) {
                           return (
-                            <span className="bg-[#E8F8F5] text-[#0A7E6E] rounded-sm text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] flex items-center gap-1">
+                            <span className="bg-[#E8F8F5] text-[#0A7E6E] rounded-none border border-[#0A7E6E] text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] flex items-center gap-1">
                               <TrendingDown size={12} />
-                              {delta} Better
+                              {delta} BETTER
                             </span>
                           );
                         } else if (after > before) {
                           return (
-                            <span className="bg-[#FDF2F2] text-[#C0392B] rounded-sm text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] flex items-center gap-1">
+                            <span className="bg-[#FDF2F2] text-[#C0392B] rounded-none border border-[#C0392B] text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] flex items-center gap-1">
                               <TrendingUp size={12} />
-                              {delta} Worse
+                              {delta} WORSE
                             </span>
                           );
                         } else {
                           return (
-                            <span className="bg-[#F0F4F7] text-[#6B7C93] rounded-sm text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] flex items-center gap-1">
+                            <span className="bg-[#F0F4F7] text-[#6B7C93] rounded-none border border-neutral-900 text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] flex items-center gap-1">
                               <Minus size={12} />
-                              No Change
+                              NO CHANGE
                             </span>
                           );
                         }
@@ -872,17 +871,17 @@ export default function SessionRecordForm() {
         </div>
 
         {/* Accordion 2: Exercise Prescription */}
-        <div className="bg-white rounded-xl shadow-level-1 mb-4 overflow-hidden">
+        <div className="bg-white rounded-none border-2 border-neutral-900 mb-4 overflow-hidden shadow-none">
           <div
             onClick={() => toggleSection('exercise')}
-            className="group flex items-center justify-between p-4 px-6 border-b border-[#EEF2F6] bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
+            className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A]" style={{ fontWeight: 600 }}>
-              Exercise Prescription
+            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+              EXERCISE PRESCRIPTION
             </h3>
             <div className="flex items-center gap-3">
-              <span className="bg-[#F0F4F7] text-[#6B7C93] rounded-sm text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px]">
-                {formData.exercisePrescription.length} Exercise{formData.exercisePrescription.length !== 1 ? 's' : ''} Added
+              <span className="bg-[#F0F4F7] text-[#6B7C93] rounded-none border border-neutral-900 text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px]">
+                {formData.exercisePrescription.length} EXERCISE{formData.exercisePrescription.length !== 1 ? 'S' : ''} ADDED
               </span>
               <ChevronDown
                 className={`h-4 w-4 text-[#6B7C93] group-hover:text-neutral-700 transition-transform duration-200 ease-swiss motion-reduce:duration-[0.01ms] ${
@@ -900,12 +899,12 @@ export default function SessionRecordForm() {
             <div className="p-6 flex flex-col gap-4">
               
               {formData.exercisePrescription.length === 0 ? (
-                <div className="bg-[#FAFBFC] border border-dashed border-[#DDE3EA] rounded-lg p-6 py-10 flex flex-col items-center justify-center text-center select-none mb-2">
-                  <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-300 mb-3">
+                <div className="bg-[#FAFBFC] border-2 border-dashed border-neutral-300 rounded-none p-6 py-10 flex flex-col items-center justify-center text-center select-none mb-2">
+                  <div className="w-12 h-12 rounded-none border-2 border-neutral-900 bg-neutral-100 flex items-center justify-center text-neutral-300 mb-3">
                     <Dumbbell size={28} />
                   </div>
-                  <h4 className="text-[14px] text-[#1C2B3A] mb-1" style={{ fontWeight: 700 }}>
-                    No Exercises Prescribed Yet
+                  <h4 className="text-[14px] text-[#1C2B3A] mb-1 font-bold uppercase tracking-wider">
+                    NO EXERCISES PRESCRIBED YET
                   </h4>
                   <p className="text-[12px] text-[#6B7C93] font-regular max-w-[400px]">
                     Add exercises to give your patient a clear home program.
@@ -916,14 +915,14 @@ export default function SessionRecordForm() {
                   {formData.exercisePrescription.map((ex, idx) => (
                     <div
                       key={idx}
-                      className="bg-white border border-[#EEF2F6] rounded-lg p-4 px-5 mb-2 relative shadow-sm transition-all duration-200 ease-swiss flex flex-col gap-3"
+                      className="bg-white border-2 border-neutral-900 rounded-none p-4 px-5 mb-2 relative shadow-none transition-all duration-200 ease-swiss flex flex-col gap-3"
                     >
                       {/* Delete Exercise Trigger */}
                       {!isReadOnly && (
                         <button
                           type="button"
                           onClick={() => handleRemoveExercise(idx)}
-                          className="absolute top-4 right-4 text-[#C0392B] hover:text-[#C0392B] bg-transparent border-0 cursor-pointer p-1.5 rounded-md hover:bg-[#FDF2F2] transition-colors duration-150 ease-swiss select-none"
+                          className="absolute top-4 right-4 text-[#C0392B] hover:text-[#C0392B] bg-transparent border-2 border-neutral-900 cursor-pointer p-1.5 rounded-none hover:bg-[#FDF2F2] transition-colors duration-150 ease-swiss select-none"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -931,8 +930,8 @@ export default function SessionRecordForm() {
 
                       {/* Row 1: Exercise Name */}
                       <div className="flex flex-col pr-8">
-                        <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                          Exercise Name
+                        <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                          EXERCISE NAME
                         </label>
                         <input
                           type="text"
@@ -941,14 +940,14 @@ export default function SessionRecordForm() {
                           value={ex.exerciseName}
                           onChange={(e) => handleUpdateExercise(idx, 'exerciseName', e.target.value)}
                           placeholder="e.g. Quad Clenches, Hamstring Stretch..."
-                          className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                          className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                         />
                       </div>
 
                       {/* Row 2: Parameters */}
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>Sets</label>
+                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">SETS</label>
                           <input
                             type="number"
                             disabled={isReadOnly}
@@ -956,11 +955,11 @@ export default function SessionRecordForm() {
                             value={ex.sets}
                             onChange={(e) => handleUpdateExercise(idx, 'sets', e.target.value)}
                             placeholder="Sets"
-                            className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                           />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>Reps</label>
+                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">REPS</label>
                           <input
                             type="number"
                             disabled={isReadOnly}
@@ -968,43 +967,43 @@ export default function SessionRecordForm() {
                             value={ex.reps}
                             onChange={(e) => handleUpdateExercise(idx, 'reps', e.target.value)}
                             placeholder="Reps"
-                            className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                           />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>Frequency</label>
+                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">FREQUENCY</label>
                           <input
                             type="text"
                             disabled={isReadOnly}
                             value={ex.frequency}
                             onChange={(e) => handleUpdateExercise(idx, 'frequency', e.target.value)}
                             placeholder="e.g. twice daily"
-                            className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                           />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>Duration</label>
+                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">DURATION</label>
                           <input
                             type="text"
                             disabled={isReadOnly}
                             value={ex.duration}
                             onChange={(e) => handleUpdateExercise(idx, 'duration', e.target.value)}
                             placeholder="e.g. 30 seconds"
-                            className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                           />
                         </div>
                       </div>
 
                       {/* Row 3: Notes */}
                       <div className="flex flex-col gap-1 mt-1">
-                        <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>Notes</label>
+                        <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">NOTES</label>
                         <input
                           type="text"
                           disabled={isReadOnly}
                           value={ex.notes}
                           onChange={(e) => handleUpdateExercise(idx, 'notes', e.target.value)}
                           placeholder="Optional notes or instructions for this specific exercise"
-                          className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                          className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                         />
                       </div>
                     </div>
@@ -1017,10 +1016,10 @@ export default function SessionRecordForm() {
                 <button
                   type="button"
                   onClick={handleAddExercise}
-                  className="h-9 px-4 bg-primary hover:bg-primary-dark text-white rounded-md flex items-center justify-center gap-1.5 transition-colors duration-150 ease-swiss select-none cursor-pointer border-0 max-w-[200px]"
-                  style={{ fontWeight: 600, fontSize: '13px' }}
+                  className="h-9 px-4 bg-neutral-900 hover:bg-accent text-white hover:text-neutral-900 rounded-none flex items-center justify-center gap-1.5 transition-colors duration-150 ease-swiss select-none cursor-pointer border-2 border-neutral-900 max-w-[200px] font-bold uppercase"
+                  style={{ fontSize: '13px' }}
                 >
-                  <Plus size={14} /> Add Exercise
+                  <Plus size={14} /> ADD EXERCISE
                 </button>
               )}
 
@@ -1029,17 +1028,17 @@ export default function SessionRecordForm() {
         </div>
 
         {/* Accordion 3: Medications & Observations */}
-        <div className="bg-white rounded-xl shadow-level-1 mb-4 overflow-hidden">
+        <div className="bg-white rounded-none border-2 border-neutral-900 mb-4 overflow-hidden shadow-none">
           <div
             onClick={() => toggleSection('meds')}
-            className="group flex items-center justify-between p-4 px-6 border-b border-[#EEF2F6] bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
+            className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A]" style={{ fontWeight: 600 }}>
-              Medications & Observations
+            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+              MEDICATIONS & OBSERVATIONS
             </h3>
             <div className="flex items-center gap-3">
-              <span className="bg-[#F0F4F7] text-[#6B7C93] rounded-sm text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px]">
-                {formData.medications.length} Added
+              <span className="bg-[#F0F4F7] text-[#6B7C93] rounded-none border border-neutral-900 text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px]">
+                {formData.medications.length} ADDED
               </span>
               <ChevronDown
                 className={`h-4 w-4 text-[#6B7C93] group-hover:text-neutral-700 transition-transform duration-200 ease-swiss motion-reduce:duration-[0.01ms] ${
@@ -1058,16 +1057,16 @@ export default function SessionRecordForm() {
               
               {/* Medications Tag Input */}
               <div className="flex flex-col">
-                <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                  Medications / Supplements
+                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                  PRESCRIBED MEDICATIONS / SUPPLEMENTS
                 </label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {formData.medications.map((med, idx) => (
                     <span
                       key={idx}
-                      className="bg-[#E8F4F8] text-[#0B4F6C] border border-[#B3D5E4] rounded-md px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5"
+                      className="bg-[#E8F4F8] text-[#0B4F6C] border-2 border-neutral-900 rounded-none px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5"
                     >
-                      {med}
+                      {med.toUpperCase()}
                       {!isReadOnly && (
                         <button
                           type="button"
@@ -1087,15 +1086,15 @@ export default function SessionRecordForm() {
                     onChange={(e) => setMedInput(e.target.value)}
                     onKeyDown={handleMedKeyPress}
                     placeholder="Type a medication and press Enter or comma"
-                    className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none"
+                    className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none"
                   />
                 )}
               </div>
 
               {/* Clinical Observations */}
               <div className="flex flex-col relative mt-2">
-                <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                  Clinical Observations
+                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                  CLINICAL OBSERVATIONS
                 </label>
                 <textarea
                   disabled={isReadOnly}
@@ -1104,7 +1103,7 @@ export default function SessionRecordForm() {
                   value={formData.clinicalObservations}
                   onChange={(e) => handleFieldChange('clinicalObservations', e.target.value)}
                   placeholder="Free-form clinical notes, professional observations, contraindications, special considerations."
-                  className="w-full border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-500 transition-all duration-200 ease-swiss"
+                  className="w-full border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 disabled:text-neutral-500 transition-all duration-200 ease-swiss"
                 />
                 <span 
                   className={`absolute bottom-3 right-3 text-[11px] font-mono ${
@@ -1115,28 +1114,26 @@ export default function SessionRecordForm() {
                 </span>
               </div>
 
-            </div>
           </div>
         </div>
-
-        {/* Accordion 4: Follow-Up & Sharing */}
-        <div className="bg-white rounded-xl shadow-level-1 mb-4 overflow-hidden">
+      </div>
+        <div className="bg-white rounded-none border-2 border-neutral-900 mb-4 overflow-hidden shadow-none">
           <div
             onClick={() => toggleSection('followup')}
-            className="group flex items-center justify-between p-4 px-6 border-b border-[#EEF2F6] bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
+            className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A]" style={{ fontWeight: 600 }}>
-              Follow-Up & Sharing
+            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+              FOLLOW-UP & SHARING
             </h3>
             <div className="flex items-center gap-3">
               <span 
-                className={`rounded-sm text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] ${
+                className={`rounded-none border border-neutral-900 text-[10px] font-bold uppercase tracking-[0.08em] py-[3px] px-[10px] ${
                   formData.followUpRecommendation.recommended 
                     ? 'bg-[#E8F4F8] text-[#0B4F6C]' 
                     : 'bg-[#F0F4F7] text-[#6B7C93]'
                 }`}
               >
-                {formData.followUpRecommendation.recommended ? 'Follow-Up Recommended' : 'No Follow-Up'}
+                {formData.followUpRecommendation.recommended ? 'FOLLOW-UP RECOMMENDED' : 'NO FOLLOW-UP'}
               </span>
               <ChevronDown
                 className={`h-4 w-4 text-[#6B7C93] group-hover:text-neutral-700 transition-transform duration-200 ease-swiss motion-reduce:duration-[0.01ms] ${
@@ -1156,8 +1153,8 @@ export default function SessionRecordForm() {
               {/* Recommend Follow-Up Toggle switch */}
               <div className="flex items-center justify-between py-4 border-t border-neutral-100 first:border-t-0 select-none">
                 <div>
-                  <span className="text-[14px] text-neutral-900 block" style={{ fontWeight: 600 }}>
-                    Recommend Follow-Up Session
+                  <span className="text-[14px] text-neutral-900 block uppercase font-bold tracking-wider">
+                    RECOMMEND FOLLOW-UP SESSION
                   </span>
                   <span className="text-[12px] text-neutral-500 font-regular block mt-1">
                     Flag if the patient requires follow-up care.
@@ -1171,7 +1168,7 @@ export default function SessionRecordForm() {
                     onChange={(e) => handleFollowUpFieldChange('recommended', e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-neutral-200 rounded-full peer peer-checked:bg-primary transition-colors duration-200 ease-swiss select-none relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-transform after:duration-200 after:ease-swiss peer-checked:after:translate-x-5 disabled:opacity-50"></div>
+                  <div className="w-12 h-6 border-2 border-neutral-900 bg-neutral-200 rounded-none peer peer-checked:bg-primary transition-colors duration-200 ease-swiss select-none relative after:content-[''] after:absolute after:top-0 after:left-0 after:bg-white after:border-2 after:border-neutral-900 after:rounded-none after:h-5 after:w-5 after:box-border after:transition-transform after:duration-200 after:ease-swiss peer-checked:after:translate-x-[24px] disabled:opacity-50"></div>
                 </label>
               </div>
 
@@ -1184,8 +1181,8 @@ export default function SessionRecordForm() {
                     
                     {/* Interval Presets */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                        Follow-Up Interval
+                      <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                        FOLLOW-UP INTERVAL
                       </label>
                       <div className="flex flex-wrap gap-2 select-none">
                         {PRESETS.map((p) => {
@@ -1196,10 +1193,10 @@ export default function SessionRecordForm() {
                               type="button"
                               disabled={isReadOnly}
                               onClick={() => handlePresetChange(p.label)}
-                              className={`px-4 py-[6px] text-[12px] font-medium rounded-full border-[1.5px] transition-colors duration-150 ease-swiss cursor-pointer select-none whitespace-nowrap ${
+                              className={`px-4 py-[6px] text-[12px] font-bold rounded-none border-2 transition-colors duration-150 ease-swiss cursor-pointer select-none whitespace-nowrap uppercase tracking-wider ${
                                 isSel
-                                  ? 'bg-[#E8F4F8] border-[#0B4F6C] text-[#0B4F6C] font-semibold'
-                                  : 'bg-white border-[#DDE3EA] text-[#6B7C93] hover:bg-[#F0F4F7]'
+                                  ? 'bg-neutral-900 border-neutral-900 text-white font-bold'
+                                  : 'bg-white border-neutral-900 text-neutral-900 hover:bg-[#F0F4F7]'
                               }`}
                             >
                               {p.label}
@@ -1212,8 +1209,8 @@ export default function SessionRecordForm() {
                     {/* Return date and Custom days */}
                     <div className="flex items-end gap-4">
                       <div className="flex-1 flex flex-col gap-2">
-                        <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                          Suggested Return Date
+                        <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                          SUGGESTED RETURN DATE
                         </label>
                         <input
                           type="date"
@@ -1221,14 +1218,14 @@ export default function SessionRecordForm() {
                           min={tomorrowStr}
                           value={formData.followUpRecommendation.suggestedDate}
                           onChange={(e) => handleSuggestedDateChange(e.target.value)}
-                          className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                          className="w-full h-10 border-2 border-neutral-900 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss font-bold"
                         />
                       </div>
                       
                       {selectedPreset === 'Custom' && (
                         <div className="w-28 flex flex-col gap-2">
-                          <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                            Days
+                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                            DAYS
                           </label>
                           <input
                             type="number"
@@ -1236,7 +1233,7 @@ export default function SessionRecordForm() {
                             min={1}
                             value={formData.followUpRecommendation.intervalDays}
                             onChange={(e) => handleCustomDaysChange(e.target.value)}
-                            className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] font-bold text-center text-neutral-900 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                            className="w-full h-10 border-2 border-neutral-900 rounded-none py-[10px] px-[12px] text-[14px] font-bold text-center text-neutral-900 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                           />
                         </div>
                       )}
@@ -1246,8 +1243,8 @@ export default function SessionRecordForm() {
 
                   {/* Session Goal */}
                   <div className="flex flex-col relative mt-2">
-                    <label className="text-[12px] text-neutral-500 mb-2 block" style={{ fontWeight: 600 }}>
-                      Session Goal (Optional)
+                    <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                      SESSION GOAL (OPTIONAL)
                     </label>
                     <input
                       type="text"
@@ -1256,7 +1253,7 @@ export default function SessionRecordForm() {
                       value={formData.followUpRecommendation.sessionGoal}
                       onChange={(e) => handleFollowUpFieldChange('sessionGoal', e.target.value)}
                       placeholder="What should the next session aim to achieve? (e.g. advance to weight-bearing exercises)"
-                      className="w-full h-10 border-[1.5px] border-[#DDE3EA] rounded-md py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-primary focus:ring-[3px] focus:ring-primary/12 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
+                      className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
                     />
                     <span 
                       className={`absolute bottom-3 right-3 text-[11px] font-mono ${
@@ -1273,8 +1270,8 @@ export default function SessionRecordForm() {
               {/* Share With Patient Toggle */}
               <div className="flex items-center justify-between border-t border-neutral-100 pt-5 select-none">
                 <div>
-                  <span className="text-[14px] text-neutral-900 block" style={{ fontWeight: 600 }}>
-                    Share With Patient
+                  <span className="text-[14px] text-neutral-900 block uppercase font-bold tracking-wider">
+                    SHARE WITH PATIENT
                   </span>
                   <span className="text-[12px] text-neutral-500 font-regular block mt-1">
                     Make treatment notes and exercises visible to the patient.
@@ -1288,7 +1285,7 @@ export default function SessionRecordForm() {
                     onChange={handleShareToggle}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-neutral-200 rounded-full peer peer-checked:bg-primary transition-colors duration-200 ease-swiss select-none relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-transform after:duration-200 after:ease-swiss peer-checked:after:translate-x-5 disabled:opacity-50"></div>
+                  <div className="w-12 h-6 border-2 border-neutral-900 bg-neutral-200 rounded-none peer peer-checked:bg-primary transition-colors duration-200 ease-swiss select-none relative after:content-[''] after:absolute after:top-0 after:left-0 after:bg-white after:border-2 after:border-neutral-900 after:rounded-none after:h-5 after:w-5 after:box-border after:transition-transform after:duration-200 after:ease-swiss peer-checked:after:translate-x-[24px] disabled:opacity-50"></div>
                 </label>
               </div>
 
@@ -1297,10 +1294,10 @@ export default function SessionRecordForm() {
         </div>
 
         {/* Form Footer Bar */}
-        <div className="bg-white border border-[#EEF2F6] rounded-xl shadow-level-1 p-5 px-10 flex items-center justify-between select-none">
+        <div className="bg-white border-2 border-neutral-900 rounded-none p-5 px-10 flex items-center justify-between select-none shadow-none">
           <div>
             {isEditMode && signedDate && (
-              <span className="text-[11px] text-[#A8B8C8] font-bold uppercase tracking-widest font-mono select-none">
+              <span className="text-[11px] text-[#6B7C93] font-bold uppercase tracking-widest font-mono select-none">
                 Signed on: {new Date(signedDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).toUpperCase()}
               </span>
             )}
@@ -1309,25 +1306,25 @@ export default function SessionRecordForm() {
             <button
               type="button"
               onClick={() => navigate('/doctor/appointments')}
-              className="h-10 px-6 bg-transparent border-[1.5px] border-[#DDE3EA] text-[#1C2B3A] hover:border-[#A8B8C8] hover:bg-[#F7F9FB] rounded-md transition-all duration-150 ease-swiss select-none cursor-pointer"
-              style={{ fontWeight: 600, fontSize: '13px' }}
+              className="h-10 px-6 bg-transparent border-2 border-neutral-900 text-neutral-900 hover:bg-[#F7F9FB] rounded-none transition-all duration-150 ease-swiss select-none cursor-pointer uppercase font-bold"
+              style={{ fontSize: '13px' }}
             >
-              Cancel
+              CANCEL
             </button>
             {!isReadOnly && (
               <button
                 type="submit"
                 disabled={submitting}
-                className="h-10 px-6 bg-primary hover:bg-primary-dark text-white border-0 active:scale-[0.97] transition-all duration-150 ease-swiss select-none rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ fontWeight: 600, fontSize: '13px' }}
+                className="h-10 px-6 bg-neutral-900 hover:bg-accent text-white hover:text-neutral-900 border-2 border-neutral-900 transition-all duration-150 ease-swiss select-none rounded-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed uppercase font-bold"
+                style={{ fontSize: '13px' }}
               >
                 {submitting ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="animate-spin h-3.5 w-3.5 text-white" />
-                    Saving…
+                    SAVING…
                   </span>
                 ) : (
-                  'Save Session Record'
+                  'SAVE SESSION RECORD'
                 )}
               </button>
             )}
@@ -1341,7 +1338,7 @@ export default function SessionRecordForm() {
         <Modal
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
-          title="Hide From Patient?"
+          title="HIDE FROM PATIENT?"
           size="sm"
         >
           <div className="flex flex-col gap-4 text-left select-none">
@@ -1352,18 +1349,18 @@ export default function SessionRecordForm() {
               <button
                 type="button"
                 onClick={() => setShowShareModal(false)}
-                className="h-10 px-4 bg-transparent border-[1.5px] border-[#DDE3EA] text-[#1C2B3A] hover:border-[#A8B8C8] hover:bg-[#F7F9FB] rounded-md transition-all duration-150 ease-swiss select-none cursor-pointer"
-                style={{ fontWeight: 600, fontSize: '13px' }}
+                className="h-10 px-4 bg-transparent border-2 border-neutral-900 text-neutral-900 hover:bg-[#F7F9FB] rounded-none transition-all duration-150 ease-swiss select-none cursor-pointer uppercase font-bold"
+                style={{ fontSize: '13px' }}
               >
-                Cancel
+                CANCEL
               </button>
               <button
                 type="button"
                 onClick={confirmKeepPrivate}
-                className="h-10 px-4 bg-transparent border-[1.5px] border-danger text-danger hover:bg-[#FDF2F2] rounded-md transition-all duration-150 ease-swiss select-none cursor-pointer"
-                style={{ fontWeight: 600, fontSize: '13px' }}
+                className="h-10 px-4 bg-transparent border-2 border-[#C0392B] text-[#C0392B] hover:bg-[#FDF2F2] rounded-none transition-all duration-150 ease-swiss select-none cursor-pointer uppercase font-bold"
+                style={{ fontSize: '13px' }}
               >
-                Yes, Keep Private
+                YES, KEEP PRIVATE
               </button>
             </div>
           </div>
