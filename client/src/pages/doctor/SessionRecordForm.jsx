@@ -666,7 +666,7 @@ export default function SessionRecordForm() {
             onClick={() => toggleSection('clinical')}
             className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+            <h3 className="text-[24px] text-[#1C2B3A] font-black uppercase tracking-wider">
               CLINICAL ASSESSMENT
             </h3>
             <div className="flex items-center gap-3">
@@ -696,7 +696,7 @@ export default function SessionRecordForm() {
               
               {/* Presenting Condition */}
               <div className="flex flex-col relative">
-                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                   PRESENTING CONDITION <span className="text-danger">*</span>
                 </label>
                 <textarea
@@ -727,7 +727,7 @@ export default function SessionRecordForm() {
 
               {/* Treatment Provided */}
               <div className="flex flex-col relative mt-2">
-                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                   TREATMENT PROVIDED <span className="text-danger">*</span>
                 </label>
                 <textarea
@@ -758,7 +758,7 @@ export default function SessionRecordForm() {
 
               {/* Progress Rating */}
               <div className="flex flex-col mt-2">
-                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                   PROGRESS RATING <span className="text-danger">*</span>
                 </label>
                 <div className="border-2 border-neutral-900 rounded-none h-11 flex overflow-hidden bg-white select-none p-0.5 gap-0.5">
@@ -799,7 +799,7 @@ export default function SessionRecordForm() {
 
               {/* Pain Scores */}
               <div className="flex flex-col mt-2">
-                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                   PAIN SCORES (OPTIONAL)
                 </label>
                 <div className="flex items-center gap-4 select-none">
@@ -876,7 +876,7 @@ export default function SessionRecordForm() {
             onClick={() => toggleSection('exercise')}
             className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+            <h3 className="text-[24px] text-[#1C2B3A] font-black uppercase tracking-wider">
               EXERCISE PRESCRIPTION
             </h3>
             <div className="flex items-center gap-3">
@@ -930,7 +930,7 @@ export default function SessionRecordForm() {
 
                       {/* Row 1: Exercise Name */}
                       <div className="flex flex-col pr-8">
-                        <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                        <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                           EXERCISE NAME
                         </label>
                         <input
@@ -947,7 +947,7 @@ export default function SessionRecordForm() {
                       {/* Row 2: Parameters */}
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">SETS</label>
+                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">SETS</label>
                           <input
                             type="number"
                             disabled={isReadOnly}
@@ -959,7 +959,7 @@ export default function SessionRecordForm() {
                           />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">REPS</label>
+                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">REPS</label>
                           <input
                             type="number"
                             disabled={isReadOnly}
@@ -971,7 +971,7 @@ export default function SessionRecordForm() {
                           />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">FREQUENCY</label>
+                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">FREQUENCY</label>
                           <input
                             type="text"
                             disabled={isReadOnly}
@@ -982,7 +982,7 @@ export default function SessionRecordForm() {
                           />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">DURATION</label>
+                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">DURATION</label>
                           <input
                             type="text"
                             disabled={isReadOnly}
@@ -996,7 +996,7 @@ export default function SessionRecordForm() {
 
                       {/* Row 3: Notes */}
                       <div className="flex flex-col gap-1 mt-1">
-                        <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">NOTES</label>
+                        <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">NOTES</label>
                         <input
                           type="text"
                           disabled={isReadOnly}
@@ -1033,7 +1033,7 @@ export default function SessionRecordForm() {
             onClick={() => toggleSection('meds')}
             className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+            <h3 className="text-[24px] text-[#1C2B3A] font-black uppercase tracking-wider">
               MEDICATIONS & OBSERVATIONS
             </h3>
             <div className="flex items-center gap-3">
@@ -1057,7 +1057,7 @@ export default function SessionRecordForm() {
               
               {/* Medications Tag Input */}
               <div className="flex flex-col">
-                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                   PRESCRIBED MEDICATIONS / SUPPLEMENTS
                 </label>
                 <div className="flex flex-wrap gap-2 mb-2">
@@ -1093,7 +1093,7 @@ export default function SessionRecordForm() {
 
               {/* Clinical Observations */}
               <div className="flex flex-col relative mt-2">
-                <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                   CLINICAL OBSERVATIONS
                 </label>
                 <textarea
@@ -1122,7 +1122,7 @@ export default function SessionRecordForm() {
             onClick={() => toggleSection('followup')}
             className="group flex items-center justify-between p-4 px-6 border-b-2 border-neutral-900 bg-[#FAFBFC] cursor-pointer hover:bg-[#F0F4F7] transition-colors duration-150 ease-swiss select-none"
           >
-            <h3 className="text-[15px] text-[#1C2B3A] font-bold uppercase tracking-wider">
+            <h3 className="text-[24px] text-[#1C2B3A] font-black uppercase tracking-wider">
               FOLLOW-UP & SHARING
             </h3>
             <div className="flex items-center gap-3">
@@ -1153,7 +1153,7 @@ export default function SessionRecordForm() {
               {/* Recommend Follow-Up Toggle switch */}
               <div className="flex items-center justify-between py-4 border-t border-neutral-100 first:border-t-0 select-none">
                 <div>
-                  <span className="text-[14px] text-neutral-900 block uppercase font-bold tracking-wider">
+                  <span className="text-[20px] text-neutral-900 block uppercase font-bold tracking-wider">
                     RECOMMEND FOLLOW-UP SESSION
                   </span>
                   <span className="text-[12px] text-neutral-500 font-regular block mt-1">
@@ -1181,7 +1181,7 @@ export default function SessionRecordForm() {
                     
                     {/* Interval Presets */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                      <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                         FOLLOW-UP INTERVAL
                       </label>
                       <div className="flex flex-wrap gap-2 select-none">
@@ -1209,7 +1209,7 @@ export default function SessionRecordForm() {
                     {/* Return date and Custom days */}
                     <div className="flex items-end gap-4">
                       <div className="flex-1 flex flex-col gap-2">
-                        <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                        <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                           SUGGESTED RETURN DATE
                         </label>
                         <input
@@ -1224,7 +1224,7 @@ export default function SessionRecordForm() {
                       
                       {selectedPreset === 'Custom' && (
                         <div className="w-28 flex flex-col gap-2">
-                          <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                             DAYS
                           </label>
                           <input
@@ -1243,7 +1243,7 @@ export default function SessionRecordForm() {
 
                   {/* Session Goal */}
                   <div className="flex flex-col relative mt-2">
-                    <label className="text-[12px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
+                    <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
                       SESSION GOAL (OPTIONAL)
                     </label>
                     <input
@@ -1270,7 +1270,7 @@ export default function SessionRecordForm() {
               {/* Share With Patient Toggle */}
               <div className="flex items-center justify-between border-t border-neutral-100 pt-5 select-none">
                 <div>
-                  <span className="text-[14px] text-neutral-900 block uppercase font-bold tracking-wider">
+                  <span className="text-[20px] text-neutral-900 block uppercase font-bold tracking-wider">
                     SHARE WITH PATIENT
                   </span>
                   <span className="text-[12px] text-neutral-500 font-regular block mt-1">

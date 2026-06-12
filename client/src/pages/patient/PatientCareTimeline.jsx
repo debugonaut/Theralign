@@ -640,7 +640,7 @@ export default function PatientCareTimeline() {
                         
                         {/* Presenting condition */}
                         <div className="flex flex-col gap-1">
-                          <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                          <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
                             PRESENTING CONDITION
                           </span>
                           <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
@@ -650,7 +650,7 @@ export default function PatientCareTimeline() {
 
                         {/* Treatment Provided */}
                         <div className="flex flex-col gap-1">
-                          <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                          <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
                             TREATMENT PROVIDED
                           </span>
                           <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
@@ -661,7 +661,7 @@ export default function PatientCareTimeline() {
                         {/* Clinical Observations */}
                         {rec.clinicalObservations && (
                           <div className="flex flex-col gap-1">
-                            <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                            <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
                               CLINICAL OBSERVATIONS
                             </span>
                             <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
@@ -674,7 +674,7 @@ export default function PatientCareTimeline() {
                         {exCount > 0 && (
                           <div className="flex flex-col gap-2">
                             <div className="flex items-center justify-between select-none">
-                              <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.06em]" style={{ fontWeight: 700 }}>
+                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em]" style={{ fontWeight: 700 }}>
                                 HOME EXERCISE PRESCRIPTIONS
                               </span>
                               <button
@@ -730,7 +730,7 @@ export default function PatientCareTimeline() {
                         {/* Medications */}
                         {rec.medications?.length > 0 && (
                           <div className="flex flex-col gap-1.5">
-                            <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                            <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
                               PRESCRIBED MEDICATIONS / SUPPLEMENTS
                             </span>
                             <div className="flex flex-wrap gap-1.5 mt-1 select-none">
@@ -749,7 +749,7 @@ export default function PatientCareTimeline() {
                         {/* Follow up goal */}
                         {showFollowup && rec.followUpRecommendation?.sessionGoal && (
                           <div className="flex flex-col gap-1">
-                            <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
+                            <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
                               FOLLOW-UP FOCUS & GOAL
                             </span>
                             <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed">
