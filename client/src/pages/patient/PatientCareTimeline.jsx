@@ -701,7 +701,7 @@ export default function PatientCareTimeline() {
                           {(activeSteps[rec._id] ?? 0) === 0 && (
                             <div>
                               <p style={{
-                                fontSize: '14px',
+                                fontSize: '30px',
                                 fontWeight: 400,
                                 color: '#3D5166',
                                 lineHeight: '1.7',
