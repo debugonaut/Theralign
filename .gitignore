@@ -1,6 +1,8 @@
-# Document Protections (As requested)
-instructions.md
-phase1.md
+# Ignore all markdown files except README
+*.md
+**/*.md
+!README.md
+!**/README.md
 
 # Environment files
 .env

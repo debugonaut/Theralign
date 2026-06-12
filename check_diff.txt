@@ -1,0 +1,1061 @@
+diff --git a/client/src/pages/patient/PatientCareTimeline.jsx b/client/src/pages/patient/PatientCareTimeline.jsx
+index 014cda1..e0fd46e 100644
+--- a/client/src/pages/patient/PatientCareTimeline.jsx
++++ b/client/src/pages/patient/PatientCareTimeline.jsx
+@@ -11,6 +11,7 @@ import {
+   Activity,
+   X,
+   CheckCircle,
++  Download,
+ } from 'lucide-react';
+ import toast from 'react-hot-toast';
+ 
+@@ -35,7 +36,7 @@ const progressBadgeStyle = (key) => {
+     color: c.color,
+     borderRadius: '4px',
+     padding: '4px 12px',
+-    fontSize: '11px',
++    fontSize: '22px', // doubled (from 11px)
+     fontWeight: 700,
+     textTransform: 'uppercase',
+     letterSpacing: '0.08em',
+@@ -113,6 +114,9 @@ export default function PatientCareTimeline() {
+   // Accordion card expanded row IDs
+   const [expandedRecordIds, setExpandedRecordIds] = useState([]);
+ 
++  // Active step/tab index for each expanded record card
++  const [activeSteps, setActiveSteps] = useState({});
++
+   const fetchTimeline = async (page = 1, silent = false) => {
+     if (!silent) setLoading(true);
+     try {
+@@ -313,7 +317,7 @@ export default function PatientCareTimeline() {
+         display: 'inline-flex',
+         alignItems: 'center',
+         gap: '6px',
+-        fontSize: '12px',
++        fontSize: '24px', // doubled (from 12px)
+         fontWeight: 600,
+       },
+       arrow: improved ? '↓' : worsened ? '↑' : '=',
+@@ -351,15 +355,15 @@ export default function PatientCareTimeline() {
+             {/* Total Sessions Card */}
+             <div className="bg-white rounded-none border-2 border-neutral-900 shadow-none p-5 px-6 min-h-[100px] flex flex-col justify-between">
+               <div>
+-                <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
++                <span className="text-[22px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
+                   TOTAL SESSIONS
+                 </span>
+-                <span className="text-[11px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
++                <span className="text-[22px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
+                   COMPLETED APPOINTMENTS
+                 </span>
+               </div>
+               <div className="flex items-baseline select-none mt-2">
+-                <span className="text-[28px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
++                <span className="text-[50px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
+                   {summary.totalSessions}
+                 </span>
+               </div>
+@@ -368,15 +372,15 @@ export default function PatientCareTimeline() {
+             {/* Doctors Seen Card */}
+             <div className="bg-white rounded-none border-2 border-neutral-900 shadow-none p-5 px-6 min-h-[100px] flex flex-col justify-between">
+               <div>
+-                <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
++                <span className="text-[22px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
+                   DOCTORS SEEN
+                 </span>
+-                <span className="text-[11px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
++                <span className="text-[22px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
+                   UNIQUE PHYSIOTHERAPISTS
+                 </span>
+               </div>
+               <div className="flex items-baseline select-none mt-2">
+-                <span className="text-[28px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
++                <span className="text-[50px] text-[#1C2B3A] leading-none block font-black" style={{ fontWeight: 900 }}>
+                   {summary.doctorsSeen}
+                 </span>
+               </div>
+@@ -385,21 +389,21 @@ export default function PatientCareTimeline() {
+             {/* Latest Progress Card */}
+             <div className="bg-white rounded-none border-2 border-neutral-900 shadow-none p-5 px-6 min-h-[100px] flex flex-col justify-between">
+               <div>
+-                <span className="text-[11px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
++                <span className="text-[22px] text-[#6B7C93] uppercase tracking-[0.08em] block" style={{ fontWeight: 700 }}>
+                   LATEST PROGRESS
+                 </span>
+-                <span className="text-[11px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
++                <span className="text-[22px] text-[#A8B8C8] block mt-0.5 font-normal uppercase">
+                   LAST REPORTED CONDITION
+                 </span>
+               </div>
+               <div className="flex items-center mt-2">
+                 {summary.latestProgressRating ? (
+                   <span style={progressBadgeStyle(summary.latestProgressRating)}>
+-                    {summary.latestProgressRating === 'resolved' && <CheckCircle size={10} />}
++                    {summary.latestProgressRating === 'resolved' && <CheckCircle size={20} />}
+                     {PROGRESS_RATING_BADGES[summary.latestProgressRating]?.label}
+                   </span>
+                 ) : (
+-                  <span className="text-[28px] text-[#A8B8C8] leading-none block font-black" style={{ fontWeight: 900 }}>
++                  <span className="text-[50px] text-[#A8B8C8] leading-none block font-black" style={{ fontWeight: 900 }}>
+                     —
+                   </span>
+                 )}
+@@ -412,7 +416,7 @@ export default function PatientCareTimeline() {
+             <div className="flex flex-wrap items-center gap-4 flex-1">
+               {/* Doctor Dropdown */}
+               <div className="flex flex-col flex-1 min-w-[200px]">
+-                <label className="text-[12px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
++                <label className="text-[24px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
+                   FILTER BY DOCTOR
+                 </label>
+                 <select
+@@ -421,7 +425,7 @@ export default function PatientCareTimeline() {
+                     setSelectedDoctorId(e.target.value);
+                     setCurrentPage(1);
+                   }}
+-                  className="border-2 border-neutral-900 rounded-none px-3 h-10 text-[14px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss cursor-pointer uppercase font-bold"
++                  className="border-2 border-neutral-900 rounded-none px-3 h-14 text-[25px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss cursor-pointer uppercase font-bold"
+                 >
+                   <option value="">ALL DOCTORS</option>
+                   {doctorsList.map((doc) => (
+@@ -434,7 +438,7 @@ export default function PatientCareTimeline() {
+ 
+               {/* Date From */}
+               <div className="flex flex-col flex-1 min-w-[150px]">
+-                <label className="text-[12px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
++                <label className="text-[24px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
+                   FROM DATE
+                 </label>
+                 <input
+@@ -444,13 +448,13 @@ export default function PatientCareTimeline() {
+                     setDateFrom(e.target.value);
+                     setCurrentPage(1);
+                   }}
+-                  className="border-2 border-neutral-900 rounded-none px-3 h-10 text-[14px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
++                  className="border-2 border-neutral-900 rounded-none px-3 h-14 text-[25px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
+                 />
+               </div>
+ 
+               {/* Date To */}
+               <div className="flex flex-col flex-1 min-w-[150px]">
+-                <label className="text-[12px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
++                <label className="text-[24px] text-[#6B7C93] mb-2 block uppercase" style={{ fontWeight: 700 }}>
+                   TO DATE
+                 </label>
+                 <input
+@@ -460,7 +464,7 @@ export default function PatientCareTimeline() {
+                     setDateTo(e.target.value);
+                     setCurrentPage(1);
+                   }}
+-                  className="border-2 border-neutral-900 rounded-none px-3 h-10 text-[14px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
++                  className="border-2 border-neutral-900 rounded-none px-3 h-14 text-[25px] text-[#1C2B3A] bg-white w-full outline-none focus:border-accent transition-colors duration-150 ease-swiss uppercase font-bold"
+                 />
+               </div>
+             </div>
+@@ -469,9 +473,9 @@ export default function PatientCareTimeline() {
+             {isFilterActive && (
+               <button
+                 onClick={handleClearFilters}
+-                className="bg-transparent border-2 border-neutral-900 text-neutral-900 rounded-none h-10 px-4 text-[12px] hover:bg-neutral-900 hover:text-white flex items-center gap-1.5 transition-colors duration-150 ease-swiss cursor-pointer select-none font-bold uppercase"
++                className="bg-transparent border-2 border-neutral-900 text-neutral-900 rounded-none h-14 px-6 text-[24px] hover:bg-neutral-900 hover:text-white flex items-center gap-1.5 transition-colors duration-150 ease-swiss cursor-pointer select-none font-bold uppercase"
+               >
+-                <X size={14} /> CLEAR FILTERS
++                <X size={20} /> CLEAR FILTERS
+               </button>
+             )}
+           </div>
+@@ -514,8 +518,8 @@ export default function PatientCareTimeline() {
+                     {/* Primary Row Summary */}
+                     <div className="flex items-stretch select-none">
+                       {/* Left identity zone */}
+-                      <div className="w-[200px] bg-[#0B4F6C] shrink-0 p-5 flex flex-col justify-center items-center text-center gap-2 relative select-none rounded-none border-r-2 border-neutral-900">
+-                        <div className="w-11 h-11 rounded-full bg-white/15 border border-white/20 flex items-center justify-center overflow-hidden shrink-0">
++                      <div className="w-[260px] bg-[#0B4F6C] shrink-0 p-5 flex flex-col justify-center items-center text-center gap-2 relative select-none rounded-none border-r-2 border-neutral-900">
++                        <div className="w-16 h-16 rounded-full bg-white/15 border border-white/20 flex items-center justify-center overflow-hidden shrink-0">
+                           {rec.doctor?.user?.profileImage ? (
+                             <img
+                               src={rec.doctor.user.profileImage}
+@@ -526,7 +530,7 @@ export default function PatientCareTimeline() {
+                               }}
+                             />
+                           ) : (
+-                            <span className="font-extrabold text-[18px] text-white tracking-tight" style={{ fontWeight: 900 }}>
++                            <span className="font-extrabold text-[28px] text-white tracking-tight" style={{ fontWeight: 900 }}>
+                               {docName
+                                 .replace(/^Dr\.\s+/i, '')
+                                 .split(' ')
+@@ -539,13 +543,13 @@ export default function PatientCareTimeline() {
+                         </div>
+ 
+                         <div className="flex flex-col min-w-0 w-full items-center">
+-                          <h4 className="font-bold text-[14px] text-white leading-snug truncate w-full" style={{ fontWeight: 700 }}>
++                          <h4 className="font-bold text-[25px] text-white leading-snug truncate w-full" style={{ fontWeight: 700 }}>
+                             {docName.toUpperCase()}
+                           </h4>
+-                          <span className="text-[11px] text-white/70 tracking-wide mt-0.5 truncate block w-full" style={{ fontWeight: 700 }}>
++                          <span className="text-[22px] text-white/70 tracking-wide mt-0.5 truncate block w-full" style={{ fontWeight: 700 }}>
+                             {primarySpec.toUpperCase()}
+                           </span>
+-                          <span className="text-[11px] text-white/55 block mt-1 font-bold">
++                          <span className="text-[22px] text-white/55 block mt-1 font-bold">
+                             {formatDate(rec.appointment?.date)}
+                           </span>
+                         </div>
+@@ -558,7 +562,7 @@ export default function PatientCareTimeline() {
+                           <div>
+                             {rec.progressRating && progressBadgeStyle(rec.progressRating) && (
+                               <span style={progressBadgeStyle(rec.progressRating)}>
+-                                {rec.progressRating === 'resolved' && <CheckCircle size={10} />}
++                                {rec.progressRating === 'resolved' && <CheckCircle size={20} />}
+                                 {PROGRESS_RATING_BADGES[rec.progressRating]?.label}
+                               </span>
+                             )}
+@@ -576,15 +580,15 @@ export default function PatientCareTimeline() {
+                         </div>
+ 
+                         {/* Row 2: Treatment excerpt */}
+-                        <p className="text-[#3D5166] text-[13px] font-normal line-clamp-2 leading-relaxed mt-1">
++                        <p className="text-[#3D5166] text-[23px] font-normal line-clamp-2 leading-relaxed mt-1">
+                           {rec.treatmentProvided}
+                         </p>
+ 
+                         {/* Row 3: Exercise, medications, followup */}
+                         <div className="flex flex-wrap items-center gap-4 mt-1 select-none">
+                           {exCount > 0 && (
+-                            <span className="inline-flex items-center gap-1.5 text-[12px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
+-                              <Activity size={14} className="text-[#0B4F6C]" />
++                            <span className="inline-flex items-center gap-1.5 text-[24px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
++                              <Activity size={20} className="text-[#0B4F6C]" />
+                               <span>{exCount} EXERCISE{exCount !== 1 ? 'S' : ''} PRESCRIBED</span>
+                             </span>
+                           )}
+@@ -595,8 +599,8 @@ export default function PatientCareTimeline() {
+                               const extraCount = rec.medications.length - 2;
+                               const medsText = displayedMeds.join(', ') + (extraCount > 0 ? ` +${extraCount} more` : '');
+                               return (
+-                                <span className="inline-flex items-center gap-1.5 text-[12px] text-[#6B7C93] font-bold uppercase tracking-wider">
+-                                  <Pill size={14} className="text-[#6B7C93]" />
++                                <span className="inline-flex items-center gap-1.5 text-[24px] text-[#6B7C93] font-bold uppercase tracking-wider">
++                                  <Pill size={20} className="text-[#6B7C93]" />
+                                   <span>{medsText.toUpperCase()}</span>
+                                 </span>
+                               );
+@@ -605,8 +609,8 @@ export default function PatientCareTimeline() {
+ 
+                           {showFollowup && rec.followUpRecommendation?.suggestedDate && (
+                             <div className="border-2 border-neutral-900 bg-[#E8F4F8] rounded-none py-1.5 px-3 inline-flex items-center gap-2 select-none">
+-                              <span className="inline-flex items-center gap-1 text-[12px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
+-                                <Calendar size={14} className="text-[#0B4F6C]" />
++                              <span className="inline-flex items-center gap-1 text-[24px] text-[#0B4F6C] uppercase tracking-wider" style={{ fontWeight: 700 }}>
++                                <Calendar size={20} className="text-[#0B4F6C]" />
+                                 <span>FOLLOW-UP: {formatDate(rec.followUpRecommendation.suggestedDate)}</span>
+                               </span>
+                               <span className="text-[#A8B8C8]">·</span>
+@@ -615,7 +619,7 @@ export default function PatientCareTimeline() {
+                                   e.stopPropagation();
+                                   navigate(`/doctors/${rec.doctor?._id || rec.doctor}#book`);
+                                 }}
+-                                className="text-[12px] text-[#F4845F] hover:text-[#D96840] hover:underline bg-transparent border-0 cursor-pointer select-none transition-colors duration-150 ease-swiss font-bold uppercase tracking-wider"
++                                className="text-[24px] text-[#F4845F] hover:text-[#D96840] hover:underline bg-transparent border-0 cursor-pointer select-none transition-colors duration-150 ease-swiss font-bold uppercase tracking-wider"
+                               >
+                                 BOOK NOW →
+                               </button>
+@@ -627,408 +631,427 @@ export default function PatientCareTimeline() {
+                         <div className="flex justify-end items-center mt-2 select-none">
+                           <button
+                             onClick={() => toggleExpand(rec._id)}
+-                            className="inline-flex items-center gap-1 text-[12px] text-[#0B4F6C] hover:text-[#083A52] bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
++                            className="inline-flex items-center gap-1 text-[24px] text-[#0B4F6C] hover:text-[#083A52] bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
+                           >
+                             <span>{isExpanded ? 'COLLAPSE' : 'VIEW FULL RECORD'}</span>
+                             <ChevronDown
+-                              size={14}
++                              size={20}
+                               className={`transition-transform duration-200 ease-swiss ${isExpanded ? 'rotate-180' : ''}`}
+                             />
+                           </button>
+                         </div>
+                       </div>
+-                    </div>
+-
+-                    {/* Inline Expanded Record Details */}
++                       {/* Inline Expanded Record Details */}
+                     {isExpanded && (
+                       <div
+                         style={{
+                           background: '#FFFFFF',
+                           borderTop: '2px solid #000000',
++                          borderLeft: '4px solid #0B4F6C',
+                           padding: '0',
+                           display: 'flex',
+                           flexDirection: 'column',
+                           gap: '0'
+                         }}
+                       >
+-
+-                        {/* ── PRESENTING CONDITION ── */}
+-                        <div style={{ borderBottom: '2px solid #000000' }}>
+-                          <div style={{
+-                            background: '#FAFBFC',
+-                            borderBottom: '2px solid #000000',
+-                            padding: '10px 28px',
+-                          }}>
+-                            <span style={{
+-                              fontSize: '11px',
+-                              fontWeight: 900,
+-                              color: '#1C2B3A',
+-                              textTransform: 'uppercase',
+-                              letterSpacing: '0.08em',
+-                            }}>PRESENTING CONDITION</span>
+-                          </div>
+-                          <div style={{ padding: '20px 28px' }}>
+-                            <p style={{
+-                              fontSize: '14px',
+-                              fontWeight: 400,
+-                              color: '#3D5166',
+-                              lineHeight: '1.7',
+-                              margin: 0,
+-                              whiteSpace: 'pre-line'
+-                            }}>
+-                              {rec.presentingCondition}
+-                            </p>
+-                          </div>
+-                        </div>
+-
+-                        {/* ── TREATMENT PROVIDED ── */}
+-                        <div style={{ borderBottom: '2px solid #000000' }}>
+-                          <div style={{
+-                            background: '#FAFBFC',
+-                            borderBottom: '2px solid #000000',
+-                            padding: '10px 28px',
+-                          }}>
+-                            <span style={{
+-                              fontSize: '11px',
+-                              fontWeight: 900,
+-                              color: '#1C2B3A',
+-                              textTransform: 'uppercase',
+-                              letterSpacing: '0.08em',
+-                            }}>TREATMENT PROVIDED</span>
+-                          </div>
+-                          <div style={{ padding: '20px 28px' }}>
+-                            <p style={{
+-                              fontSize: '14px',
+-                              fontWeight: 400,
+-                              color: '#3D5166',
+-                              lineHeight: '1.7',
+-                              margin: 0,
+-                              whiteSpace: 'pre-line'
+-                            }}>
+-                              {rec.treatmentProvided}
+-                            </p>
+-                          </div>
++                        {/* Stepper Wizard Tabs */}
++                        <div style={{
++                          display: 'grid',
++                          gridTemplateColumns: 'repeat(4, 1fr)',
++                          borderBottom: '2px solid #000000',
++                          background: '#FAFBFC',
++                        }}>
++                          {[
++                            { key: 'present', label: 'PRESENT CONDITION' },
++                            { key: 'treatment', label: 'TREATMENT PROVIDED' },
++                            { key: 'exercise', label: 'EXERCISE PRESCRIPTION' },
++                            { key: 'followup', label: 'FOLLOW UP' },
++                          ].map((step, idx) => {
++                            const stepActive = (activeSteps[rec._id] ?? 0) === idx;
++                            return (
++                              <button
++                                key={step.key}
++                                onClick={() => setActiveSteps(prev => ({ ...prev, [rec._id]: idx }))}
++                                style={{
++                                  background: stepActive ? '#0B4F6C' : 'transparent',
++                                  color: stepActive ? '#FFFFFF' : '#6B7C93',
++                                  border: 'none',
++                                  borderRight: idx < 3 ? '2px solid #000000' : 'none',
++                                  padding: '16px 8px',
++                                  cursor: 'pointer',
++                                  fontWeight: 900,
++                                  fontSize: '22px', // doubled (from 11px)
++                                  textTransform: 'uppercase',
++                                  letterSpacing: '0.08em',
++                                  textAlign: 'center',
++                                  transition: 'background-color 150ms, color 150ms',
++                                  outline: 'none',
++                                }}
++                              >
++                                {step.label}
++                              </button>
++                            );
++                          })}
+                         </div>
+ 
+-                        {/* ── CLINICAL OBSERVATIONS (Conditional) ── */}
+-                        {rec.clinicalObservations && (
+-                          <div style={{ borderBottom: '2px solid #000000' }}>
+-                            <div style={{
+-                              background: '#FAFBFC',
+-                              borderBottom: '2px solid #000000',
+-                              padding: '10px 28px',
+-                            }}>
+-                              <span style={{
+-                                fontSize: '11px',
+-                                fontWeight: 900,
+-                                color: '#1C2B3A',
+-                                textTransform: 'uppercase',
+-                                letterSpacing: '0.08em',
+-                              }}>CLINICAL OBSERVATIONS</span>
+-                            </div>
+-                            <div style={{ padding: '20px 28px' }}>
++                        {/* Tab Content Viewport */}
++                        <div style={{ padding: '32px' }}>
++                          {/* TAB 0: PRESENTING CONDITION */}
++                          {(activeSteps[rec._id] ?? 0) === 0 && (
++                            <div>
+                               <p style={{
+-                                fontSize: '14px',
++                                fontSize: '25px', // increased by 80% (from 14px)
+                                 fontWeight: 400,
+                                 color: '#3D5166',
+                                 lineHeight: '1.7',
+                                 margin: 0,
+                                 whiteSpace: 'pre-line'
+                               }}>
+-                                {rec.clinicalObservations}
++                                {rec.presentingCondition}
+                               </p>
+                             </div>
+-                          </div>
+-                        )}
++                          )}
+ 
+-                        {/* ── MEDICATIONS ── */}
+-                        {rec.medications?.length > 0 && (
+-                          <div style={{ borderBottom: '2px solid #000000' }}>
+-                            <div style={{
+-                              background: '#FAFBFC',
+-                              borderBottom: '2px solid #000000',
+-                              padding: '10px 28px',
+-                            }}>
+-                              <span style={{
+-                                fontSize: '11px',
+-                                fontWeight: 900,
+-                                color: '#1C2B3A',
+-                                textTransform: 'uppercase',
+-                                letterSpacing: '0.08em',
+-                              }}>PRESCRIBED MEDICATIONS / SUPPLEMENTS</span>
+-                            </div>
+-                            <div style={{ padding: '20px 28px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+-                              {rec.medications.map((med, medIdx) => (
+-                                <span
+-                                  key={medIdx}
+-                                  style={{
+-                                    background: '#FFFFFF',
+-                                    border: '2px solid #000000',
+-                                    borderRadius: '0px',
+-                                    padding: '6px 14px',
+-                                    fontSize: '12px',
+-                                    fontWeight: 700,
++                          {/* TAB 1: TREATMENT PROVIDED */}
++                          {(activeSteps[rec._id] ?? 0) === 1 && (
++                            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
++                              <div>
++                                <span style={{
++                                  fontSize: '22px', // doubled (from 11px)
++                                  fontWeight: 900,
++                                  color: '#1C2B3A',
++                                  textTransform: 'uppercase',
++                                  letterSpacing: '0.08em',
++                                  display: 'block',
++                                  marginBottom: '12px'
++                                }}>TREATMENT PROVIDED</span>
++                                <p style={{
++                                  fontSize: '25px', // increased by 80% (from 14px)
++                                  fontWeight: 400,
++                                  color: '#3D5166',
++                                  lineHeight: '1.7',
++                                  margin: 0,
++                                  whiteSpace: 'pre-line'
++                                }}>
++                                  {rec.treatmentProvided}
++                                </p>
++                              </div>
++
++                              {rec.clinicalObservations && (
++                                <div>
++                                  <span style={{
++                                    fontSize: '22px', // doubled
++                                    fontWeight: 900,
+                                     color: '#1C2B3A',
+                                     textTransform: 'uppercase',
+-                                    letterSpacing: '0.06em'
+-                                  }}
+-                                >
+-                                  {med}
+-                                </span>
+-                              ))}
+-                            </div>
+-                          </div>
+-                        )}
+-
+-                        {/* ── HOME EXERCISE PLAN ── */}
+-                        <div style={{ borderBottom: '2px solid #000000' }}>
+-                          <div style={{
+-                            background: '#FAFBFC',
+-                            borderBottom: '2px solid #000000',
+-                            padding: '10px 28px',
+-                            display: 'flex',
+-                            alignItems: 'center',
+-                            justifyContent: 'space-between',
+-                          }}>
+-                            <span style={{
+-                              fontSize: '11px',
+-                              fontWeight: 900,
+-                              color: '#1C2B3A',
+-                              textTransform: 'uppercase',
+-                              letterSpacing: '0.08em',
+-                            }}>EXERCISE PRESCRIPTION</span>
+-                            {exCount > 0 && (
+-                              <span style={{
+-                                fontSize: '11px',
+-                                fontWeight: 700,
+-                                color: '#6B7C93',
+-                                textTransform: 'uppercase',
+-                                letterSpacing: '0.06em',
+-                                border: '2px solid #DDE3EA',
+-                                padding: '2px 10px',
+-                              }}>
+-                                {exCount} EXERCISE{exCount !== 1 ? 'S' : ''} ADDED
+-                              </span>
+-                            )}
+-                          </div>
++                                    letterSpacing: '0.08em',
++                                    display: 'block',
++                                    marginBottom: '12px'
++                                  }}>CLINICAL OBSERVATIONS</span>
++                                  <p style={{
++                                    fontSize: '25px', // increased by 80%
++                                    fontWeight: 400,
++                                    color: '#3D5166',
++                                    lineHeight: '1.7',
++                                    margin: 0,
++                                    whiteSpace: 'pre-line'
++                                  }}>
++                                    {rec.clinicalObservations}
++                                  </p>
++                                </div>
++                              )}
+ 
+-                          {exCount === 0 ? (
+-                            <div style={{ padding: '20px 28px' }}>
+-                              <p style={{
+-                                fontSize: '13px',
+-                                fontWeight: 400,
+-                                color: '#A8B8C8',
+-                                fontStyle: 'italic',
+-                                margin: 0
+-                              }}>
+-                                No exercises prescribed for this session.
+-                              </p>
++                              {rec.medications?.length > 0 && (
++                                <div>
++                                  <span style={{
++                                    fontSize: '22px', // doubled
++                                    fontWeight: 900,
++                                    color: '#1C2B3A',
++                                    textTransform: 'uppercase',
++                                    letterSpacing: '0.08em',
++                                    display: 'block',
++                                    marginBottom: '12px'
++                                  }}>PRESCRIBED MEDICATIONS / SUPPLEMENTS</span>
++                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
++                                    {rec.medications.map((med, medIdx) => (
++                                      <span
++                                        key={medIdx}
++                                        style={{
++                                          background: '#FFFFFF',
++                                          border: '2px solid #000000',
++                                          borderRadius: '0px',
++                                          padding: '6px 14px',
++                                          fontSize: '24px', // doubled (from 12px)
++                                          fontWeight: 700,
++                                          color: '#1C2B3A',
++                                          textTransform: 'uppercase',
++                                          letterSpacing: '0.06em'
++                                        }}
++                                      >
++                                        {med}
++                                      </span>
++                                    ))}
++                                  </div>
++                                </div>
++                              )}
+                             </div>
+-                          ) : (
+-                            <div style={{ padding: '20px 28px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+-                              {rec.exercisePrescription.map((ex, exIdx) => (
+-                                <div
+-                                  key={ex._id || exIdx}
+-                                  style={{
+-                                    border: '2px solid #000000',
+-                                    background: '#FFFFFF',
+-                                  }}
+-                                >
+-                                  {/* Exercise Name Header */}
+-                                  <div style={{
+-                                    borderBottom: '2px solid #000000',
+-                                    padding: '10px 16px',
++                          )}
++
++                          {/* TAB 2: EXERCISE PRESCRIPTION */}
++                          {(activeSteps[rec._id] ?? 0) === 2 && (
++                            <div>
++                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
++                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
++                                  <span style={{
++                                    fontSize: '22px', // doubled
++                                    fontWeight: 900,
++                                    color: '#1C2B3A',
++                                    textTransform: 'uppercase',
++                                    letterSpacing: '0.08em'
+                                   }}>
++                                    EXERCISE PRESCRIPTION
++                                  </span>
++                                  {exCount > 0 && (
+                                     <span style={{
+-                                      fontSize: '11px',
+-                                      fontWeight: 900,
+-                                      color: '#6B7C93',
+-                                      textTransform: 'uppercase',
+-                                      letterSpacing: '0.08em',
+-                                      display: 'block',
+-                                      marginBottom: '4px',
+-                                    }}>EXERCISE NAME</span>
+-                                    <span style={{
+-                                      fontSize: '14px',
++                                      fontSize: '22px', // doubled
+                                       fontWeight: 700,
+-                                      color: '#1C2B3A',
++                                      color: '#6B7C93',
+                                       textTransform: 'uppercase',
+-                                      letterSpacing: '0.04em',
++                                      letterSpacing: '0.06em',
++                                      border: '2px solid #DDE3EA',
++                                      padding: '4px 12px',
+                                     }}>
+-                                      {ex.exerciseName}
++                                      {exCount} EXERCISE{exCount !== 1 ? 'S' : ''} ADDED
+                                     </span>
+-                                  </div>
++                                  )}
++                                </div>
++                                {exCount > 0 && (
++                                  <button
++                                    onClick={(e) => handlePrintExercisePlan(e, rec)}
++                                    title="Download Exercise Plan"
++                                    style={{
++                                      background: 'transparent',
++                                      border: '2px solid #000000',
++                                      padding: '8px',
++                                      cursor: 'pointer',
++                                      display: 'flex',
++                                      alignItems: 'center',
++                                      justifyContent: 'center',
++                                      color: '#1C2B3A',
++                                      transition: 'background-color 150ms, color 150ms',
++                                    }}
++                                    onMouseEnter={(e) => {
++                                      e.currentTarget.style.background = '#1C2B3A';
++                                      e.currentTarget.style.color = '#FFFFFF';
++                                    }}
++                                    onMouseLeave={(e) => {
++                                      e.currentTarget.style.background = 'transparent';
++                                      e.currentTarget.style.color = '#1C2B3A';
++                                    }}
++                                  >
++                                    <Download size={20} />
++                                  </button>
++                                )}
++                              </div>
+ 
+-                                  {/* Parameter Grid */}
+-                                  <div style={{
+-                                    display: 'grid',
+-                                    gridTemplateColumns: 'repeat(4, 1fr)',
+-                                    borderBottom: ex.notes ? '2px solid #000000' : 'none',
+-                                  }}>
+-                                    {[
+-                                      { label: 'SETS', value: ex.sets },
+-                                      { label: 'REPS', value: ex.reps },
+-                                      { label: 'FREQUENCY', value: ex.frequency },
+-                                      { label: 'DURATION', value: ex.duration },
+-                                    ].map((param, pIdx) => (
+-                                      <div
+-                                        key={pIdx}
+-                                        style={{
+-                                          padding: '12px 16px',
+-                                          borderRight: pIdx < 3 ? '2px solid #000000' : 'none',
+-                                        }}
+-                                      >
++                              {exCount === 0 ? (
++                                <p style={{
++                                  fontSize: '23px', // increased by 80% (from 13px)
++                                  fontWeight: 400,
++                                  color: '#A8B8C8',
++                                  fontStyle: 'italic',
++                                  margin: 0
++                                }}>
++                                  No exercises prescribed for this session.
++                                </p>
++                              ) : (
++                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
++                                  {rec.exercisePrescription.map((ex, exIdx) => (
++                                    <div
++                                      key={ex._id || exIdx}
++                                      style={{
++                                        border: '2px solid #000000',
++                                        background: '#FFFFFF',
++                                      }}
++                                    >
++                                      {/* Exercise Name Header */}
++                                      <div style={{
++                                        borderBottom: '2px solid #000000',
++                                        padding: '10px 16px',
++                                      }}>
+                                         <span style={{
+-                                          fontSize: '10px',
++                                          fontSize: '22px', // doubled (from 11px)
+                                           fontWeight: 900,
+                                           color: '#6B7C93',
+                                           textTransform: 'uppercase',
+                                           letterSpacing: '0.08em',
+                                           display: 'block',
+-                                          marginBottom: '6px',
+-                                        }}>{param.label}</span>
++                                          marginBottom: '4px',
++                                        }}>EXERCISE NAME</span>
+                                         <span style={{
+-                                          fontSize: '16px',
+-                                          fontWeight: 900,
++                                          fontSize: '25px', // increased by 80% (from 14px)
++                                          fontWeight: 700,
+                                           color: '#1C2B3A',
+-                                          letterSpacing: '-0.01em',
++                                          textTransform: 'uppercase',
++                                          letterSpacing: '0.04em',
+                                         }}>
+-                                          {(param.value !== null && param.value !== undefined && param.value !== '') ? param.value : '—'}
++                                          {ex.exerciseName}
+                                         </span>
+                                       </div>
+-                                    ))}
+-                                  </div>
+ 
+-                                  {/* Notes (Conditional) */}
+-                                  {ex.notes && (
+-                                    <div style={{ padding: '10px 16px' }}>
+-                                      <span style={{
+-                                        fontSize: '10px',
+-                                        fontWeight: 900,
+-                                        color: '#6B7C93',
+-                                        textTransform: 'uppercase',
+-                                        letterSpacing: '0.08em',
+-                                        display: 'block',
+-                                        marginBottom: '4px',
+-                                      }}>NOTES</span>
+-                                      <span style={{
+-                                        fontSize: '13px',
+-                                        fontWeight: 400,
+-                                        color: '#3D5166',
+-                                        fontStyle: 'italic',
++                                      {/* Parameter Grid */}
++                                      <div style={{
++                                        display: 'grid',
++                                        gridTemplateColumns: 'repeat(4, 1fr)',
++                                        borderBottom: ex.notes ? '2px solid #000000' : 'none',
+                                       }}>
+-                                        {ex.notes}
+-                                      </span>
++                                        {[
++                                          { label: 'SETS', value: ex.sets },
++                                          { label: 'REPS', value: ex.reps },
++                                          { label: 'FREQUENCY', value: ex.frequency },
++                                          { label: 'DURATION', value: ex.duration },
++                                        ].map((param, pIdx) => (
++                                          <div
++                                            key={pIdx}
++                                            style={{
++                                              padding: '12px 16px',
++                                              borderRight: pIdx < 3 ? '2px solid #000000' : 'none',
++                                            }}
++                                          >
++                                            <span style={{
++                                              fontSize: '20px', // doubled (from 10px)
++                                              fontWeight: 900,
++                                              color: '#6B7C93',
++                                              textTransform: 'uppercase',
++                                              letterSpacing: '0.08em',
++                                              display: 'block',
++                                              marginBottom: '6px',
++                                            }}>{param.label}</span>
++                                            <span style={{
++                                              fontSize: '29px', // increased by 80% (from 16px)
++                                              fontWeight: 900,
++                                              color: '#1C2B3A',
++                                              letterSpacing: '-0.01em',
++                                            }}>
++                                              {(param.value !== null && param.value !== undefined && param.value !== '') ? param.value : '—'}
++                                            </span>
++                                          </div>
++                                        ))}
++                                      </div>
++
++                                      {/* Notes (Conditional) */}
++                                      {ex.notes && (
++                                        <div style={{ padding: '10px 16px' }}>
++                                          <span style={{
++                                            fontSize: '20px', // doubled (from 10px)
++                                            fontWeight: 900,
++                                            color: '#6B7C93',
++                                            textTransform: 'uppercase',
++                                            letterSpacing: '0.08em',
++                                            display: 'block',
++                                            marginBottom: '4px',
++                                          }}>NOTES</span>
++                                          <span style={{
++                                            fontSize: '23px', // increased by 80% (from 13px)
++                                            fontWeight: 400,
++                                            color: '#3D5166',
++                                            fontStyle: 'italic',
++                                          }}>
++                                            {ex.notes}
++                                          </span>
++                                        </div>
++                                      )}
+                                     </div>
+-                                  )}
++                                  ))}
+                                 </div>
+-                              ))}
+-
+-                              {/* Download Exercise Plan */}
+-                              <button
+-                                onClick={(e) => handlePrintExercisePlan(e, rec)}
+-                                onMouseEnter={(e) => {
+-                                  e.currentTarget.style.background = '#1C2B3A';
+-                                  e.currentTarget.style.color = '#FFFFFF';
+-                                }}
+-                                onMouseLeave={(e) => {
+-                                  e.currentTarget.style.background = 'transparent';
+-                                  e.currentTarget.style.color = '#1C2B3A';
+-                                }}
+-                                style={{
+-                                  width: '100%',
+-                                  height: '44px',
+-                                  background: 'transparent',
+-                                  border: '2px solid #000000',
+-                                  borderRadius: '0px',
+-                                  color: '#1C2B3A',
+-                                  fontSize: '12px',
+-                                  fontWeight: 900,
+-                                  cursor: 'pointer',
+-                                  display: 'flex',
+-                                  alignItems: 'center',
+-                                  justifyContent: 'center',
+-                                  gap: '8px',
+-                                  transition: '150ms ease',
+-                                  letterSpacing: '0.06em',
+-                                  textTransform: 'uppercase',
+-                                }}
+-                              >
+-                                ↓ DOWNLOAD EXERCISE PLAN
+-                              </button>
++                              )}
+                             </div>
+                           )}
+-                        </div>
+ 
+-                        {/* ── FOLLOW-UP RECOMMENDATION ── */}
+-                        {rec.followUpRecommendation?.recommended && (
+-                          <div style={{ borderBottom: '2px solid #000000' }}>
+-                            <div style={{
+-                              background: '#FAFBFC',
+-                              borderBottom: '2px solid #000000',
+-                              padding: '10px 28px',
+-                            }}>
+-                              <span style={{
+-                                fontSize: '11px',
+-                                fontWeight: 900,
+-                                color: '#1C2B3A',
+-                                textTransform: 'uppercase',
+-                                letterSpacing: '0.08em',
+-                              }}>FOLLOW-UP RECOMMENDATION</span>
+-                            </div>
+-                            <div style={{
+-                              padding: '20px 28px',
+-                              display: 'flex',
+-                              alignItems: 'center',
+-                              justifyContent: 'space-between',
+-                              gap: '16px',
+-                            }}>
+-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+-                                <span style={{
+-                                  fontSize: '18px',
+-                                  fontWeight: 900,
+-                                  color: '#0B4F6C',
+-                                  textTransform: 'uppercase',
+-                                  letterSpacing: '0.02em',
++                          {/* TAB 3: FOLLOW UP */}
++                          {(activeSteps[rec._id] ?? 0) === 3 && (
++                            <div>
++                              {rec.followUpRecommendation?.recommended ? (
++                                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
++                                  <div>
++                                    <span style={{
++                                      fontSize: '22px', // doubled (from 11px)
++                                      fontWeight: 900,
++                                      color: '#1C2B3A',
++                                      textTransform: 'uppercase',
++                                      letterSpacing: '0.08em',
++                                      display: 'block',
++                                      marginBottom: '12px'
++                                    }}>FOLLOW-UP RECOMMENDATION</span>
++                                    <div style={{
++                                      padding: '24px',
++                                      background: '#E8F4F8',
++                                      border: '2px solid #0B4F6C',
++                                      display: 'flex',
++                                      alignItems: 'center',
++                                      justifyContent: 'space-between',
++                                      gap: '16px',
++                                    }}>
++                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
++                                        <span style={{
++                                          fontSize: '32px', // increased by 80% (from 18px)
++                                          fontWeight: 900,
++                                          color: '#0B4F6C',
++                                          textTransform: 'uppercase',
++                                          letterSpacing: '0.02em',
++                                        }}>
++                                          {formatDate(rec.followUpRecommendation.suggestedDate)}
++                                        </span>
++                                        {rec.followUpRecommendation.sessionGoal && (
++                                          <span style={{
++                                            fontSize: '23px', // increased by 80% (from 13px)
++                                            fontWeight: 400,
++                                            color: '#3D5166',
++                                            lineHeight: '1.5',
++                                          }}>
++                                            {rec.followUpRecommendation.sessionGoal}
++                                          </span>
++                                        )}
++                                      </div>
++                                      <button
++                                        onClick={() => navigate(`/doctors/${rec.doctor?._id || rec.doctor}#book`)}
++                                        onMouseEnter={(e) => e.currentTarget.style.background = '#083A52'}
++                                        onMouseLeave={(e) => e.currentTarget.style.background = '#0B4F6C'}
++                                        style={{
++                                          background: '#0B4F6C',
++                                          color: 'white',
++                                          borderRadius: '0px',
++                                          border: '2px solid #000000',
++                                          height: '56px',
++                                          padding: '0 28px',
++                                          fontWeight: 900,
++                                          fontSize: '24px', // doubled (from 12px)
++                                          cursor: 'pointer',
++                                          whiteSpace: 'nowrap',
++                                          transition: '150ms',
++                                          textTransform: 'uppercase',
++                                          letterSpacing: '0.08em',
++                                        }}
++                                      >
++                                        BOOK NOW →
++                                      </button>
++                                    </div>
++                                  </div>
++                                </div>
++                              ) : (
++                                <p style={{
++                                  fontSize: '23px', // increased by 80% (from 13px)
++                                  fontWeight: 400,
++                                  color: '#A8B8C8',
++                                  fontStyle: 'italic',
++                                  margin: 0
+                                 }}>
+-                                  {formatDate(rec.followUpRecommendation.suggestedDate)}
+-                                </span>
+-                                {rec.followUpRecommendation.sessionGoal && (
+-                                  <span style={{
+-                                    fontSize: '13px',
+-                                    fontWeight: 400,
+-                                    color: '#3D5166',
+-                                    lineHeight: '1.5',
+-                                  }}>
+-                                    {rec.followUpRecommendation.sessionGoal}
+-                                  </span>
+-                                )}
+-                              </div>
+-                              <button
+-                                onClick={() => navigate(`/doctors/${rec.doctor?._id || rec.doctor}#book`)}
+-                                onMouseEnter={(e) => e.currentTarget.style.background = '#083A52'}
+-                                onMouseLeave={(e) => e.currentTarget.style.background = '#0B4F6C'}
+-                                style={{
+-                                  background: '#0B4F6C',
+-                                  color: 'white',
+-                                  borderRadius: '0px',
+-                                  border: '2px solid #000000',
+-                                  height: '44px',
+-                                  padding: '0 28px',
+-                                  fontWeight: 900,
+-                                  fontSize: '12px',
+-                                  cursor: 'pointer',
+-                                  whiteSpace: 'nowrap',
+-                                  transition: '150ms',
+-                                  textTransform: 'uppercase',
+-                                  letterSpacing: '0.08em',
+-                                }}
+-                              >
+-                                BOOK NOW →
+-                              </button>
++                                  No follow-up recommendation scheduled.
++                                </p>
++                              )}
+                             </div>
+-                          </div>
+-                        )}
++                          )}
++                        </div>
+ 
+                         {/* ── FOOTER / SIGNATURE ── */}
+                         {(() => {
+@@ -1043,15 +1066,17 @@ export default function PatientCareTimeline() {
+ 
+                           return (
+                             <div style={{
+-                              padding: '12px 28px',
++                              padding: '20px 28px',
+                               display: 'flex',
+                               alignItems: 'center',
+                               justifyContent: 'space-between',
++                              borderTop: '2px solid #000000',
++                              background: '#FAFBFC',
+                             }}>
+                               <span
+                                 title={formattedLastEditedDate ? `Last edited: ${formattedLastEditedDate}` : undefined}
+                                 style={{
+-                                  fontSize: '11px',
++                                  fontSize: '22px', // doubled (from 11px)
+                                   fontWeight: 400,
+                                   color: '#A8B8C8',
+                                   cursor: 'default',
+@@ -1067,7 +1092,7 @@ export default function PatientCareTimeline() {
+                                   background: 'transparent',
+                                   border: 'none',
+                                   color: '#6B7C93',
+-                                  fontSize: '11px',
++                                  fontSize: '22px', // doubled (from 11px)
+                                   fontWeight: 900,
+                                   cursor: 'pointer',
+                                   display: 'flex',
