@@ -56,6 +56,10 @@ export const createSessionRecordValidation = [
     .trim()
     .notEmpty().withMessage('Each exercise must have a name'),
 
+  body('exercisePrescription.*.exerciseLibraryId')
+    .optional({ nullable: true })
+    .isString().trim(),
+
   body('exercisePrescription.*.sets')
     .optional({ nullable: true })
     .isInt({ min: 1 }).withMessage('Sets must be a positive integer'),
@@ -144,6 +148,10 @@ export const updateSessionRecordValidation = [
   body('exercisePrescription.*.exerciseName')
     .trim()
     .notEmpty().withMessage('Each exercise must have a name'),
+
+  body('exercisePrescription.*.exerciseLibraryId')
+    .optional({ nullable: true })
+    .isString().trim(),
 
   body('medications')
     .optional()

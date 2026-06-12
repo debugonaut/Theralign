@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const exercisePrescriptionItemSchema = new mongoose.Schema({
   exerciseName: { type: String, required: true, trim: true },
+  exerciseLibraryId: {
+    type: String,
+    default: null,
+    // exercise.id from exerciseLibrary.js — null for manually typed exercises
+  },
   sets:         { type: Number, min: 1, default: null },
   reps:         { type: Number, min: 1, default: null },
   frequency:    { type: String, default: null },  // e.g. 'twice daily', '3x per week'

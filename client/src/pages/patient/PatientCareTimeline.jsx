@@ -12,11 +12,15 @@ import {
   X,
   CheckCircle,
   Download,
+  Play,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import useAuthStore from '../../store/authStore';
 import { getPatientTimeline } from '../../api/sessionRecord.api';
+import { getExerciseById } from '../../data/exerciseLibrary';
+import { getPositionFigure } from '../../components/exercises/PositionFigures';
+import ExerciseVideoModal from '../../components/exercises/ExerciseVideoModal';
 import SectionHeader from '../../components/common/SectionHeader';
 import Pagination from '../../components/common/Pagination';
 
@@ -93,6 +97,14 @@ const formatMetadataTime = (dateString) => {
   }
 };
 
+const formatExerciseParamsForPatient = (ex) => {
+  const parts = [];
+  if (ex.sets) parts.push(`${ex.sets} sets`);
+  if (ex.reps) parts.push(`${ex.reps} reps`);
+  if (ex.duration) parts.push(ex.duration);
+  return parts.join(' · ') || '—';
+};
+
 export default function PatientCareTimeline() {
   const navigate = useNavigate();
   const { user: currentUser } = useAuthStore();
@@ -116,6 +128,17 @@ export default function PatientCareTimeline() {
 
   // Active step/tab index for each expanded record card
   const [activeSteps, setActiveSteps] = useState({});
+
+  const [videoModal, setVideoModal] = useState({
+    open: false,
+    exerciseId: null,
+    exerciseName: '',
+    sets: null,
+    reps: null,
+    duration: null,
+    frequency: null,
+    doctorName: '',
+  });
 
   const fetchTimeline = async (page = 1, silent = false) => {
     if (!silent) setLoading(true);
@@ -866,104 +889,96 @@ export default function PatientCareTimeline() {
                                   No exercises prescribed for this session.
                                 </p>
                               ) : (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                  {rec.exercisePrescription.map((ex, exIdx) => (
-                                    <div
-                                      key={ex._id || exIdx}
-                                      style={{
-                                        border: '2px solid #000000',
-                                        background: '#FFFFFF',
-                                      }}
-                                    >
-                                      {/* Exercise Name Header */}
-                                      <div style={{
-                                        borderBottom: '2px solid #000000',
-                                        padding: '10px 16px',
-                                      }}>
-                                        <span style={{
-                                          fontSize: '20px',
-                                          fontWeight: 900,
-                                          color: '#6B7C93',
-                                          textTransform: 'uppercase',
-                                          letterSpacing: '0.08em',
-                                          display: 'block',
-                                          marginBottom: '4px',
-                                        }}>EXERCISE NAME</span>
-                                        <span style={{
-                                          fontSize: '14px',
-                                          fontWeight: 700,
-                                          color: '#1C2B3A',
-                                          textTransform: 'uppercase',
-                                          letterSpacing: '0.04em',
-                                        }}>
-                                          {ex.exerciseName}
-                                        </span>
-                                      </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                                  {rec.exercisePrescription.map((ex, exIdx) => {
+                                    const libraryMeta = ex.exerciseLibraryId ? getExerciseById(ex.exerciseLibraryId) : null;
+                                    const PositionFigure = libraryMeta ? getPositionFigure(libraryMeta.position) : null;
+                                    const categoryColor = libraryMeta?.categoryColor || '#0B4F6C';
+                                    const targetArea = libraryMeta?.targetArea;
 
-                                      {/* Parameter Grid */}
-                                      <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(4, 1fr)',
-                                        borderBottom: ex.notes ? '2px solid #000000' : 'none',
-                                      }}>
-                                        {[
-                                          { label: 'SETS', value: ex.sets },
-                                          { label: 'REPS', value: ex.reps },
-                                          { label: 'FREQUENCY', value: ex.frequency },
-                                          { label: 'DURATION', value: ex.duration },
-                                        ].map((param, pIdx) => (
-                                          <div
-                                            key={pIdx}
-                                            style={{
-                                              padding: '12px 16px',
-                                              borderRight: pIdx < 3 ? '2px solid #000000' : 'none',
-                                            }}
-                                          >
-                                            <span style={{
-                                              fontSize: '20px',
-                                              fontWeight: 900,
-                                              color: '#6B7C93',
-                                              textTransform: 'uppercase',
-                                              letterSpacing: '0.08em',
-                                              display: 'block',
-                                              marginBottom: '6px',
-                                            }}>{param.label}</span>
-                                            <span style={{
-                                              fontSize: '18px',
-                                              fontWeight: 900,
-                                              color: '#1C2B3A',
-                                              letterSpacing: '-0.01em',
-                                            }}>
-                                              {(param.value !== null && param.value !== undefined && param.value !== '') ? param.value : '—'}
-                                            </span>
-                                          </div>
-                                        ))}
-                                      </div>
-
-                                      {/* Notes (Conditional) */}
-                                      {ex.notes && (
-                                        <div style={{ padding: '10px 16px' }}>
-                                          <span style={{
-                                            fontSize: '20px',
-                                            fontWeight: 900,
-                                            color: '#6B7C93',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.08em',
-                                            display: 'block',
-                                            marginBottom: '4px',
-                                          }}>NOTES</span>
-                                          <span style={{
-                                            fontSize: '14px',
-                                            fontWeight: 400,
-                                            color: '#3D5166',
-                                            fontStyle: 'italic',
+                                    return (
+                                      <div
+                                        key={ex._id || exIdx}
+                                        style={{
+                                          border: '2px solid #DDE3EA',
+                                          borderRadius: '8px',
+                                          background: '#FFFFFF',
+                                          padding: '16px',
+                                          display: 'flex',
+                                          gap: '16px',
+                                          alignItems: 'flex-start',
+                                        }}
+                                      >
+                                        {PositionFigure && (
+                                          <div style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            background: '#F8F8F6',
+                                            borderRadius: '8px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
                                           }}>
-                                            {ex.notes}
-                                          </span>
+                                            <PositionFigure size={80} color={`${categoryColor}B3`} />
+                                          </div>
+                                        )}
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                          <p style={{ fontSize: '14px', fontWeight: 700, color: '#1A1A1A', margin: 0 }}>
+                                            {ex.exerciseName}
+                                          </p>
+                                          {targetArea && (
+                                            <p style={{ fontSize: '11px', fontWeight: 400, color: '#6B7C93', margin: '4px 0 0' }}>
+                                              {targetArea}
+                                            </p>
+                                          )}
+                                          <p style={{ fontSize: '13px', fontWeight: 600, color: '#1C2B3A', margin: '8px 0 0' }}>
+                                            {formatExerciseParamsForPatient(ex)}
+                                          </p>
+                                          {ex.frequency && (
+                                            <p style={{ fontSize: '11px', fontWeight: 400, color: '#6B7C93', margin: '4px 0 0', textTransform: 'capitalize' }}>
+                                              {ex.frequency}
+                                            </p>
+                                          )}
+                                          {ex.notes && (
+                                            <p style={{ fontSize: '11px', fontStyle: 'italic', color: '#6B7C93', margin: '6px 0 0' }}>
+                                              {ex.notes}
+                                            </p>
+                                          )}
+                                          {ex.exerciseLibraryId && (
+                                            <button
+                                              type="button"
+                                              onClick={() => setVideoModal({
+                                                open: true,
+                                                exerciseId: ex.exerciseLibraryId,
+                                                exerciseName: ex.exerciseName,
+                                                sets: ex.sets,
+                                                reps: ex.reps,
+                                                duration: ex.duration,
+                                                frequency: ex.frequency,
+                                                doctorName: docName,
+                                              })}
+                                              style={{
+                                                marginTop: '12px',
+                                                background: 'transparent',
+                                                border: 'none',
+                                                padding: 0,
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                fontSize: '12px',
+                                                fontWeight: 600,
+                                                color: '#0B4F6C',
+                                              }}
+                                            >
+                                              <Play size={14} /> Watch Demonstration
+                                            </button>
+                                          )}
                                         </div>
-                                      )}
-                                    </div>
-                                  ))}
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               )}
                             </div>
@@ -1127,6 +1142,18 @@ export default function PatientCareTimeline() {
           )}
         </>
       )}
+
+      <ExerciseVideoModal
+        isOpen={videoModal.open}
+        onClose={() => setVideoModal((v) => ({ ...v, open: false, exerciseId: null }))}
+        exerciseId={videoModal.exerciseId}
+        exerciseName={videoModal.exerciseName}
+        sets={videoModal.sets}
+        reps={videoModal.reps}
+        duration={videoModal.duration}
+        frequency={videoModal.frequency}
+        doctorName={videoModal.doctorName}
+      />
     </div>
   );
 }

@@ -5,8 +5,9 @@ import {
   RotateCcw,
   ChevronDown,
   Dumbbell,
-  Plus,
   Trash2,
+  Library,
+  ExternalLink,
   Loader2,
   CheckCircle,
   Calendar,
@@ -27,6 +28,8 @@ import {
 import SectionHeader from '../../components/common/SectionHeader';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
+import ExerciseLibraryModal from '../../components/exercises/ExerciseLibraryModal';
+import { getExerciseById } from '../../data/exerciseLibrary';
 
 const PROGRESS_RATING_OPTIONS = [
   { value: 'worse', label: 'WORSE', bg: 'bg-[#C0392B] text-white border-[#C0392B]' },
@@ -46,6 +49,15 @@ const PRESETS = [
   { label: '3 Months', days: 90 },
   { label: 'Custom', days: 'custom' },
 ];
+
+const formatExerciseParams = (ex) => {
+  const parts = [];
+  if (ex.sets) parts.push(`${ex.sets} sets`);
+  if (ex.reps) parts.push(`${ex.reps} reps`);
+  if (ex.duration) parts.push(ex.duration);
+  if (ex.frequency) parts.push(ex.frequency);
+  return parts.join(' · ');
+};
 
 const getProgressBadgeStyle = (rating) => {
   switch (rating) {
@@ -95,6 +107,13 @@ export default function SessionRecordForm() {
 
   // Share confirmation modal state
   const [showShareModal, setShowShareModal] = useState(false);
+
+  // Exercise library modal state
+  const [showExerciseLibrary, setShowExerciseLibrary] = useState(false);
+  const [showManualAdd, setShowManualAdd] = useState(false);
+  const [manualExercise, setManualExercise] = useState({
+    exerciseName: '', sets: '', reps: '', frequency: '', duration: '', notes: '',
+  });
 
   // Validation state for required fields
   const [showValidation, setShowValidation] = useState(false);
@@ -365,21 +384,31 @@ export default function SessionRecordForm() {
   };
 
   // Exercises array helpers
-  const handleAddExercise = () => {
-    const newItem = { exerciseName: '', sets: '', reps: '', frequency: '', duration: '', notes: '' };
+  const handleLibraryDone = (prescription) => {
+    setFormData((prev) => ({ ...prev, exercisePrescription: prescription }));
+    setShowExerciseLibrary(false);
+  };
+
+  const handleAddManualExercise = () => {
+    if (!manualExercise.exerciseName.trim()) {
+      toast.error('Exercise name is required.');
+      return;
+    }
+    const newItem = {
+      exerciseLibraryId: null,
+      exerciseName: manualExercise.exerciseName.trim(),
+      sets: manualExercise.sets === '' ? null : Number(manualExercise.sets),
+      reps: manualExercise.reps === '' ? null : Number(manualExercise.reps),
+      frequency: manualExercise.frequency.trim() || null,
+      duration: manualExercise.duration.trim() || null,
+      notes: manualExercise.notes.trim() || null,
+    };
     setFormData((prev) => ({
       ...prev,
       exercisePrescription: [...prev.exercisePrescription, newItem],
     }));
-  };
-
-  const handleUpdateExercise = (index, field, value) => {
-    const updated = [...formData.exercisePrescription];
-    updated[index] = {
-      ...updated[index],
-      [field]: field === 'sets' || field === 'reps' ? (value === '' ? '' : parseInt(value, 10)) : value,
-    };
-    setFormData((prev) => ({ ...prev, exercisePrescription: updated }));
+    setManualExercise({ exerciseName: '', sets: '', reps: '', frequency: '', duration: '', notes: '' });
+    setShowManualAdd(false);
   };
 
   const handleRemoveExercise = (index) => {
@@ -473,9 +502,10 @@ export default function SessionRecordForm() {
         painScoreBefore: formData.painScoreBefore === '' ? null : Number(formData.painScoreBefore),
         painScoreAfter: formData.painScoreAfter === '' ? null : Number(formData.painScoreAfter),
         exercisePrescription: formData.exercisePrescription.map((ex) => ({
+          exerciseLibraryId: ex.exerciseLibraryId || null,
           exerciseName: ex.exerciseName.trim(),
-          sets: ex.sets === '' ? null : Number(ex.sets),
-          reps: ex.reps === '' ? null : Number(ex.reps),
+          sets: ex.sets === '' || ex.sets === null || ex.sets === undefined ? null : Number(ex.sets),
+          reps: ex.reps === '' || ex.reps === null || ex.reps === undefined ? null : Number(ex.reps),
           frequency: ex.frequency ? ex.frequency.trim() : null,
           duration: ex.duration ? ex.duration.trim() : null,
           notes: ex.notes ? ex.notes.trim() : null,
@@ -897,130 +927,109 @@ export default function SessionRecordForm() {
             }`}
           >
             <div className="p-6 flex flex-col gap-4">
-              
+
+              {!isReadOnly && (
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowExerciseLibrary(true)}
+                    className="h-9 px-4 bg-primary hover:bg-primary-dark text-white rounded-md flex items-center justify-center gap-2 transition-colors text-ui-sm font-semibold"
+                  >
+                    <Library size={16} /> Browse Exercise Library →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowManualAdd((v) => !v)}
+                    className="text-ui-sm font-semibold text-primary hover:underline bg-transparent border-0 cursor-pointer"
+                  >
+                    Add manually +
+                  </button>
+                </div>
+              )}
+
+              {showManualAdd && !isReadOnly && (
+                <div className="border-2 border-neutral-200 rounded-lg p-4 flex flex-col gap-3 bg-[#FAFBFC]">
+                  <input
+                    type="text"
+                    value={manualExercise.exerciseName}
+                    onChange={(e) => setManualExercise((p) => ({ ...p, exerciseName: e.target.value }))}
+                    placeholder="Exercise name"
+                    className="w-full h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none"
+                  />
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <input type="number" min={1} placeholder="Sets" value={manualExercise.sets} onChange={(e) => setManualExercise((p) => ({ ...p, sets: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
+                    <input type="number" min={1} placeholder="Reps" value={manualExercise.reps} onChange={(e) => setManualExercise((p) => ({ ...p, reps: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
+                    <input type="text" placeholder="Frequency" value={manualExercise.frequency} onChange={(e) => setManualExercise((p) => ({ ...p, frequency: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
+                    <input type="text" placeholder="Duration" value={manualExercise.duration} onChange={(e) => setManualExercise((p) => ({ ...p, duration: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
+                  </div>
+                  <button type="button" onClick={handleAddManualExercise} className="self-start h-9 px-4 bg-neutral-900 text-white rounded-md text-ui-sm font-semibold">
+                    Add Exercise
+                  </button>
+                </div>
+              )}
+
               {formData.exercisePrescription.length === 0 ? (
-                <div className="bg-[#FAFBFC] border-2 border-dashed border-neutral-300 rounded-none p-6 py-10 flex flex-col items-center justify-center text-center select-none mb-2">
-                  <div className="w-12 h-12 rounded-none border-2 border-neutral-900 bg-neutral-100 flex items-center justify-center text-neutral-300 mb-3">
+                <div className="bg-[#FAFBFC] border-2 border-dashed border-neutral-300 rounded-lg p-6 py-10 flex flex-col items-center justify-center text-center select-none">
+                  <div className="w-12 h-12 rounded-lg border-2 border-neutral-200 bg-neutral-100 flex items-center justify-center text-neutral-300 mb-3">
                     <Dumbbell size={28} />
                   </div>
-                  <h4 className="text-[14px] text-[#1C2B3A] mb-1 font-bold uppercase tracking-wider">
-                    NO EXERCISES PRESCRIBED YET
+                  <h4 className="text-ui-sm text-neutral-900 mb-1 font-bold">
+                    No exercises yet
                   </h4>
-                  <p className="text-[12px] text-[#6B7C93] font-regular max-w-[400px]">
-                    Add exercises to give your patient a clear home program.
+                  <p className="text-ui-xs text-neutral-500 max-w-[400px]">
+                    Click Browse Library to get started, or add a custom exercise manually.
                   </p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  {formData.exercisePrescription.map((ex, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-white border-2 border-neutral-900 rounded-none p-4 px-5 mb-2 relative shadow-none transition-all duration-200 ease-swiss flex flex-col gap-3"
-                    >
-                      {/* Delete Exercise Trigger */}
-                      {!isReadOnly && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveExercise(idx)}
-                          className="absolute top-4 right-4 text-[#C0392B] hover:text-[#C0392B] bg-transparent border-2 border-neutral-900 cursor-pointer p-1.5 rounded-none hover:bg-[#FDF2F2] transition-colors duration-150 ease-swiss select-none"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
+                  {formData.exercisePrescription.map((ex, idx) => {
+                    const libraryMeta = ex.exerciseLibraryId ? getExerciseById(ex.exerciseLibraryId) : null;
+                    const targetArea = libraryMeta?.targetArea;
+                    const youtubeId = libraryMeta?.youtubeId;
 
-                      {/* Row 1: Exercise Name */}
-                      <div className="flex flex-col pr-8">
-                        <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">
-                          EXERCISE NAME
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          disabled={isReadOnly}
-                          value={ex.exerciseName}
-                          onChange={(e) => handleUpdateExercise(idx, 'exerciseName', e.target.value)}
-                          placeholder="e.g. Quad Clenches, Hamstring Stretch..."
-                          className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
-                        />
-                      </div>
-
-                      {/* Row 2: Parameters */}
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                        <div className="flex flex-col">
-                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">SETS</label>
-                          <input
-                            type="number"
-                            disabled={isReadOnly}
-                            min={1}
-                            value={ex.sets}
-                            onChange={(e) => handleUpdateExercise(idx, 'sets', e.target.value)}
-                            placeholder="Sets"
-                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
-                          />
+                    return (
+                      <div
+                        key={idx}
+                        className="bg-white border-2 border-neutral-200 rounded-lg p-4 flex items-start justify-between gap-4"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="text-ui-sm font-bold text-neutral-900">{ex.exerciseName}</p>
+                          <p className="text-ui-sm font-semibold text-neutral-700 mt-1">
+                            {formatExerciseParams(ex)}
+                          </p>
+                          {targetArea && (
+                            <p className="text-ui-xs text-neutral-500 mt-1">Target: {targetArea}</p>
+                          )}
+                          {ex.notes && (
+                            <p className="text-ui-xs text-neutral-500 mt-1 italic">{ex.notes}</p>
+                          )}
                         </div>
-                        <div className="flex flex-col">
-                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">REPS</label>
-                          <input
-                            type="number"
-                            disabled={isReadOnly}
-                            min={1}
-                            value={ex.reps}
-                            onChange={(e) => handleUpdateExercise(idx, 'reps', e.target.value)}
-                            placeholder="Reps"
-                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">FREQUENCY</label>
-                          <input
-                            type="text"
-                            disabled={isReadOnly}
-                            value={ex.frequency}
-                            onChange={(e) => handleUpdateExercise(idx, 'frequency', e.target.value)}
-                            placeholder="e.g. twice daily"
-                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">DURATION</label>
-                          <input
-                            type="text"
-                            disabled={isReadOnly}
-                            value={ex.duration}
-                            onChange={(e) => handleUpdateExercise(idx, 'duration', e.target.value)}
-                            placeholder="e.g. 30 seconds"
-                            className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
-                          />
+                        <div className="flex items-center gap-2 shrink-0">
+                          {youtubeId && (
+                            <a
+                              href={`https://www.youtube.com/watch?v=${youtubeId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-ui-xs font-semibold text-primary flex items-center gap-1 hover:underline"
+                            >
+                              ▶ Video <ExternalLink size={12} />
+                            </a>
+                          )}
+                          {!isReadOnly && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveExercise(idx)}
+                              className="text-danger hover:bg-danger/10 p-1.5 rounded-md transition-colors"
+                              aria-label="Remove exercise"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
                         </div>
                       </div>
-
-                      {/* Row 3: Notes */}
-                      <div className="flex flex-col gap-1 mt-1">
-                        <label className="text-[20px] text-neutral-900 mb-2 block uppercase font-bold tracking-wider">NOTES</label>
-                        <input
-                          type="text"
-                          disabled={isReadOnly}
-                          value={ex.notes}
-                          onChange={(e) => handleUpdateExercise(idx, 'notes', e.target.value)}
-                          placeholder="Optional notes or instructions for this specific exercise"
-                          className="w-full h-10 border-2 border-neutral-200 rounded-none py-[10px] px-[12px] text-[14px] text-neutral-900 placeholder-neutral-300 focus:border-neutral-900 focus:ring-0 focus:outline-none disabled:bg-neutral-50 transition-all duration-200 ease-swiss"
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
-              )}
-
-              {/* Add Exercise Trigger Button */}
-              {!isReadOnly && (
-                <button
-                  type="button"
-                  onClick={handleAddExercise}
-                  className="h-9 px-4 bg-neutral-900 hover:bg-accent text-white hover:text-neutral-900 rounded-none flex items-center justify-center gap-1.5 transition-colors duration-150 ease-swiss select-none cursor-pointer border-2 border-neutral-900 max-w-[200px] font-bold uppercase"
-                  style={{ fontSize: '13px' }}
-                >
-                  <Plus size={14} /> ADD EXERCISE
-                </button>
               )}
 
             </div>
@@ -1366,6 +1375,13 @@ export default function SessionRecordForm() {
           </div>
         </Modal>
       )}
+
+      <ExerciseLibraryModal
+        isOpen={showExerciseLibrary}
+        onClose={() => setShowExerciseLibrary(false)}
+        initialPrescription={formData.exercisePrescription}
+        onDone={handleLibraryDone}
+      />
 
     </div>
   );
