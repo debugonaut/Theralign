@@ -641,213 +641,381 @@ export default function PatientCareTimeline() {
 
                     {/* Inline Expanded Record Details */}
                     {isExpanded && (
-                      <div className="border-t-2 border-neutral-900 select-none overflow-hidden" style={{ borderRadius: '0 0 0 0' }}>
-
-                        {/* Zone A — What Happened */}
-                        <div style={{ background: '#FFFFFF', padding: '24px', borderBottom: '1px solid #EEF2F6' }}>
-                          <span style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '10px', color: '#6B7C93', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '16px' }}>
-                            WHAT HAPPENED THIS SESSION
-                          </span>
-
-                          {/* Progress badge in Zone A header */}
-                          {rec.progressRating && progressBadgeStyle(rec.progressRating) && (
-                            <div style={{ marginBottom: '16px' }}>
-                              <span style={progressBadgeStyle(rec.progressRating)}>
-                                {rec.progressRating === 'resolved' && <CheckCircle size={10} />}
-                                {PROGRESS_RATING_BADGES[rec.progressRating]?.label}
-                              </span>
-                            </div>
-                          )}
-
-                          <div className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                                PRESENTING CONDITION
-                              </span>
-                              <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
-                                {rec.presentingCondition}
-                              </p>
-                            </div>
-
-                            <div className="flex flex-col gap-1">
-                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                                TREATMENT PROVIDED
-                              </span>
-                              <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
-                                {rec.treatmentProvided}
-                              </p>
-                            </div>
-
-                            {rec.clinicalObservations && (
-                              <div className="flex flex-col gap-1">
-                                <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                                  CLINICAL OBSERVATIONS
-                                </span>
-                                <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed whitespace-pre-line">
-                                  {rec.clinicalObservations}
-                                </p>
-                              </div>
-                            )}
-
-                            {rec.medications?.length > 0 && (
-                              <div className="flex flex-col gap-1.5">
-                                <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                                  PRESCRIBED MEDICATIONS / SUPPLEMENTS
-                                </span>
-                                <div className="flex flex-wrap gap-1.5 mt-1">
-                                  {rec.medications.map((med, medIdx) => (
-                                    <span key={medIdx} className="bg-[#E8F4F8] text-[#0B4F6C] border-2 border-neutral-900 rounded-none px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider">
-                                      {med.toUpperCase()}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
+                      <div
+                        style={{
+                          background: '#FFFFFF',
+                          borderLeft: '3px solid #0B4F6C',
+                          borderBottomLeftRadius: '12px',
+                          borderBottomRightRadius: '12px',
+                          padding: '28px 32px 20px 32px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0'
+                        }}
+                      >
+                        {/* Presenting Condition */}
+                        <div style={{ marginBottom: '28px' }}>
+                          <p style={{
+                            fontSize: '10px',
+                            fontWeight: '600',
+                            color: '#A8B8C8',
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                            marginBottom: '6px'
+                          }}>
+                            Presenting Condition
+                          </p>
+                          <p style={{
+                            fontSize: '14px',
+                            fontWeight: '400',
+                            color: '#3D5166',
+                            lineHeight: '1.6',
+                            margin: '0',
+                            whiteSpace: 'pre-line'
+                          }}>
+                            {rec.presentingCondition}
+                          </p>
                         </div>
 
-                        {/* Zone B — Your Action Plan */}
-                        <div style={{ background: '#E8F4F8', padding: '24px', borderRadius: '0 0 12px 12px' }}>
-                          <span style={{ display: 'block', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '10px', color: '#0B4F6C', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '16px' }}>
-                            YOUR ACTION PLAN
-                          </span>
+                        {/* Treatment Provided */}
+                        <div style={{ marginBottom: '28px' }}>
+                          <p style={{
+                            fontSize: '10px',
+                            fontWeight: '600',
+                            color: '#A8B8C8',
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                            marginBottom: '6px'
+                          }}>
+                            Treatment Provided
+                          </p>
+                          <p style={{
+                            fontSize: '14px',
+                            fontWeight: '400',
+                            color: '#3D5166',
+                            lineHeight: '1.6',
+                            margin: '0',
+                            whiteSpace: 'pre-line'
+                          }}>
+                            {rec.treatmentProvided}
+                          </p>
+                        </div>
 
-                          <div className="flex flex-col gap-4">
-                            {/* Exercise Section */}
-                            <div className="flex flex-col gap-1">
-                              <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-2 block" style={{ fontWeight: 700 }}>
-                                HOME EXERCISE PRESCRIPTIONS
-                              </span>
+                        {/* Clinical Observations (Conditional) */}
+                        {rec.clinicalObservations && (
+                          <div style={{ marginBottom: '28px' }}>
+                            <p style={{
+                              fontSize: '10px',
+                              fontWeight: '600',
+                              color: '#A8B8C8',
+                              letterSpacing: '0.1em',
+                              textTransform: 'uppercase',
+                              marginBottom: '6px'
+                            }}>
+                              Clinical Observations
+                            </p>
+                            <p style={{
+                              fontSize: '14px',
+                              fontWeight: '400',
+                              color: '#3D5166',
+                              lineHeight: '1.6',
+                              margin: '0',
+                              whiteSpace: 'pre-line'
+                            }}>
+                              {rec.clinicalObservations}
+                            </p>
+                          </div>
+                        )}
 
-                              {exCount > 0 ? (
-                                <>
-                                  {rec.exercisePrescription.map((ex, exIdx) => {
-                                    const setsReps = ex.sets && ex.reps
-                                      ? `${ex.sets} sets × ${ex.reps} reps`
-                                      : ex.sets
-                                      ? `${ex.sets} sets`
-                                      : ex.reps
-                                      ? `${ex.reps} reps`
-                                      : '—';
+                        {/* Prescribed Medications / Supplements */}
+                        {rec.medications?.length > 0 && (
+                          <div style={{ marginBottom: '28px' }}>
+                            <p style={{
+                              fontSize: '10px',
+                              fontWeight: '600',
+                              color: '#A8B8C8',
+                              letterSpacing: '0.1em',
+                              textTransform: 'uppercase',
+                              marginBottom: '6px'
+                            }}>
+                              Prescribed Medications / Supplements
+                            </p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                              {rec.medications.map((med, medIdx) => (
+                                <span
+                                  key={medIdx}
+                                  style={{
+                                    background: '#F7F9FB',
+                                    border: '1px solid #EEF2F6',
+                                    borderRadius: '4px',
+                                    padding: '4px 10px',
+                                    fontSize: '11px',
+                                    fontWeight: '600',
+                                    color: '#3D5166',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.04em'
+                                  }}
+                                >
+                                  {med}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Home Exercise Plan */}
+                        <div style={{ marginBottom: '28px' }}>
+                          <p style={{
+                            fontSize: '10px',
+                            fontWeight: '600',
+                            color: '#A8B8C8',
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                            marginBottom: '6px'
+                          }}>
+                            Home Exercise Plan
+                          </p>
+
+                          {exCount === 0 ? (
+                            <p style={{
+                              fontSize: '13px',
+                              fontWeight: '400',
+                              color: '#A8B8C8',
+                              fontStyle: 'italic',
+                              margin: '0'
+                            }}>
+                              No exercises prescribed for this session.
+                            </p>
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              {rec.exercisePrescription.map((ex, exIdx) => (
+                                <div
+                                  key={ex._id || exIdx}
+                                  style={{
+                                    background: '#F7F9FB',
+                                    border: '1px solid #EEF2F6',
+                                    borderRadius: '8px',
+                                    padding: '12px 16px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '16px'
+                                  }}
+                                >
+                                  {/* Name */}
+                                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: '700', color: '#1C2B3A', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                      {ex.exerciseName}
+                                    </span>
+                                    {ex.notes && (
+                                      <span style={{ fontSize: '11px', fontWeight: '400', color: '#6B7C93', fontStyle: 'italic' }}>
+                                        {ex.notes}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {/* Sets × Reps Pill */}
+                                  {(() => {
+                                    const hasSets = ex.sets !== null && ex.sets !== undefined && ex.sets !== '';
+                                    const hasReps = ex.reps !== null && ex.reps !== undefined && ex.reps !== '';
+                                    if (!hasSets && !hasReps) return null;
+                                    let text = '';
+                                    if (hasSets && hasReps) {
+                                      text = `${ex.sets}s × ${ex.reps}r`;
+                                    } else if (hasSets) {
+                                      text = `${ex.sets}s`;
+                                    } else {
+                                      text = `${ex.reps}r`;
+                                    }
                                     return (
-                                      <div
-                                        key={ex._id || exIdx}
-                                        style={{
-                                          background: '#FFFFFF',
-                                          border: '1px solid #DDE3EA',
-                                          borderRadius: '8px',
-                                          padding: '14px 20px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'space-between',
-                                          marginBottom: '10px',
-                                        }}
-                                      >
-                                        {/* Name */}
-                                        <div style={{ flex: 1 }}>
-                                          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '14px', color: '#1C2B3A', textTransform: 'uppercase' }}>
-                                            {ex.exerciseName}
-                                          </div>
-                                          {ex.notes && (
-                                            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '11px', color: '#6B7C93', fontStyle: 'italic', marginTop: '2px' }}>
-                                              {ex.notes}
-                                            </div>
-                                          )}
-                                        </div>
-                                        {/* Sets × Reps */}
-                                        <div style={{ width: '100px', textAlign: 'center', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '13px', color: '#0B4F6C' }}>
-                                          {setsReps}
-                                        </div>
-                                        {/* Frequency */}
-                                        <div style={{ width: '120px', textAlign: 'center' }}>
-                                          {ex.frequency && (
-                                            <span style={{ background: '#F0F4F7', borderRadius: '4px', padding: '4px 10px', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: '11px', color: '#6B7C93' }}>
-                                              {ex.frequency}
-                                            </span>
-                                          )}
-                                        </div>
-                                        {/* Duration */}
-                                        <div style={{ width: '100px', textAlign: 'center' }}>
-                                          {ex.duration && (
-                                            <span style={{ background: '#F0F4F7', borderRadius: '4px', padding: '4px 10px', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: '11px', color: '#6B7C93' }}>
-                                              {ex.duration}
-                                            </span>
-                                          )}
-                                        </div>
+                                      <div style={{
+                                        background: '#E8F4F8',
+                                        borderRadius: '20px',
+                                        padding: '4px 12px',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: '12px',
+                                        fontWeight: '600',
+                                        color: '#0B4F6C'
+                                      }}>
+                                        {text}
                                       </div>
                                     );
-                                  })}
-                                  <button
-                                    onClick={(e) => handlePrintExercisePlan(e, rec)}
-                                    style={{
-                                      width: '100%',
-                                      background: 'transparent',
-                                      border: '1.5px solid #0B4F6C',
-                                      color: '#0B4F6C',
-                                      borderRadius: '6px',
-                                      height: '40px',
-                                      fontFamily: 'Inter, sans-serif',
-                                      fontWeight: 600,
-                                      fontSize: '13px',
-                                      cursor: 'pointer',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      gap: '6px',
-                                      marginTop: '4px',
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.background = '#E8F4F8'}
-                                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                                  >
-                                    ↓ Download Exercise Plan
-                                  </button>
-                                </>
-                              ) : (
-                                <div style={{ border: '1px dashed #DDE3EA', borderRadius: '8px', padding: '20px', textAlign: 'center', color: '#6B7C93', fontSize: '13px' }}>
-                                  No exercises prescribed
-                                </div>
-                              )}
-                            </div>
+                                  })()}
 
-                            {/* Follow-up Goal */}
-                            {showFollowup && rec.followUpRecommendation?.sessionGoal && (
-                              <div className="flex flex-col gap-1">
-                                <span className="text-[19px] text-[#6B7C93] uppercase tracking-[0.06em] mb-1 block" style={{ fontWeight: 700 }}>
-                                  FOLLOW-UP FOCUS & GOAL
-                                </span>
-                                <p className="text-[#1C2B3A] text-[13px] font-normal leading-relaxed">
-                                  {rec.followUpRecommendation.sessionGoal}
-                                </p>
-                              </div>
-                            )}
-                          </div>
+                                  {/* Frequency · Duration */}
+                                  {(() => {
+                                    const hasFreq = ex.frequency && ex.frequency.trim();
+                                    const hasDur = ex.duration && ex.duration.trim();
+                                    if (!hasFreq && !hasDur) return null;
+                                    let text = '';
+                                    if (hasFreq && hasDur) {
+                                      text = `${ex.frequency} · ${ex.duration}`;
+                                    } else if (hasFreq) {
+                                      text = ex.frequency;
+                                    } else {
+                                      text = ex.duration;
+                                    }
+                                    return (
+                                      <span style={{
+                                        fontSize: '11px',
+                                        fontWeight: '400',
+                                        color: '#A8B8C8',
+                                        whiteSpace: 'nowrap'
+                                      }}>
+                                        {text}
+                                      </span>
+                                    );
+                                  })()}
+                                </div>
+                              ))}
+
+                              {/* Download Button */}
+                              <button
+                                onClick={(e) => handlePrintExercisePlan(e, rec)}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.borderColor = '#0B4F6C';
+                                  e.currentTarget.style.color = '#0B4F6C';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.borderColor = '#DDE3EA';
+                                  e.currentTarget.style.color = '#6B7C93';
+                                }}
+                                style={{
+                                  width: '100%',
+                                  height: '36px',
+                                  background: 'transparent',
+                                  border: '1px solid #DDE3EA',
+                                  borderRadius: '6px',
+                                  color: '#6B7C93',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  marginTop: '12px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: '6px',
+                                  transition: '150ms'
+                                }}
+                              >
+                                ↓ Download Exercise Plan
+                              </button>
+                            </div>
+                          )}
                         </div>
+
+                        {/* Follow-Up Recommendation Section */}
+                        {rec.followUpRecommendation?.recommended && (
+                          <div style={{ marginBottom: '28px' }}>
+                            <p style={{
+                              fontSize: '10px',
+                              fontWeight: '600',
+                              color: '#A8B8C8',
+                              letterSpacing: '0.1em',
+                              textTransform: 'uppercase',
+                              marginBottom: '6px'
+                            }}>
+                              Follow-Up Recommendation
+                            </p>
+                            <div style={{
+                              background: '#E8F4F8',
+                              border: '1px solid #C5DDED',
+                              borderRadius: '8px',
+                              padding: '16px 20px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '16px'
+                            }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: '600', fontSize: '13px', color: '#0B4F6C' }}>
+                                  Recommended on {formatMetadataDate(rec.followUpRecommendation.suggestedDate)}
+                                </span>
+                                {rec.followUpRecommendation.sessionGoal && (
+                                  <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: '400', fontSize: '12px', color: '#3D5166' }}>
+                                    {rec.followUpRecommendation.sessionGoal}
+                                  </span>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => navigate(`/doctors/${rec.doctor?._id || rec.doctor}#book`)}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#083A52'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = '#0B4F6C'}
+                                style={{
+                                  background: '#0B4F6C',
+                                  color: 'white',
+                                  borderRadius: '6px',
+                                  height: '36px',
+                                  padding: '0 20px',
+                                  border: 'none',
+                                  fontFamily: 'Inter, sans-serif',
+                                  fontWeight: '600',
+                                  fontSize: '13px',
+                                  cursor: 'pointer',
+                                  whiteSpace: 'nowrap',
+                                  transition: '150ms'
+                                }}
+                              >
+                                BOOK NOW →
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Footer */}
-                        <div style={{ borderTop: '1px solid #EEF2F6', padding: '12px 24px', textAlign: 'center', fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: '11px', color: '#A8B8C8' }}>
-                          Signed by {getDoctorNameDisplay(rec.doctor)}
-                          {' · '}
-                          {(() => {
-                            const lastEdit = rec.editHistory?.length > 0 ? rec.editHistory[rec.editHistory.length - 1] : null;
-                            const signedFormatted = rec.doctorSignedAt
-                              ? `${formatMetadataDate(rec.doctorSignedAt)} at ${formatMetadataTime(rec.doctorSignedAt)}`
-                              : '—';
-                            const editFormatted = lastEdit
-                              ? `Last edited: ${formatMetadataDate(lastEdit.editedAt)} at ${formatMetadataTime(lastEdit.editedAt)}`
-                              : null;
-                            return editFormatted
-                              ? <span title={editFormatted}>{signedFormatted}</span>
-                              : <span>{signedFormatted}</span>;
-                          })()}
-                        </div>
+                        {(() => {
+                          const doctorName = getDoctorNameDisplay(rec.doctor).replace(/^Dr\.\s+/i, '');
+                          const formattedSignedDate = rec.doctorSignedAt
+                            ? `${formatMetadataDate(rec.doctorSignedAt)} at ${formatMetadataTime(rec.doctorSignedAt)}`
+                            : '—';
+                          const lastEdit = rec.editHistory?.length > 0 ? rec.editHistory[rec.editHistory.length - 1] : null;
+                          const formattedLastEditedDate = lastEdit
+                            ? `${formatMetadataDate(lastEdit.editedAt)} at ${formatMetadataTime(lastEdit.editedAt)}`
+                            : null;
 
-                        {/* Collapse trigger */}
-                        <div className="flex justify-end px-6 pb-4 bg-white select-none">
+                          return (
+                            <div style={{
+                              borderTop: '1px solid #F0F4F7',
+                              paddingTop: '12px',
+                              marginTop: '8px',
+                              textAlign: 'center'
+                            }}>
+                              <span
+                                title={formattedLastEditedDate ? `Last edited: ${formattedLastEditedDate}` : undefined}
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: '400',
+                                  color: '#C5CDD5',
+                                  cursor: 'default'
+                                }}
+                              >
+                                Signed by Dr. {doctorName} · {formattedSignedDate}
+                              </span>
+                            </div>
+                          );
+                        })()}
+
+                        {/* Collapse Button */}
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          paddingTop: '8px'
+                        }}>
                           <button
                             onClick={() => toggleExpand(rec._id)}
-                            className="inline-flex items-center gap-1 text-[12px] text-[#6B7C93] hover:text-accent bg-transparent border-0 cursor-pointer select-none font-bold uppercase tracking-wider"
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#A8B8C8',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              letterSpacing: '0.04em'
+                            }}
                           >
-                            <span>COLLAPSE ↑</span>
+                            COLLAPSE ↑
                           </button>
                         </div>
 
