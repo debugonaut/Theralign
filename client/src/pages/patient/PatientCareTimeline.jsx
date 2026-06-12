@@ -306,11 +306,14 @@ export default function PatientCareTimeline() {
   return (
     <div className="flex flex-col gap-5 select-none text-left bg-[#F7F9FB] min-h-[90vh] pb-24">
       {/* Page Title Area */}
-      <div className="mb-6">
-        <h1 className="text-[22px] text-[#1C2B3A] leading-tight font-bold" style={{ fontWeight: 700 }}>Care History</h1>
-        <p className="text-[13px] text-[#6B7C93] mt-1 font-normal">Your complete treatment journey across all physiotherapists.</p>
-        <div className="h-[1.5px] bg-neutral-200 mt-6" />
-      </div>
+      <SectionHeader
+        title="CARE HISTORY"
+        subtitle="Your complete treatment journey across all physiotherapists."
+        size="lg"
+        ruled={true}
+        className="mb-6"
+      />
+
 
       {/* Loading state */}
       {loading && records.length === 0 ? (

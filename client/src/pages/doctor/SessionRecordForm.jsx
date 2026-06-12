@@ -570,11 +570,14 @@ export default function SessionRecordForm() {
     <div className="max-w-[1200px] mx-auto py-8 px-10 text-left select-none bg-[#F7F9FB] min-h-[90vh] pb-8">
       
       {/* Page Title Area */}
-      <div className="mb-6">
-        <h1 className="text-[22px] font-bold text-neutral-900 leading-tight">Session Notes</h1>
-        <p className="text-[13px] font-regular text-neutral-500 mt-1">Document treatment details for this appointment</p>
-        <div className="h-[1.5px] bg-neutral-200 mt-6" />
-      </div>
+      <SectionHeader
+        title="SESSION RECORD"
+        subtitle="Document treatment details for this appointment"
+        size="lg"
+        ruled={true}
+        className="mb-6"
+      />
+
 
       {/* Context Bar */}
       <div className="bg-white rounded-xl shadow-level-1 p-4 px-6 mb-6 flex items-center justify-between select-none">
