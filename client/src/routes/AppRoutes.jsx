@@ -37,6 +37,7 @@ const BookingSuccessPage = lazy(() => import('../pages/patient/BookingSuccessPag
 const PatientPayments = lazy(() => import('../pages/patient/PatientPayments'));
 const PatientProfile = lazy(() => import('../pages/patient/PatientProfile'));
 const PatientMyReviews = lazy(() => import('../pages/patient/MyReviews'));
+const PatientCareTimeline = lazy(() => import('../pages/patient/PatientCareTimeline'));
 
 // Doctor Pages (Lazy Loaded)
 const DoctorDashboard = lazy(() => import('../pages/doctor/DoctorDashboard'));
@@ -45,6 +46,7 @@ const DoctorAvailability = lazy(() => import('../pages/doctor/DoctorAvailability
 const DoctorProfileEditor = lazy(() => import('../pages/doctor/DoctorProfileEditor'));
 const DoctorEarnings = lazy(() => import('../pages/doctor/DoctorEarnings'));
 const DoctorMyReviews = lazy(() => import('../pages/doctor/MyReviews'));
+const SessionRecordForm = lazy(() => import('../pages/doctor/SessionRecordForm'));
 
 // Admin Pages (Lazy Loaded)
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -121,6 +123,7 @@ const AppRoutes = () => {
           <Route path="/patient/payments" element={<PatientPayments />} />
           <Route path="/patient/profile" element={<PatientProfile />} />
           <Route path="/patient/reviews" element={<PatientMyReviews />} />
+          <Route path="/patient/care-timeline" element={<PatientCareTimeline />} />
         </Route>
 
         {/* Lightweight Mobile-First Patient detail route (hides the dashboard sidebar layout shell) */}
@@ -163,6 +166,7 @@ const AppRoutes = () => {
           <Route path="/doctor/profile" element={<DoctorProfileEditor />} />
           <Route path="/doctor/earnings" element={<DoctorEarnings />} />
           <Route path="/doctor/reviews" element={<DoctorMyReviews />} />
+          <Route path="/doctor/appointments/:appointmentId/session-record" element={<SessionRecordForm />} />
         </Route>
 
         {/* ─── Admin Routes ───────────────────────────────────────────────── */}

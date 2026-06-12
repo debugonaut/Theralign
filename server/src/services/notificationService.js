@@ -12,6 +12,7 @@ export const createNotification = async ({
   message,
   link = null,
   relatedId = null,
+  relatedDoctor = null,
 }) => {
   try {
     await Notification.create({
@@ -21,6 +22,7 @@ export const createNotification = async ({
       message,
       link,
       relatedId,
+      relatedDoctor,
     });
   } catch (err) {
     logger.error(`[ERROR] Notification creation failure: ${err.message}`);

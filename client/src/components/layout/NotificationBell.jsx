@@ -42,6 +42,9 @@ const CATEGORY_MAP = {
   REFUND_APPROVED: 'REFUND APPROVED',
   REFUND_REJECTED: 'REFUND REVIEWED',
   DOCTOR_CANCELLED: 'APPOINTMENT CANCELLED',
+  // Phase 15 — Session Records
+  session_record_available: 'SESSION NOTES READY',
+  follow_up_recommended: 'FOLLOW-UP RECOMMENDED',
 };
 
 const NotificationBell = () => {

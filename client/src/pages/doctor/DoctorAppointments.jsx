@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AlertTriangle, X, Check, FileText } from 'lucide-react';
 import { getDoctorAppointments, cancelAppointment, completeAppointment } from '../../api/appointment.api';
@@ -12,6 +13,7 @@ import DoctorCancellationModal from '../../components/appointments/DoctorCancell
 import AppointmentMediaViewer from '../../components/appointments/AppointmentMediaViewer.jsx';
 
 const DoctorAppointments = () => {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ALL');
@@ -415,13 +417,13 @@ const DoctorAppointments = () => {
                         )}
 
                         {isCompleted && (
-                          appt.sessionDocument?.url ? (
-                            <ActionLink onClick={(e) => handleActionLinkClick(e, appt._id, 'view')}>
+                          appt.hasSessionRecord ? (
+                            <ActionLink onClick={(e) => { e.stopPropagation(); navigate(`/doctor/appointments/${appt._id}/session-record`); }}>
                               VIEW NOTES →
                             </ActionLink>
                           ) : (
-                            <ActionLink onClick={(e) => handleActionLinkClick(e, appt._id, 'upload')}>
-                              UPLOAD NOTES →
+                            <ActionLink onClick={(e) => { e.stopPropagation(); navigate(`/doctor/appointments/${appt._id}/session-record`); }}>
+                              ADD SESSION NOTES →
                             </ActionLink>
                           )
                         )}

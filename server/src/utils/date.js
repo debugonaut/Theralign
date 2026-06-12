@@ -23,3 +23,17 @@ export const formatDateKolkata = (date) => {
   
   return `${year}-${month}-${day}`;
 };
+
+/**
+ * Converts a YYYY-MM-DD date string to DD/MM/YYYY display format.
+ * Used for all user-facing date strings — ADR-005.
+ *
+ * @param {string} dateStr — YYYY-MM-DD
+ * @returns {string} DD/MM/YYYY
+ */
+export const formatDisplayDate = (dateStr) => {
+  if (!dateStr || typeof dateStr !== 'string') return '';
+  const [year, month, day] = dateStr.split('-');
+  if (!year || !month || !day) return dateStr;
+  return `${day}/${month}/${year}`;
+};

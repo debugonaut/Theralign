@@ -333,8 +333,9 @@ if (expectedSignature !== receivedSignature) {
 | 11. Patient Experience | ✅ Complete | — | UX enhancements |
 | 12. Accessibility | ✅ Complete | — | WCAG compliance |
 | 13. Refunds & Cancellation | ✅ Complete | 8 | Patient/Doctor/Admin cancel, Refund approval |
+| 14. Session Records & Care Continuity | ✅ Complete | 6 | Session Record CRUD, Timeline query, Admin archive, Notifications |
 
-**Next Phase:** Phase 14 — Care Continuity (Session Records, Exercise Tracking)
+**Next Phase:** Phase 15 — Patient Compliance Tracking (Exercise Compliance)
 
 ---
 

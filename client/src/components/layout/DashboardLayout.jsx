@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Menu, X, LogOut, LayoutDashboard, Calendar, Search, 
-  CreditCard, Star, Clock, DollarSign, User 
+  CreditCard, Star, Clock, DollarSign, User, ClipboardList
 } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import toast from 'react-hot-toast';
@@ -70,6 +70,7 @@ const DashboardLayout = () => {
   const patientNavigation = [
     { name: 'Dashboard', href: '/patient/dashboard', icon: LayoutDashboard },
     { name: 'My Appointments', href: '/patient/appointments', icon: Calendar },
+    { name: 'Care History', href: '/patient/care-timeline', icon: ClipboardList },
     { name: 'Find Doctors', href: '/doctors', icon: Search },
     { name: 'Payment History', href: '/patient/payments', icon: CreditCard },
     { name: 'My Profile', href: '/patient/profile', icon: User },

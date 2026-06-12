@@ -38,3 +38,9 @@ export const GEOSPATIAL = {
   MAX_DISTANCE_METERS: 50000,      // 50km default search radius
   DEFAULT_DISTANCE_METERS: 10000   // 10km if user doesn't specify
 };
+
+// Phase 15 — Session Records notification types
+export const NOTIFICATION_TYPES = {
+  SESSION_RECORD_AVAILABLE: 'session_record_available',
+  FOLLOW_UP_RECOMMENDED:    'follow_up_recommended',
+};

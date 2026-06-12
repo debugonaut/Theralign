@@ -17,6 +17,9 @@ const notificationSchema = new mongoose.Schema(
         'verification_approved',
         'verification_rejected',
         'document_uploaded',
+        // Phase 15 — Session Records
+        'session_record_available',
+        'follow_up_recommended',
       ],
       required: [true, 'Notification type is required'],
     },
@@ -40,6 +43,13 @@ const notificationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       default: null 
     }, // Can point to appointmentId, reviewId, etc.
+    // Phase 15: Links FOLLOW_UP_RECOMMENDED notifications to a DoctorProfile
+    // so the frontend can deep-link to /doctors/{id}#book
+    relatedDoctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'DoctorProfile',
+      default: null
+    },
   },
   { timestamps: true }
 );

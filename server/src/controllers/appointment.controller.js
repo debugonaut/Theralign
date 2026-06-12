@@ -7,6 +7,7 @@ import AvailabilitySlot from '../models/AvailabilitySlot.model.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
 import WeeklySchedule from '../models/WeeklySchedule.model.js';
 import Payment from '../models/Payment.model.js';
+import SessionRecord from '../models/SessionRecord.model.js';
 import { sendBookingConfirmation, sendCancellationNotice } from '../services/emailService.js';
 import { createNotification } from '../services/notificationService.js';
 import { DOCTOR_STATUS } from '../utils/constants.js';
@@ -210,7 +211,33 @@ export const getMyAppointments = asyncHandler(async (req, res) => {
     .populate('slot', 'date startTime endTime')
     .sort({ date: -1, startTime: -1 });
 
-  return successResponse(res, 200, 'Your appointments retrieved successfully', appointments);
+  // Batch-fetch session records for all completed appointments (single DB query)
+  // Patient sees a shared, non-archived record summary for care continuity
+  const completedIds = appointments
+    .filter((a) => a.status === 'completed')
+    .map((a) => a._id);
+
+  let sessionRecordMap = {};
+  if (completedIds.length > 0) {
+    const records = await SessionRecord.find({
+      appointment: { $in: completedIds },
+      isSharedWithPatient: true,
+      isArchived: { $ne: true },
+    }).select(
+      'appointment progressRating followUpRecommendation exercisePrescription isSharedWithPatient createdAt'
+    );
+    records.forEach((r) => {
+      sessionRecordMap[r.appointment.toString()] = r;
+    });
+  }
+
+  const enrichedAppointments = appointments.map((appt) => {
+    const apptObj = appt.toObject();
+    apptObj.sessionRecord = sessionRecordMap[appt._id.toString()] || null;
+    return apptObj;
+  });
+
+  return successResponse(res, 200, 'Your appointments retrieved successfully', enrichedAppointments);
 });
 
 /**
@@ -230,12 +257,26 @@ export const getDoctorAppointments = asyncHandler(async (req, res) => {
     .populate('patient', 'name email phone profileImage')
     .sort({ date: 1, startTime: 1 });
 
-  // Step 3: Fetch corresponding payments to attach status details
+  // Fetch corresponding payments and session records in parallel
   const appointmentIds = appointments.map((a) => a._id);
-  const payments = await Payment.find({ appointment: { $in: appointmentIds } });
+  const completedIds = appointments.filter((a) => a.status === 'completed').map((a) => a._id);
+
+  const [payments, sessionRecords] = await Promise.all([
+    Payment.find({ appointment: { $in: appointmentIds } }),
+    SessionRecord.find({
+      appointment: { $in: completedIds },
+      isArchived: { $ne: true },
+    }).select('appointment'),
+  ]);
+
   const paymentMap = {};
   payments.forEach((p) => {
     paymentMap[p.appointment.toString()] = p;
+  });
+
+  const sessionRecordMap = {};
+  sessionRecords.forEach((sr) => {
+    sessionRecordMap[sr.appointment.toString()] = true;
   });
 
   // Format patient name to protect privacy (e.g. "Jane S.")
@@ -262,6 +303,9 @@ export const getDoctorAppointments = asyncHandler(async (req, res) => {
       refundAmount: payment.refundAmount,
       amount: payment.amount,
     } : null;
+
+    // Attach session record existence flag
+    apptObj.hasSessionRecord = !!sessionRecordMap[appt._id.toString()];
 
     return apptObj;
   });

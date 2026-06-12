@@ -27,6 +27,7 @@ import appointmentMediaRoutes from './src/routes/appointmentMedia.routes.js';
 import notificationRoutes from './src/routes/notification.routes.js';
 import searchRoutes from './src/routes/search.routes.js';
 import patientProfileRoutes from './src/routes/patientProfile.routes.js';
+import sessionRecordRoutes from './src/routes/sessionRecord.routes.js';
 
 const app = express();
 
@@ -237,6 +238,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/patients/profile', patientProfileRoutes);
+app.use('/api/session-records', sessionRecordRoutes);
 
 // ==========================================
 // 5. FALLBACK & ERROR HANDLERS

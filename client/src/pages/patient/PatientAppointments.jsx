@@ -345,25 +345,36 @@ const PatientAppointments = () => {
                               </div>
                             </div>
 
-                            {/* Session Document Attachment F3 */}
-                            {appt.sessionDocument?.url && (
+                            {/* Session Record — Phase 15 */}
+                            {appt.status === 'completed' && (
                               <div className="pt-4 border-t border-neutral-200 flex items-center justify-between">
-                                <div>
-                                  <span className="text-[10px] font-black text-success uppercase tracking-widest block">
-                                    CLINICAL DOCUMENTS ATTACHED
-                                  </span>
-                                  <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
-                                    Your physiotherapist has uploaded session recovery logs.
-                                  </span>
-                                </div>
-                                <a
-                                  href={appt.sessionDocument.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="h-10 px-4 border-2 border-success text-success bg-white hover:bg-success hover:text-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-none"
-                                >
-                                  DOWNLOAD NOTES →
-                                </a>
+                                {appt.sessionRecord ? (
+                                  <>
+                                    <div>
+                                      <span className="text-[10px] font-black text-success uppercase tracking-widest block">
+                                        CLINICAL SESSION NOTES AVAILABLE
+                                      </span>
+                                      <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider block mt-0.5">
+                                        Your physiotherapist has recorded your session notes and exercise plan.
+                                      </span>
+                                    </div>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); navigate(`/patient/care-timeline`); }}
+                                      className="h-10 px-4 border-2 border-success text-success bg-white hover:bg-success hover:text-white font-black text-ui-xs flex items-center uppercase tracking-widest transition-colors select-none rounded-md whitespace-nowrap cursor-pointer"
+                                    >
+                                      VIEW NOTES →
+                                    </button>
+                                  </>
+                                ) : (
+                                  <div>
+                                    <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest block">
+                                      SESSION NOTES PENDING
+                                    </span>
+                                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block mt-0.5">
+                                      Awaiting your physiotherapist's session notes.
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             )}
 
