@@ -940,15 +940,22 @@ router.post('/book', validate(schema), controller);
 | 12 | Accessibility | ✅ | Phase 12 | — (WCAG compliance) |
 | 13 | Refunds & Cancellation | ✅ | Phase 13 | 8 (cancel-patient, cancel-doctor, refund) |
 | 14 | Pre-Appointment Media | ✅ | Phase 14 | 4 (upload, retrieve, delete, count) |
-| **15** | **Session Records** | 📋 | **Planned** | **5** |
+| 15 | Session Records | ✅ | 2026-06-13 | 5 (create, get, edit, history, timeline) |
 
-**Total Completed:** 14 phases, 60+ endpoints, 40+ components, 12 models
+**Total Completed:** 15 phases, 65+ endpoints, 44+ components, 13 models
 
 ---
 
 # CURRENT STATE & RECENT CHANGES
 
-## Latest Updates (As of 2026-06-11)
+## Latest Updates (As of 2026-06-13)
+
+### Phase 15 Completion (Session Records & Care Continuity)
+- ✅ SessionRecord model linking Appointments to treatment summaries
+- ✅ 5 new API endpoints to create, view, edit (within 24h) session records
+- ✅ SessionRecordForm component for doctors
+- ✅ PatientCareTimeline component for patients to view historical care
+- ✅ Visual Humanization pass on exercise library components and video modal (rounded containers, tracking normal for mixed-case, elevated layout contrast)
 
 ### Phase 14 Completion (Pre-Appointment Media Upload)
 - ✅ AppointmentMedia model with `uploadedBy` field
@@ -979,22 +986,26 @@ router.post('/book', validate(schema), controller);
 ## Git Commit History (Recent)
 
 ```
+2026-06-13 — Phase 15 Redesign (Complete): Full visual redesign of ExerciseLibraryModal + ExerciseVideoModal
+             Root typography fix: index.css was overriding Inter with system-ui — removed completely.
+             tailwind.config.js: Added semibold: '600' to fontWeight scale (font-semibold now works).
+             Both modals: dark navy overlay (rgba(15,23,42,0.6)), FAFBFC header band, EEF2F6 borders,
+             correct Level-3 shadow, Inter applied via inline styles for cascade safety.
+             Category sidebar: 28px icons, Title Case labels, 3px category-color left border active state.
+             Exercise cards: 12px radius (rounded-xl), Level-1 shadow, no border, proper badge casing.
+             Prescription panel: F7F9FB background, white item cards, disabled Done button when empty.
+2026-06-13 — visual humanization updates for exercise layouts and typography tracking
+2026-06-13 — Phase 15 Complete: Session Records & Care Continuity
 2026-06-11 — Bug Fix: Doctor's profile photo on his profile has increased length and width
 2026-06-11 — Feature: Add doctor profile image on detail page
 2026-06-11 — Revert: Rollback typography redesign
-2026-06-11 — Feature: Profile Image Sync & rendering across roles
-2026-06-11 — Feature: Two-Step Booking + Media Upload + Authorization Fix
-2026-06-10 — Phase 13 Complete: Refund System & Cancellation Workflow
-2026-06-08 — Phase 13 Feature: Patient Cancellation Request Flow
-2026-06-07 — Bug Fix: Slot Availability Query (exclude booked)
-2026-06-05 — Patch: Email Template Update (formatting)
 ```
 
 ---
 
 # FUTURE ROADMAP (PHASE 15+)
 
-## Phase 15: Session Records & Care Continuity
+## Phase 15: Session Records & Care Continuity (Complete)
 
 **Overview:** After a doctor marks an appointment complete, they create a structured session record documenting treatment provided, patient progress, exercise prescriptions, and follow-up recommendations. Patients can view and track their care history across all doctors.
 

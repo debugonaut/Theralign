@@ -9,12 +9,12 @@ import { getCategoryIcon } from './ExerciseCategoryIcons';
 import { getPositionFigure } from './PositionFigures';
 
 const FREQUENCY_OPTIONS = [
-  'once daily',
-  'twice daily',
-  'three times daily',
-  'every other day',
+  'Once daily',
+  'Twice daily',
+  'Three times daily',
+  'Every other day',
   '3× per week',
-  'as tolerated',
+  'As tolerated',
 ];
 
 const DURATION_OPTIONS = [
@@ -30,12 +30,12 @@ const DURATION_OPTIONS = [
 ];
 
 const DIFFICULTY_STYLES = {
-  beginner: 'bg-success/10 text-success',
-  intermediate: 'bg-warning/10 text-warning',
-  advanced: 'bg-danger/10 text-danger',
+  beginner:     'bg-[#E8F8F5] text-[#0A7E6E]',
+  intermediate: 'bg-[#FEF3E2] text-[#B45309]',
+  advanced:     'bg-[#FDF2F2] text-[#C0392B]',
 };
 
-const formatPrescription = (ex) => {
+const formatDefaultPrescription = (ex) => {
   const parts = [];
   if (ex.sets) parts.push(`${ex.sets} × ${ex.reps || ex.duration || '—'}`);
   else if (ex.duration) parts.push(ex.duration);
@@ -48,7 +48,7 @@ const toPrescriptionItem = (exercise) => ({
   sets: exercise.defaultSets ?? null,
   reps: exercise.defaultReps ?? null,
   duration: exercise.defaultDuration ?? null,
-  frequency: exercise.defaultFrequency ?? 'once daily',
+  frequency: exercise.defaultFrequency ?? 'Once daily',
   notes: null,
   targetArea: exercise.targetArea,
   categoryColor: exercise.categoryColor,
@@ -56,6 +56,9 @@ const toPrescriptionItem = (exercise) => ({
   difficulty: exercise.difficulty,
   equipment: exercise.equipment,
 });
+
+const capitalize = (str) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
 const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDone }) => {
   const [activeCategoryId, setActiveCategoryId] = useState(EXERCISE_CATEGORIES[0]?.id || 'spine');
@@ -71,7 +74,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           sets: ex.sets ?? null,
           reps: ex.reps ?? null,
           duration: ex.duration ?? null,
-          frequency: ex.frequency || 'once daily',
+          frequency: ex.frequency || 'Once daily',
         }))
       );
       setSearchQuery('');
@@ -135,6 +138,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
 
   if (!isOpen) return null;
 
+  // ─── Exercise Card ────────────────────────────────────────────────────────
   const renderExerciseCard = (exercise) => {
     const PositionFigure = getPositionFigure(exercise.position);
     const color = exercise.categoryColor || activeCategory?.color || '#0B4F6C';
@@ -144,145 +148,353 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
     return (
       <div
         key={exercise.id}
-        className="flex flex-col bg-white rounded-lg overflow-hidden shadow-level-1 hover:shadow-level-2 hover:bg-primary-light/30 transition-all duration-150"
-        style={{ minHeight: '200px' }}
+        className="flex flex-col bg-white rounded-xl overflow-hidden transition-all duration-200"
+        style={{
+          minHeight: '196px',
+          boxShadow: '0px 1px 3px rgba(11, 79, 108, 0.06), 0px 1px 2px rgba(11, 79, 108, 0.04)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow =
+            '0px 4px 16px rgba(11, 79, 108, 0.10), 0px 2px 6px rgba(11, 79, 108, 0.07)';
+          e.currentTarget.style.transform = 'translateY(-2px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow =
+            '0px 1px 3px rgba(11, 79, 108, 0.06), 0px 1px 2px rgba(11, 79, 108, 0.04)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
       >
-        <div className="h-[110px] bg-[#F8F8F6] flex items-center justify-center">
-          <PositionFigure size={80} color={`${color}B3`} />
+        {/* Figure zone */}
+        <div
+          className="h-[104px] flex items-center justify-center shrink-0"
+          style={{ backgroundColor: '#F8F8F6' }}
+        >
+          <PositionFigure size={76} color={`${color}B3`} />
         </div>
+
+        {/* Content zone */}
         <div className="flex-1 p-3 flex flex-col gap-1 relative">
+          {/* Category label shown only in search results */}
           {searchResults && (
-            <span className="text-[11px] font-semibold text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-sm self-start tracking-normal">
+            <span
+              className="self-start px-2 py-0.5 rounded-sm"
+              style={{
+                fontSize: '10px',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                backgroundColor: `${color}18`,
+                color: color,
+              }}
+            >
               {exercise.categoryLabel}
             </span>
           )}
-          <p className="text-ui-sm font-semibold text-neutral-900 truncate tracking-normal">{exercise.name}</p>
-          <p className="text-ui-xs text-neutral-500 truncate tracking-normal">{exercise.targetArea}</p>
+
+          {/* Exercise name */}
+          <p
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '14px',
+              fontWeight: 600,
+              lineHeight: '20px',
+              color: '#1C2B3A',
+            }}
+            className="truncate"
+          >
+            {exercise.name}
+          </p>
+
+          {/* Target area */}
+          <p
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '12px',
+              fontWeight: 400,
+              color: '#6B7C93',
+            }}
+            className="truncate"
+          >
+            {exercise.targetArea}
+          </p>
+
+          {/* Difficulty + equipment badges */}
           <div className="flex flex-wrap gap-1 mt-1">
-            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm tracking-normal ${DIFFICULTY_STYLES[exercise.difficulty] || DIFFICULTY_STYLES.beginner}`}>
-              {exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
+            <span
+              className={`px-2 py-0.5 rounded-sm ${DIFFICULTY_STYLES[exercise.difficulty] || DIFFICULTY_STYLES.beginner}`}
+              style={{
+                fontSize: '10px',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+              }}
+            >
+              {exercise.difficulty}
             </span>
             {exercise.equipment && exercise.equipment !== 'none' && (
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-sm bg-neutral-100 text-neutral-500 tracking-normal">
-                {exercise.equipment.charAt(0).toUpperCase() + exercise.equipment.slice(1)}
+              <span
+                className="px-2 py-0.5 rounded-sm bg-[#F0F4F7] text-[#6B7C93]"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {exercise.equipment}
               </span>
             )}
           </div>
-          <p className="text-ui-xs text-neutral-500 mt-auto tracking-normal">
-            {formatPrescription({
+
+          {/* Default prescription summary */}
+          <p
+            className="mt-auto"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '12px',
+              fontWeight: 400,
+              color: '#6B7C93',
+            }}
+          >
+            {formatDefaultPrescription({
               sets: exercise.defaultSets,
               reps: exercise.defaultReps,
               duration: exercise.defaultDuration,
             })}
             {exercise.defaultFrequency ? ` · ${exercise.defaultFrequency}` : ''}
           </p>
+
+          {/* Add / Added button */}
           <button
             type="button"
             onClick={() => handleAddExercise(exercise)}
             disabled={isAdded}
-            className="absolute bottom-3 right-3 w-6 h-6 rounded-full border-2 border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors disabled:opacity-60"
+            className="absolute bottom-3 right-3 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150"
+            style={{
+              border: `2px solid ${isAdded || isFlashing ? '#0B4F6C' : '#0B4F6C'}`,
+              backgroundColor: isAdded || isFlashing ? '#0B4F6C' : 'transparent',
+              color: isAdded || isFlashing ? '#FFFFFF' : '#0B4F6C',
+              opacity: isAdded ? 0.65 : 1,
+              cursor: isAdded ? 'default' : 'pointer',
+            }}
             aria-label={`Add ${exercise.name}`}
           >
-            {isFlashing || isAdded ? <Check size={14} /> : <Plus size={14} />}
+            {isFlashing || isAdded ? <Check size={13} /> : <Plus size={13} />}
           </button>
         </div>
       </div>
     );
   };
 
+  // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div
       className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-6"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+      style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose?.(); }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="exercise-library-title"
     >
+      {/* Modal container */}
       <div
-        className="bg-white flex flex-col w-full h-full sm:h-[620px] sm:max-h-[90vh] rounded-none sm:rounded-xl shadow-level-3 overflow-hidden"
-        style={{ maxWidth: '880px' }}
+        className="bg-white flex flex-col w-full h-full sm:h-[620px] sm:max-h-[90vh] rounded-none sm:rounded-xl overflow-hidden"
+        style={{
+          maxWidth: '880px',
+          boxShadow: '0px 20px 60px rgba(11, 79, 108, 0.18), 0px 8px 24px rgba(11, 79, 108, 0.12)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="shrink-0 px-6 py-4 border-b border-neutral-200">
+        {/* ── Modal Header ─────────────────────────────────────────────── */}
+        <div
+          className="shrink-0 px-6 py-4 border-b"
+          style={{ backgroundColor: '#FAFBFC', borderBottomColor: '#EEF2F6' }}
+        >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 id="exercise-library-title" className="text-ui-lg font-semibold text-neutral-900">
+              <h2
+                id="exercise-library-title"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '18px',
+                  fontWeight: 700,
+                  lineHeight: '28px',
+                  color: '#1C2B3A',
+                }}
+              >
                 Exercise Library
               </h2>
-              <p className="text-ui-sm text-neutral-500 mt-1">
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  color: '#6B7C93',
+                  marginTop: '2px',
+                }}
+              >
                 Find and prescribe the right exercises for your patient
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="text-neutral-500 hover:text-danger p-1"
+              className="shrink-0 p-1 rounded-md transition-colors duration-150"
+              style={{ color: '#6B7C93' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#C0392B'; e.currentTarget.style.backgroundColor = '#FDF2F2'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = '#6B7C93'; e.currentTarget.style.backgroundColor = 'transparent'; }}
               aria-label="Close exercise library"
             >
               <X size={20} />
             </button>
           </div>
-          <div className="relative mt-4">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+
+          {/* Search input */}
+          <div className="relative mt-3">
+            <Search
+              size={15}
+              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ color: '#6B7C93' }}
+            />
             <input
               type="text"
+              id="exercise-library-search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search exercises by name, tag, or target area..."
-              className="w-full h-10 pl-9 pr-3 border-2 border-neutral-200 rounded-md text-ui-sm focus:border-primary focus:ring-2 focus:ring-primary/12 focus:outline-none transition-all duration-150"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '14px',
+                fontWeight: 400,
+                color: '#1C2B3A',
+                border: '1.5px solid #DDE3EA',
+                borderRadius: '6px',
+                height: '40px',
+                paddingLeft: '36px',
+                paddingRight: '12px',
+                width: '100%',
+                backgroundColor: '#FFFFFF',
+                outline: 'none',
+                transition: 'border-color 150ms, box-shadow 150ms',
+                boxSizing: 'border-box',
+              }}
+              onFocus={(e) => {
+                e.target.style.border = '2px solid #0B4F6C';
+                e.target.style.boxShadow = '0 0 0 3px rgba(11, 79, 108, 0.12)';
+              }}
+              onBlur={(e) => {
+                e.target.style.border = '1.5px solid #DDE3EA';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
         </div>
 
-        {/* Three-panel body */}
+        {/* ── Three-panel body ─────────────────────────────────────────── */}
         <div className="flex flex-1 min-h-0">
-          {/* Category panel */}
+
+          {/* ── Category Sidebar ─────────────────────────────────────── */}
           <div
-            className={`hidden sm:flex flex-col w-[180px] shrink-0 border-r border-neutral-200 overflow-y-auto p-3 gap-1 ${searchQuery ? 'opacity-60' : ''}`}
+            className={`hidden sm:flex flex-col w-[180px] shrink-0 overflow-y-auto p-3 gap-0.5 border-r`}
+            style={{
+              borderRightColor: '#EEF2F6',
+              opacity: searchQuery ? 0.55 : 1,
+              transition: 'opacity 150ms',
+            }}
           >
             {EXERCISE_CATEGORIES.map((cat) => {
               const Icon = getCategoryIcon(cat.icon);
               const count = cat.subcategories.reduce((sum, sub) => sum + sub.exercises.length, 0);
               const isActive = activeCategoryId === cat.id;
+
               return (
                 <button
                   key={cat.id}
                   type="button"
                   onClick={() => setActiveCategoryId(cat.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors ${
-                    isActive
-                      ? 'text-neutral-900 font-semibold'
-                      : 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900'
-                  }`}
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-all duration-150 w-full"
                   style={{
-                    borderLeft: isActive ? `3px solid ${cat.color}` : '3px solid transparent',
+                    borderLeft: `3px solid ${isActive ? cat.color : 'transparent'}`,
                     backgroundColor: isActive ? `${cat.color}14` : 'transparent',
                   }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = '#F0F4F7';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
+                  }}
                 >
-                  <Icon size={32} color={cat.color} />
+                  <Icon size={28} color={isActive ? cat.color : '#6B7C93'} />
                   <div className="min-w-0">
-                    <p className="text-ui-sm font-semibold text-neutral-900 truncate tracking-normal">{cat.label}</p>
-                    <p className="text-[10px] text-neutral-500 tracking-normal">{count} exercises</p>
+                    <p
+                      className="truncate"
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '13px',
+                        fontWeight: isActive ? 600 : 500,
+                        color: isActive ? '#1C2B3A' : '#6B7C93',
+                        lineHeight: '18px',
+                      }}
+                    >
+                      {cat.label}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '11px',
+                        fontWeight: 400,
+                        color: '#A8B8C8',
+                        lineHeight: '16px',
+                      }}
+                    >
+                      {count} exercises
+                    </p>
                   </div>
                 </button>
               );
             })}
           </div>
 
-          {/* Exercise grid */}
-          <div className="flex-1 overflow-y-auto p-4 min-w-0 bg-neutral-50">
+          {/* ── Exercise Grid ─────────────────────────────────────────── */}
+          <div
+            className="flex-1 overflow-y-auto p-4 min-w-0"
+            style={{ backgroundColor: '#F7F9FB' }}
+          >
             {searchResults ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {searchResults.map(renderExerciseCard)}
-              </div>
+              searchResults.length === 0 ? (
+                <div
+                  className="flex flex-col items-center justify-center h-full text-center py-12"
+                  style={{ color: '#6B7C93' }}
+                >
+                  <Search size={32} style={{ color: '#DDE3EA', marginBottom: '12px' }} />
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '15px', fontWeight: 600, color: '#1C2B3A' }}>
+                    No exercises found
+                  </p>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', fontWeight: 400, color: '#6B7C93', marginTop: '4px' }}>
+                    Try a different name, tag, or target area
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {searchResults.map(renderExerciseCard)}
+                </div>
+              )
             ) : (
               activeCategory?.subcategories.map((sub) => (
                 <div key={sub.id} className="mb-6">
                   <h3
-                    id={`sub-${sub.id}`}
-                    className="sticky top-0 z-10 bg-neutral-50 text-[12px] font-semibold text-neutral-700 py-2 mb-3 tracking-normal"
+                    className="sticky top-0 z-10 py-2 mb-3"
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      color: '#6B7C93',
+                      backgroundColor: '#F7F9FB',
+                    }}
                   >
                     {sub.label}
                   </h3>
@@ -300,33 +512,127 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
             )}
           </div>
 
-          {/* Prescription panel */}
-          <div className="hidden sm:flex flex-col w-[240px] shrink-0 border-l border-neutral-200 bg-neutral-50">
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+          {/* ── Prescription Panel ────────────────────────────────────── */}
+          <div
+            className="hidden sm:flex flex-col w-[240px] shrink-0 border-l"
+            style={{ borderLeftColor: '#EEF2F6', backgroundColor: '#F7F9FB' }}
+          >
+            {/* Prescription header */}
+            <div
+              className="shrink-0 px-4 pt-4 pb-2"
+            >
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  color: '#6B7C93',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Prescription
+              </p>
+            </div>
+
+            {/* Prescription items */}
+            <div className="flex-1 overflow-y-auto px-4 pb-4 flex flex-col gap-3">
               {prescription.length === 0 ? (
-                <p className="text-ui-xs text-neutral-500 text-center mt-8">
-                  Add exercises from the grid to build a prescription
-                </p>
+                <div
+                  className="flex flex-col items-center justify-center text-center mt-6 rounded-xl p-4"
+                  style={{
+                    border: '1px dashed #DDE3EA',
+                    backgroundColor: '#FAFBFC',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '12px',
+                      fontWeight: 400,
+                      color: '#A8B8C8',
+                      lineHeight: '18px',
+                    }}
+                  >
+                    Add exercises from the grid to build a prescription
+                  </p>
+                </div>
               ) : (
                 prescription.map((item, idx) => (
-                  <div key={`${item.exerciseLibraryId || item.exerciseName}-${idx}`} className="bg-white shadow-level-1 rounded-lg p-3 relative">
+                  <div
+                    key={`${item.exerciseLibraryId || item.exerciseName}-${idx}`}
+                    className="bg-white rounded-xl p-3 relative"
+                    style={{
+                      boxShadow: '0px 1px 3px rgba(11, 79, 108, 0.06), 0px 1px 2px rgba(11, 79, 108, 0.04)',
+                    }}
+                  >
+                    {/* Remove button */}
                     <button
                       type="button"
                       onClick={() => removePrescriptionItem(idx)}
-                      className="absolute top-2 right-2 text-neutral-500 hover:text-danger"
+                      className="absolute top-2.5 right-2.5 p-0.5 rounded transition-colors duration-150"
+                      style={{ color: '#A8B8C8' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = '#C0392B'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = '#A8B8C8'; }}
                       aria-label="Remove exercise"
                     >
-                      <X size={14} />
+                      <X size={13} />
                     </button>
-                    <p className="text-ui-sm font-semibold text-neutral-900 pr-5 tracking-normal">{item.exerciseName}</p>
 
+                    {/* Exercise name */}
+                    <p
+                      className="pr-5"
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: '#1C2B3A',
+                        lineHeight: '18px',
+                      }}
+                    >
+                      {item.exerciseName}
+                    </p>
+
+                    {/* Duration-only exercises */}
                     {item.duration && !item.reps ? (
                       <div className="mt-2">
-                        <label className="text-[12px] font-semibold text-neutral-700">Duration</label>
+                        <label
+                          style={{
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: '#6B7C93',
+                            display: 'block',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Duration
+                        </label>
                         <select
                           value={item.duration || DURATION_OPTIONS[3]}
                           onChange={(e) => updatePrescriptionItem(idx, 'duration', e.target.value)}
-                          className="w-full h-8 mt-1 border-2 border-neutral-200 rounded-md text-ui-xs px-2 focus:border-primary focus:ring-2 focus:ring-primary/12 focus:outline-none transition-all duration-150 bg-white"
+                          style={{
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: '12px',
+                            fontWeight: 400,
+                            color: '#1C2B3A',
+                            border: '1.5px solid #DDE3EA',
+                            borderRadius: '6px',
+                            height: '32px',
+                            width: '100%',
+                            paddingLeft: '8px',
+                            paddingRight: '8px',
+                            backgroundColor: '#FFFFFF',
+                            outline: 'none',
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.border = '2px solid #0B4F6C';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(11, 79, 108, 0.12)';
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.border = '1.5px solid #DDE3EA';
+                            e.target.style.boxShadow = 'none';
+                          }}
                         >
                           {DURATION_OPTIONS.map((d) => (
                             <option key={d} value={d}>{d}</option>
@@ -334,32 +640,181 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                         </select>
                       </div>
                     ) : (
+                      /* Sets + Reps steppers */
                       <div className="flex gap-3 mt-2">
+                        {/* Sets */}
                         <div>
-                          <label className="text-[12px] font-semibold text-neutral-700">Sets</label>
-                          <div className="flex items-center gap-1 mt-1">
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.max(1, (item.sets || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Minus size={12} /></button>
-                            <span className="w-6 text-center text-ui-sm font-semibold tracking-normal">{item.sets || 1}</span>
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.min(20, (item.sets || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Plus size={12} /></button>
+                          <label
+                            style={{
+                              fontFamily: "'Inter', sans-serif",
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              color: '#6B7C93',
+                              display: 'block',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Sets
+                          </label>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => updatePrescriptionItem(idx, 'sets', Math.max(1, (item.sets || 1) - 1))}
+                              className="flex items-center justify-center transition-colors duration-150"
+                              style={{
+                                width: '26px',
+                                height: '26px',
+                                border: '1.5px solid #DDE3EA',
+                                borderRadius: '6px',
+                                backgroundColor: 'transparent',
+                                color: '#3D5166',
+                                cursor: 'pointer',
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F0F4F7'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                            >
+                              <Minus size={11} />
+                            </button>
+                            <span
+                              style={{
+                                fontFamily: "'Inter', sans-serif",
+                                fontSize: '14px',
+                                fontWeight: 700,
+                                color: '#1C2B3A',
+                                width: '22px',
+                                textAlign: 'center',
+                              }}
+                            >
+                              {item.sets || 1}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => updatePrescriptionItem(idx, 'sets', Math.min(20, (item.sets || 1) + 1))}
+                              className="flex items-center justify-center transition-colors duration-150"
+                              style={{
+                                width: '26px',
+                                height: '26px',
+                                border: '1.5px solid #DDE3EA',
+                                borderRadius: '6px',
+                                backgroundColor: 'transparent',
+                                color: '#3D5166',
+                                cursor: 'pointer',
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F0F4F7'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                            >
+                              <Plus size={11} />
+                            </button>
                           </div>
                         </div>
+
+                        {/* Reps */}
                         <div>
-                          <label className="text-[12px] font-semibold text-neutral-700">Reps</label>
-                          <div className="flex items-center gap-1 mt-1">
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.max(1, (item.reps || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Minus size={12} /></button>
-                            <span className="w-6 text-center text-ui-sm font-semibold tracking-normal">{item.reps || 1}</span>
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.min(50, (item.reps || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Plus size={12} /></button>
+                          <label
+                            style={{
+                              fontFamily: "'Inter', sans-serif",
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              color: '#6B7C93',
+                              display: 'block',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Reps
+                          </label>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => updatePrescriptionItem(idx, 'reps', Math.max(1, (item.reps || 1) - 1))}
+                              className="flex items-center justify-center transition-colors duration-150"
+                              style={{
+                                width: '26px',
+                                height: '26px',
+                                border: '1.5px solid #DDE3EA',
+                                borderRadius: '6px',
+                                backgroundColor: 'transparent',
+                                color: '#3D5166',
+                                cursor: 'pointer',
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F0F4F7'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                            >
+                              <Minus size={11} />
+                            </button>
+                            <span
+                              style={{
+                                fontFamily: "'Inter', sans-serif",
+                                fontSize: '14px',
+                                fontWeight: 700,
+                                color: '#1C2B3A',
+                                width: '22px',
+                                textAlign: 'center',
+                              }}
+                            >
+                              {item.reps || 1}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => updatePrescriptionItem(idx, 'reps', Math.min(50, (item.reps || 1) + 1))}
+                              className="flex items-center justify-center transition-colors duration-150"
+                              style={{
+                                width: '26px',
+                                height: '26px',
+                                border: '1.5px solid #DDE3EA',
+                                borderRadius: '6px',
+                                backgroundColor: 'transparent',
+                                color: '#3D5166',
+                                cursor: 'pointer',
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F0F4F7'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                            >
+                              <Plus size={11} />
+                            </button>
                           </div>
                         </div>
                       </div>
                     )}
 
+                    {/* Frequency */}
                     <div className="mt-2">
-                      <label className="text-[12px] font-semibold text-neutral-700">Frequency</label>
+                      <label
+                        style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          color: '#6B7C93',
+                          display: 'block',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Frequency
+                      </label>
                       <select
-                        value={item.frequency || 'once daily'}
+                        value={item.frequency || 'Once daily'}
                         onChange={(e) => updatePrescriptionItem(idx, 'frequency', e.target.value)}
-                        className="w-full h-8 mt-1 border-2 border-neutral-200 rounded-md text-ui-xs px-2 focus:border-primary focus:ring-2 focus:ring-primary/12 focus:outline-none transition-all duration-150 bg-white"
+                        style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontSize: '12px',
+                          fontWeight: 400,
+                          color: '#1C2B3A',
+                          border: '1.5px solid #DDE3EA',
+                          borderRadius: '6px',
+                          height: '32px',
+                          width: '100%',
+                          paddingLeft: '8px',
+                          paddingRight: '8px',
+                          backgroundColor: '#FFFFFF',
+                          outline: 'none',
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.border = '2px solid #0B4F6C';
+                          e.target.style.boxShadow = '0 0 0 3px rgba(11, 79, 108, 0.12)';
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.border = '1.5px solid #DDE3EA';
+                          e.target.style.boxShadow = 'none';
+                        }}
                       >
                         {FREQUENCY_OPTIONS.map((f) => (
                           <option key={f} value={f}>{f}</option>
@@ -370,28 +825,86 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                 ))
               )}
             </div>
-            <div className="shrink-0 p-4 border-t border-neutral-200">
-              <p className="text-ui-xs text-neutral-500 mb-3">
-                {prescription.length} exercise{prescription.length !== 1 ? 's' : ''}
+
+            {/* ── Done button ─────────────────────────────────────────── */}
+            <div
+              className="shrink-0 px-4 py-4 border-t"
+              style={{ borderTopColor: '#EEF2F6' }}
+            >
+              <p
+                className="mb-3"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '12px',
+                  fontWeight: 400,
+                  color: '#6B7C93',
+                }}
+              >
+                {prescription.length === 0
+                  ? 'No exercises selected'
+                  : `${prescription.length} exercise${prescription.length !== 1 ? 's' : ''} selected`}
               </p>
               <button
                 type="button"
                 onClick={handleDone}
-                className="w-full h-10 bg-primary text-white font-semibold rounded-md hover:bg-primary-dark shadow-btn-primary hover:shadow-level-2 active:scale-98 transition-all duration-150 text-ui-sm"
+                disabled={prescription.length === 0}
+                className="w-full transition-all duration-150 active:scale-[0.97]"
+                style={{
+                  height: '40px',
+                  backgroundColor: prescription.length === 0 ? '#A8B8C8' : '#0B4F6C',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: prescription.length === 0 ? 'not-allowed' : 'pointer',
+                  boxShadow: prescription.length === 0 ? 'none' : '0 2px 8px rgba(11, 79, 108, 0.25)',
+                }}
+                onMouseEnter={(e) => {
+                  if (prescription.length > 0) e.currentTarget.style.backgroundColor = '#083A52';
+                }}
+                onMouseLeave={(e) => {
+                  if (prescription.length > 0) e.currentTarget.style.backgroundColor = '#0B4F6C';
+                }}
               >
-                Done — Add to Prescription →
+                Add to Prescription →
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile prescription footer */}
-        <div className="sm:hidden shrink-0 p-4 border-t border-neutral-200 flex items-center justify-between gap-3">
-          <span className="text-ui-xs text-neutral-500">{prescription.length} selected</span>
+        {/* ── Mobile prescription footer ────────────────────────────────── */}
+        <div
+          className="sm:hidden shrink-0 px-4 py-3 border-t flex items-center justify-between gap-3"
+          style={{ borderTopColor: '#EEF2F6' }}
+        >
+          <span
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '13px',
+              fontWeight: 400,
+              color: '#6B7C93',
+            }}
+          >
+            {prescription.length} selected
+          </span>
           <button
             type="button"
             onClick={handleDone}
-            className="h-10 px-4 bg-primary text-white font-semibold rounded-md shadow-btn-primary hover:bg-primary-dark active:scale-98 transition-all duration-150 text-ui-sm"
+            style={{
+              height: '40px',
+              padding: '0 20px',
+              backgroundColor: '#0B4F6C',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(11, 79, 108, 0.25)',
+            }}
           >
             Done →
           </button>

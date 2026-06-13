@@ -1,126 +1,84 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* ============================================================
+   THERALIGN — GLOBAL STYLESHEET
+   Font: Inter (all weights 400–900, loaded via Google Fonts in index.html)
+   Design system: Humanized Swiss Minimalism
+   Source of truth: .ai/MASTER_DESIGN_LANGUAGE.md
+   ============================================================ */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+/* 1. Establish Inter as the universal font — must come before Tailwind */
+html {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  text-rendering: optimizeLegibility;
+  /* Disable font synthesis so Inter renders at exact requested weights */
+  font-synthesis: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
+/* 2. Body: warm off-white background per design system */
 body {
   margin: 0;
+  background-color: #F7F9FB;
+  color: #1C2B3A;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* 3. Root: full-height flex column, no artificial width constraints */
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* 4. Heading resets — all headings use Inter via Tailwind classes,
+      these just clear browser UA stylesheet weight/size overrides */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
 p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* 5. Focus ring — keyboard navigation visible focus indicator */
+*:focus-visible {
+  outline: 2px solid #0B4F6C;
+  outline-offset: 2px;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* 6. Scrollbar — subtle, on-brand */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F0F4F7;
+}
+::-webkit-scrollbar-thumb {
+  background: #A8B8C8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6B7C93;
 }
 
-/* Refund System Styles */
+/* ============================================================
+   UTILITY CLASSES — Refund system & nav badge
+   Keep these: they are used in legacy pages not yet migrated
+   to Tailwind component classes.
+   ============================================================ */
+
 .cancel-link {
   background: none;
   border: none;
-  color: #c0392b;
+  color: #C0392B;
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cancel-link:hover {
@@ -135,42 +93,42 @@ code {
 
 .badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   width: fit-content;
 }
 
 .badge.pending-badge {
-  background-color: #fef3e2;
-  color: #b45309;
-  border: 1px solid #b45309;
+  background-color: #FEF3E2;
+  color: #B45309;
 }
 
 .badge.refunded-badge {
-  background-color: #f0f9f8;
-  color: #0a7e6e;
-  border: 1px solid #0a7e6e;
+  background-color: #E8F8F5;
+  color: #0A7E6E;
 }
 
 .badge.rejected-badge {
-  background-color: #f3f4f6;
-  color: #6b7c93;
-  border: 1px solid #d1d5db;
+  background-color: #F0F4F7;
+  color: #6B7C93;
 }
 
 .refund-detail {
+  font-family: 'Inter', sans-serif;
   font-size: 12px;
-  color: #a8b8c8;
+  color: #A8B8C8;
   margin-top: 2px;
 }
 
 .cancelled-by-doctor {
+  font-family: 'Inter', sans-serif;
   font-size: 12px;
-  color: #6b7c93;
+  color: #6B7C93;
   font-style: italic;
   margin-top: 4px;
 }
@@ -179,15 +137,26 @@ code {
   position: absolute;
   top: -8px;
   right: -8px;
-  background-color: #fef3e2;
-  color: #b45309;
-  border: 1px solid #b45309;
+  background-color: #FEF3E2;
+  color: #B45309;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ============================================================
+   REDUCED MOTION — respect user preference
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

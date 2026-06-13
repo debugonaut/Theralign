@@ -108,10 +108,11 @@ export default {
     },
 
     fontWeight: {
-      regular: '400',
-      medium:  '500',
-      bold:    '700',
-      black:   '900',
+      regular:  '400',
+      medium:   '500',
+      semibold: '600',  // Required: used by font-semibold on all card titles, labels
+      bold:     '700',
+      black:    '900',
     },
 
     spacing: {
