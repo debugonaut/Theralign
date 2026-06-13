@@ -55,15 +55,20 @@ const font = (size, weight, color, extra = {}) => ({
   fontFamily: "'Inter', system-ui, sans-serif",
   fontSize: `${size}px`,
   fontWeight: weight,
+  lineHeight: 1.4,
   color,
   ...extra,
 });
 
+/* Swiss shadow system — tinted primary, never black */
 const shadow1 = '0px 1px 3px rgba(11,79,108,0.06), 0px 1px 2px rgba(11,79,108,0.04)';
 const shadow2 = '0px 4px 16px rgba(11,79,108,0.10), 0px 2px 6px rgba(11,79,108,0.07)';
 const shadow3 = '0px 20px 60px rgba(11,79,108,0.18), 0px 8px 24px rgba(11,79,108,0.12)';
 
-/* ─── Stepper button ───────────────────────────────────── */
+/* Swiss structural divider */
+const rule = '1px solid #EEF2F6';
+
+/* ─── Stepper button — Swiss ghost style ───────────────── */
 const StepBtn = ({ onClick, children }) => (
   <button
     type="button"
@@ -73,13 +78,20 @@ const StepBtn = ({ onClick, children }) => (
       border: '1.5px solid #DDE3EA',
       borderRadius: 6,
       backgroundColor: 'transparent',
-      color: '#3D5166',
+      color: '#1C2B3A',
       cursor: 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      transition: 'background-color 150ms',
+      transition: 'background-color 150ms, border-color 150ms',
+      flexShrink: 0,
     }}
-    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F0F4F7'; }}
-    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.backgroundColor = '#F0F4F7';
+      e.currentTarget.style.borderColor = '#A8B8C8';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.backgroundColor = 'transparent';
+      e.currentTarget.style.borderColor = '#DDE3EA';
+    }}
   >
     {children}
   </button>
@@ -91,7 +103,7 @@ const SelectCtrl = ({ value, onChange, options }) => (
     value={value}
     onChange={onChange}
     style={{
-      ...font(13, 400, '#1C2B3A'),
+      ...font(13, 500, '#1C2B3A'),
       border: '1.5px solid #DDE3EA',
       borderRadius: 6,
       height: 36,
@@ -101,13 +113,16 @@ const SelectCtrl = ({ value, onChange, options }) => (
       backgroundColor: '#FFFFFF',
       outline: 'none',
       cursor: 'pointer',
+      transition: 'border-color 150ms, box-shadow 150ms',
     }}
     onFocus={(e) => {
-      e.target.style.border = '2px solid #0B4F6C';
-      e.target.style.boxShadow = '0 0 0 3px rgba(11,79,108,0.12)';
+      e.target.style.borderWidth = '2px';
+      e.target.style.borderColor = '#0B4F6C';
+      e.target.style.boxShadow = '0 0 0 3px rgba(11,79,108,0.10)';
     }}
     onBlur={(e) => {
-      e.target.style.border = '1.5px solid #DDE3EA';
+      e.target.style.borderWidth = '1.5px';
+      e.target.style.borderColor = '#DDE3EA';
       e.target.style.boxShadow = 'none';
     }}
   >
@@ -115,18 +130,14 @@ const SelectCtrl = ({ value, onChange, options }) => (
   </select>
 );
 
-/* ─── Field label ──────────────────────────────────────── */
+/* ─── Field label — UPPERCASE Swiss system label ───────── */
 const FieldLabel = ({ children }) => (
-  <span
-    style={{
-      ...font(11, 700, '#6B7C93', {
-        display: 'block',
-        marginBottom: 6,
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
-      }),
-    }}
-  >
+  <span style={font(10, 700, '#6B7C93', {
+    display: 'block',
+    marginBottom: 8,
+    letterSpacing: '0.10em',
+    textTransform: 'uppercase',
+  })}>
     {children}
   </span>
 );
@@ -229,28 +240,26 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           borderRadius: 12,
           overflow: 'hidden',
           boxShadow: shadow1,
-          transition: 'box-shadow 200ms, transform 200ms',
+          transition: 'box-shadow 200ms',
           minHeight: 230,
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.boxShadow = shadow2;
-          e.currentTarget.style.transform = 'translateY(-2px)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.boxShadow = shadow1;
-          e.currentTarget.style.transform = 'translateY(0)';
         }}
       >
         {/* Figure zone */}
         <div style={{
           height: 132,
-          backgroundColor: '#F8F8F6',
+          backgroundColor: '#FAFBFC',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <Figure size={96} color={`${color}B3`} />
+          <Figure size={96} color="#0B4F6C" />
         </div>
 
         {/* Content zone */}
@@ -258,11 +267,11 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           {/* Category label (search mode) */}
           {searchResults && (
             <span style={{
-              ...font(10, 700, color, {
-                letterSpacing: '0.1em',
+              ...font(10, 700, '#6B7C93', {
+                letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                backgroundColor: `${color}18`,
-                padding: '2px 8px',
+                backgroundColor: '#F0F4F7',
+                padding: '3px 8px',
                 borderRadius: 4,
                 alignSelf: 'flex-start',
               }),
@@ -331,7 +340,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
               right: 12,
               width: 28,
               height: 28,
-              borderRadius: '50%',
+              borderRadius: 6,
               border: `2px solid #0B4F6C`,
               backgroundColor: isAdded || isFlashing ? '#0B4F6C' : 'transparent',
               color: isAdded || isFlashing ? '#FFFFFF' : '#0B4F6C',
@@ -341,6 +350,16 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
               cursor: isAdded ? 'default' : 'pointer',
               opacity: isAdded ? 0.65 : 1,
               transition: 'background-color 150ms, color 150ms',
+            }}
+            onMouseEnter={(e) => {
+              if (!isAdded) {
+                e.currentTarget.style.backgroundColor = '#E8F4F8';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isAdded) {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }
             }}
           >
             {isFlashing || isAdded ? <Check size={14} /> : <Plus size={14} />}
@@ -500,8 +519,8 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                     padding: '10px 14px',
                     borderRadius: 8,
                     border: 'none',
-                    borderLeft: `3px solid ${isActive ? cat.color : 'transparent'}`,
-                    backgroundColor: isActive ? `${cat.color}14` : 'transparent',
+                    borderLeft: `3px solid ${isActive ? '#0B4F6C' : 'transparent'}`,
+                    backgroundColor: 'transparent',
                     cursor: 'pointer',
                     textAlign: 'left',
                     width: '100%',
@@ -514,7 +533,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                     if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
                   }}
                 >
-                  <Icon size={32} color={isActive ? cat.color : '#A8B8C8'} />
+                  <Icon size={32} color={isActive ? '#1C2B3A' : '#A8B8C8'} />
                   <div style={{ minWidth: 0 }}>
                     <p style={font(14, isActive ? 700 : 500, isActive ? '#1C2B3A' : '#6B7C93', {
                       lineHeight: '20px',
