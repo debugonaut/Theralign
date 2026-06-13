@@ -986,15 +986,8 @@ router.post('/book', validate(schema), controller);
 ## Git Commit History (Recent)
 
 ```
+2026-06-13 — Phase 15 Swiss Minimalist UI Polish: Refactored ExerciseLibraryModal to remove decorative background tints and colored icons. Used brand primary left border and transparent background for active category items. Changed card hover transition to shadow-only lift. Set card figure zone background to #FAFBFC and stickman figures to brand color. Square add buttons with 6px border-radius.
 2026-06-13 — Phase 15 Redesign (Complete): Full visual redesign of ExerciseLibraryModal + ExerciseVideoModal
-             Root typography fix: index.css was overriding Inter with system-ui — removed completely.
-             tailwind.config.js: Added semibold: '600' to fontWeight scale (font-semibold now works).
-             Both modals: dark navy overlay (rgba(15,23,42,0.6)), FAFBFC header band, EEF2F6 borders,
-             correct Level-3 shadow, Inter applied via inline styles for cascade safety.
-             Category sidebar: 28px icons, Title Case labels, 3px category-color left border active state.
-             Exercise cards: 12px radius (rounded-xl), Level-1 shadow, no border, proper badge casing.
-             Prescription panel: F7F9FB background, white item cards, disabled Done button when empty.
-2026-06-13 — visual humanization updates for exercise layouts and typography tracking
 2026-06-13 — Phase 15 Complete: Session Records & Care Continuity
 2026-06-11 — Bug Fix: Doctor's profile photo on his profile has increased length and width
 2026-06-11 — Feature: Add doctor profile image on detail page
