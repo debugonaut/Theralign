@@ -152,23 +152,23 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
         </div>
         <div className="flex-1 p-3 flex flex-col gap-1 relative">
           {searchResults && (
-            <span className="text-[11px] font-semibold text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-sm self-start">
+            <span className="text-[11px] font-semibold text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-sm self-start tracking-normal">
               {exercise.categoryLabel}
             </span>
           )}
-          <p className="text-ui-sm font-semibold text-neutral-900 truncate">{exercise.name}</p>
-          <p className="text-ui-xs text-neutral-500 truncate">{exercise.targetArea}</p>
+          <p className="text-ui-sm font-semibold text-neutral-900 truncate tracking-normal">{exercise.name}</p>
+          <p className="text-ui-xs text-neutral-500 truncate tracking-normal">{exercise.targetArea}</p>
           <div className="flex flex-wrap gap-1 mt-1">
-            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${DIFFICULTY_STYLES[exercise.difficulty] || DIFFICULTY_STYLES.beginner}`}>
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm tracking-normal ${DIFFICULTY_STYLES[exercise.difficulty] || DIFFICULTY_STYLES.beginner}`}>
               {exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
             </span>
             {exercise.equipment && exercise.equipment !== 'none' && (
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-sm bg-neutral-100 text-neutral-500">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-sm bg-neutral-100 text-neutral-500 tracking-normal">
                 {exercise.equipment.charAt(0).toUpperCase() + exercise.equipment.slice(1)}
               </span>
             )}
           </div>
-          <p className="text-ui-xs text-neutral-500 mt-auto">
+          <p className="text-ui-xs text-neutral-500 mt-auto tracking-normal">
             {formatPrescription({
               sets: exercise.defaultSets,
               reps: exercise.defaultReps,
@@ -263,8 +263,8 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                 >
                   <Icon size={32} color={cat.color} />
                   <div className="min-w-0">
-                    <p className="text-ui-sm font-semibold text-neutral-900 truncate">{cat.label}</p>
-                    <p className="text-[10px] text-neutral-500">{count} exercises</p>
+                    <p className="text-ui-sm font-semibold text-neutral-900 truncate tracking-normal">{cat.label}</p>
+                    <p className="text-[10px] text-neutral-500 tracking-normal">{count} exercises</p>
                   </div>
                 </button>
               );
@@ -272,7 +272,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           </div>
 
           {/* Exercise grid */}
-          <div className="flex-1 overflow-y-auto p-4 min-w-0">
+          <div className="flex-1 overflow-y-auto p-4 min-w-0 bg-neutral-50">
             {searchResults ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {searchResults.map(renderExerciseCard)}
@@ -282,7 +282,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                 <div key={sub.id} className="mb-6">
                   <h3
                     id={`sub-${sub.id}`}
-                    className="sticky top-0 z-10 bg-white text-[12px] font-semibold text-neutral-700 py-2 mb-3"
+                    className="sticky top-0 z-10 bg-neutral-50 text-[12px] font-semibold text-neutral-700 py-2 mb-3 tracking-normal"
                   >
                     {sub.label}
                   </h3>
@@ -318,7 +318,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                     >
                       <X size={14} />
                     </button>
-                    <p className="text-ui-sm font-semibold text-neutral-900 pr-5">{item.exerciseName}</p>
+                    <p className="text-ui-sm font-semibold text-neutral-900 pr-5 tracking-normal">{item.exerciseName}</p>
 
                     {item.duration && !item.reps ? (
                       <div className="mt-2">
@@ -339,7 +339,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                           <label className="text-[12px] font-semibold text-neutral-700">Sets</label>
                           <div className="flex items-center gap-1 mt-1">
                             <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.max(1, (item.sets || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Minus size={12} /></button>
-                            <span className="w-6 text-center text-ui-sm font-semibold">{item.sets || 1}</span>
+                            <span className="w-6 text-center text-ui-sm font-semibold tracking-normal">{item.sets || 1}</span>
                             <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.min(20, (item.sets || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Plus size={12} /></button>
                           </div>
                         </div>
@@ -347,7 +347,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                           <label className="text-[12px] font-semibold text-neutral-700">Reps</label>
                           <div className="flex items-center gap-1 mt-1">
                             <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.max(1, (item.reps || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Minus size={12} /></button>
-                            <span className="w-6 text-center text-ui-sm font-semibold">{item.reps || 1}</span>
+                            <span className="w-6 text-center text-ui-sm font-semibold tracking-normal">{item.reps || 1}</span>
                             <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.min(50, (item.reps || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Plus size={12} /></button>
                           </div>
                         </div>

@@ -70,7 +70,7 @@ const ExerciseVideoModal = ({
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
           <div className="flex items-center gap-2 min-w-0">
             <Play size={18} className="text-primary shrink-0" />
-            <h2 id="exercise-video-title" className="text-ui-md font-semibold text-neutral-900 truncate">
+            <h2 id="exercise-video-title" className="text-ui-md font-semibold text-neutral-900 truncate tracking-normal">
               {exerciseName} — Demonstration
             </h2>
           </div>
@@ -102,12 +102,12 @@ const ExerciseVideoModal = ({
 
         <div className="px-6 py-4 border-t border-neutral-200 bg-neutral-50">
           {doctorName && (
-            <p className="text-ui-xs text-neutral-500 mb-1">
+            <p className="text-ui-xs text-neutral-500 mb-1 tracking-normal">
               Prescribed by {doctorName}
             </p>
           )}
           {prescriptionText && (
-            <p className="text-ui-sm font-semibold text-neutral-900">{prescriptionText}</p>
+            <p className="text-ui-sm font-semibold text-neutral-900 tracking-normal">{prescriptionText}</p>
           )}
         </div>
       </div>
