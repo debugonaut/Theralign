@@ -144,7 +144,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
     return (
       <div
         key={exercise.id}
-        className="flex flex-col bg-white border-2 border-neutral-200 rounded-lg overflow-hidden shadow-level-1 hover:border-primary hover:bg-primary-light/30 hover:shadow-level-2 transition-all duration-150"
+        className="flex flex-col bg-white rounded-lg overflow-hidden shadow-level-1 hover:shadow-level-2 hover:bg-primary-light/30 transition-all duration-150"
         style={{ minHeight: '200px' }}
       >
         <div className="h-[110px] bg-[#F8F8F6] flex items-center justify-center">
@@ -152,19 +152,19 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
         </div>
         <div className="flex-1 p-3 flex flex-col gap-1 relative">
           {searchResults && (
-            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-sm self-start">
+            <span className="text-[11px] font-semibold text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-sm self-start">
               {exercise.categoryLabel}
             </span>
           )}
-          <p className="text-ui-sm font-bold text-neutral-900 truncate">{exercise.name}</p>
+          <p className="text-ui-sm font-semibold text-neutral-900 truncate">{exercise.name}</p>
           <p className="text-ui-xs text-neutral-500 truncate">{exercise.targetArea}</p>
           <div className="flex flex-wrap gap-1 mt-1">
             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${DIFFICULTY_STYLES[exercise.difficulty] || DIFFICULTY_STYLES.beginner}`}>
-              {exercise.difficulty}
+              {exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
             </span>
             {exercise.equipment && exercise.equipment !== 'none' && (
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-sm bg-neutral-100 text-neutral-500">
-                {exercise.equipment}
+                {exercise.equipment.charAt(0).toUpperCase() + exercise.equipment.slice(1)}
               </span>
             )}
           </div>
@@ -200,7 +200,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
       aria-labelledby="exercise-library-title"
     >
       <div
-        className="bg-white flex flex-col w-full h-full sm:h-[620px] sm:max-h-[90vh] rounded-none sm:rounded-lg shadow-level-3 overflow-hidden"
+        className="bg-white flex flex-col w-full h-full sm:h-[620px] sm:max-h-[90vh] rounded-none sm:rounded-xl shadow-level-3 overflow-hidden"
         style={{ maxWidth: '880px' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -208,7 +208,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
         <div className="shrink-0 px-6 py-4 border-b border-neutral-200">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 id="exercise-library-title" className="text-ui-lg font-bold text-neutral-900">
+              <h2 id="exercise-library-title" className="text-ui-lg font-semibold text-neutral-900">
                 Exercise Library
               </h2>
               <p className="text-ui-sm text-neutral-500 mt-1">
@@ -231,7 +231,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search exercises by name, tag, or target area..."
-              className="w-full h-10 pl-9 pr-3 border-2 border-neutral-200 rounded-md text-ui-sm focus:border-primary focus:outline-none"
+              className="w-full h-10 pl-9 pr-3 border-2 border-neutral-200 rounded-md text-ui-sm focus:border-primary focus:ring-2 focus:ring-primary/12 focus:outline-none transition-all duration-150"
             />
           </div>
         </div>
@@ -251,7 +251,11 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                   key={cat.id}
                   type="button"
                   onClick={() => setActiveCategoryId(cat.id)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors"
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-left transition-colors ${
+                    isActive
+                      ? 'text-neutral-900 font-semibold'
+                      : 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900'
+                  }`}
                   style={{
                     borderLeft: isActive ? `3px solid ${cat.color}` : '3px solid transparent',
                     backgroundColor: isActive ? `${cat.color}14` : 'transparent',
@@ -278,7 +282,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                 <div key={sub.id} className="mb-6">
                   <h3
                     id={`sub-${sub.id}`}
-                    className="sticky top-0 z-10 bg-white text-[10px] font-bold uppercase tracking-wider text-neutral-500 py-2 mb-3"
+                    className="sticky top-0 z-10 bg-white text-[12px] font-semibold text-neutral-700 py-2 mb-3"
                   >
                     {sub.label}
                   </h3>
@@ -297,7 +301,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           </div>
 
           {/* Prescription panel */}
-          <div className="hidden sm:flex flex-col w-[240px] shrink-0 border-l border-neutral-200">
+          <div className="hidden sm:flex flex-col w-[240px] shrink-0 border-l border-neutral-200 bg-neutral-50">
             <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
               {prescription.length === 0 ? (
                 <p className="text-ui-xs text-neutral-500 text-center mt-8">
@@ -305,7 +309,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                 </p>
               ) : (
                 prescription.map((item, idx) => (
-                  <div key={`${item.exerciseLibraryId || item.exerciseName}-${idx}`} className="border-2 border-neutral-200 rounded-lg p-3 relative">
+                  <div key={`${item.exerciseLibraryId || item.exerciseName}-${idx}`} className="bg-white shadow-level-1 rounded-lg p-3 relative">
                     <button
                       type="button"
                       onClick={() => removePrescriptionItem(idx)}
@@ -314,15 +318,15 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                     >
                       <X size={14} />
                     </button>
-                    <p className="text-ui-sm font-bold text-neutral-900 pr-5">{item.exerciseName}</p>
+                    <p className="text-ui-sm font-semibold text-neutral-900 pr-5">{item.exerciseName}</p>
 
                     {item.duration && !item.reps ? (
                       <div className="mt-2">
-                        <label className="text-[10px] font-bold uppercase text-neutral-500">Duration</label>
+                        <label className="text-[12px] font-semibold text-neutral-700">Duration</label>
                         <select
                           value={item.duration || DURATION_OPTIONS[3]}
                           onChange={(e) => updatePrescriptionItem(idx, 'duration', e.target.value)}
-                          className="w-full h-8 mt-1 border border-neutral-200 rounded-md text-ui-xs px-2"
+                          className="w-full h-8 mt-1 border-2 border-neutral-200 rounded-md text-ui-xs px-2 focus:border-primary focus:ring-2 focus:ring-primary/12 focus:outline-none transition-all duration-150 bg-white"
                         >
                           {DURATION_OPTIONS.map((d) => (
                             <option key={d} value={d}>{d}</option>
@@ -332,30 +336,30 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                     ) : (
                       <div className="flex gap-3 mt-2">
                         <div>
-                          <label className="text-[10px] font-bold uppercase text-neutral-500">Sets</label>
+                          <label className="text-[12px] font-semibold text-neutral-700">Sets</label>
                           <div className="flex items-center gap-1 mt-1">
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.max(1, (item.sets || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center"><Minus size={12} /></button>
-                            <span className="w-6 text-center text-ui-sm font-bold">{item.sets || 1}</span>
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.min(20, (item.sets || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center"><Plus size={12} /></button>
+                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.max(1, (item.sets || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Minus size={12} /></button>
+                            <span className="w-6 text-center text-ui-sm font-semibold">{item.sets || 1}</span>
+                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'sets', Math.min(20, (item.sets || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Plus size={12} /></button>
                           </div>
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold uppercase text-neutral-500">Reps</label>
+                          <label className="text-[12px] font-semibold text-neutral-700">Reps</label>
                           <div className="flex items-center gap-1 mt-1">
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.max(1, (item.reps || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center"><Minus size={12} /></button>
-                            <span className="w-6 text-center text-ui-sm font-bold">{item.reps || 1}</span>
-                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.min(50, (item.reps || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center"><Plus size={12} /></button>
+                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.max(1, (item.reps || 1) - 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Minus size={12} /></button>
+                            <span className="w-6 text-center text-ui-sm font-semibold">{item.reps || 1}</span>
+                            <button type="button" onClick={() => updatePrescriptionItem(idx, 'reps', Math.min(50, (item.reps || 1) + 1))} className="w-7 h-7 border-2 border-neutral-200 rounded-md flex items-center justify-center hover:bg-neutral-100 hover:border-neutral-300 transition-colors"><Plus size={12} /></button>
                           </div>
                         </div>
                       </div>
                     )}
 
                     <div className="mt-2">
-                      <label className="text-[10px] font-bold uppercase text-neutral-500">Frequency</label>
+                      <label className="text-[12px] font-semibold text-neutral-700">Frequency</label>
                       <select
                         value={item.frequency || 'once daily'}
                         onChange={(e) => updatePrescriptionItem(idx, 'frequency', e.target.value)}
-                        className="w-full h-8 mt-1 border border-neutral-200 rounded-md text-ui-xs px-2"
+                        className="w-full h-8 mt-1 border-2 border-neutral-200 rounded-md text-ui-xs px-2 focus:border-primary focus:ring-2 focus:ring-primary/12 focus:outline-none transition-all duration-150 bg-white"
                       >
                         {FREQUENCY_OPTIONS.map((f) => (
                           <option key={f} value={f}>{f}</option>
@@ -373,7 +377,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
               <button
                 type="button"
                 onClick={handleDone}
-                className="w-full h-10 bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-colors text-ui-sm"
+                className="w-full h-10 bg-primary text-white font-semibold rounded-md hover:bg-primary-dark shadow-btn-primary hover:shadow-level-2 active:scale-98 transition-all duration-150 text-ui-sm"
               >
                 Done — Add to Prescription →
               </button>
@@ -387,7 +391,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           <button
             type="button"
             onClick={handleDone}
-            className="h-10 px-4 bg-primary text-white font-semibold rounded-md text-ui-sm"
+            className="h-10 px-4 bg-primary text-white font-semibold rounded-md shadow-btn-primary hover:bg-primary-dark active:scale-98 transition-all duration-150 text-ui-sm"
           >
             Done →
           </button>

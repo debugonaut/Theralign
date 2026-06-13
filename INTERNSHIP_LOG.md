@@ -270,7 +270,24 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ---
 
-### June 12, 2026 — Day 2: Session Records & Care Continuity (Phase 14 Complete)
+### June 12, 2026 — Day 2: Session Records, Care Continuity & Phase 14 UI Overhaul
+
+**Commits:**
+- `38fea75` — Feat: implement Phase 14 Session Records & Care Continuity
+- `1022383` — Docs: update .ai indexing architecture for Phase 14
+- `5fcf456` — Session summary page for doctor's and patient updated
+- `56418b6` — Redesign of Phase 14
+- `a9c2865` — Changes to Phase 14 part 2
+- `e4ca5c2` — Phase 14 redesign fix 3
+- `106f2ca` — Patient timeline UI changes enhanced
+- `5351ce0` — Patient timeline redesign fix
+- `5d09960` — Feat(timeline): bold Swiss-minimalist expanded record redesign
+- `f00ee86` — Added a 4-stepper navigation system in patient care timeline
+- `55b7dc5` — Reduction in font size
+- `e031010` — Some changes
+- `a547781` — Font size increased in stepper by 30% and 50% for labels and text
+- `b099107` — Proper formatting
+- `5d44851` — Exercise tab revamped with actual selection from a catalogue
 
 **Work Accomplished:**
 
@@ -286,21 +303,42 @@ This document logs all development work, bug fixes, features implemented, and le
    - Developed auto-saving drafts (using debounced local storage sync) with a resume/discard banner.
    - Added interactive rating widgets, numeric pain selectors with delta comparison labels, dynamic addition/deletion of home exercise lists, and return date calculators.
    - Intercepted patient-visibility status changes with confirmation modals to prevent accidental unsharing of clinical records.
+   - Updated session summary page for both doctor and patient views.
 
-3. **Care History Timeline (Patient Portal):**
+3. **Care History Timeline (Patient Portal) — Major Redesign:**
    - Created a comprehensive care timeline page (`PatientCareTimeline.jsx`) that displays paginated progress records, prescribed exercises, and medication schedules.
    - Implemented real-time dropdown and date filters, and in-app doctor appointment scheduling redirects (deep-linked directly to booking selectors using the `#book` hash).
    - Designed a printable/downloadable exercise plan layout using custom `@media print` DOM injection templates.
+   - Went through 3 rounds of full redesign iterations to reach final polish.
 
-4. **Branding, Documentation, and Knowledge Management:**
-   - Completed `.ai/MASTER_CONTEXT.md` knowledge enhancement (2,400+ lines including schema references, route structures, environment guides, and emergency procedures).
-   - Synchronized `relatedDoctor` inputs on the notification service to link timeline recommendations with booking flows.
+4. **Swiss-Minimalist UI System (Patient Timeline):**
+   - Introduced bold Swiss-minimalist visual language across expanded record cards: 2px black borders, `#FAFBFC` grey header bars, and `font-weight: 900` UPPERCASE section titles (PRESENTING CONDITION, TREATMENT PROVIDED, etc.).
+   - Exercises rendered in bordered cards with a 4-column grid: SETS / REPS / FREQUENCY / DURATION — large (16px, 900-weight) values with 10px uppercase labels.
+   - Medication pills redesigned as square-cornered with 2px black border.
+   - Follow-up CTA: large bold date (18px/900) with square `BOOK NOW` button (colour `#0B4F6C`).
+   - Download button: full-width, 2px black border, square, uppercase, hover inverts to fill.
+   - Footer: practitioner signature + `COLLAPSE` inline, matching the doctor portal block aesthetic.
+
+5. **4-Stepper Navigation System:**
+   - Replaced the flat timeline scroll with a 4-step stepper navigation inside the patient care timeline.
+   - Stepper labels and inner text scaled up by 30% and 50% respectively for improved readability and hierarchy.
+   - Multiple font-size and formatting passes to ensure visual consistency across breakpoints.
+
+6. **Exercise Catalogue Tab:**
+   - Completely revamped the exercise tab: replaced free-text input with actual catalogue-based exercise selection.
+   - Patients can now browse and select from a structured exercise library, improving clinical accuracy and UX.
+
+7. **Documentation & Architecture:**
+   - Updated `.ai` indexing architecture docs to reflect Phase 14 schema additions.
    - Verified that the client production build compiles with zero errors or bundle warnings.
 
 **Technical Skills Demonstrated:**
 - Full-stack product development (Node.js/Express + React/Vite + Mongoose/MongoDB)
 - Healthcare clinical design compliance (immutable audit logs, 24-hour modification windows, HIPAA-aligned data isolation)
-- Front-end layout structures, state synchronizations, and printing templates
+- Swiss-minimalist design system implementation in CSS/Tailwind
+- Iterative UI redesign and design-system consistency enforcement
+- Stepper/wizard navigation component architecture
+- Exercise catalogue data modelling and selection UX
 - Asynchronous notification workflows and parallel query optimizations
 - Deployment verification and multi-environment build troubleshooting
 
@@ -318,6 +356,7 @@ This document logs all development work, bug fixes, features implemented, and le
 | Auto DoctorProfile creation | June 8 | ✅ Shipped |
 | Slot seeding for pending doctors | June 8 | ✅ Live |
 | Appointment media endpoints | June 11 | ✅ Phase 14 |
+| Session Records (Phase 14) | June 12 | ✅ Complete |
 | Demo reset flow | June 4 | ✅ Deployed |
 
 ### Frontend Development
@@ -334,6 +373,11 @@ This document logs all development work, bug fixes, features implemented, and le
 | Doctor profile images | June 11 | ✅ Complete |
 | Appointment media viewer | June 11 | ✅ Phase 14 |
 | Symptom upload form | June 11 | ✅ Delivered |
+| Session Notes form (doctor) | June 12 | ✅ Shipped |
+| Patient Care Timeline | June 12 | ✅ Complete |
+| Swiss-minimalist record cards | June 12 | ✅ Live |
+| 4-stepper timeline navigation | June 12 | ✅ Deployed |
+| Exercise catalogue tab | June 12 | ✅ Delivered |
 
 ### Bug Fixes & Security
 
@@ -439,11 +483,11 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ## Code Quality Metrics
 
-- **Total Commits:** 70+ commits over 9 days (pre-joining + 2 internship days)
-- **Files Modified:** 150+ files across frontend and backend
-- **Bug Fixes:** 25+ bugs identified and resolved
-- **Features Shipped:** 12+ major features delivered to production
-- **Documentation:** Complete API reference and code patterns documented
+- **Total Commits:** 85+ commits over 9 days (pre-joining + 2 internship days)
+- **Files Modified:** 170+ files across frontend and backend
+- **Bug Fixes:** 27+ bugs identified and resolved
+- **Features Shipped:** 17+ major features delivered to production
+- **Documentation:** Complete API reference, .ai indexing architecture, and code patterns documented
 - **Code Coverage:** Production-grade error handling, validation, and security
 
 ---
@@ -462,6 +506,10 @@ This document logs all development work, bug fixes, features implemented, and le
 ✅ Full codebase rebranding (Physioconnect → Theralign)  
 ✅ Deployment stabilization  
 ✅ Knowledge base documentation (7,400+ lines)  
+✅ Swiss-minimalist design system for patient care timeline  
+✅ 4-stepper navigation in patient care timeline  
+✅ Exercise catalogue tab (structured library selection)  
+✅ Session summary page (doctor & patient views)  
 
 ### In Progress
 🔄 Phase 15 — Patient Compliance Tracking (Exercise Compliance)  
@@ -487,12 +535,15 @@ During the first 2 days of this internship (June 11-12, 2026), I've successfully
 4. Enhanced doctor profile presentation with larger avatars
 5. Implemented patient symptom upload functionality
 6. Created comprehensive knowledge base documentation
+7. Executed 3+ full redesign iterations on the Phase 14 UI to deliver a bold Swiss-minimalist visual system
+8. Built a 4-stepper navigation structure for the patient care timeline
+9. Revamped the exercise tab with a structured catalogue selection system
 
-The work demonstrates proficiency in full-stack development, problem-solving, security awareness, and documentation excellence. All code is production-ready and deployed to live servers serving real users.
+The work demonstrates proficiency in full-stack development, iterative UI design, design system enforcement, problem-solving, security awareness, and documentation excellence. All code is production-ready and deployed to live servers serving real users.
 
 ---
 
-**Document Last Updated:** June 12, 2026  
+**Document Last Updated:** June 12, 2026 (23:36 IST)  
 **Internship Duration:** Ongoing  
 **Status:** Active Development  
 **College Submission:** Ready for Review

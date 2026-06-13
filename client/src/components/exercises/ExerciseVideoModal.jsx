@@ -63,14 +63,14 @@ const ExerciseVideoModal = ({
       aria-labelledby="exercise-video-title"
     >
       <div
-        className="bg-white rounded-lg shadow-level-3 overflow-hidden w-full"
+        className="bg-white rounded-xl shadow-level-3 overflow-hidden w-full"
         style={{ maxWidth: '800px' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
           <div className="flex items-center gap-2 min-w-0">
             <Play size={18} className="text-primary shrink-0" />
-            <h2 id="exercise-video-title" className="text-ui-md font-bold text-neutral-900 truncate">
+            <h2 id="exercise-video-title" className="text-ui-md font-semibold text-neutral-900 truncate">
               {exerciseName} — Demonstration
             </h2>
           </div>
