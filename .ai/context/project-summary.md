@@ -1,8 +1,8 @@
 # Theralign — Project Summary
 
 **Generated:** 2026-06-11  
-**System Version:** 0.2.0  
-**Last Updated:** 2026-06-11
+**System Version:** 0.2.1  
+**Last Updated:** 2026-06-15
 
 ---
 
@@ -334,8 +334,9 @@ if (expectedSignature !== receivedSignature) {
 | 12. Accessibility | ✅ Complete | — | WCAG compliance |
 | 13. Refunds & Cancellation | ✅ Complete | 8 | Patient/Doctor/Admin cancel, Refund approval |
 | 14. Session Records & Care Continuity | ✅ Complete | 6 | Session Record CRUD, Timeline query, Admin archive, Notifications |
+| 15. Visual Exercise Library & Prescription System | ✅ Complete | — | 50+ exercise library, prescription duration selection dropdown, layout overlap fixes, YouTube dynamic thumbnails |
 
-**Next Phase:** Phase 15 — Patient Compliance Tracking (Exercise Compliance)
+**Next Phase:** Phase 16 — Patient Compliance Tracking (Exercise Adherence)
 
 ---
 

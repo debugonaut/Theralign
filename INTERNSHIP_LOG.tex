@@ -568,6 +568,48 @@ fallback. Fixed auth issues for media deletion across roles.
 
 \textbf{Commits Pushed:} 6 commits
 
+\subsection{June 15, 2026 — Day 4: Visual Exercise Library \& Prescription Duration System}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{e23d1dd} — fix: broken links fixed in exercise modals
+  \item \texttt{b46170f} — fix: replaced svg stickman figures in exercise modal with real youtube thumbnails
+  \item \texttt{b030fd4} — fix: exercise library plus button overlap with text
+  \item \texttt{b7355bd} — feat: added duration selection dropdown for physio to prescribe the exercises for a periodic manner
+  \item \texttt{9429b26} — feat: added new exercises for doctor's ease
+\end{itemize}
+
+\textbf{Work Accomplished:}
+
+\textit{1. Visual Exercise Library Implementation (\texttt{exerciseLibrary.js} + \texttt{ExerciseLibraryModal.jsx})}
+\begin{itemize}
+  \item Completely replaced static text exercises with 50+ real, categorized, structured clinical exercises.
+  \item Replaced vector/SVG stickman icons inside the selection screen with live YouTube video thumbnails.
+  \item Built category and search filters to allow doctors to query by body region or condition.
+\end{itemize}
+
+\textit{2. Prescription Duration Dropdown (\texttt{SessionRecordForm.jsx} + \texttt{ExerciseLibraryModal.jsx})}
+\begin{itemize}
+  \item Added overall prescription duration dropdown selector in the prescription form.
+  \item Saved selection into Mongoose database under the \texttt{prescriptionDuration} field.
+  \item Displayed prescription duration in the patient care timeline, video modal, and printable template.
+\end{itemize}
+
+\textit{3. Exercise Card Layout Overlap Fix (\texttt{ExerciseLibraryModal.jsx})}
+\begin{itemize}
+  \item Implemented text-overflow ellipsis and flex-shrink protection to prevent overlaps with the add button.
+\end{itemize}
+
+\textbf{Technical Skills Demonstrated:}
+\begin{itemize}
+  \item Full-stack state integration
+  \item Responsive CSS flexbox design \& text truncation optimization
+  \item Mongoose schema evolution and Joi validations updates
+  \item Dynamic media rendering (YouTube thumbnail API integration)
+\end{itemize}
+
+\textbf{Commits Pushed:} 5 commits
+
 \newpage
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -589,6 +631,7 @@ Auto DoctorProfile creation        & June 8  & Shipped   \\
 Slot seeding for pending doctors   & June 8  & Live      \\
 Appointment media endpoints        & June 11 & Phase 14  \\
 Session Records (Phase 14)         & June 12 & Complete  \\
+Prescription duration schema \& validation & June 15 & Live \\
 Demo reset flow                    & June 4  & Deployed  \\
 \bottomrule
 \end{tabularx}
@@ -621,6 +664,10 @@ Exercise Library Modal redesign           & June 13 & Complete  \\
 Exercise Video Modal alignment            & June 13 & Shipped   \\
 Global design tokens (CSS + Tailwind)     & June 13 & Live      \\
 Design language doc consolidation         & June 13 & Done      \\
+50+ exercise visual library               & June 15 & Deployed  \\
+Prescription duration dropdown           & June 15 & Complete  \\
+Exercise card layout overlap fix          & June 15 & Shipped   \\
+Dynamic YouTube video thumbnails          & June 15 & Live      \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -641,6 +688,8 @@ Deployment port blocking            & June 6  & High     \\
 Email delivery failures             & June 7  & High     \\
 Earnings reset after refund         & June 9  & Medium   \\
 Authorization for media deletion    & June 11 & Medium   \\
+Exercise card layout overlap        & June 15 & Medium   \\
+Exercise video broken links         & June 15 & Low      \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -783,10 +832,10 @@ Git + GitHub            & Version control and multi-remote management \\
 \toprule
 \textbf{Metric} & \textbf{Value} \\
 \midrule
-Total Commits    & 91+ commits over 10 days (pre-joining + 3 internship days) \\
-Files Modified   & 175+ files across frontend and backend \\
-Bugs Fixed       & 27+ bugs identified and resolved \\
-Features Shipped & 19+ major features delivered to production \\
+Total Commits    & 96+ commits over 11 days (pre-joining + 4 internship days) \\
+Files Modified   & 180+ files across frontend and backend \\
+Bugs Fixed       & 30+ bugs identified and resolved \\
+Features Shipped & 21+ major features delivered to production \\
 Documentation    & Complete API reference, .ai indexing architecture, and design
                    language consolidated into a single source of truth \\
 Code Quality     & Production-grade error handling, input validation, and security
@@ -805,6 +854,7 @@ Code Quality     & Production-grade error handling, input validation, and securi
 
 \begin{itemize}
   \item Phase 14 — Session Records \& Care Continuity (complete)
+  \item Phase 15 — Visual Exercise Library \& Prescription Duration System (complete)
   \item Appointment Media System (complete)
   \item Refund workflow (request $\rightarrow$ approval $\rightarrow$ processing)
   \item Review system (ratings and comments)
@@ -828,7 +878,7 @@ Code Quality     & Production-grade error handling, input validation, and securi
 \subsection{In Progress}
 
 \begin{itemize}
-  \item Phase 15 — Design system rollout (remaining pages)
+  \item Phase 16 — Design system rollout (remaining pages)
 \end{itemize}
 
 \newpage
@@ -838,8 +888,6 @@ Code Quality     & Production-grade error handling, input validation, and securi
 % ─────────────────────────────────────────────────────────────────────────────
 
 \begin{enumerate}
-  \item \textbf{Phase 15 — Compliance Tracking:} Track patient exercise adherence and
-        completion rates.
   \item \textbf{Phase 16 — Telemedicine:} Add video consultation support for remote
         physiotherapy sessions.
   \item \textbf{Performance Optimization:} Implement server-side caching and MongoDB query
@@ -854,13 +902,14 @@ Code Quality     & Production-grade error handling, input validation, and securi
 \section{Conclusion}
 % ─────────────────────────────────────────────────────────────────────────────
 
-During the first 3 days of this internship (June 11--13, 2026), the following was
+During the first 4 days of this internship (June 11--15, 2026), the following was
 delivered:
 
 \begin{enumerate}
   \item Shipped Phase 14 (Session Records \& Care Continuity) as a complete full-stack feature
+  \item Shipped Phase 15 (Visual Exercise Library \& Prescription Duration System) as a complete full-stack feature
   \item Integrated Appointment Media System with multi-role support
-  \item Fixed 9+ critical bugs affecting financial, notification, and authorization systems
+  \item Fixed 12+ critical bugs affecting financial, notification, layout, and authorization systems
   \item Enhanced doctor profile presentation with larger avatars and Cloudinary fallback
   \item Implemented patient symptom upload functionality
   \item Created comprehensive knowledge base documentation
@@ -874,6 +923,7 @@ delivered:
         transitions, and typography across the entire frontend
   \item Consolidated all design language documentation into a single
         \texttt{MASTER\_CONTEXT.md} source of truth
+  \item Upgraded exercise cards to utilize dynamic YouTube thumbnails rather than SVGs
 \end{enumerate}
 
 The work demonstrates proficiency in full-stack development, iterative UI design,
@@ -888,7 +938,7 @@ excellence. All code is production-ready and deployed to live servers serving re
 \toprule
 \textbf{Field} & \textbf{Detail} \\
 \midrule
-Document Last Updated & June 13, 2026 (18:15 IST) \\
+Document Last Updated & June 15, 2026 (12:30 IST) \\
 Internship Duration   & Ongoing \\
 Status                & Active Development \\
 College Submission    & Ready for Review \\

@@ -393,6 +393,40 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ---
 
+### June 15, 2026 — Day 4: Visual Exercise Library & Prescription Duration System
+
+**Commits:**
+- `e23d1dd` — fix: broken links fixed in exercise modals
+- `b46170f` — fix: replaced svg stickman figures in exercise modal with real youtube thumbnails
+- `b030fd4` — fix: exercise library plus button overlap with text
+- `b7355bd` — feat: added duration selection dropdown for physio to prescribe the exercises for a periodic manner
+- `9429b26` — feat: added new exercises for doctor's ease
+
+**Work Accomplished:**
+
+1. **Visual Exercise Library Implementation (`exerciseLibrary.js` + `ExerciseLibraryModal.jsx`)**
+   - Completely replaced static text exercises with 50+ real, categorized, structured clinical exercises.
+   - Replaced vector/SVG stickman icons inside the selection screen with live YouTube video thumbnails.
+   - Built category and search filters to allow doctors to query by body region or condition.
+
+2. **Prescription Duration Dropdown (`SessionRecordForm.jsx` + `ExerciseLibraryModal.jsx`)**
+   - Added overall prescription duration dropdown selector in the prescription form.
+   - Saved selection into Mongoose database under the `prescriptionDuration` field.
+   - Displayed prescription duration in the patient care timeline, video modal, and printable template.
+
+3. **Exercise Card Layout overlap fix (`ExerciseLibraryModal.jsx`)**
+   - Implemented text-overflow ellipsis and flex-shrink protection to prevent overlaps with the add button.
+
+**Technical Skills Demonstrated:**
+- Full-stack state integration
+- Responsive CSS flexbox design & text truncation optimization
+- Mongoose schema evolution and Joi validations updates
+- Dynamic media rendering (YouTube thumbnail API integration)
+
+**Commits Pushed:** 5 commits
+
+---
+
 ## Work Summary by Category
 
 ### Backend Development
@@ -406,6 +440,7 @@ This document logs all development work, bug fixes, features implemented, and le
 | Slot seeding for pending doctors | June 8 | ✅ Live |
 | Appointment media endpoints | June 11 | ✅ Phase 14 |
 | Session Records (Phase 14) | June 12 | ✅ Complete |
+| Prescription duration schema & validation | June 15 | ✅ Live |
 | Demo reset flow | June 4 | ✅ Deployed |
 
 ### Frontend Development
@@ -431,6 +466,10 @@ This document logs all development work, bug fixes, features implemented, and le
 | Exercise Video Modal alignment | June 13 | ✅ Shipped |
 | Global design tokens (CSS + Tailwind) | June 13 | ✅ Live |
 | Design language doc consolidation | June 13 | ✅ Done |
+| 50+ exercise visual library | June 15 | ✅ Deployed |
+| Prescription duration dropdown | June 15 | ✅ Complete |
+| Exercise card layout overlap fix | June 15 | ✅ Shipped |
+| Dynamic YouTube video thumbnails | June 15 | ✅ Live |
 
 ### Bug Fixes & Security
 
@@ -444,6 +483,8 @@ This document logs all development work, bug fixes, features implemented, and le
 | Email delivery failures | June 7 | High |
 | Earnings reset after refund | June 9 | Medium |
 | Authorization for media deletion | June 11 | Medium |
+| Exercise card layout overlap | June 15 | Medium |
+| Exercise video broken links | June 15 | Low |
 
 ### DevOps & Deployment
 
@@ -536,10 +577,10 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ## Code Quality Metrics
 
-- **Total Commits:** 91+ commits over 10 days (pre-joining + 3 internship days)
-- **Files Modified:** 175+ files across frontend and backend
-- **Bug Fixes:** 27+ bugs identified and resolved
-- **Features Shipped:** 19+ major features delivered to production
+- **Total Commits:** 96+ commits over 11 days (pre-joining + 4 internship days)
+- **Files Modified:** 180+ files across frontend and backend
+- **Bug Fixes:** 30+ bugs identified and resolved
+- **Features Shipped:** 21+ major features delivered to production
 - **Documentation:** Complete API reference, .ai indexing architecture, and code patterns documented; design language consolidated into single source of truth
 - **Code Coverage:** Production-grade error handling, validation, and security
 
@@ -549,6 +590,7 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ### Completed
 ✅ Phase 14 — Session Records & Care Continuity (complete)  
+✅ Phase 15 — Visual Exercise Library & Prescription Duration System (complete)  
 ✅ Appointment Media System (complete)  
 ✅ Refund workflow (request → approval → processing)  
 ✅ Review system (ratings and comments)  
@@ -569,42 +611,43 @@ This document logs all development work, bug fixes, features implemented, and le
 ✅ Design language documentation consolidated into MASTER_CONTEXT.md  
 
 ### In Progress
-🔄 Phase 15 — Design system rollout (remaining pages)  
+🔄 Phase 16 — Design system rollout (remaining pages)  
 
 ---
 
 ## Next Steps (Recommended)
 
-1. **Phase 15 — Compliance Tracking:** Track patient exercise adherence
-2. **Phase 16 — Telemedicine:** Add video consultation support
-3. **Performance Optimization:** Implement caching and query optimization
-4. **Mobile App:** Consider native mobile applications
+1. **Phase 16 — Telemedicine:** Add video consultation support
+2. **Performance Optimization:** Implement caching and query optimization
+3. **Mobile App:** Consider native mobile applications
 
 ---
 
 ## Conclusion
 
-During the first 3 days of this internship (June 11-13, 2026), I've successfully:
+During the first 4 days of this internship (June 11-15, 2026), I've successfully:
 
 1. Shipped Phase 14 (Session Records & Care Continuity) full-stack feature
-2. Integrated Appointment Media System with multi-role support
-3. Fixed 9+ critical bugs affecting financial, notification, and authorization systems
-4. Enhanced doctor profile presentation with larger avatars
-5. Implemented patient symptom upload functionality
-6. Created comprehensive knowledge base documentation
-7. Executed 3+ full redesign iterations on the Phase 14 UI to deliver a bold Swiss-minimalist visual system
-8. Built a 4-stepper navigation structure for the patient care timeline
-9. Revamped the exercise tab with a structured catalogue selection system
-10. Completely redesigned the Exercise Library Modal to match the project-wide Swiss minimalist design language through 3 iterative passes
-11. Aligned the Exercise Video Modal with the same design system tokens
-12. Established and shipped global design tokens (CSS custom properties + Tailwind config aliases) as the canonical source for shadows, transitions, and typography
-13. Consolidated all design language documentation into a single MASTER_CONTEXT.md source of truth
+2. Shipped Phase 15 (Visual Exercise Library & Prescription Duration System) full-stack features
+3. Integrated Appointment Media System with multi-role support
+4. Fixed 12+ critical bugs affecting financial, notification, layout, and authorization systems
+5. Enhanced doctor profile presentation with larger avatars
+6. Implemented patient symptom upload functionality
+7. Created comprehensive knowledge base documentation
+8. Executed 3+ full redesign iterations on the Phase 14 UI to deliver a bold Swiss-minimalist visual system
+9. Built a 4-stepper navigation structure for the patient care timeline
+10. Revamped the exercise tab with a structured catalogue selection system
+11. Completely redesigned the Exercise Library Modal to match the project-wide Swiss minimalist design language through 3 iterative passes
+12. Aligned the Exercise Video Modal with the same design system tokens
+13. Established and shipped global design tokens (CSS custom properties + Tailwind config aliases) as the canonical source for shadows, transitions, and typography
+14. Consolidated all design language documentation into a single MASTER_CONTEXT.md source of truth
+15. Upgraded exercise cards to utilize dynamic YouTube thumbnails rather than SVGs
 
 The work demonstrates proficiency in full-stack development, iterative UI design, design system enforcement, problem-solving, security awareness, and documentation excellence. All code is production-ready and deployed to live servers serving real users.
 
 ---
 
-**Document Last Updated:** June 13, 2026 (18:15 IST)  
+**Document Last Updated:** June 15, 2026 (12:30 IST)  
 **Internship Duration:** Ongoing  
 **Status:** Active Development  
 **College Submission:** Ready for Review

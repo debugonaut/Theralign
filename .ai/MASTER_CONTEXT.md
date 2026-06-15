@@ -302,7 +302,7 @@ SessionRecord (Phase 14 — Care Continuity)
   ├─ progressRating: String ('worse'|'no_change'|'slight_improvement'|'significant_improvement'|'resolved')
   ├─ painScoreBefore: Number (0-10)
   ├─ painScoreAfter: Number (0-10)
-  ├─ exercisePrescription: [{ exerciseName, sets, reps, frequency, duration, notes }]
+  ├─ exercisePrescription: [{ exerciseName, exerciseLibraryId, sets, reps, frequency, duration, prescriptionDuration, notes }]
   ├─ medications: [String]
   ├─ clinicalObservations: String
   ├─ followUpRecommendation: { recommended, intervalDays, suggestedDate, sessionGoal }
@@ -941,14 +941,23 @@ router.post('/book', validate(schema), controller);
 | 13 | Refunds & Cancellation | ✅ | Phase 13 | 8 (cancel-patient, cancel-doctor, refund) |
 | 14 | Pre-Appointment Media | ✅ | Phase 14 | 4 (upload, retrieve, delete, count) |
 | 15 | Session Records | ✅ | 2026-06-13 | 5 (create, get, edit, history, timeline) |
+| 16 | Visual Exercise Library | ✅ | 2026-06-15 | — (schema changes & UI components) |
 
-**Total Completed:** 15 phases, 65+ endpoints, 44+ components, 13 models
+**Total Completed:** 16 phases, 65+ endpoints, 46+ components, 13 models
 
 ---
 
 # CURRENT STATE & RECENT CHANGES
 
-## Latest Updates (As of 2026-06-13)
+## Latest Updates (As of 2026-06-15)
+
+### Phase 16 Completion (Visual Exercise Library & Prescription Duration System)
+- ✅ Replaced static placeholder exercise list with 50+ real, categorized, structured exercises
+- ✅ Added `prescriptionDuration` field to SessionRecord model and validation layer
+- ✅ Built overall prescription duration dropdown selector in SessionRecordForm and ExerciseLibraryModal
+- ✅ Rendered overall prescription duration on the patient care timeline, video modal, and printable template
+- ✅ Resolved exercise card layout overlap issues on small viewports with text-overflow ellipsis and flex-shrink protection
+- ✅ Replaced vector/SVG stickman icons in exercise cards with dynamic YouTube video thumbnails
 
 ### Phase 15 Completion (Session Records & Care Continuity)
 - ✅ SessionRecord model linking Appointments to treatment summaries
@@ -972,6 +981,9 @@ router.post('/book', validate(schema), controller);
 - ✅ Doctor profile image added to DoctorDetailPage with w-28 h-28 dimensions and alignment adjustments
 
 ### Recent Bug Fixes
+- ✅ Exercise library card text overlap with add (+) button
+- ✅ Replaced placeholder stickman SVGs with YouTube thumbnails
+- ✅ Fixed broken video links in the exercise library
 - ✅ Profile upload redirection bug (role field missing in user queries)
 - ✅ Modal auto-close during background polling (showModalRef check)
 - ✅ Font family mismatch in modal header
@@ -986,12 +998,16 @@ router.post('/book', validate(schema), controller);
 ## Git Commit History (Recent)
 
 ```
+2026-06-15 — fix: broken links fixed in exercise modals
+2026-06-15 — fix: replaced svg stickman figures in exercise modal with real youtube thumbnails
+2026-06-15 — fix: exercise library plus button overlap with text
+2026-06-15 — feat: added duration selection dropdown for physio to prescribe the exercises for a periodic manner
+2026-06-15 — feat: added new exercises for doctor's ease
 2026-06-13 — Phase 15 Swiss Minimalist UI Polish: Refactored ExerciseLibraryModal to remove decorative background tints and colored icons. Used brand primary left border and transparent background for active category items. Changed card hover transition to shadow-only lift. Set card figure zone background to #FAFBFC and stickman figures to brand color. Square add buttons with 6px border-radius.
 2026-06-13 — Phase 15 Redesign (Complete): Full visual redesign of ExerciseLibraryModal + ExerciseVideoModal
 2026-06-13 — Phase 15 Complete: Session Records & Care Continuity
 2026-06-11 — Bug Fix: Doctor's profile photo on his profile has increased length and width
 2026-06-11 — Feature: Add doctor profile image on detail page
-2026-06-11 — Revert: Rollback typography redesign
 ```
 
 ---
@@ -2131,10 +2147,12 @@ Indexes:
   // Exercise prescription
   exercisePrescription: [{
     exerciseName: String,
+    exerciseLibraryId: String (null for manual exercises),
     sets: Number,
     reps: Number,
-    frequency: String (e.g., 'daily', '3x per week', '2x per week'),
-    duration: String (e.g., '4 weeks', '2 weeks'),
+    frequency: String (e.g., 'twice daily', '3x per week'),
+    duration: String (e.g., '30 seconds', '10 minutes' hold time),
+    prescriptionDuration: String (e.g., '2 weeks', '1 month' overall duration),
     notes: String
   }],
   

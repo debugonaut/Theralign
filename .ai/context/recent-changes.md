@@ -1,12 +1,37 @@
 # Recent Changes — Last 7 Days
 
-**Generated:** 2026-06-11  
-**Period:** 2026-06-04 to 2026-06-11  
+**Generated:** 2026-06-15  
+**Period:** 2026-06-08 to 2026-06-15  
 **Source:** git log --oneline -n 50
 
 ---
 
 ## High Impact Changes
+
+### 2026-06-15 — Visual Exercise Library & Prescription Duration System (Phase 15 Completion)
+**Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
+
+**Summary:** Fully integrated the comprehensive visual exercise library from the updated specifications. Extended the Mongoose schema validator and form UI with a new overall prescription duration dropdown (1 week to 3 months, defaulting to "2 weeks") and synchronized it across the patient care timeline, exercise video modal, and printable template. Resolved a critical layout overlap issue on exercise cards by applying flexbox layout and text-overflow ellipsis, and replaced stickman SVG placeholders with dynamic YouTube video thumbnails.
+
+**Changed files:**
+- `client/src/data/exerciseLibrary.js` [modified] — Replaced placeholder data with 50+ real, categorized exercises.
+- `server/src/models/SessionRecord.model.js` [modified] — Added `prescriptionDuration` field to Mongoose schema.
+- `server/src/validations/sessionRecord.validation.js` [modified] — Added validation constraints for the `prescriptionDuration` field.
+- `client/src/components/exercises/ExerciseLibraryModal.jsx` [modified] — Implemented overall prescription duration selector dropdown, fixed the overlapping card bottom-row flex layout, replaced stickman placeholders with YouTube thumbnails.
+- `client/src/pages/doctor/SessionRecordForm.jsx` [modified] — Integrated overall prescription duration selector dropdown.
+- `client/src/components/exercises/ExerciseVideoModal.jsx` [modified] — Rendered overall prescription duration.
+- `client/src/pages/patient/PatientCareTimeline.jsx` [modified] — Displayed overall prescription duration on cards and printable templates.
+
+**Affected subsystems:**
+- patient-profiles
+- doctor-profiles
+- appointment-booking
+
+**Regression risk:** Low
+- Production build compiled successfully.
+- Backward compatibility preserved for existing session records lacking `prescriptionDuration` and `exerciseLibraryId` fields.
+
+---
 
 ### 2026-06-12 — Complete Implementation & Redesign of Phase 14: Session Records & Care Continuity
 **Author:** Antigravity (AI Coding Assistant)
