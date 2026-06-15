@@ -427,6 +427,54 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ---
 
+### June 15, 2026 — Day 5: AI Exercise Creator & Junior Doctor Hierarchy (Phase 16)
+
+**Files Created/Modified (Staged & Working):**
+- **New Frontend Components/Stores**:
+  - `client/src/components/exercises/AIExerciseCreatorModal.jsx` [NEW] — Wizard component interface for Llama 3.1 8B parameters modeling.
+  - `client/src/utils/customExerciseStore.js` [NEW] — Browser local storage interface for persistence of doctor-designed custom exercises.
+  - `client/src/pages/auth/JuniorDoctorRegister.jsx` [NEW] — Subordinate onboarding parsing invitation tokens.
+  - `client/src/pages/doctor/PracticeManagement.jsx` [NEW] — Supervisor administrative page to manage team size, invitation links, and roster configurations.
+  - `client/src/pages/doctor/JuniorDoctorDashboard.jsx` [NEW] — Clean dashboard display with supervisor footnote metadata.
+  - `client/src/api/junior.api.js` [NEW] — Frontend API integration mapping backend team hierarchy routes.
+- **Frontend Enhancements**:
+  - `client/src/components/exercises/ExerciseLibraryModal.jsx` [MODIFY] — Integrated "Create with AI" modal triggers, catalog merging, custom badges, and hover deletion listeners.
+  - `client/src/components/layout/DashboardLayout.jsx` [MODIFY] — Restricts sidebar navigation links (Availability, Onboarding, Billing) for junior profiles.
+  - `client/src/pages/doctor/DoctorDashboard.jsx` [MODIFY] — Implemented conditional rendering load of the specialized `JuniorDoctorDashboard.jsx`.
+  - `client/src/routes/AppRoutes.jsx` [MODIFY] — Added layout path routing for practice hierarchy and registration.
+- **New Backend Services/Middleware**:
+  - `server/src/controllers/juniorDoctor.controller.js` [NEW] — Controller handling invitations and team management functions.
+  - `server/src/services/juniorDoctor.service.js` [NEW] — Logic validating invitation tokens and adding verified juniors under supervisor profiles.
+  - `server/src/routes/juniorDoctor.routes.js` [NEW] — Hierarchy routing for `/api/junior`.
+  - `server/src/middleware/aiRateLimit.middleware.js` [NEW] — Limits custom exercise generation endpoints to 10 requests per minute.
+  - `server/src/middleware/juniorGuard.middleware.js` [NEW] — REST access control blocking juniors from mutating supervising configs.
+- **Backend Model & Config Updates**:
+  - `server/src/models/DoctorProfile.model.js` [MODIFY] — Added `doctorType`, `juniorInvitations`, `supervisingDoctor` collections schema.
+  - `server/src/controllers/ai.controller.js` & `server/src/routes/ai.routes.js` [MODIFY] — Formulated endpoints executing Groq Llama 3.1 8B prompts.
+
+**Work Accomplished:**
+
+1. **AI Custom Exercise Creation (Feature A):**
+   - Built a 3-step wizard modal (`AIExerciseCreatorModal.jsx`) allowing doctors to provide raw prompt text and select muscle groups/difficulty.
+   - Connected wizard to `/api/ai/generate-exercise` where prompts are dynamically routed to Llama 3.1 8B for structured parameters modeling.
+   - Created `customExerciseStore` to save exercises locally under `'theralign_custom_exercises'` so doctor catalogs persist securely.
+   - Merged custom exercises dynamically into `ExerciseLibraryModal.jsx` and added mouse-hover listeners to render custom delete indicators.
+
+2. **Junior Doctor Hierarchy (Feature B):**
+   - Updated `DoctorProfile` model schemas to map hierarchy relationships (`doctorType: 'senior' | 'junior'`).
+   - Implemented email-linked, single-use token invitations that prefill register parameters.
+   - Developed `PracticeManagement.jsx` permitting senior doctors to monitor roster sizes, generate links, and revoke access.
+   - Designed conditional render dashboards and middleware route guards blocking juniors from altering supervisor calendars, profiles, and billing configurations.
+
+**Technical Skills Demonstrated:**
+- Full-stack SaaS role authorization design
+- Advanced React wizard modals and hover UI states
+- Groq Llama 3.1 8B parameter modeling and API schema validations
+- Database relationship hierarchies and compound indexing
+- REST API middleware and rate limiter development
+
+---
+
 ## Work Summary by Category
 
 ### Backend Development
@@ -441,6 +489,8 @@ This document logs all development work, bug fixes, features implemented, and le
 | Appointment media endpoints | June 11 | ✅ Phase 14 |
 | Session Records (Phase 14) | June 12 | ✅ Complete |
 | Prescription duration schema & validation | June 15 | ✅ Live |
+| AI exercise generation endpoint | June 15 | ✅ Complete |
+| Junior Doctor invitation system & middleware | June 15 | ✅ Live |
 | Demo reset flow | June 4 | ✅ Deployed |
 
 ### Frontend Development
@@ -470,6 +520,10 @@ This document logs all development work, bug fixes, features implemented, and le
 | Prescription duration dropdown | June 15 | ✅ Complete |
 | Exercise card layout overlap fix | June 15 | ✅ Shipped |
 | Dynamic YouTube video thumbnails | June 15 | ✅ Live |
+| AIExerciseCreatorModal 3-step wizard | June 15 | ✅ Complete |
+| localStorage custom exercise store | June 15 | ✅ Live |
+| PracticeManagement team roster & invite settings | June 15 | ✅ Complete |
+| JuniorDoctorDashboard & conditional rendering | June 15 | ✅ Deployed |
 
 ### Bug Fixes & Security
 
@@ -485,6 +539,8 @@ This document logs all development work, bug fixes, features implemented, and le
 | Authorization for media deletion | June 11 | Medium |
 | Exercise card layout overlap | June 15 | Medium |
 | Exercise video broken links | June 15 | Low |
+| Vite JSX syntax & tag compilation error | June 15 | Blocker |
+| Custom exercise delete button display | June 15 | Medium |
 
 ### DevOps & Deployment
 
@@ -591,6 +647,7 @@ This document logs all development work, bug fixes, features implemented, and le
 ### Completed
 ✅ Phase 14 — Session Records & Care Continuity (complete)  
 ✅ Phase 15 — Visual Exercise Library & Prescription Duration System (complete)  
+✅ Phase 16 — AI Exercise Creation & Junior Doctor Hierarchy (complete)  
 ✅ Appointment Media System (complete)  
 ✅ Refund workflow (request → approval → processing)  
 ✅ Review system (ratings and comments)  
@@ -611,13 +668,13 @@ This document logs all development work, bug fixes, features implemented, and le
 ✅ Design language documentation consolidated into MASTER_CONTEXT.md  
 
 ### In Progress
-🔄 Phase 16 — Design system rollout (remaining pages)  
+🔄 Phase 17 — Telemedicine design and backend scoping  
 
 ---
 
 ## Next Steps (Recommended)
 
-1. **Phase 16 — Telemedicine:** Add video consultation support
+1. **Phase 17 — Telemedicine:** Add video consultation support
 2. **Performance Optimization:** Implement caching and query optimization
 3. **Mobile App:** Consider native mobile applications
 
@@ -647,7 +704,7 @@ The work demonstrates proficiency in full-stack development, iterative UI design
 
 ---
 
-**Document Last Updated:** June 15, 2026 (12:30 IST)  
+**Document Last Updated:** June 15, 2026 (13:40 IST)  
 **Internship Duration:** Ongoing  
 **Status:** Active Development  
 **College Submission:** Ready for Review

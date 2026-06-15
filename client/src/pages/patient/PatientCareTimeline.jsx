@@ -284,7 +284,7 @@ export default function PatientCareTimeline() {
         }
         .print-meta {
           display: grid;
-          grid-template-cols: 1fr 1fr;
+          grid-template-columns: 1fr 1fr;
           gap: 8px;
           font-size: 12px;
         }
@@ -324,10 +324,14 @@ export default function PatientCareTimeline() {
     document.body.appendChild(printContainer);
     document.head.appendChild(style);
 
-    window.print();
+    const cleanup = () => {
+      if (document.body.contains(printContainer)) document.body.removeChild(printContainer);
+      if (document.head.contains(style)) document.head.removeChild(style);
+      window.removeEventListener('afterprint', cleanup);
+    };
 
-    document.body.removeChild(printContainer);
-    document.head.removeChild(style);
+    window.addEventListener('afterprint', cleanup);
+    window.print();
   };
 
   const getPainChipStyle = (before, after) => {
@@ -572,6 +576,14 @@ export default function PatientCareTimeline() {
                           <h4 className="font-bold text-[15px] text-white leading-snug truncate w-full" style={{ fontWeight: 700 }}>
                             {docName.toUpperCase()}
                           </h4>
+                          {rec.doctor?.doctorType === 'junior' && rec.doctor?.seniorDoctor?.user?.name && (
+                            <span 
+                              className="block mt-0.5 leading-tight select-none"
+                              style={{ color: 'rgba(255,255,255,0.55)', fontSize: '10px', fontWeight: 400 }}
+                            >
+                              Under supervision of Dr. {rec.doctor.seniorDoctor.user.name}
+                            </span>
+                          )}
                           <span className="text-[13px] text-white/70 tracking-wide mt-0.5 truncate block w-full" style={{ fontWeight: 700 }}>
                             {primarySpec.toUpperCase()}
                           </span>

@@ -17,6 +17,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 const LandingPage = lazy(() => import('../pages/public/LandingPage'));
 const LoginPage = lazy(() => import('../pages/public/LoginPage'));
 const RegisterPage = lazy(() => import('../pages/public/RegisterPage'));
+const JuniorDoctorRegister = lazy(() => import('../pages/auth/JuniorDoctorRegister'));
 const DoctorListingPage = lazy(() => import('../pages/public/DoctorListingPage'));
 const DoctorDetailPage = lazy(() => import('../pages/public/DoctorDetailPage'));
 const NotFoundPage = lazy(() => import('../pages/public/NotFoundPage'));
@@ -47,6 +48,7 @@ const DoctorProfileEditor = lazy(() => import('../pages/doctor/DoctorProfileEdit
 const DoctorEarnings = lazy(() => import('../pages/doctor/DoctorEarnings'));
 const DoctorMyReviews = lazy(() => import('../pages/doctor/MyReviews'));
 const SessionRecordForm = lazy(() => import('../pages/doctor/SessionRecordForm'));
+const PracticeManagement = lazy(() => import('../pages/doctor/PracticeManagement'));
 
 // Admin Pages (Lazy Loaded)
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -94,6 +96,10 @@ const AppRoutes = () => {
           <Route
             path="/register"
             element={<AuthRedirect><RegisterPage /></AuthRedirect>}
+          />
+          <Route
+            path="/register/junior"
+            element={<JuniorDoctorRegister />}
           />
 
           <Route path="/doctors" element={<DoctorListingPage />} />
@@ -164,6 +170,7 @@ const AppRoutes = () => {
           <Route path="/doctor/appointments" element={<DoctorAppointments />} />
           <Route path="/doctor/availability" element={<DoctorAvailability />} />
           <Route path="/doctor/profile" element={<DoctorProfileEditor />} />
+          <Route path="/doctor/practice" element={<PracticeManagement />} />
           <Route path="/doctor/earnings" element={<DoctorEarnings />} />
           <Route path="/doctor/reviews" element={<DoctorMyReviews />} />
           <Route path="/doctor/appointments/:appointmentId/session-record" element={<SessionRecordForm />} />

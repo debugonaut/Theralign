@@ -14,10 +14,10 @@ const doctorProfileSchema = new Schema(
 
     specialization: {
       type: [String],
-      required: [function () { return this.isOnboarded === true; }, 'At least one specialization is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'At least one specialization is required'],
       validate: {
         validator: function (v) {
-          if (this.isOnboarded !== true) return true;
+          if (this.isOnboarded !== true || this.doctorType === 'junior') return true;
           return Array.isArray(v) && v.length > 0;
         },
         message: 'A doctor must have at least one specialization',
@@ -26,25 +26,25 @@ const doctorProfileSchema = new Schema(
 
     experience: {
       type: Number,
-      required: [function () { return this.isOnboarded === true; }, 'Experience (in years) is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Experience (in years) is required'],
       min: [0, 'Experience cannot be negative'],
     },
 
     clinicName: {
       type: String,
-      required: [function () { return this.isOnboarded === true; }, 'Clinic name is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Clinic name is required'],
       trim: true,
     },
 
     clinicAddress: {
       type: String,
-      required: [function () { return this.isOnboarded === true; }, 'Clinic address is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Clinic address is required'],
       trim: true,
     },
 
     city: {
       type: String,
-      required: [function () { return this.isOnboarded === true; }, 'City is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'City is required'],
       trim: true,
     },
 
@@ -55,14 +55,14 @@ const doctorProfileSchema = new Schema(
           values: ['Point'],
           message: 'clinicLocation type must be "Point"',
         },
-        required: [function () { return this.isOnboarded === true; }, 'clinicLocation type is required'],
+        required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'clinicLocation type is required'],
       },
       coordinates: {
         type: [Number], // [longitude, latitude]
-        required: [function () { return this.isOnboarded === true; }, 'Geospatial coordinates [longitude, latitude] are required'],
+        required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Geospatial coordinates [longitude, latitude] are required'],
         validate: {
           validator: function (coords) {
-            if (this.isOnboarded !== true) return true;
+            if (this.isOnboarded !== true || this.doctorType === 'junior') return true;
             if (!Array.isArray(coords) || coords.length !== 2) return false;
             const [lng, lat] = coords;
             return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
@@ -74,17 +74,17 @@ const doctorProfileSchema = new Schema(
 
     consultationFee: {
       type: Number,
-      required: [function () { return this.isOnboarded === true; }, 'Consultation fee is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Consultation fee is required'],
       min: [0, 'Consultation fee cannot be negative'],
       default: 500,
     },
 
     bio: {
       type: String,
-      required: [function () { return this.isOnboarded === true; }, 'Professional biography is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Professional biography is required'],
       validate: {
         validator: function (v) {
-          if (this.isOnboarded !== true) return true;
+          if (this.isOnboarded !== true || this.doctorType === 'junior') return true;
           if (!v) return false;
           return v.length >= 50 && v.length <= 1000;
         },
@@ -94,7 +94,7 @@ const doctorProfileSchema = new Schema(
 
     registrationNumber: {
       type: String,
-      required: [function () { return this.isOnboarded === true; }, 'Medical license registration number is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Medical license registration number is required'],
       unique: true,
       sparse: true,
       trim: true,
@@ -102,12 +102,12 @@ const doctorProfileSchema = new Schema(
 
     degreeDocument: {
       type: String, // Cloudinary URL
-      required: [function () { return this.isOnboarded === true; }, 'Degree document is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Degree document is required'],
     },
 
     licenseDocument: {
       type: String, // Cloudinary URL
-      required: [function () { return this.isOnboarded === true; }, 'Medical license document is required'],
+      required: [function () { return this.isOnboarded === true && this.doctorType !== 'junior'; }, 'Medical license document is required'],
     },
 
     isOnboarded: {
@@ -172,6 +172,60 @@ const doctorProfileSchema = new Schema(
       type: String,
       default: null,
     },
+
+    // ─── Junior Doctor Hierarchy ───────────────────────────────────────────────
+    // All senior doctors have doctorType: 'senior' (default: 'senior' for backwards compat).
+    // Junior doctors have doctorType: 'junior' and a reference to their seniorDoctor.
+    // Junior doctors cannot manage their own fees, availability, or accept direct payments.
+
+    doctorType: {
+      type: String,
+      enum: ['independent', 'senior', 'junior'],
+      default: 'independent',
+      required: true,
+    },
+
+    // For junior doctors: reference to the supervising senior doctor's DoctorProfile
+    seniorDoctor: {
+      type: Schema.Types.ObjectId,
+      ref: 'DoctorProfile',
+      default: null,
+    },
+
+    // For senior doctors: the name of the practice under which juniors operate
+    practiceName: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+
+    // For senior doctors: how many junior doctors they are allowed to add
+    maxJuniorDoctors: {
+      type: Number,
+      default: 0,
+      min: [0, 'maxJuniorDoctors cannot be negative'],
+    },
+
+    // For senior doctors: which junior doctors are under their practice
+    juniorDoctors: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'DoctorProfile' }],
+      default: [],
+    },
+
+    // Pending invitation records for junior doctors
+    juniorInvitations: {
+      type: [{
+        email: { type: String, required: true, lowercase: true, trim: true },
+        invitedAt: { type: Date, default: Date.now },
+        status: {
+          type: String,
+          enum: ['pending', 'accepted', 'expired'],
+          default: 'pending'
+        },
+        token: { type: String, required: true }
+      }],
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -184,6 +238,9 @@ doctorProfileSchema.index({ clinicLocation: '2dsphere' });
 doctorProfileSchema.index({ verificationStatus: 1 });
 doctorProfileSchema.index({ experience: -1 });
 doctorProfileSchema.index({ city: 1 });
+doctorProfileSchema.index({ seniorDoctor: 1 });
+doctorProfileSchema.index({ 'juniorInvitations.token': 1 });
+doctorProfileSchema.index({ 'juniorInvitations.email': 1 });
 
 const DoctorProfile = mongoose.model('DoctorProfile', doctorProfileSchema);
 

@@ -11,6 +11,7 @@ import Table, { ActionLink } from '../../components/common/Table';
 import OnboardingCard from '../../components/doctor/OnboardingCard';
 import ProfileCompletionCard from '../../components/doctor/ProfileCompletionCard';
 import Button from '../../components/common/Button';
+import JuniorDoctorDashboard from './JuniorDoctorDashboard';
 
 const DoctorDashboard = () => {
   const navigate = useNavigate();
@@ -75,6 +76,16 @@ const DoctorDashboard = () => {
       <div className="py-24 text-center text-ui-xs font-bold text-neutral-500 uppercase tracking-widest bg-white">
         LOADING PRACTITIONER LEDGER PANELS...
       </div>
+    );
+  }
+
+  if (profile?.doctorType === 'junior') {
+    return (
+      <JuniorDoctorDashboard
+        profile={profile}
+        appointments={appointments}
+        fetchDashboardData={fetchDashboardData}
+      />
     );
   }
 

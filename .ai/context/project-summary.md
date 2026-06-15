@@ -335,8 +335,10 @@ if (expectedSignature !== receivedSignature) {
 | 13. Refunds & Cancellation | ✅ Complete | 8 | Patient/Doctor/Admin cancel, Refund approval |
 | 14. Session Records & Care Continuity | ✅ Complete | 6 | Session Record CRUD, Timeline query, Admin archive, Notifications |
 | 15. Visual Exercise Library & Prescription System | ✅ Complete | — | 50+ exercise library, prescription duration selection dropdown, layout overlap fixes, YouTube dynamic thumbnails |
+| 16. AI Exercise Creation & Junior Doctor Hierarchy | ✅ Complete | 7 | Llama 3.1 8B exercise creation, local custom store, junior invitations & registration, junior dashboard rendering, supervisor validation middleware |
 
-**Next Phase:** Phase 16 — Patient Compliance Tracking (Exercise Adherence)
+**Next Phase:** Phase 17 — Telemedicine & Video Consultations
+
 
 ---
 

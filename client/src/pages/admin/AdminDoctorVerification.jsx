@@ -380,6 +380,14 @@ const AdminDoctorVerification = () => {
                   {/* Expanded block */}
                   {isExpanded && (
                     <div className="border-t border-neutral-900 p-6 bg-white text-left space-y-6">
+                      {/* Junior Doctor Verification Note Banner */}
+                      {doc.verificationNote && (
+                        <div className="p-4 bg-[#FEF3E2] border border-[#B45309]/20 text-[#B45309] rounded-md text-xs font-bold mb-4 flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4 shrink-0" />
+                          <span>{doc.verificationNote}</span>
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
                         {/* Profile Info (7 cols) */}
                         <div className="md:col-span-7 space-y-4">
@@ -621,7 +629,25 @@ const AdminDoctorVerification = () => {
 
                     {/* Status */}
                     <td className="px-4 py-4 align-middle">
-                      <Badge variant={badgeVariant} size="sm" />
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant={badgeVariant} size="sm" />
+                        {doc.doctorType === 'senior' && (
+                          <span 
+                            className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded"
+                            style={{ background: '#E8F4F8', color: '#0B4F6C' }}
+                          >
+                            SENIOR
+                          </span>
+                        )}
+                        {doc.doctorType === 'junior' && (
+                          <span 
+                            className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded"
+                            style={{ background: '#FEF3E2', color: '#B45309' }}
+                          >
+                            JUNIOR
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     {/* Joined */}

@@ -93,6 +93,16 @@
       "type": "service",
       "path": "server/src/services/sessionRecord.service.js",
       "label": "SessionRecord Service"
+    },
+    "controller_juniorDoctor": {
+      "type": "controller",
+      "path": "server/src/controllers/juniorDoctor.controller.js",
+      "label": "JuniorDoctor Controller"
+    },
+    "service_juniorDoctor": {
+      "type": "service",
+      "path": "server/src/services/juniorDoctor.service.js",
+      "label": "JuniorDoctor Service"
     }
   },
   "edges": [
@@ -233,6 +243,24 @@
       "target": "model_User",
       "type": "uses-model",
       "label": "Populates recipient information"
+    },
+    {
+      "source": "controller_juniorDoctor",
+      "target": "service_juniorDoctor",
+      "type": "calls",
+      "label": "Calls junior doctor hierarchy functions"
+    },
+    {
+      "source": "service_juniorDoctor",
+      "target": "model_DoctorProfile",
+      "type": "uses-model",
+      "label": "Manages doctor role type and junior invitations"
+    },
+    {
+      "source": "service_juniorDoctor",
+      "target": "model_User",
+      "type": "uses-model",
+      "label": "Registers junior doctors as User entities"
     }
   ],
   "queries": {

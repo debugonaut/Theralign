@@ -3,6 +3,8 @@ import { onboard, getMyProfile } from '../controllers/doctor.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 import { uploadOnboardingDocs } from '../middleware/upload.middleware.js';
+import validate from '../middleware/validate.middleware.js';
+import { onboardValidation } from '../validations/doctor.validation.js';
 
 const router = Router();
 
@@ -15,6 +17,8 @@ router.put(
   requireAuth,
   requireRole('doctor'),
   uploadOnboardingDocs,
+  onboardValidation,
+  validate,
   onboard
 );
 

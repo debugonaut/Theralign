@@ -14,22 +14,47 @@ const DOCTOR_STEPS_UNVERIFIED = [
   { key: 'personal', label: 'PERSONAL INFO' },
   { key: 'professional', label: 'PROFESSIONAL DETAILS' },
   { key: 'clinic', label: 'CLINIC DETAILS' },
-  { key: 'documents', label: 'VERIFICATION' }
+  { key: 'documents', label: 'VERIFICATION' },
+  { key: 'practice', label: 'PRACTICE STRUCTURE' }
 ];
 
 const DOCTOR_STEPS_VERIFIED = [
   { key: 'personal', label: 'PERSONAL INFO' },
   { key: 'professional', label: 'PROFESSIONAL DETAILS' },
-  { key: 'clinic', label: 'CLINIC DETAILS' }
+  { key: 'clinic', label: 'CLINIC DETAILS' },
+  { key: 'practice', label: 'PRACTICE STRUCTURE' }
+];
+
+const DOCTOR_STEPS_JUNIOR = [
+  { key: 'personal', label: 'PERSONAL INFO' },
+  { key: 'professional', label: 'PROFESSIONAL DETAILS' }
 ];
 
 const getDoctorCompletedSteps = (prof) => {
   const completed = [];
   if (!prof) return completed;
-  if (prof.user?.name && prof.user?.phone) completed.push(0);
-  if (prof.specialization?.length > 0 && prof.experience && prof.bio) completed.push(1);
-  if (prof.clinicName && prof.clinicAddress && prof.consultationFee) completed.push(2);
-  if ((prof.degreeDocument && prof.licenseDocument) || prof.verificationStatus === 'verified') completed.push(3);
+  
+  const activeSteps = prof.doctorType === 'junior' 
+    ? DOCTOR_STEPS_JUNIOR 
+    : (prof.verificationStatus === 'verified' ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED);
+    
+  activeSteps.forEach((step, idx) => {
+    if (step.key === 'personal') {
+      if (prof.user?.name && prof.user?.phone) completed.push(idx);
+    } else if (step.key === 'professional') {
+      if (prof.doctorType === 'junior') {
+        if (prof.bio) completed.push(idx);
+      } else {
+        if (prof.specialization?.length > 0 && prof.experience && prof.bio) completed.push(idx);
+      }
+    } else if (step.key === 'clinic') {
+      if (prof.clinicName && prof.clinicAddress && prof.consultationFee) completed.push(idx);
+    } else if (step.key === 'documents') {
+      if (prof.degreeDocument && prof.licenseDocument) completed.push(idx);
+    } else if (step.key === 'practice') {
+      completed.push(idx);
+    }
+  });
   return completed;
 };
 
@@ -45,6 +70,11 @@ const DoctorProfileEditor = () => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const [animatingStepIdx, setAnimatingStepIdx] = useState(null);
   const [dirtyStep, setDirtyStep] = useState(null);
+
+  // Practice structure states
+  const [isSupervising, setIsSupervising] = useState('no');
+  const [practiceName, setPracticeName] = useState('');
+  const [maxJuniorDoctors, setMaxJuniorDoctors] = useState(2);
 
   // ─── Form States ───
   const [name, setName] = useState('');
@@ -144,6 +174,9 @@ const DoctorProfileEditor = () => {
     setLatitude(draftToRestore.latitude ?? draftToRestore.initialValues.latitude);
     setLongitude(draftToRestore.longitude ?? draftToRestore.initialValues.longitude);
     setConsultationFee(draftToRestore.consultationFee ?? draftToRestore.initialValues.consultationFee);
+    setIsSupervising(draftToRestore.isSupervising ?? draftToRestore.initialValues.isSupervising ?? 'no');
+    setPracticeName(draftToRestore.practiceName ?? draftToRestore.initialValues.practiceName ?? '');
+    setMaxJuniorDoctors(draftToRestore.maxJuniorDoctors ?? draftToRestore.initialValues.maxJuniorDoctors ?? 2);
     if (typeof draftToRestore.editorStep === 'number') {
       setEditorStep(draftToRestore.editorStep);
     }
@@ -186,6 +219,9 @@ const DoctorProfileEditor = () => {
         profilePhotoPreview: p?.user?.profileImage || user?.profileImage || '',
         latitude: p?.clinicLocation?.coordinates ? p.clinicLocation.coordinates[1].toString() : '',
         longitude: p?.clinicLocation?.coordinates ? p.clinicLocation.coordinates[0].toString() : '',
+        isSupervising: (p?.doctorType === 'senior' || (p?.maxJuniorDoctors && p.maxJuniorDoctors > 0)) ? 'yes' : 'no',
+        practiceName: p?.practiceName || '',
+        maxJuniorDoctors: p?.maxJuniorDoctors || 2,
       };
 
       if (p?.clinicAddress) {
@@ -232,6 +268,9 @@ const DoctorProfileEditor = () => {
       setLongitude(initialValues.longitude);
       setConsultationFee(initialValues.consultationFee);
       setProfilePhotoPreview(initialValues.profilePhotoPreview);
+      setIsSupervising(initialValues.isSupervising);
+      setPracticeName(initialValues.practiceName);
+      setMaxJuniorDoctors(initialValues.maxJuniorDoctors);
       
       const dbCompleted = getDoctorCompletedSteps(p);
       setCompletedSteps(dbCompleted);
@@ -239,7 +278,7 @@ const DoctorProfileEditor = () => {
       // Restore first incomplete step if profile exists
       if (p) {
         const isVerified = p.verificationStatus === 'verified';
-        const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
+        const activeSteps = p.doctorType === 'junior' ? DOCTOR_STEPS_JUNIOR : (isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED);
         let firstIncomplete = 0;
         for (let i = 0; i < activeSteps.length; i++) {
           if (!dbCompleted.includes(i)) {
@@ -288,6 +327,9 @@ const DoctorProfileEditor = () => {
       latitude,
       longitude,
       consultationFee,
+      isSupervising,
+      practiceName,
+      maxJuniorDoctors,
       editorStep,
       savedAt: new Date().toISOString()
     };
@@ -332,6 +374,9 @@ const DoctorProfileEditor = () => {
       setProfilePhotoFile(null);
       setDegreeFile(null);
       setLicenseFile(null);
+      setIsSupervising((profile.doctorType === 'senior' || (profile.maxJuniorDoctors && profile.maxJuniorDoctors > 0)) ? 'yes' : 'no');
+      setPracticeName(profile.practiceName || '');
+      setMaxJuniorDoctors(profile.maxJuniorDoctors || 2);
       toast.success('CHANGES DISCARDED.');
     }
   };
@@ -354,7 +399,10 @@ const DoctorProfileEditor = () => {
     longitude.trim() !== '' ||
     profilePhotoFile !== null ||
     degreeFile !== null ||
-    licenseFile !== null
+    licenseFile !== null ||
+    isSupervising !== 'no' ||
+    practiceName.trim() !== '' ||
+    maxJuniorDoctors !== 2
   ) : (
     name !== (profile.user?.name || '') ||
     phone !== (profile.user?.phone || '').replace('+91', '').trim() ||
@@ -369,18 +417,25 @@ const DoctorProfileEditor = () => {
     longitude !== (profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[0].toString() : '') ||
     profilePhotoFile !== null ||
     degreeFile !== null ||
-    licenseFile !== null
+    licenseFile !== null ||
+    isSupervising !== ((profile.doctorType === 'senior' || (profile.maxJuniorDoctors && profile.maxJuniorDoctors > 0)) ? 'yes' : 'no') ||
+    practiceName !== (profile.practiceName || '') ||
+    maxJuniorDoctors !== (profile.maxJuniorDoctors || 2)
   );
+
   const isStepDirty = (stepIdx) => {
     if (!profile) return false;
-    if (stepIdx === 0) {
+    const isVerified = profile.verificationStatus === 'verified';
+    const activeSteps = profile.doctorType === 'junior' ? DOCTOR_STEPS_JUNIOR : (isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED);
+    const stepKey = activeSteps[stepIdx]?.key;
+    if (stepKey === 'personal') {
       return (
         name !== (profile.user?.name || '') ||
         phone !== (profile.user?.phone || '').replace('+91', '').trim() ||
         profilePhotoFile !== null
       );
     }
-    if (stepIdx === 1) {
+    if (stepKey === 'professional') {
       return (
         bio !== (profile.bio || '') ||
         experience !== (profile.experience?.toString() || '') ||
@@ -388,7 +443,7 @@ const DoctorProfileEditor = () => {
         specializationText !== (profile.specialization?.join(', ') || '')
       );
     }
-    if (stepIdx === 2) {
+    if (stepKey === 'clinic') {
       const dbClinicAddress = profile.clinicAddress || '';
       const currentClinicAddress = `${address}${city ? `, ${city}` : ''}${stateName ? `, ${stateName}` : ''}`;
       return (
@@ -399,8 +454,16 @@ const DoctorProfileEditor = () => {
         longitude !== (profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[0].toString() : '')
       );
     }
-    if (stepIdx === 3) {
+    if (stepKey === 'documents') {
       return degreeFile !== null || licenseFile !== null;
+    }
+    if (stepKey === 'practice') {
+      const dbIsSupervising = (profile.doctorType === 'senior' || (profile.maxJuniorDoctors && profile.maxJuniorDoctors > 0)) ? 'yes' : 'no';
+      return (
+        isSupervising !== dbIsSupervising ||
+        practiceName !== (profile.practiceName || '') ||
+        maxJuniorDoctors !== (profile.maxJuniorDoctors || 2)
+      );
     }
     return false;
   };
@@ -414,7 +477,12 @@ const DoctorProfileEditor = () => {
   };
 
   const handleSaveDirtyStep = async (stepIdx) => {
-    if (stepIdx === 0) {
+    const isVerified = profile?.verificationStatus === 'verified';
+    const activeSteps = profile?.doctorType === 'junior' ? DOCTOR_STEPS_JUNIOR : (isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED);
+    const stepKey = activeSteps[stepIdx]?.key;
+    const isJunior = profile?.doctorType === 'junior';
+
+    if (stepKey === 'personal') {
       if (!name.trim()) {
         toast.error('FULL NAME IS REQUIRED.');
         return;
@@ -428,25 +496,27 @@ const DoctorProfileEditor = () => {
         return;
       }
     }
-    if (stepIdx === 1) {
-      if (!specializationText.trim()) {
-        toast.error('SPECIALIZATION FIELD IS REQUIRED.');
-        return;
-      }
-      if (!experience.trim() || isNaN(parseInt(experience))) {
-        toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
-        return;
-      }
-      if (!registrationNumber.trim()) {
-        toast.error('REGISTRATION NUMBER IS REQUIRED.');
-        return;
+    if (stepKey === 'professional') {
+      if (!isJunior) {
+        if (!specializationText.trim()) {
+          toast.error('SPECIALIZATION FIELD IS REQUIRED.');
+          return;
+        }
+        if (!experience.trim() || isNaN(parseInt(experience))) {
+          toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
+          return;
+        }
+        if (!registrationNumber.trim()) {
+          toast.error('REGISTRATION NUMBER IS REQUIRED.');
+          return;
+        }
       }
       if (bio.trim().length < 50) {
         toast.error('PROFESSIONAL BIO MUST BE AT LEAST 50 CHARACTERS.');
         return;
       }
     }
-    if (stepIdx === 2) {
+    if (stepKey === 'clinic') {
       if (!clinicName.trim()) {
         toast.error('CLINIC NAME IS REQUIRED.');
         return;
@@ -464,7 +534,7 @@ const DoctorProfileEditor = () => {
         return;
       }
     }
-    if (stepIdx === 3 && profile?.verificationStatus !== 'verified') {
+    if (stepKey === 'documents' && profile?.verificationStatus !== 'verified') {
       if (!degreeFile && !profile?.degreeDocument) {
         toast.error('DEGREE CERTIFICATE IS REQUIRED.');
         return;
@@ -483,7 +553,11 @@ const DoctorProfileEditor = () => {
 
   const discardStepChanges = (stepIdx) => {
     if (!profile) return;
-    if (stepIdx === 0) {
+    const isVerified = profile?.verificationStatus === 'verified';
+    const activeSteps = profile?.doctorType === 'junior' ? DOCTOR_STEPS_JUNIOR : (isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED);
+    const stepKey = activeSteps[stepIdx]?.key;
+
+    if (stepKey === 'personal') {
       setName(profile.user?.name || '');
       let rawPhone = profile.user?.phone || '';
       if (rawPhone.startsWith('+91')) {
@@ -493,13 +567,13 @@ const DoctorProfileEditor = () => {
       setProfilePhotoPreview(profile.user?.profileImage || '');
       setProfilePhotoFile(null);
     }
-    if (stepIdx === 1) {
+    if (stepKey === 'professional') {
       setBio(profile.bio || '');
       setExperience(profile.experience ? profile.experience.toString() : '');
       setRegistrationNumber(profile.registrationNumber || '');
       setSpecializationText(profile.specialization ? profile.specialization.join(', ') : '');
     }
-    if (stepIdx === 2) {
+    if (stepKey === 'clinic') {
       setClinicName(profile.clinicName || '');
       setConsultationFee(profile.consultationFee ? profile.consultationFee.toString() : '');
       const fullAddr = profile.clinicAddress || '';
@@ -516,9 +590,14 @@ const DoctorProfileEditor = () => {
       setLatitude(profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[1].toString() : '');
       setLongitude(profile.clinicLocation?.coordinates ? profile.clinicLocation.coordinates[0].toString() : '');
     }
-    if (stepIdx === 3) {
+    if (stepKey === 'documents') {
       setDegreeFile(null);
       setLicenseFile(null);
+    }
+    if (stepKey === 'practice') {
+      setIsSupervising((profile.doctorType === 'senior' || (profile.maxJuniorDoctors && profile.maxJuniorDoctors > 0)) ? 'yes' : 'no');
+      setPracticeName(profile.practiceName || '');
+      setMaxJuniorDoctors(profile.maxJuniorDoctors || 2);
     }
     setDirtyStep(null);
     toast.success(`CHANGES IN ${activeSteps[stepIdx]?.label} DISCARDED.`);
@@ -579,18 +658,22 @@ const DoctorProfileEditor = () => {
     }
 
     // Step 1 validations (only if on Step 1, later steps, or is final submit):
-    if (editorStep >= 1 || isFinalStep) {
-      if (!specializationText.trim()) {
-        toast.error('SPECIALIZATION FIELD IS REQUIRED.');
-        return false;
-      }
-      if (!experience.trim() || isNaN(parseInt(experience))) {
-        toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
-        return false;
-      }
-      if (!registrationNumber.trim()) {
-        toast.error('REGISTRATION NUMBER IS REQUIRED.');
-        return false;
+    const professionalStepIdx = activeSteps.findIndex(s => s.key === 'professional');
+    const isJunior = profile?.doctorType === 'junior';
+    if (professionalStepIdx !== -1 && (editorStep >= professionalStepIdx || isFinalStep)) {
+      if (!isJunior) {
+        if (!specializationText.trim()) {
+          toast.error('SPECIALIZATION FIELD IS REQUIRED.');
+          return false;
+        }
+        if (!experience.trim() || isNaN(parseInt(experience))) {
+          toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
+          return false;
+        }
+        if (!registrationNumber.trim()) {
+          toast.error('REGISTRATION NUMBER IS REQUIRED.');
+          return false;
+        }
       }
       if (bio.trim().length < 50) {
         toast.error('PROFESSIONAL BIO MUST BE AT LEAST 50 CHARACTERS.');
@@ -599,7 +682,8 @@ const DoctorProfileEditor = () => {
     }
 
     // Step 2 validations (only if on Step 2, later steps, or is final submit):
-    if (editorStep >= 2 || isFinalStep) {
+    const clinicStepIdx = activeSteps.findIndex(s => s.key === 'clinic');
+    if (clinicStepIdx !== -1 && (editorStep >= clinicStepIdx || isFinalStep)) {
       if (!clinicName.trim()) {
         toast.error('CLINIC NAME IS REQUIRED.');
         return false;
@@ -619,7 +703,8 @@ const DoctorProfileEditor = () => {
     }
 
     // Step 3 validations (only if is final submit and user is not verified):
-    if (isFinalStep && profile?.verificationStatus !== 'verified') {
+    const documentsStepIdx = activeSteps.findIndex(s => s.key === 'documents');
+    if (documentsStepIdx !== -1 && (editorStep >= documentsStepIdx || isFinalStep) && profile?.verificationStatus !== 'verified') {
       if (!degreeFile && !profile?.degreeDocument) {
         toast.error('DEGREE CERTIFICATE IS REQUIRED.');
         return false;
@@ -646,48 +731,55 @@ const DoctorProfileEditor = () => {
       if (bio.trim() !== '') {
         formData.append('bio', bio.trim());
       }
-      if (experience.trim() !== '') {
-        formData.append('experience', parseInt(experience, 10));
-      }
-      if (registrationNumber.trim() !== '') {
-        formData.append('registrationNumber', registrationNumber.trim());
-      }
+      if (!isJunior) {
+        if (experience.trim() !== '') {
+          formData.append('experience', parseInt(experience, 10));
+        }
+        if (registrationNumber.trim() !== '') {
+          formData.append('registrationNumber', registrationNumber.trim());
+        }
 
-      if (specializationText.trim() !== '') {
-        const specList = specializationText
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
-        formData.append('specialization', JSON.stringify(specList));
-      }
+        if (specializationText.trim() !== '') {
+          const specList = specializationText
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+          formData.append('specialization', JSON.stringify(specList));
+        }
 
-      if (clinicName.trim() !== '') {
-        formData.append('clinicName', clinicName.trim());
-      }
-      if (currentClinicAddress.trim() !== '') {
-        formData.append('clinicAddress', currentClinicAddress);
-      }
-      if (city.trim() !== '') {
-        formData.append('city', city.trim());
-      }
-      
-      if (latitude && longitude) {
-        formData.append('latitude', parseFloat(latitude));
-        formData.append('longitude', parseFloat(longitude));
-      }
+        if (clinicName.trim() !== '') {
+          formData.append('clinicName', clinicName.trim());
+        }
+        if (currentClinicAddress.trim() !== '') {
+          formData.append('clinicAddress', currentClinicAddress);
+        }
+        if (city.trim() !== '') {
+          formData.append('city', city.trim());
+        }
+        
+        if (latitude && longitude) {
+          formData.append('latitude', parseFloat(latitude));
+          formData.append('longitude', parseFloat(longitude));
+        }
 
-      if (consultationFee.trim() !== '') {
-        formData.append('consultationFee', parseFloat(consultationFee));
+        if (consultationFee.trim() !== '') {
+          formData.append('consultationFee', parseFloat(consultationFee));
+        }
       }
 
       if (profilePhotoFile) {
         formData.append('profileImage', profilePhotoFile);
       }
-      if (degreeFile) {
-        formData.append('degreeDocument', degreeFile);
-      }
-      if (licenseFile) {
-        formData.append('licenseDocument', licenseFile);
+      if (!isJunior) {
+        if (degreeFile) {
+          formData.append('degreeDocument', degreeFile);
+        }
+        if (licenseFile) {
+          formData.append('licenseDocument', licenseFile);
+        }
+        
+        formData.append('maxJuniorDoctors', isSupervising === 'yes' ? maxJuniorDoctors : 0);
+        formData.append('practiceName', isSupervising === 'yes' ? practiceName.trim() : '');
       }
 
       const res = await onboardDoctorAPI(formData);
@@ -719,11 +811,13 @@ const DoctorProfileEditor = () => {
 
   const handleSaveStep = async () => {
     const isVerified = profile?.verificationStatus === 'verified';
-    const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
+    const activeSteps = profile?.doctorType === 'junior' ? DOCTOR_STEPS_JUNIOR : (isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED);
     const isFinalStep = editorStep === activeSteps.length - 1;
+    const currentStepKey = activeSteps[editorStep]?.key;
+    const isJunior = profile?.doctorType === 'junior';
 
     // Validations based on the current step
-    if (editorStep === 0) {
+    if (currentStepKey === 'personal') {
       if (!name.trim()) {
         toast.error('FULL NAME IS REQUIRED.');
         return;
@@ -737,25 +831,27 @@ const DoctorProfileEditor = () => {
         return;
       }
     }
-    if (editorStep === 1) {
-      if (!specializationText.trim()) {
-        toast.error('SPECIALIZATION FIELD IS REQUIRED.');
-        return;
-      }
-      if (!experience.trim() || isNaN(parseInt(experience))) {
-        toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
-        return;
-      }
-      if (!registrationNumber.trim()) {
-        toast.error('REGISTRATION NUMBER IS REQUIRED.');
-        return;
+    if (currentStepKey === 'professional') {
+      if (!isJunior) {
+        if (!specializationText.trim()) {
+          toast.error('SPECIALIZATION FIELD IS REQUIRED.');
+          return;
+        }
+        if (!experience.trim() || isNaN(parseInt(experience))) {
+          toast.error('EXPERIENCE YEARS MUST BE A VALID NUMBER.');
+          return;
+        }
+        if (!registrationNumber.trim()) {
+          toast.error('REGISTRATION NUMBER IS REQUIRED.');
+          return;
+        }
       }
       if (bio.trim().length < 50) {
         toast.error('PROFESSIONAL BIO MUST BE AT LEAST 50 CHARACTERS.');
         return;
       }
     }
-    if (editorStep === 2) {
+    if (currentStepKey === 'clinic') {
       if (!clinicName.trim()) {
         toast.error('CLINIC NAME IS REQUIRED.');
         return;
@@ -773,7 +869,7 @@ const DoctorProfileEditor = () => {
         return;
       }
     }
-    if (isFinalStep && !isVerified) {
+    if (currentStepKey === 'documents' && !isVerified) {
       if (!degreeFile && !profile?.degreeDocument) {
         toast.error('DEGREE CERTIFICATE IS REQUIRED.');
         return;
@@ -825,6 +921,9 @@ const DoctorProfileEditor = () => {
             latitude,
             longitude,
             consultationFee,
+            isSupervising,
+            practiceName,
+            maxJuniorDoctors,
             editorStep: nextStep,
             savedAt: new Date().toISOString()
           };
@@ -861,7 +960,7 @@ const DoctorProfileEditor = () => {
     { key: 'active', label: 'Active', desc: 'Profile live in search directory.' },
   ];
 
-  const activeSteps = isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED;
+  const activeSteps = profile?.doctorType === 'junior' ? DOCTOR_STEPS_JUNIOR : (isVerified ? DOCTOR_STEPS_VERIFIED : DOCTOR_STEPS_UNVERIFIED);
   const showUnsavedBanner = dirtyStep !== null && isStepDirty(dirtyStep);
 
   return (
@@ -941,7 +1040,7 @@ const DoctorProfileEditor = () => {
 
 
       {/* ── PERSONAL INFORMATION (Step 0) ── */}
-      {editorStep === 0 && (
+      {activeSteps[editorStep]?.key === 'personal' && (
         <div className="max-w-3xl w-full flex flex-col gap-6">
           <div className="flex flex-col gap-6">
             <SectionHeader title="Personal Information" size="sm" ruled={true} className="mb-0" />
@@ -1032,7 +1131,7 @@ const DoctorProfileEditor = () => {
       )}
 
       {/* ── PROFESSIONAL DETAILS (Step 1) ── */}
-      {editorStep === 1 && (
+      {activeSteps[editorStep]?.key === 'professional' && (
         <div className="max-w-3xl w-full flex flex-col gap-6">
           <SectionHeader title="Professional Details" size="sm" ruled={true} className="mb-0" />
           
@@ -1042,13 +1141,24 @@ const DoctorProfileEditor = () => {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setSpecDropdownOpen((o) => !o)}
-                className="w-full h-10 px-3 border border-neutral-200 rounded-md bg-white text-left flex items-center justify-between shadow-sm hover:border-primary transition-all focus:outline-none focus:ring-3 focus:ring-primary/12 focus:border-primary"
+                onClick={() => !isJunior && setSpecDropdownOpen((o) => !o)}
+                disabled={isJunior}
+                className={`w-full h-10 px-3 border border-neutral-200 rounded-md text-left flex items-center justify-between shadow-sm transition-all focus:outline-none ${
+                  isJunior 
+                    ? 'bg-neutral-50 text-neutral-500 cursor-not-allowed border-neutral-200 shadow-none' 
+                    : 'bg-white hover:border-primary focus:ring-3 focus:ring-primary/12 focus:border-primary'
+                }`}
               >
                 <span className={`text-ui-sm font-semibold truncate ${selectedSpecs.length === 0 ? 'text-neutral-400' : 'text-neutral-900'}`}>
                   {selectedSpecs.length === 0 ? 'Select specializations...' : selectedSpecs.join(', ')}
                 </span>
-                <svg className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform ${specDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                {isJunior ? (
+                  <svg className="w-3.5 h-3.5 text-neutral-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                ) : (
+                  <svg className={`w-4 h-4 text-neutral-400 shrink-0 transition-transform ${specDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                )}
               </button>
 
               {specDropdownOpen && (
@@ -1093,6 +1203,8 @@ const DoctorProfileEditor = () => {
               onChange={(e) => setExperience(e.target.value.replace(/\D/g, ''))}
               required
               placeholder="e.g. 5"
+              disabled={isJunior}
+              showLock={isJunior}
             />
             {/* Medical registration number */}
             <Input
@@ -1102,6 +1214,8 @@ const DoctorProfileEditor = () => {
               onChange={(e) => setRegistrationNumber(e.target.value)}
               required
               placeholder="e.g. MCI-12345"
+              disabled={isJunior}
+              showLock={isJunior}
             />
           </div>
 
@@ -1125,7 +1239,7 @@ const DoctorProfileEditor = () => {
       )}
 
       {/* ── CLINIC DETAILS (Step 2) ── */}
-      {editorStep === 2 && (
+      {activeSteps[editorStep]?.key === 'clinic' && (
         <div className="max-w-3xl w-full flex flex-col gap-6">
           <div className="flex flex-col gap-6">
             <SectionHeader title="Clinic Details" size="sm" ruled={true} className="mb-0" />
@@ -1248,7 +1362,7 @@ const DoctorProfileEditor = () => {
       )}
 
       {/* ── VERIFICATION DOCUMENTS & STATUS (Step 3) ── */}
-      {editorStep === 3 && !isVerified && (
+      {activeSteps[editorStep]?.key === 'documents' && !isVerified && (
         <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-6 select-none">
           <div className="lg:col-span-7 flex flex-col gap-6">
             <SectionHeader title="Verification Documents" size="sm" ruled={true} className="mb-0" />
@@ -1370,6 +1484,109 @@ const DoctorProfileEditor = () => {
                 })}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── PRACTICE STRUCTURE (Step key 'practice') ── */}
+      {activeSteps[editorStep]?.key === 'practice' && (
+        <div className="max-w-3xl w-full flex flex-col gap-6 animate-fade-in text-left">
+          <SectionHeader title="Practice Structure" size="sm" ruled={true} className="mb-0" />
+          
+          <div className="flex flex-col gap-3">
+            <span className="text-[12px] font-semibold text-neutral-700">
+              Do you supervise junior physiotherapists?
+            </span>
+            <span className="text-[11px] text-neutral-500 mt-0.5">
+              If yes, you can invite them to your practice after registration.
+            </span>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              {/* Tile A — Independent */}
+              <div
+                onClick={() => {
+                  setIsSupervising('no');
+                }}
+                className={`border-2 rounded-lg p-5 cursor-pointer text-center transition-all duration-150 flex flex-col items-center gap-3 select-none ${
+                  isSupervising === 'no'
+                    ? 'border-[#0B4F6C] bg-[#E8F4F8]'
+                    : 'border-neutral-200 bg-white hover:border-neutral-300'
+                }`}
+              >
+                <svg className={`w-7 h-7 transition-colors ${isSupervising === 'no' ? 'text-[#0B4F6C]' : 'text-neutral-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <div className="flex flex-col">
+                  <span className="font-bold text-[14px] text-neutral-900">Independent</span>
+                  <span className="text-[12px] text-neutral-500 mt-1">Solo practice</span>
+                </div>
+              </div>
+
+              {/* Tile B — Senior Doctor */}
+              <div
+                onClick={() => {
+                  setIsSupervising('yes');
+                }}
+                className={`border-2 rounded-lg p-5 cursor-pointer text-center transition-all duration-150 flex flex-col items-center gap-3 select-none ${
+                  isSupervising === 'yes'
+                    ? 'border-[#0B4F6C] bg-[#E8F4F8]'
+                    : 'border-neutral-200 bg-white hover:border-neutral-300'
+                }`}
+              >
+                <svg className={`w-7 h-7 transition-colors ${isSupervising === 'yes' ? 'text-[#0B4F6C]' : 'text-neutral-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <div className="flex flex-col">
+                  <span className="font-bold text-[14px] text-neutral-900">Senior Doctor</span>
+                  <span className="text-[12px] text-neutral-500 mt-1">With junior doctors</span>
+                </div>
+              </div>
+            </div>
+
+            {isSupervising === 'yes' && (
+              <div className="flex flex-col gap-6 mt-4 text-left animate-fade-in">
+                {/* Practice Name */}
+                <Input
+                  type="text"
+                  label="Practice Name (Optional)"
+                  value={practiceName}
+                  onChange={(e) => setPracticeName(e.target.value)}
+                  placeholder="e.g. Sharma Physiotherapy Clinic"
+                  maxLength={100}
+                />
+
+                {/* Maximum Junior Doctors selector */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[12px] font-semibold text-neutral-700">
+                    Maximum Junior Doctors
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setMaxJuniorDoctors((prev) => Math.max(1, prev - 1))}
+                      disabled={maxJuniorDoctors <= 1}
+                      className="w-7 h-7 border border-neutral-200 rounded-md text-neutral-600 bg-white flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50 select-none cursor-pointer"
+                    >
+                      −
+                    </button>
+                    <span className="font-bold text-[15px] text-neutral-900 w-8 text-center">
+                      {maxJuniorDoctors}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setMaxJuniorDoctors((prev) => Math.min(10, prev + 1))}
+                      disabled={maxJuniorDoctors >= 10}
+                      className="w-7 h-7 border border-neutral-200 rounded-md text-neutral-600 bg-white flex items-center justify-center hover:bg-neutral-50 disabled:opacity-50 select-none cursor-pointer"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <span className="text-[11px] text-neutral-500 mt-1">
+                    You can change this later in your practice settings.
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

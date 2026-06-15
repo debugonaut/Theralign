@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Menu, X, LogOut, LayoutDashboard, Calendar, Search, 
-  CreditCard, Star, Clock, DollarSign, User, ClipboardList
+  CreditCard, Star, Clock, DollarSign, User, ClipboardList, Users
 } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import toast from 'react-hot-toast';
@@ -17,6 +17,8 @@ const DashboardLayout = () => {
   const [verificationStatus, setVerificationStatus] = useState('pending');
   const [pendingCount, setPendingCount] = useState(0);
   const [showVerificationSuccessModal, setShowVerificationSuccessModal] = useState(false);
+  const [doctorType, setDoctorType] = useState('independent');
+  const [maxJuniorDoctors, setMaxJuniorDoctors] = useState(0);
   const isInitiallyVerified = useRef(null);
 
   const user = useAuthStore((state) => state.user);
@@ -35,6 +37,11 @@ const DashboardLayout = () => {
           const profileRes = await getDoctorProfileAPI();
           if (profileRes.success && profileRes.data?.profile) {
             const currentStatus = profileRes.data.profile.verificationStatus;
+            const currentType = profileRes.data.profile.doctorType || 'independent';
+            const currentMaxJuniors = profileRes.data.profile.maxJuniorDoctors || 0;
+            
+            setDoctorType(currentType);
+            setMaxJuniorDoctors(currentMaxJuniors);
             
             if (isInitiallyVerified.current === null) {
               isInitiallyVerified.current = currentStatus === 'verified';
@@ -80,9 +87,14 @@ const DashboardLayout = () => {
   const doctorNavigation = [
     { name: 'Overview', href: '/doctor/dashboard', icon: LayoutDashboard },
     { name: 'Appointments', href: '/doctor/appointments', icon: Calendar, showBadge: true },
-    { name: 'Availability', href: '/doctor/availability', icon: Clock },
-    { name: 'Earnings', href: '/doctor/earnings', icon: DollarSign },
+    ...(doctorType !== 'junior' ? [
+      { name: 'Availability', href: '/doctor/availability', icon: Clock },
+      { name: 'Earnings', href: '/doctor/earnings', icon: DollarSign },
+    ] : []),
     { name: 'My Profile', href: '/doctor/profile', icon: User },
+    ...(doctorType === 'senior' || maxJuniorDoctors > 0 ? [
+      { name: 'Practice', href: '/doctor/practice', icon: Users }
+    ] : []),
     { name: 'My Reviews', href: '/doctor/reviews', icon: Star },
   ];
 

@@ -2,14 +2,17 @@ import express from 'express';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { requireRole } from '../middleware/role.middleware.js';
 import validate from '../middleware/validate.middleware.js';
+import { aiRateLimit } from '../middleware/aiRateLimit.middleware.js';
 import {
   interpretSymptomsController,
   getDoctorAISummary,
-  batchGenerateDoctorSummaries
+  batchGenerateDoctorSummaries,
+  generateExercise,
 } from '../controllers/ai.controller.js';
 import {
   interpretSymptomsValidation,
-  getDoctorAISummaryValidation
+  getDoctorAISummaryValidation,
+  generateExerciseValidation,
 } from '../validations/ai.validation.js';
 
 const router = express.Router();
@@ -33,6 +36,17 @@ router.post(
   requireAuth,
   requireRole('admin'),
   batchGenerateDoctorSummaries
+);
+
+// Doctor-only: AI exercise generation (rate-limited 10 req/min per doctor)
+router.post(
+  '/generate-exercise',
+  requireAuth,
+  requireRole('doctor'),
+  aiRateLimit,
+  generateExerciseValidation,
+  validate,
+  generateExercise
 );
 
 export default router;

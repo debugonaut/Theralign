@@ -745,6 +745,66 @@
       ],
       "lastUpdated": "2026-06-12T12:00:00Z",
       "stale": false
+    },
+    {
+      "id": "ai-exercise-creation",
+      "name": "AI Exercise Creation",
+      "phase": 16,
+      "description": "Generate structured clinical exercise prescriptions using natural language prompts powered by Llama 3.1 8B. Save custom exercises to local browser storage, merge them with the visual library, and assign them directly to prescriptions.",
+      "userRoles": ["doctor"],
+      "routes": ["/doctor/appointments/:appointmentId/session-record"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/ai/generate-exercise" }
+      ],
+      "components": [
+        "client/src/components/exercises/AIExerciseCreatorModal.jsx",
+        "client/src/components/exercises/ExerciseLibraryModal.jsx"
+      ],
+      "models": [],
+      "controllers": ["server/src/controllers/ai.controller.js"],
+      "services": ["server/src/services/aiService.js"],
+      "relatedFeatures": ["session-notes-creation"],
+      "knownConstraints": [
+        "Rate-limited to 10 requests per minute per doctor",
+        "Persisted in local storage using customExerciseStore",
+        "Custom badge and hover deletion in ExerciseLibraryModal"
+      ],
+      "lastUpdated": "2026-06-15T13:40:00Z",
+      "stale": false
+    },
+    {
+      "id": "junior-doctor-hierarchy",
+      "name": "Junior Doctor Hierarchy",
+      "phase": 16,
+      "description": "Register and manage subordinate junior doctors under a senior doctor's practice. Junior doctors get subordinate dashboards with restricted access to billing, profile settings, and availability slots.",
+      "userRoles": ["doctor"],
+      "routes": ["/register/junior", "/doctor/practice"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/junior/invite" },
+        { "method": "GET", "path": "/api/junior/team" },
+        { "method": "DELETE", "path": "/api/junior/team/:juniorProfileId" },
+        { "method": "PATCH", "path": "/api/junior/settings" },
+        { "method": "POST", "path": "/api/junior/accept/:token" }
+      ],
+      "components": [
+        "client/src/pages/auth/JuniorDoctorRegister.jsx",
+        "client/src/pages/doctor/PracticeManagement.jsx",
+        "client/src/pages/doctor/JuniorDoctorDashboard.jsx",
+        "client/src/pages/doctor/DoctorDashboard.jsx",
+        "client/src/components/layout/DashboardLayout.jsx"
+      ],
+      "models": ["DoctorProfile", "User"],
+      "controllers": ["server/src/controllers/juniorDoctor.controller.js", "server/src/controllers/doctor.controller.js"],
+      "services": ["server/src/services/juniorDoctor.service.js", "server/src/services/doctor.service.js"],
+      "relatedFeatures": ["user-registration", "doctor-profile-management"],
+      "knownConstraints": [
+        "Enforced via juniorGuard middleware (seniorOnly)",
+        "Junior profiles skip standard admin verification and inherit verified status",
+        "Juniors cannot charge fees or modify slots",
+        "Supervising credentials displayed in timeline footnotes"
+      ],
+      "lastUpdated": "2026-06-15T13:40:00Z",
+      "stale": false
     }
   ]
 }

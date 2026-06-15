@@ -1,4 +1,4 @@
-import { interpretSymptoms, batchGenerateSummaries } from '../services/aiService.js';
+import { interpretSymptoms, batchGenerateSummaries, generateExerciseFromPrompt } from '../services/aiService.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
 import { successResponse } from '../utils/apiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
@@ -110,4 +110,30 @@ export const batchGenerateDoctorSummaries = asyncHandler(async (req, res) => {
     successful: successCount,
     failed: doctors.length - successCount
   });
+});
+
+/**
+ * POST /api/ai/generate-exercise
+ * Generates a structured clinical exercise prescription from a natural language prompt.
+ * Doctor-only. Rate-limited to 10 requests per minute per doctor.
+ */
+export const generateExercise = asyncHandler(async (req, res) => {
+  const { prompt, targetMuscleGroups = [], patientCondition = null, difficultyLevel = 'intermediate' } = req.body;
+
+  const exercise = await generateExerciseFromPrompt({
+    prompt,
+    targetMuscleGroups,
+    patientCondition,
+    difficultyLevel,
+  });
+
+  // Validate required fields before returning
+  const required = ['name', 'category', 'sets', 'reps', 'stepByStepInstructions', 'youtubeSearchQuery'];
+  for (const field of required) {
+    if (exercise[field] === undefined || exercise[field] === null) {
+      throw new AppError(`AI response was incomplete (missing ${field}). Please try again.`, 502);
+    }
+  }
+
+  return successResponse(res, 200, 'Exercise generated successfully', exercise);
 });

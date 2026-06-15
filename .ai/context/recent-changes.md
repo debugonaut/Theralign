@@ -8,6 +8,67 @@
 
 ## High Impact Changes
 
+### 2026-06-15 — AI Exercise Creation & Junior Doctor Hierarchy (Phase 16 Completion)
+**Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
+
+**Summary:** Implemented and integrated Feature A (AI Custom Exercise Creation) and Feature B (Junior Doctor Hierarchy) from the Phase 16 specifications.
+- **AI Custom Exercise Creator**:
+  - Implemented 3-step wizard modal `AIExerciseCreatorModal` using Llama 3.1 8B for structured parameters modeling.
+  - Setup local browser storage persistence via `customExerciseStore` under `'theralign_custom_exercises'` to manage doctor sandbox exercises.
+  - Merged custom exercises dynamically into `ExerciseLibraryModal`, added hover-to-delete listeners, and designated custom items with a high-contrast `CUSTOM / AI` badge.
+  - Developed custom in-memory rate-limiter middleware `aiRateLimit` capping requests at 10 requests per minute per doctor.
+- **Junior Doctor Hierarchy**:
+  - Extended the `DoctorProfile` model schema to add hierarchy variables (`doctorType`, `juniorInvitations`, `supervisingDoctor`) with indexes.
+  - Created invitation service logic generating single-use invite links containing crypto-secure tokens, automatically bypassing standard admin verification for accepted juniors.
+  - Formulated `PracticeManagement` dashboard allowing senior doctors to view practice size limits, generate link invitations, and remove junior doctors.
+  - Built subordinate dashboard `JuniorDoctorDashboard` displaying supervising physician footnote details, and route access guards blocking junior doctors from altering supervisor calendars, profiles, and billing configurations.
+
+**Changed/Created files:**
+- **New Files**:
+  - `client/src/api/junior.api.js`
+  - `client/src/components/exercises/AIExerciseCreatorModal.jsx`
+  - `client/src/pages/auth/JuniorDoctorRegister.jsx`
+  - `client/src/pages/doctor/JuniorDoctorDashboard.jsx`
+  - `client/src/pages/doctor/PracticeManagement.jsx`
+  - `client/src/utils/customExerciseStore.js`
+  - `server/src/controllers/juniorDoctor.controller.js`
+  - `server/src/middleware/aiRateLimit.middleware.js`
+  - `server/src/middleware/juniorGuard.middleware.js`
+  - `server/src/routes/juniorDoctor.routes.js`
+  - `server/src/services/juniorDoctor.service.js`
+  - `server/src/validations/doctor.validation.js`
+- **Modified Files**:
+  - `client/src/api/ai.api.js`
+  - `client/src/components/exercises/ExerciseLibraryModal.jsx`
+  - `client/src/components/layout/DashboardLayout.jsx`
+  - `client/src/pages/admin/AdminDoctorVerification.jsx`
+  - `client/src/pages/doctor/DoctorDashboard.jsx`
+  - `client/src/pages/doctor/DoctorProfileEditor.jsx`
+  - `client/src/pages/patient/PatientCareTimeline.jsx`
+  - `client/src/routes/AppRoutes.jsx`
+  - `server/app.js`
+  - `server/src/controllers/ai.controller.js`
+  - `server/src/models/DoctorProfile.model.js`
+  - `server/src/routes/ai.routes.js`
+  - `server/src/routes/availability.routes.js`
+  - `server/src/routes/doctor.routes.js`
+  - `server/src/services/aiService.js`
+  - `server/src/services/doctor.service.js`
+  - `server/src/services/emailService.js`
+  - `server/src/services/sessionRecord.service.js`
+  - `server/src/validations/ai.validation.js`
+
+**Affected subsystems:**
+- doctor-profiles
+- ai-integration
+- user-management
+
+**Regression risk:** Low
+- Production client bundles compiled successfully with zero errors.
+- Backward compatibility preserved for all existing doctor profiles (which defaults to `independent` type).
+
+---
+
 ### 2026-06-15 — Visual Exercise Library & Prescription Duration System (Phase 15 Completion)
 **Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
 

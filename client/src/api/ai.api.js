@@ -27,3 +27,12 @@ export const triggerBatchSummariesAPI = async () => {
   const response = await axiosInstance.post('/ai/admin/batch-summaries');
   return response.data;
 };
+
+/**
+ * Generates a structured clinical exercise prescription from a natural-language prompt.
+ * Doctor-only. Rate-limited to 10 requests per minute.
+ *
+ * @param {{ prompt: string, targetMuscleGroups?: string[], patientCondition?: string, difficultyLevel?: string }} data
+ */
+export const generateExerciseAPI = (data) =>
+  axiosInstance.post('/ai/generate-exercise', data);

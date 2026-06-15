@@ -25,12 +25,22 @@ export const onboardDoctor = async (userId, profileData, files) => {
 
   const isOnboarded = profileData.isOnboarded === 'true';
 
-  // 2. Extract and validate files
-  const degreeFile = files?.degreeDocument?.[0];
-  const licenseFile = files?.licenseDocument?.[0];
-
   // Fetch existing profile if any
   let profile = await DoctorProfile.findOne({ user: userId });
+  const isJunior = profile && profile.doctorType === 'junior';
+
+  if (isJunior) {
+    // Strip restricted fields for junior doctors
+    delete profileData.specialization;
+    delete profileData.consultationFee;
+    delete profileData.registrationNumber;
+    delete profileData.maxJuniorDoctors;
+    delete profileData.practiceName;
+  }
+
+  // 2. Extract and validate files
+  const degreeFile = isJunior ? undefined : files?.degreeDocument?.[0];
+  const licenseFile = isJunior ? undefined : files?.licenseDocument?.[0];
 
   // For a brand new profile, both files are strictly required only if finalizing onboarding
   if (isOnboarded && !profile && (!degreeFile || !licenseFile)) {
@@ -120,10 +130,32 @@ export const onboardDoctor = async (userId, profileData, files) => {
   const updatePayload = {
     user: userId,
     isOnboarded,
-    verificationStatus: isOnboarded ? DOCTOR_STATUS.PENDING : (profile?.verificationStatus || DOCTOR_STATUS.PENDING),
-    isAvailable: isOnboarded ? false : (profile?.isAvailable ?? false),
-    rejectionReason: isOnboarded ? null : (profile?.rejectionReason || null),
+    verificationStatus: isJunior
+      ? (profile?.verificationStatus || DOCTOR_STATUS.VERIFIED)
+      : (isOnboarded ? DOCTOR_STATUS.PENDING : (profile?.verificationStatus || DOCTOR_STATUS.PENDING)),
+    isAvailable: isJunior
+      ? (profile?.isAvailable ?? true)
+      : (isOnboarded ? false : (profile?.isAvailable ?? false)),
+    rejectionReason: isOnboarded && !isJunior ? null : (profile?.rejectionReason || null),
   };
+
+  if (isJunior) {
+    updatePayload.doctorType = 'junior';
+  } else {
+    let maxJuniors = profile?.maxJuniorDoctors || 0;
+    if (profileData.maxJuniorDoctors !== undefined && profileData.maxJuniorDoctors !== '') {
+      maxJuniors = parseInt(profileData.maxJuniorDoctors, 10);
+      if (isNaN(maxJuniors) || maxJuniors < 0) {
+        throw new AppError('Maximum junior doctors must be a non-negative number.', 400);
+      }
+    }
+    updatePayload.maxJuniorDoctors = maxJuniors;
+    updatePayload.doctorType = maxJuniors > 0 ? 'senior' : 'independent';
+
+    if (profileData.practiceName !== undefined) {
+      updatePayload.practiceName = profileData.practiceName ? profileData.practiceName.trim() : null;
+    }
+  }
 
   if (parsedSpecializations !== undefined && parsedSpecializations.length > 0) {
     updatePayload.specialization = parsedSpecializations;
@@ -183,7 +215,12 @@ export const onboardDoctor = async (userId, profileData, files) => {
  * @returns {Promise<object|null>} DoctorProfile populated with user details
  */
 export const getDoctorProfileByUserId = async (userId) => {
-  return DoctorProfile.findOne({ user: userId }).populate('user');
+  return DoctorProfile.findOne({ user: userId })
+    .populate('user')
+    .populate({
+      path: 'seniorDoctor',
+      populate: { path: 'user', select: 'name profileImage' }
+    });
 };
 
 /**

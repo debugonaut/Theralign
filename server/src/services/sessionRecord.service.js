@@ -263,8 +263,11 @@ export const getPatientCareTimeline = async (patientUserId, { doctorId, dateFrom
       .populate('appointment', 'date startTime endTime consultationFee')
       .populate({
         path: 'doctor',
-        populate: { path: 'user', select: 'name profileImage' },
-        select: 'specialization clinicName user',
+        populate: [
+          { path: 'user', select: 'name profileImage' },
+          { path: 'seniorDoctor', populate: { path: 'user', select: 'name' } }
+        ],
+        select: 'specialization clinicName user seniorDoctor doctorType',
       })
       .lean(),
     SessionRecord.countDocuments(query),

@@ -85,26 +85,32 @@
     {
       "id": "doctor-profiles",
       "name": "Doctor Profiles & Verification",
-      "purpose": "Manage doctor professional information, verification status, credentials, and specialization",
+      "purpose": "Manage doctor professional information, verification status, credentials, and practice team hierarchies",
       "responsibilities": [
         "Doctor profile creation during onboarding",
         "Credentials and license document upload to Cloudinary",
         "Professional verification workflow (pending → verified/rejected)",
         "Doctor profile updates (profile, consultationFee, specialization)",
         "Doctor suspension and reconsideration",
-        "Doctor profile display in public discovery"
+        "Doctor profile display in public discovery",
+        "Practice team and junior doctor invitation management"
       ],
       "entryPoints": [
         "server/src/routes/doctor.routes.js",
         "server/src/controllers/doctor.controller.js",
-        "server/src/controllers/admin.controller.js"
+        "server/src/controllers/admin.controller.js",
+        "server/src/routes/juniorDoctor.routes.js",
+        "server/src/controllers/juniorDoctor.controller.js"
       ],
       "relatedFiles": [
         "server/src/models/DoctorProfile.model.js",
         "server/src/services/doctor.service.js",
+        "server/src/services/juniorDoctor.service.js",
         "server/src/middleware/upload.middleware.js",
         "server/src/services/upload.service.js",
-        "server/src/validations/auth.validation.js"
+        "server/src/validations/auth.validation.js",
+        "server/src/validations/doctor.validation.js",
+        "server/src/middleware/juniorGuard.middleware.js"
       ],
       "dependsOn": [
         "user-management",
@@ -125,10 +131,11 @@
         "consultationFee is snapshotted to Appointment at booking time",
         "Doctor cannot have duplicate specializations",
         "Suspended doctors cannot accept new bookings",
-        "ADR-003: Cloudinary resource_type 'raw' for credentials"
+        "ADR-003: Cloudinary resource_type 'raw' for credentials",
+        "Junior doctors inherit verification status but cannot set fees, manage availability, or update onboarding templates"
       ],
-      "lastUpdated": "2026-06-11T18:00:00Z",
-      "sourceFilesHash": "ghi789jkl012",
+      "lastUpdated": "2026-06-15T13:40:00Z",
+      "sourceFilesHash": "ghi789jkl012_p16",
       "stale": false
     },
     {
@@ -443,22 +450,25 @@
     {
       "id": "ai-integration",
       "name": "AI Integration & Recommendations",
-      "purpose": "OpenAI-powered symptom triage and doctor profile summaries",
+      "purpose": "OpenAI-powered symptom triage, doctor profile summaries, and clinical exercise generation",
       "responsibilities": [
         "Free-text symptom interpretation and specialization recommendation",
         "Doctor profile summary generation",
         "Batch summary generation for all verified doctors",
         "Summary caching to reduce API calls",
-        "AI-powered doctor recommendations"
+        "AI-powered doctor recommendations",
+        "Structured clinical exercise generation from natural language prompts"
       ],
       "entryPoints": [
         "server/src/routes/ai.routes.js",
         "server/src/controllers/ai.controller.js",
-        "server/src/services/aiService.js"
+        "server/src/services/aiService.js",
+        "server/src/middleware/aiRateLimit.middleware.js"
       ],
       "relatedFiles": [
         "server/src/config/openai.js",
-        "server/src/models/DoctorProfile.model.js"
+        "server/src/models/DoctorProfile.model.js",
+        "server/src/validations/ai.validation.js"
       ],
       "dependsOn": [
         "doctor-profiles",
@@ -469,17 +479,18 @@
         "admin-operations"
       ],
       "externalServices": [
-        "OpenAI: GPT-3.5 for text generation"
+        "OpenAI: GPT-3.5 for text generation and clinical parameters modeling"
       ],
       "criticalConstraints": [
         "Symptom interpretation is free (no auth required)",
         "Doctor summaries are cached per doctor",
         "Batch summary generation is admin-only",
         "Summary cache is invalidated when doctor profile changes",
-        "AI responses must be deterministic (use temperature=0.3)"
+        "AI responses must be deterministic (use temperature=0.3)",
+        "AI exercise generation is rate-limited to 10 requests per minute per doctor profile"
       ],
-      "lastUpdated": "2026-06-11T18:00:00Z",
-      "sourceFilesHash": "def123ghi456",
+      "lastUpdated": "2026-06-15T13:40:00Z",
+      "sourceFilesHash": "def123ghi456_p16",
       "stale": false
     },
     {

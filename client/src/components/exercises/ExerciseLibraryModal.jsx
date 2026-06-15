@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Search, Check, Minus, Plus } from 'lucide-react';
+import { X, Search, Check, Minus, Plus, Sparkles, Trash2 } from 'lucide-react';
 import {
   EXERCISE_CATEGORIES,
   searchExercises,
@@ -7,6 +7,8 @@ import {
 } from '../../data/exerciseLibrary';
 import { getCategoryIcon } from './ExerciseCategoryIcons';
 import { getPositionFigure } from './PositionFigures';
+import AIExerciseCreatorModal from './AIExerciseCreatorModal';
+import { getCustomExercises, deleteCustomExercise } from '../../utils/customExerciseStore';
 
 const FREQUENCY_OPTIONS = [
   'Once daily',
@@ -160,11 +162,19 @@ const FieldLabel = ({ children }) => (
 
 /* ═══════════════════════════════════════════════════════ */
 
+// Synthetic category ID for custom exercises
+const CUSTOM_CATEGORY_ID = '__custom__';
+
 const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDone }) => {
   const [activeCategoryId, setActiveCategoryId] = useState(EXERCISE_CATEGORIES[0]?.id || 'spine');
   const [searchQuery, setSearchQuery] = useState('');
   const [prescription, setPrescription] = useState([]);
   const [addedFlash, setAddedFlash] = useState(new Set());
+  const [customExercises, setCustomExercises] = useState([]);
+  const [showAICreator, setShowAICreator] = useState(false);
+  const [hoveredExerciseId, setHoveredExerciseId] = useState(null);
+
+  const reloadCustomExercises = () => setCustomExercises(getCustomExercises());
 
   useEffect(() => {
     if (isOpen) {
@@ -180,6 +190,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
       );
       setSearchQuery('');
       setActiveCategoryId(EXERCISE_CATEGORIES[0]?.id || 'spine');
+      reloadCustomExercises();
     }
   }, [isOpen, initialPrescription]);
 
@@ -259,12 +270,15 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           boxShadow: shadow1,
           transition: 'box-shadow 200ms',
           minHeight: 230,
+          position: 'relative',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.boxShadow = shadow2;
+          setHoveredExerciseId(exercise.id);
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.boxShadow = shadow1;
+          setHoveredExerciseId(null);
         }}
       >
         {/* Thumbnail / Figure zone */}
@@ -315,6 +329,42 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           }}>
             <Figure size={96} color="#0B4F6C" />
           </div>
+        )}
+
+        {/* Custom badge — top-right corner of content zone */}
+        {exercise.isCustom && (
+          <span style={{
+            position: 'absolute', top: 8, right: exercise.isCustom ? 36 : 8,
+            backgroundColor: '#E8F4F8', color: '#0B4F6C',
+            fontSize: 10, fontWeight: 700, fontFamily: "'Inter', system-ui, sans-serif",
+            padding: '2px 6px', borderRadius: 4, letterSpacing: '0.08em',
+            textTransform: 'uppercase', zIndex: 2,
+          }}>
+            CUSTOM
+          </span>
+        )}
+        {exercise.isCustom && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteCustomExercise(exercise.id);
+              reloadCustomExercises();
+            }}
+            style={{
+              position: 'absolute', top: 8, right: 8,
+              border: 'none', background: 'transparent', cursor: 'pointer',
+              padding: 4, borderRadius: 4, color: '#A8B8C8', zIndex: 2,
+              display: hoveredExerciseId === exercise.id ? 'block' : 'none',
+              transition: 'color 150ms',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#C0392B'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#A8B8C8'; }}
+            className="exercise-delete-btn"
+            aria-label={`Delete ${exercise.name}`}
+          >
+            <Trash2 size={14} />
+          </button>
         )}
 
         {/* Content zone */}
@@ -441,7 +491,8 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
 
   /* ── Render ─────────────────────────────────────────── */
   return (
-    <div
+    <>
+      <div
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -488,31 +539,48 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                 Find and prescribe the right exercises for your patient
               </p>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close exercise library"
-              style={{
-                padding: 8,
-                borderRadius: 6,
-                border: 'none',
-                backgroundColor: 'transparent',
-                color: '#6B7C93',
-                cursor: 'pointer',
-                display: 'flex',
-                transition: 'background-color 150ms, color 150ms',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#FDF2F2';
-                e.currentTarget.style.color = '#C0392B';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#6B7C93';
-              }}
-            >
-              <X size={22} />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {/* Create with AI button */}
+              <button
+                type="button"
+                onClick={() => setShowAICreator(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  border: '1.5px solid #0B4F6C', borderRadius: 6,
+                  backgroundColor: '#FFFFFF', color: '#0B4F6C',
+                  height: 36, padding: '0 14px',
+                  ...font(13, 600, '#0B4F6C'),
+                  cursor: 'pointer',
+                  transition: 'background-color 150ms',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E8F4F8'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#FFFFFF'; }}
+              >
+                <Sparkles size={14} />
+                Create with AI
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close exercise library"
+                style={{
+                  padding: 8, borderRadius: 6, border: 'none',
+                  backgroundColor: 'transparent', color: '#6B7C93',
+                  cursor: 'pointer', display: 'flex',
+                  transition: 'background-color 150ms, color 150ms',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FDF2F2';
+                  e.currentTarget.style.color = '#C0392B';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#6B7C93';
+                }}
+              >
+                <X size={22} />
+              </button>
+            </div>
           </div>
 
           {/* Search */}
@@ -583,52 +651,62 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                   type="button"
                   onClick={() => setActiveCategoryId(cat.id)}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '10px 14px',
-                    borderRadius: 8,
-                    border: 'none',
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 14px', borderRadius: 8, border: 'none',
                     borderLeft: `3px solid ${isActive ? '#0B4F6C' : 'transparent'}`,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    width: '100%',
-                    transition: 'background-color 150ms',
+                    backgroundColor: 'transparent', cursor: 'pointer',
+                    textAlign: 'left', width: '100%', transition: 'background-color 150ms',
                   }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) e.currentTarget.style.backgroundColor = '#F0F4F7';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
+                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = '#F0F4F7'; }}
+                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
                 >
                   <Icon size={32} color={isActive ? '#1C2B3A' : '#A8B8C8'} />
                   <div style={{ minWidth: 0 }}>
                     <p style={font(14, isActive ? 700 : 500, isActive ? '#1C2B3A' : '#6B7C93', {
-                      lineHeight: '20px',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    })}>
-                      {cat.label}
-                    </p>
-                    <p style={font(11, 400, '#A8B8C8', { lineHeight: '16px' })}>
-                      {count} exercises
-                    </p>
+                      lineHeight: '20px', whiteSpace: 'nowrap',
+                      overflow: 'hidden', textOverflow: 'ellipsis',
+                    })}>{cat.label}</p>
+                    <p style={font(11, 400, '#A8B8C8', { lineHeight: '16px' })}>{count} exercises</p>
                   </div>
                 </button>
               );
             })}
+
+            {/* Custom category — only shown when there are custom exercises */}
+            {customExercises.length > 0 && (() => {
+              const isActive = activeCategoryId === CUSTOM_CATEGORY_ID;
+              return (
+                <button
+                  key={CUSTOM_CATEGORY_ID}
+                  type="button"
+                  onClick={() => setActiveCategoryId(CUSTOM_CATEGORY_ID)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 14px', borderRadius: 8, border: 'none',
+                    borderLeft: `3px solid ${isActive ? '#0B4F6C' : 'transparent'}`,
+                    backgroundColor: 'transparent', cursor: 'pointer',
+                    textAlign: 'left', width: '100%', transition: 'background-color 150ms',
+                  }}
+                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = '#F0F4F7'; }}
+                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
+                  <Sparkles size={20} color={isActive ? '#0B4F6C' : '#A8B8C8'} style={{ flexShrink: 0 }} />
+                  <div style={{ minWidth: 0 }}>
+                    <p style={font(14, isActive ? 700 : 500, isActive ? '#1C2B3A' : '#6B7C93', {
+                      lineHeight: '20px', whiteSpace: 'nowrap',
+                      overflow: 'hidden', textOverflow: 'ellipsis',
+                    })}>Custom</p>
+                    <p style={font(11, 400, '#A8B8C8', { lineHeight: '16px' })}>{customExercises.length} exercises</p>
+                  </div>
+                </button>
+              );
+            })()}
           </div>
 
           {/* ── Exercise grid ─────────────────────────────── */}
           <div style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '24px',
-            backgroundColor: '#F7F9FB',
-            minWidth: 0,
+            flex: 1, overflowY: 'auto', padding: '24px',
+            backgroundColor: '#F7F9FB', minWidth: 0,
           }}>
             {searchResults ? (
               searchResults.length === 0 ? (
@@ -646,20 +724,43 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                   {searchResults.map(renderCard)}
                 </div>
               )
+            ) : activeCategoryId === CUSTOM_CATEGORY_ID ? (
+              /* Custom exercises grid */
+              <div>
+                <h3 style={font(12, 700, '#6B7C93', {
+                  letterSpacing: '0.08em', textTransform: 'uppercase',
+                  marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid #EEF2F6',
+                })}>
+                  Your AI-Created Exercises
+                </h3>
+                {customExercises.length === 0 ? (
+                  <div style={{
+                    border: '1px dashed #DDE3EA', borderRadius: 12,
+                    padding: '48px 20px', backgroundColor: '#FAFBFC', textAlign: 'center',
+                  }}>
+                    <Sparkles size={32} style={{ color: '#DDE3EA', marginBottom: 12 }} />
+                    <p style={font(18, 700, '#1C2B3A', { marginBottom: 6 })}>No custom exercises yet</p>
+                    <p style={font(13, 400, '#6B7C93')}>Use the &quot;Create with AI&quot; button to generate your first exercise.</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 20 }}>
+                    {customExercises.map((ex) => renderCard({
+                      ...ex,
+                      categoryColor: '#0B4F6C',
+                      categoryLabel: 'Custom',
+                      isCustom: true,
+                    }))}
+                  </div>
+                )}
+              </div>
             ) : (
               activeCategory?.subcategories.map((sub) => (
                 <div key={sub.id} style={{ marginBottom: 32 }}>
                   <h3 style={{
                     ...font(12, 700, '#6B7C93', {
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      marginBottom: 16,
-                      paddingBottom: 10,
-                      borderBottom: '1px solid #EEF2F6',
-                      position: 'sticky',
-                      top: 0,
-                      backgroundColor: '#F7F9FB',
-                      zIndex: 10,
+                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid #EEF2F6',
+                      position: 'sticky', top: 0, backgroundColor: '#F7F9FB', zIndex: 10,
                     }),
                   }}>
                     {sub.label}
@@ -892,7 +993,40 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
         </div>
       </div>
     </div>
-  );
+    {/* AI Exercise Creator Modal — mounted outside the modal shell to avoid z-index conflicts */}
+    <AIExerciseCreatorModal
+      isOpen={showAICreator}
+      onClose={() => {
+        setShowAICreator(false);
+        reloadCustomExercises();
+      }}
+      fromPrescriptionContext={true}
+      onAddToPrescription={(newExercise) => {
+        reloadCustomExercises();
+        // Auto-select the exercise in the prescription panel
+        const enriched = {
+          exerciseLibraryId: newExercise.id,
+          exerciseName: newExercise.name,
+          sets: newExercise.sets || 3,
+          reps: newExercise.reps || 10,
+          duration: null,
+          frequency: newExercise.frequency || 'Once daily',
+          prescriptionDuration: '2 weeks',
+          notes: null,
+          targetArea: (newExercise.targetMuscleGroups || []).join(', '),
+          categoryColor: '#0B4F6C',
+          position: null,
+          difficulty: newExercise.difficulty || 'intermediate',
+          equipment: (newExercise.equipmentRequired || []).join(', '),
+        };
+        setPrescription((prev) => {
+          if (prev.some((p) => p.exerciseLibraryId === newExercise.id)) return prev;
+          return [...prev, enriched];
+        });
+      }}
+    />
+  </>
+);
 };
 
 export default ExerciseLibraryModal;

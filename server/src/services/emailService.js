@@ -455,3 +455,133 @@ export const sendPasswordResetEmail = async ({
 
   return sendMail({ to: email, subject, html });
 };
+
+export const sendJuniorInviteEmail = async ({
+  email,
+  seniorName,
+  practiceName,
+  token,
+}) => {
+  const subject = 'You have been invited to join a practice on Theralign';
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const inviteLink = `${clientUrl}/register/junior?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+
+  const html = `
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0f0f0f; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0f0f0f; padding: 24px; text-align: center; border-bottom: 2px solid #0f0f0f;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0f0f0f; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0f0f0f; padding-bottom: 8px;">
+          Practice Invitation
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Dear Practitioner,</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          DR. ${seniorName.toUpperCase()} HAS INVITED YOU TO JOIN THEIR PRACTICE ${practiceName ? `"${practiceName.toUpperCase()}"` : ''} ON THE THERALIGN PLATFORM.
+        </p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          AS A JUNIOR PRACTITIONER, YOU WILL BE ABLE TO MANAGE PATIENT SESSIONS AND ASSIGN CLINICAL EXERCISES UNDER DR. ${seniorName.toUpperCase()}'S SUPERVISION.
+        </p>
+        
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${inviteLink}" style="background-color: #0B4F6C; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; border: 2px solid #0B4F6C; display: inline-block;">ACCEPT INVITATION & REGISTER →</a>
+        </div>
+        
+        <p style="color: #777777; font-size: 11px; line-height: 1.6; font-weight: 700; text-transform: uppercase; margin-bottom: 28px;">
+          * THIS INVITATION LINK WILL EXPIRE IN 7 DAYS. IF YOU DID NOT EXPECT THIS INVITATION, PLEASE DISREGARD THIS CORRESPONDENCE.
+        </p>
+      </div>
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0f0f0f;">
+        <p style="color: #0f0f0f; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+          The Theralign Team
+        </p>
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+          Automated system dispatch — do not reply. Support: support@theralign.com.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: email, subject, html });
+};
+
+export const sendJuniorAcceptedEmail = async ({
+  seniorEmail,
+  juniorName,
+  seniorName,
+}) => {
+  const subject = 'A junior doctor has joined your practice on Theralign';
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const dashboardLink = `${clientUrl}/doctor/dashboard`;
+
+  const html = `
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0f0f0f; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0f0f0f; padding: 24px; text-align: center; border-bottom: 2px solid #0f0f0f;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0f0f0f; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0f0f0f; padding-bottom: 8px;">
+          Practice Team Update
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Hi Dr. ${seniorName.toUpperCase()},</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          DR. ${juniorName.toUpperCase()} HAS ACCEPTED YOUR INVITATION AND REGISTERED UNDER YOUR PRACTICE.
+        </p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          THEY HAVE BYPASSED ADMIN REVIEW AND CAN NOW START LOGGING SESSIONS AND CREATING REHABILITATION PRESCRIPTIONS FOR ASSIGNED APPOINTMENTS.
+        </p>
+        
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${dashboardLink}" style="background-color: #0f0f0f; color: #ffffff; padding: 14px 28px; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; border: 2px solid #0f0f0f; display: inline-block;">VIEW PRACTICE DASHBOARD →</a>
+        </div>
+      </div>
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0f0f0f;">
+        <p style="color: #0f0f0f; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+          The Theralign Team
+        </p>
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+          Automated system dispatch — do not reply. Support: support@theralign.com.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: seniorEmail, subject, html });
+};
+
+export const sendJuniorRemovedEmail = async ({
+  juniorEmail,
+  seniorName,
+}) => {
+  const subject = 'Affiliation change notification';
+
+  const html = `
+    <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 2px solid #0f0f0f; background: #ffffff; text-align: left; box-sizing: border-box;">
+      <div style="background: #0f0f0f; padding: 24px; text-align: center; border-bottom: 2px solid #0f0f0f;">
+        <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Theralign</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #0f0f0f; margin-top: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #0f0f0f; padding-bottom: 8px;">
+          Affiliation Update
+        </h2>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500; margin-top: 20px;">Dear Practitioner,</p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          THIS IS TO INFORM YOU THAT YOU HAVE BEEN REMOVED FROM DR. ${seniorName.toUpperCase()}'S PRACTICE ON THE THERALIGN PLATFORM.
+        </p>
+        <p style="color: #555555; font-size: 14px; line-height: 1.6; font-weight: 500;">
+          YOUR ACCOUNT HAS BEEN CONVERTED TO A SOLO INDEPENDENT PRACTITIONER STATUS.
+        </p>
+      </div>
+      <div style="padding: 20px; background: #fafafa; text-align: center; border-top: 2px solid #0f0f0f;">
+        <p style="color: #0f0f0f; font-size: 11px; margin: 0 0 6px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+          The Theralign Team
+        </p>
+        <p style="color: #888888; font-size: 10px; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+          Automated system dispatch — do not reply. Support: support@theralign.com.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendMail({ to: juniorEmail, subject, html });
+};

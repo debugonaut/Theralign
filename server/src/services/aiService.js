@@ -232,3 +232,86 @@ export const batchGenerateSummaries = async (doctors) => {
 
   return results;
 };
+
+/**
+ * Generates a structured clinical exercise prescription from a natural-language prompt.
+ * Called by the doctor-facing AI Exercise Creator feature.
+ *
+ * @param {object} params
+ * @param {string} params.prompt - Doctor's free-text exercise description
+ * @param {string[]} params.targetMuscleGroups
+ * @param {string|null} params.patientCondition
+ * @param {string} params.difficultyLevel - beginner | intermediate | advanced
+ * @returns {object} Structured exercise object
+ * @throws {Error} On AI failure or malformed response
+ */
+export const generateExerciseFromPrompt = async ({ prompt, targetMuscleGroups = [], patientCondition = null, difficultyLevel = 'intermediate' }) => {
+  const systemPrompt = `You are a clinical physiotherapy exercise designer for Theralign, an Indian physiotherapy platform. You generate evidence-based exercise prescriptions for physiotherapists to assign to patients.
+
+Return ONLY a valid JSON object. No markdown. No preamble. No explanation. The JSON must exactly match this structure:
+
+{
+  "name": "string — exercise name, Title Case, 2–6 words",
+  "category": "string — one of: Strength, Flexibility, Balance, Cardio, Posture, Breathing, Functional, Manual Therapy",
+  "targetMuscleGroups": ["string array — anatomical muscle names"],
+  "difficulty": "string — beginner | intermediate | advanced",
+  "sets": number,
+  "reps": number,
+  "holdDuration": "string or null — e.g. '30 seconds', null if not applicable",
+  "frequency": "string — e.g. 'twice daily', '3 times per week'",
+  "stepByStepInstructions": ["array of strings — each string is one clear instruction step"],
+  "commonMistakes": ["array of strings — 2–3 common errors to avoid"],
+  "contraindications": ["array of strings — conditions where this exercise should not be performed"],
+  "modifications": {
+    "easier": "string — how to make it easier",
+    "harder": "string — how to make it harder"
+  },
+  "equipmentRequired": ["array of strings — or empty array if none needed"],
+  "youtubeSearchQuery": "string — a precise search query that would find a demonstration video for this exact exercise on YouTube",
+  "clinicalNotes": "string — brief clinical context, 1–2 sentences"
+}`;
+
+  const muscleGroupsText = targetMuscleGroups.length > 0 ? `Target muscle groups: ${targetMuscleGroups.join(', ')}` : '';
+  const conditionText = patientCondition ? `Patient condition context: ${patientCondition}` : '';
+
+  const userMessage = `Generate a physiotherapy exercise for the following:
+
+Description: ${prompt}
+${muscleGroupsText}
+${conditionText}
+Difficulty level: ${difficultyLevel}
+
+Generate a safe, evidence-based exercise appropriate for a physiotherapy clinic setting in India.`;
+
+  const rawContent = await callAI(
+    [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userMessage },
+    ],
+    { temperature: 0.4, maxTokens: 1000 }
+  );
+
+  if (!rawContent) {
+    const error = new Error('AI did not return a response. Please try again.');
+    error.statusCode = 502;
+    throw error;
+  }
+
+  // Strip possible markdown code blocks
+  let cleanJson = rawContent;
+  if (cleanJson.startsWith('```json')) cleanJson = cleanJson.slice(7);
+  else if (cleanJson.startsWith('```')) cleanJson = cleanJson.slice(3);
+  if (cleanJson.endsWith('```')) cleanJson = cleanJson.slice(0, -3);
+  cleanJson = cleanJson.trim();
+
+  let exercise;
+  try {
+    exercise = JSON.parse(cleanJson);
+  } catch {
+    const error = new Error('AI returned an unreadable response. Please rephrase your prompt and try again.');
+    error.statusCode = 502;
+    throw error;
+  }
+
+  return exercise;
+};
