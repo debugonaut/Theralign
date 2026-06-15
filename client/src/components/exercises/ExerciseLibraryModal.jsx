@@ -335,52 +335,67 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
             )}
           </div>
 
-          {/* Default prescription */}
-          <p style={{ ...font(12, 400, '#6B7C93'), marginTop: 'auto', paddingTop: 4 }}>
-            {formatDefaultPrescription({
-              sets: exercise.defaultSets,
-              reps: exercise.defaultReps,
-              duration: exercise.defaultDuration,
-            })}
-            {exercise.defaultFrequency ? ` · ${exercise.defaultFrequency}` : ''}
-          </p>
+          {/* Bottom row (Summary text + Add button) */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '8px',
+            marginTop: 'auto',
+            paddingTop: 4,
+          }}>
+            {/* Default prescription */}
+            <p style={{
+              ...font(12, 400, '#6B7C93'),
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              flex: 1,
+              margin: 0,
+            }}>
+              {formatDefaultPrescription({
+                sets: exercise.defaultSets,
+                reps: exercise.defaultReps,
+                duration: exercise.defaultDuration,
+              })}
+              {exercise.defaultFrequency ? ` · ${exercise.defaultFrequency}` : ''}
+            </p>
 
-          {/* Add button */}
-          <button
-            type="button"
-            onClick={() => handleAddExercise(exercise)}
-            disabled={isAdded}
-            aria-label={`Add ${exercise.name}`}
-            style={{
-              position: 'absolute',
-              bottom: 12,
-              right: 12,
-              width: 28,
-              height: 28,
-              borderRadius: 6,
-              border: `2px solid #0B4F6C`,
-              backgroundColor: isAdded || isFlashing ? '#0B4F6C' : 'transparent',
-              color: isAdded || isFlashing ? '#FFFFFF' : '#0B4F6C',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: isAdded ? 'default' : 'pointer',
-              opacity: isAdded ? 0.65 : 1,
-              transition: 'background-color 150ms, color 150ms',
-            }}
-            onMouseEnter={(e) => {
-              if (!isAdded) {
-                e.currentTarget.style.backgroundColor = '#E8F4F8';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isAdded) {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }
-            }}
-          >
-            {isFlashing || isAdded ? <Check size={14} /> : <Plus size={14} />}
-          </button>
+            {/* Add button */}
+            <button
+              type="button"
+              onClick={() => handleAddExercise(exercise)}
+              disabled={isAdded}
+              aria-label={`Add ${exercise.name}`}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 6,
+                border: `2px solid #0B4F6C`,
+                backgroundColor: isAdded || isFlashing ? '#0B4F6C' : 'transparent',
+                color: isAdded || isFlashing ? '#FFFFFF' : '#0B4F6C',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: isAdded ? 'default' : 'pointer',
+                opacity: isAdded ? 0.65 : 1,
+                transition: 'background-color 150ms, color 150ms',
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                if (!isAdded) {
+                  e.currentTarget.style.backgroundColor = '#E8F4F8';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isAdded) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }
+              }}
+            >
+              {isFlashing || isAdded ? <Check size={14} /> : <Plus size={14} />}
+            </button>
+          </div>
         </div>
       </div>
     );
