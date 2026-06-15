@@ -267,17 +267,55 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           e.currentTarget.style.boxShadow = shadow1;
         }}
       >
-        {/* Figure zone */}
-        <div style={{
-          height: 132,
-          backgroundColor: '#FAFBFC',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          <Figure size={96} color="#0B4F6C" />
-        </div>
+        {/* Thumbnail / Figure zone */}
+        {exercise.youtubeId ? (
+          <a
+            href={`https://www.youtube.com/watch?v=${exercise.youtubeId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Watch ${exercise.name} on YouTube`}
+            style={{ display: 'block', position: 'relative', height: 132, flexShrink: 0, overflow: 'hidden' }}
+          >
+            <img
+              src={`https://img.youtube.com/vi/${exercise.youtubeId}/mqdefault.jpg`}
+              alt={exercise.youtubeTitle || exercise.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              loading="lazy"
+            />
+            {/* Play overlay */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'rgba(0,0,0,0.18)',
+              transition: 'background 150ms',
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.38)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.18)'; }}
+            >
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                backgroundColor: '#FF0000',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {/* Triangle play icon */}
+                <svg width="14" height="14" viewBox="0 0 12 14" fill="white">
+                  <path d="M1 1l10 6-10 6V1z" />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ) : (
+          <div style={{
+            height: 132,
+            backgroundColor: '#FAFBFC',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <Figure size={96} color="#0B4F6C" />
+          </div>
+        )}
 
         {/* Content zone */}
         <div style={{ flex: 1, padding: '14px 14px 12px', display: 'flex', flexDirection: 'column', gap: 6, position: 'relative' }}>
