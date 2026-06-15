@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { X, Play } from 'lucide-react';
 import { getExerciseById } from '../../data/exerciseLibrary';
 
-const formatPrescriptionFooter = ({ sets, reps, duration, frequency }) => {
+const formatPrescriptionFooter = ({ sets, reps, duration, frequency, prescriptionDuration }) => {
   const parts = [];
   if (sets) parts.push(`${sets} sets`);
   if (reps) parts.push(`${reps} reps`);
   if (duration) parts.push(duration);
   if (frequency) parts.push(frequency);
+  if (prescriptionDuration) parts.push(`for ${prescriptionDuration}`);
   return parts.join(' · ');
 };
 
@@ -20,6 +21,7 @@ const ExerciseVideoModal = ({
   reps,
   duration,
   frequency,
+  prescriptionDuration,
   doctorName,
 }) => {
   const [embedSrc, setEmbedSrc] = useState('');
@@ -51,7 +53,7 @@ const ExerciseVideoModal = ({
 
   if (!isOpen) return null;
 
-  const prescriptionText = formatPrescriptionFooter({ sets, reps, duration, frequency });
+  const prescriptionText = formatPrescriptionFooter({ sets, reps, duration, frequency, prescriptionDuration });
 
   return (
     <div

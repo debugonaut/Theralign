@@ -7,11 +7,12 @@ const exercisePrescriptionItemSchema = new mongoose.Schema({
     default: null,
     // exercise.id from exerciseLibrary.js — null for manually typed exercises
   },
-  sets:         { type: Number, min: 1, default: null },
-  reps:         { type: Number, min: 1, default: null },
-  frequency:    { type: String, default: null },  // e.g. 'twice daily', '3x per week'
-  duration:     { type: String, default: null },  // e.g. '30 seconds', '10 minutes'
-  notes:        { type: String, default: null }
+  sets:                 { type: Number, min: 1, default: null },
+  reps:                 { type: Number, min: 1, default: null },
+  frequency:            { type: String, default: null },  // e.g. 'twice daily', '3x per week'
+  duration:             { type: String, default: null },  // e.g. '30 seconds', '10 minutes' (hold time)
+  prescriptionDuration: { type: String, default: null },  // e.g. '2 weeks', '1 month' (overall duration)
+  notes:                { type: String, default: null }
 }, { _id: true });
 
 const sessionRecordSchema = new mongoose.Schema({

@@ -76,6 +76,10 @@ export const createSessionRecordValidation = [
     .optional({ nullable: true })
     .isString().trim(),
 
+  body('exercisePrescription.*.prescriptionDuration')
+    .optional({ nullable: true })
+    .isString().trim(),
+
   body('exercisePrescription.*.notes')
     .optional({ nullable: true })
     .isString().trim()
@@ -150,6 +154,10 @@ export const updateSessionRecordValidation = [
     .notEmpty().withMessage('Each exercise must have a name'),
 
   body('exercisePrescription.*.exerciseLibraryId')
+    .optional({ nullable: true })
+    .isString().trim(),
+
+  body('exercisePrescription.*.prescriptionDuration')
     .optional({ nullable: true })
     .isString().trim(),
 

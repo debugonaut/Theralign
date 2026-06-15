@@ -102,6 +102,7 @@ const formatExerciseParamsForPatient = (ex) => {
   if (ex.sets) parts.push(`${ex.sets} sets`);
   if (ex.reps) parts.push(`${ex.reps} reps`);
   if (ex.duration) parts.push(ex.duration);
+  if (ex.prescriptionDuration) parts.push(`for ${ex.prescriptionDuration}`);
   return parts.join(' · ') || '—';
 };
 
@@ -232,7 +233,8 @@ export default function PatientCareTimeline() {
             <th>Sets</th>
             <th>Reps</th>
             <th>Frequency</th>
-            <th>Duration</th>
+            <th>Hold Time</th>
+            <th>Prescribe For</th>
           </tr>
         </thead>
         <tbody>
@@ -248,6 +250,7 @@ export default function PatientCareTimeline() {
               <td>${ex.reps || '—'}</td>
               <td>${ex.frequency || '—'}</td>
               <td>${ex.duration || '—'}</td>
+              <td>${ex.prescriptionDuration || '—'}</td>
             </tr>
           `
             )
@@ -956,6 +959,7 @@ export default function PatientCareTimeline() {
                                                 reps: ex.reps,
                                                 duration: ex.duration,
                                                 frequency: ex.frequency,
+                                                prescriptionDuration: ex.prescriptionDuration,
                                                 doctorName: docName,
                                               })}
                                               style={{
@@ -1152,6 +1156,7 @@ export default function PatientCareTimeline() {
         reps={videoModal.reps}
         duration={videoModal.duration}
         frequency={videoModal.frequency}
+        prescriptionDuration={videoModal.prescriptionDuration}
         doctorName={videoModal.doctorName}
       />
     </div>

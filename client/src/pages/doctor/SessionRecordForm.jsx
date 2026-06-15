@@ -50,12 +50,28 @@ const PRESETS = [
   { label: 'Custom', days: 'custom' },
 ];
 
+const PRESCRIPTION_DURATION_OPTIONS = [
+  '1 week',
+  '2 weeks',
+  '3 weeks',
+  '4 weeks',
+  '6 weeks',
+  '8 weeks',
+  '12 weeks',
+  '1 month',
+  '2 months',
+  '3 months',
+  'Until next session',
+  'Ongoing',
+];
+
 const formatExerciseParams = (ex) => {
   const parts = [];
   if (ex.sets) parts.push(`${ex.sets} sets`);
   if (ex.reps) parts.push(`${ex.reps} reps`);
   if (ex.duration) parts.push(ex.duration);
   if (ex.frequency) parts.push(ex.frequency);
+  if (ex.prescriptionDuration) parts.push(`for ${ex.prescriptionDuration}`);
   return parts.join(' · ');
 };
 
@@ -112,7 +128,7 @@ export default function SessionRecordForm() {
   const [showExerciseLibrary, setShowExerciseLibrary] = useState(false);
   const [showManualAdd, setShowManualAdd] = useState(false);
   const [manualExercise, setManualExercise] = useState({
-    exerciseName: '', sets: '', reps: '', frequency: '', duration: '', notes: '',
+    exerciseName: '', sets: '', reps: '', frequency: '', duration: '', prescriptionDuration: '2 weeks', notes: '',
   });
 
   // Validation state for required fields
@@ -401,13 +417,14 @@ export default function SessionRecordForm() {
       reps: manualExercise.reps === '' ? null : Number(manualExercise.reps),
       frequency: manualExercise.frequency.trim() || null,
       duration: manualExercise.duration.trim() || null,
+      prescriptionDuration: manualExercise.prescriptionDuration ? manualExercise.prescriptionDuration.trim() : '2 weeks',
       notes: manualExercise.notes.trim() || null,
     };
     setFormData((prev) => ({
       ...prev,
       exercisePrescription: [...prev.exercisePrescription, newItem],
     }));
-    setManualExercise({ exerciseName: '', sets: '', reps: '', frequency: '', duration: '', notes: '' });
+    setManualExercise({ exerciseName: '', sets: '', reps: '', frequency: '', duration: '', prescriptionDuration: '2 weeks', notes: '' });
     setShowManualAdd(false);
   };
 
@@ -956,11 +973,20 @@ export default function SessionRecordForm() {
                     placeholder="Exercise name"
                     className="w-full h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none"
                   />
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <input type="number" min={1} placeholder="Sets" value={manualExercise.sets} onChange={(e) => setManualExercise((p) => ({ ...p, sets: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
                     <input type="number" min={1} placeholder="Reps" value={manualExercise.reps} onChange={(e) => setManualExercise((p) => ({ ...p, reps: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
                     <input type="text" placeholder="Frequency" value={manualExercise.frequency} onChange={(e) => setManualExercise((p) => ({ ...p, frequency: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
-                    <input type="text" placeholder="Duration" value={manualExercise.duration} onChange={(e) => setManualExercise((p) => ({ ...p, duration: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
+                    <input type="text" placeholder="Hold Time" value={manualExercise.duration} onChange={(e) => setManualExercise((p) => ({ ...p, duration: e.target.value }))} className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm focus:border-primary focus:outline-none" />
+                    <select
+                      value={manualExercise.prescriptionDuration}
+                      onChange={(e) => setManualExercise((p) => ({ ...p, prescriptionDuration: e.target.value }))}
+                      className="h-10 border-2 border-neutral-200 rounded-md px-3 text-ui-sm bg-white focus:border-primary focus:outline-none"
+                    >
+                      {PRESCRIPTION_DURATION_OPTIONS.map((o) => (
+                        <option key={o} value={o}>for {o}</option>
+                      ))}
+                    </select>
                   </div>
                   <button type="button" onClick={handleAddManualExercise} className="self-start h-9 px-4 bg-neutral-900 text-white rounded-md text-ui-sm font-semibold">
                     Add Exercise

@@ -22,6 +22,21 @@ const DURATION_OPTIONS = [
   '45 sec', '1 min', '2 min', '5 min', '10 min',
 ];
 
+const PRESCRIPTION_DURATION_OPTIONS = [
+  '1 week',
+  '2 weeks',
+  '3 weeks',
+  '4 weeks',
+  '6 weeks',
+  '8 weeks',
+  '12 weeks',
+  '1 month',
+  '2 months',
+  '3 months',
+  'Until next session',
+  'Ongoing',
+];
+
 const DIFFICULTY_STYLES = {
   beginner:     { bg: '#E8F8F5', color: '#0A7E6E' },
   intermediate: { bg: '#FEF3E2', color: '#B45309' },
@@ -42,6 +57,7 @@ const toPrescriptionItem = (exercise) => ({
   reps: exercise.defaultReps ?? null,
   duration: exercise.defaultDuration ?? null,
   frequency: exercise.defaultFrequency ?? 'Once daily',
+  prescriptionDuration: '2 weeks',
   notes: null,
   targetArea: exercise.targetArea,
   categoryColor: exercise.categoryColor,
@@ -159,6 +175,7 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
           reps: ex.reps ?? null,
           duration: ex.duration ?? null,
           frequency: ex.frequency || 'Once daily',
+          prescriptionDuration: ex.prescriptionDuration || '2 weeks',
         }))
       );
       setSearchQuery('');
@@ -736,6 +753,16 @@ const ExerciseLibraryModal = ({ isOpen, onClose, initialPrescription = [], onDon
                           value={item.frequency || 'Once daily'}
                           onChange={(e) => updateItem(idx, 'frequency', e.target.value)}
                           options={FREQUENCY_OPTIONS}
+                        />
+                      </div>
+
+                      {/* Overall Duration */}
+                      <div style={{ marginTop: 12 }}>
+                        <FieldLabel>Prescribe For</FieldLabel>
+                        <SelectCtrl
+                          value={item.prescriptionDuration || '2 weeks'}
+                          onChange={(e) => updateItem(idx, 'prescriptionDuration', e.target.value)}
+                          options={PRESCRIPTION_DURATION_OPTIONS}
                         />
                       </div>
                     </div>
