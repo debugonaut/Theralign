@@ -22,7 +22,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'P1xMHnGTZNM',
+            youtubeId: 'ZIQjHtghzqw',
             youtubeTitle: 'Pelvic Tilt Exercise — Physiotherapy',
             tags: ['lower back pain', 'lumbar stability', 'core']
           },
@@ -82,7 +82,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'EPM5t_6FQYY',
+            youtubeId: 'LugNxxfIdvo',
             youtubeTitle: 'Knee to Chest Stretch — Physiotherapy',
             tags: ['lower back stretch', 'hip flexors', 'pain relief']
           },
@@ -112,7 +112,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'chair',
             position: 'sitting',
-            youtubeId: 'LxyHoSfBUMg',
+            youtubeId: 'SLIaql7h6RQ',
             youtubeTitle: 'Seated Forward Bend — Physiotherapy',
             tags: ['lower back stretch', 'hamstrings', 'flexibility']
           },
@@ -127,7 +127,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'WjR8y6HNQQA',
+            youtubeId: 'gkXPnqRaRvc',
             youtubeTitle: 'Side Lying Lumbar Rotation — Physiotherapy',
             tags: ['lumbar rotation', 'lower back', 'mobility']
           },
@@ -142,7 +142,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'Tp5ph9MZBek',
+            youtubeId: 'tIZppe-RB0g',
             youtubeTitle: 'McKenzie Press Up — Physiotherapy',
             tags: ['McKenzie', 'disc pain', 'lumbar extension']
           },
@@ -157,7 +157,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'eqVMAPM00h0',
+            youtubeId: 'kH12QrSGedM',
             youtubeTitle: 'Child\'s Pose Stretch — Physiotherapy',
             tags: ['lower back stretch', 'relaxation', 'flexibility']
           },
@@ -172,7 +172,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: '7yvXDqRSYNE',
+            youtubeId: '2Iq19sP3Ha8',
             youtubeTitle: 'Quadruped Rocking — Physiotherapy',
             tags: ['lumbar mobility', 'hip flexibility', 'decompression']
           },
@@ -187,7 +187,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'P6TINM_nkn8',
+            youtubeId: 'JR1rtQ-PF38',
             youtubeTitle: 'Piriformis Stretch Supine — Physiotherapy',
             tags: ['piriformis', 'sciatica', 'lower back']
           },
@@ -202,7 +202,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'Eb_V0ZCmjqA',
+            youtubeId: 'fyGmgHAt9rg',
             youtubeTitle: 'Hip Hinge Pattern — Physiotherapy',
             tags: ['lumbar mechanics', 'movement pattern', 'hamstrings']
           },
@@ -217,7 +217,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'XcVKUqPQlC4',
+            youtubeId: 'vdmlNaXSjd4',
             youtubeTitle: 'Single Leg Glute Bridge — Physiotherapy',
             tags: ['glutes', 'lumbar stability', 'unilateral']
           },
@@ -232,7 +232,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'chair',
             position: 'sitting',
-            youtubeId: 'iYj8LijFxQ0',
+            youtubeId: 'PUVTGBARpoo',
             youtubeTitle: 'Seated Lumbar Roll — Physiotherapy',
             tags: ['lumbar mobility', 'desk worker', 'posture']
           }
@@ -253,7 +253,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'wQylqaCl8Zo',
+            youtubeId: 'H0TWk06p5s4',
             youtubeTitle: 'Chin Tuck Exercise — Physiotherapy',
             tags: ['neck pain', 'posture', 'cervical']
           },
