@@ -268,7 +268,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'V0bCn-_xEzk',
+            youtubeId: 'PruXF-NE2zI',
             youtubeTitle: 'Neck Rotation Stretch — Physiotherapy',
             tags: ['neck mobility', 'cervical range of motion']
           },
@@ -283,7 +283,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'vr2KhElbpGQ',
+            youtubeId: 'UUXUVFQS5u0',
             youtubeTitle: 'Neck Side Bend Stretch — Physiotherapy',
             tags: ['neck stretch', 'upper trapezius', 'posture']
           },
@@ -298,7 +298,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'dkTCVPLYHgE',
+            youtubeId: 't_q9JQh_-7A',
             youtubeTitle: 'Neck Flexion Stretch — Physiotherapy',
             tags: ['neck stretch', 'suboccipital', 'headache']
           },
@@ -313,7 +313,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'RqcOCBb4arc',
+            youtubeId: 'HiwOX2evTt4',
             youtubeTitle: 'Neck Extension Exercise — Physiotherapy',
             tags: ['neck mobility', 'cervical extension', 'posture']
           },
@@ -328,7 +328,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'P04y5uE8iE8',
+            youtubeId: 'r0eoFS7_5Q',
             youtubeTitle: 'Upper Trap Stretch — Physiotherapy',
             tags: ['neck tension', 'upper trapezius', 'headache']
           },
@@ -343,7 +343,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: '7v6Oy1iFWbM',
+            youtubeId: 'GSoXPJRnR6E',
             youtubeTitle: 'Levator Scapulae Stretch — Physiotherapy',
             tags: ['neck pain', 'levator scapulae', 'shoulder']
           },
@@ -358,7 +358,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'hy7PtXWFpNs',
+            youtubeId: 'm6GvNCk',
             youtubeTitle: 'Isometric Neck Flexion — Physiotherapy',
             tags: ['neck strengthening', 'isometric', 'cervical stability']
           },
@@ -373,7 +373,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: '4iqOJcz6DWo',
+            youtubeId: '0kWF968uFXY',
             youtubeTitle: 'Isometric Neck Side Resistance — Physiotherapy',
             tags: ['neck strengthening', 'cervical stability', 'isometric']
           },
@@ -388,7 +388,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'HbiS6IfkFSM',
+            youtubeId: 'K4RT5VWhptg',
             youtubeTitle: 'Scalene Stretch — Physiotherapy',
             tags: ['scalenes', 'thoracic outlet', 'neck']
           },
@@ -403,7 +403,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'bZqroPS3cS4',
+            youtubeId: 'DVebkG8aDG4',
             youtubeTitle: 'SCM Sternocleidomastoid Stretch — Physiotherapy',
             tags: ['neck pain', 'SCM', 'headache']
           },
@@ -418,7 +418,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'yQTJFYZ7bWg',
+            youtubeId: 'Bh3csgV45kw',
             youtubeTitle: 'Head Retraction Overpressure — Physiotherapy',
             tags: ['neck posture', 'deep cervical flexors', 'cervicogenic headache']
           },
@@ -433,7 +433,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'mFRIJXBjCRM',
+            youtubeId: 'QrYSctbYQfg',
             youtubeTitle: 'Prone Head Lift — Physiotherapy',
             tags: ['cervical strengthening', 'neck extensors', 'stability']
           }
@@ -664,7 +664,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'KyaqMRmQJpM',
+            youtubeId: 'au62CidApd0',
             youtubeTitle: 'Quad Set Exercise — Physiotherapy',
             tags: ['quadriceps', 'knee strengthening', 'post-surgical']
           },
@@ -679,7 +679,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'AKMJnJDfBVY',
+            youtubeId: 'U4L_6JEv9Jg',
             youtubeTitle: 'Straight Leg Raise — Physiotherapy',
             tags: ['quadriceps', 'knee', 'hip flexors']
           },
@@ -694,7 +694,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band',
             position: 'standing',
-            youtubeId: 'XGTMvqKjdZ4',
+            youtubeId: 'guRzp6o0N6M',
             youtubeTitle: 'Terminal Knee Extension — Physiotherapy',
             tags: ['quadriceps', 'ACL rehab', 'knee extension']
           },
@@ -709,7 +709,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'HWkXz3CU_3Q',
+            youtubeId: '0YAFlev6AYg',
             youtubeTitle: 'Mini Squat Exercise — Physiotherapy',
             tags: ['quadriceps', 'knee', 'functional strength']
           },
@@ -724,7 +724,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: 'V5ZOxlR7SBE',
+            youtubeId: 'aKBxiKs9n8A',
             youtubeTitle: 'Wall Squat Wall Sit — Physiotherapy',
             tags: ['quadriceps', 'knee strengthening', 'isometric']
           },
@@ -739,7 +739,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'step or stair',
             position: 'standing',
-            youtubeId: 'L7AHOjKZVFc',
+            youtubeId: 'WCFCdxzFBa4',
             youtubeTitle: 'Step Up Exercise — Physiotherapy',
             tags: ['quadriceps', 'functional', 'knee rehab']
           },
@@ -754,7 +754,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'rolled towel',
             position: 'lying',
-            youtubeId: 'nnXJBdYapJU',
+            youtubeId: 'Wqky4QQQ23c',
             youtubeTitle: 'Short Arc Quad — Physiotherapy',
             tags: ['VMO', 'quadriceps', 'knee extension']
           },
@@ -769,7 +769,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band optional',
             position: 'prone',
-            youtubeId: '5E4bfAqFjrc',
+            youtubeId: 'x4aLje2kGKU',
             youtubeTitle: 'Prone Hamstring Curl — Physiotherapy',
             tags: ['hamstrings', 'knee flexion', 'strengthening']
           },
@@ -784,7 +784,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'resistance band',
             position: 'sitting',
-            youtubeId: 'gL8NCbqKf5E',
+            youtubeId: '5JPF0sokam8',
             youtubeTitle: 'Seated Band Leg Press — Physiotherapy',
             tags: ['quadriceps', 'knee strengthening', 'band exercise']
           },
@@ -799,7 +799,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'step',
             position: 'standing',
-            youtubeId: 'E8qlNWgjnNY',
+            youtubeId: 'Vr7G2yzb9f4',
             youtubeTitle: 'Lateral Step Up — Physiotherapy',
             tags: ['knee stability', 'lateral movement', 'glute med']
           },
@@ -814,7 +814,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'advanced',
             equipment: 'none',
             position: 'standing',
-            youtubeId: '6g2UQk_JM9E',
+            youtubeId: 'u_vJD-fiGWA',
             youtubeTitle: 'Single Leg Squat — Physiotherapy',
             tags: ['knee strength', 'advanced rehab', 'sport return']
           },
@@ -829,7 +829,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'advanced',
             equipment: 'anchor point for feet',
             position: 'kneeling',
-            youtubeId: 'oXhCuOGhxo4',
+            youtubeId: 'kjv4WQXWl_A',
             youtubeTitle: 'Nordic Hamstring Curl — Physiotherapy',
             tags: ['hamstrings', 'eccentric', 'ACL prevention']
           }
@@ -850,7 +850,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'E3OV7VXJNLI',
+            youtubeId: 'BL68tDXi430',
             youtubeTitle: 'Heel Slide Exercise — Physiotherapy',
             tags: ['knee flexion', 'range of motion', 'post-surgical']
           },
@@ -865,7 +865,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'vOVmf3eTT3E',
+            youtubeId: 'Z7zuFKOv9Vw',
             youtubeTitle: 'Prone Knee Extension Hang — Physiotherapy',
             tags: ['knee extension', 'range of motion', 'ACL']
           },
@@ -880,7 +880,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall for balance',
             position: 'standing',
-            youtubeId: 'YEUm_3zq5_0',
+            youtubeId: 'zi5__zBRzYc',
             youtubeTitle: 'Standing Quad Stretch — Physiotherapy',
             tags: ['quadriceps stretch', 'knee flexibility', 'hamstrings']
           },
@@ -895,7 +895,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'chair',
             position: 'sitting',
-            youtubeId: 'yqQZEIhYBsQ',
+            youtubeId: 'Ci_iEOLTLzI',
             youtubeTitle: 'Seated Assisted Knee Flexion — Physiotherapy',
             tags: ['knee flexion', 'ROM', 'post-surgical']
           },
@@ -910,7 +910,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'G0XaaTkP5dQ',
+            youtubeId: 'Il1L75v6gq0',
             youtubeTitle: 'Supine Hamstring Stretch — Physiotherapy',
             tags: ['hamstring stretch', 'knee', 'flexibility']
           },
@@ -925,7 +925,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: 'MuTLaKcyHBQ',
+            youtubeId: 'y01ri_43G50',
             youtubeTitle: 'Gastrocnemius Calf Stretch — Physiotherapy',
             tags: ['calf stretch', 'Achilles', 'knee']
           },
@@ -940,7 +940,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall for balance',
             position: 'standing',
-            youtubeId: 'ZLw96wCzSGY',
+            youtubeId: 'bJuV3ZQVfJ4',
             youtubeTitle: 'IT Band Stretch — Physiotherapy',
             tags: ['IT band', 'lateral knee', 'runners knee']
           },
@@ -955,7 +955,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'rAkTB3vXE7s',
+            youtubeId: 'jgYyheqwEdk',
             youtubeTitle: 'Patellar Mobilisation — Physiotherapy',
             tags: ['patella', 'knee cap', 'patellofemoral']
           }
@@ -985,7 +985,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band',
             position: 'standing',
-            youtubeId: 'FE2EkNyqSMo',
+            youtubeId: '_UvmPNGtlPM',
             youtubeTitle: 'Shoulder External Rotation — Physiotherapy',
             tags: ['rotator cuff', 'shoulder stability', 'external rotation']
           },
@@ -1000,7 +1000,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'qMTKBMVKJcA',
+            youtubeId: 'QF_ubbr_RUE',
             youtubeTitle: 'Pendulum Exercise — Physiotherapy',
             tags: ['frozen shoulder', 'decompression', 'acute phase']
           },
@@ -1015,7 +1015,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'light dumbbells',
             position: 'standing',
-            youtubeId: 'lbtzNwFfPGY',
+            youtubeId: 'sJYXn8thNEQ',
             youtubeTitle: 'Scaption Exercise — Physiotherapy',
             tags: ['rotator cuff', 'shoulder elevation', 'strengthening']
           },
@@ -1030,7 +1030,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band',
             position: 'standing',
-            youtubeId: 'Mz_2Uxo-0GE',
+            youtubeId: 'ZXncuZKonas',
             youtubeTitle: 'Shoulder Internal Rotation — Physiotherapy',
             tags: ['rotator cuff', 'subscapularis', 'internal rotation']
           },
@@ -1045,7 +1045,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'light dumbbells',
             position: 'standing',
-            youtubeId: 'PGflGpJmyFk',
+            youtubeId: 'Vsq2iAPnPEQ',
             youtubeTitle: 'Empty Can Exercise — Physiotherapy',
             tags: ['supraspinatus', 'rotator cuff', 'shoulder']
           },
@@ -1060,7 +1060,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'light dumbbell optional',
             position: 'lying',
-            youtubeId: 'ZPMFrMsMKA8',
+            youtubeId: 'v5bPOsQbq7g',
             youtubeTitle: 'Side Lying External Rotation — Physiotherapy',
             tags: ['rotator cuff', 'external rotation', 'infraspinatus']
           },
@@ -1075,7 +1075,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'light dumbbell',
             position: 'prone',
-            youtubeId: 'tVg-hBLm_a4',
+            youtubeId: 'g_zkDp50HN0',
             youtubeTitle: 'Prone External Rotation 90 90 — Physiotherapy',
             tags: ['rotator cuff', 'throwers', 'external rotation']
           },
@@ -1090,7 +1090,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'light dumbbells optional',
             position: 'prone',
-            youtubeId: 'dBHMVxomPxs',
+            youtubeId: 'w1AWGKubE5U',
             youtubeTitle: 'Prone Y Raise — Physiotherapy',
             tags: ['lower trapezius', 'shoulder stability', 'scapular']
           },
@@ -1105,7 +1105,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'resistance band',
             position: 'standing',
-            youtubeId: 'LNhjFIHe3Mk',
+            youtubeId: 'tmVLUwCny5k',
             youtubeTitle: 'PNF Diagonal D2 — Physiotherapy',
             tags: ['PNF', 'shoulder', 'diagonal pattern']
           },
@@ -1120,7 +1120,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: '5jNNXLrA1YY',
+            youtubeId: '9BN8bRVq3Xo',
             youtubeTitle: 'Sleeper Stretch — Physiotherapy',
             tags: ['posterior capsule', 'shoulder tightness', 'internal rotation']
           },
@@ -1135,7 +1135,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'NqRuPRKVHVQ',
+            youtubeId: 'mjM9mDetxIk',
             youtubeTitle: 'Cross Body Shoulder Stretch — Physiotherapy',
             tags: ['shoulder stretch', 'posterior deltoid', 'flexibility']
           }
@@ -1156,7 +1156,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: '5Jdj8BakxLs',
+            youtubeId: 'GLty-L_JxXk',
             youtubeTitle: 'Wall Slide Exercise — Physiotherapy',
             tags: ['shoulder mobility', 'scapular control', 'posture']
           },
@@ -1171,7 +1171,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'doorway',
             position: 'standing',
-            youtubeId: 'FpfKZAlQMCo',
+            youtubeId: 'CEQMx4zFwYs',
             youtubeTitle: 'Doorway Pec Stretch — Physiotherapy',
             tags: ['chest stretch', 'anterior shoulder', 'posture']
           },
@@ -1186,7 +1186,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'shoulder pulley or rope over door',
             position: 'sitting',
-            youtubeId: 'wNAhLSZzOgI',
+            youtubeId: 'qQ47zNKToFM',
             youtubeTitle: 'Shoulder Pulley Exercise — Physiotherapy',
             tags: ['shoulder ROM', 'frozen shoulder', 'post-surgical']
           },
@@ -1201,7 +1201,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wand or stick',
             position: 'lying',
-            youtubeId: 'kp0G3Jrg4K4',
+            youtubeId: 'UmuBpaGANxw',
             youtubeTitle: 'Wand Shoulder Flexion — Physiotherapy',
             tags: ['shoulder flexion', 'ROM', 'post-surgical']
           },
@@ -1231,7 +1231,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wand',
             position: 'sitting',
-            youtubeId: 'TXRfCVc8FiE',
+            youtubeId: 'pHAMdJOJM',
             youtubeTitle: 'Active Assisted Shoulder Abduction — Physiotherapy',
             tags: ['shoulder abduction', 'ROM', 'active-assisted']
           },
@@ -1246,7 +1246,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'foam roller optional',
             position: 'lying',
-            youtubeId: 'DdmP4Xu_KHk',
+            youtubeId: 'fKrrITz4zRc',
             youtubeTitle: 'Chest Opener Stretch — Physiotherapy',
             tags: ['chest opening', 'posture', 'shoulder mobility']
           },
@@ -1261,7 +1261,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'p8iHRlb9t1A',
+            youtubeId: 'hJffqKmfnfA',
             youtubeTitle: 'Scapular Retraction — Physiotherapy',
             tags: ['scapula', 'posture', 'rhomboids']
           }
@@ -1282,7 +1282,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: '9WZMqpg6cXQ',
+            youtubeId: 'i-JV2PsFzWA',
             youtubeTitle: 'Wrist Flexor Stretch — Physiotherapy',
             tags: ['golfers elbow', 'medial epicondyle', 'wrist']
           },
@@ -1297,7 +1297,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'WUmIqXLcCBM',
+            youtubeId: '_uINTR_7X-g',
             youtubeTitle: 'Wrist Extensor Stretch — Physiotherapy',
             tags: ['tennis elbow', 'lateral epicondyle', 'wrist']
           },
@@ -1312,7 +1312,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'light hammer or stick',
             position: 'sitting',
-            youtubeId: 'uB_YHXRP6V8',
+            youtubeId: 'VV7zsl6LafM',
             youtubeTitle: 'Forearm Pronation Supination — Physiotherapy',
             tags: ['forearm', 'elbow', 'rotation']
           },
@@ -1327,7 +1327,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'light dumbbell',
             position: 'sitting',
-            youtubeId: 'xj7wTcEHCWk',
+            youtubeId: 'lQ7Vliv0Q-M',
             youtubeTitle: 'Wrist Curl Flexion — Physiotherapy',
             tags: ['wrist strengthening', 'forearm', 'golfers elbow']
           },
@@ -1342,7 +1342,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'light dumbbell',
             position: 'sitting',
-            youtubeId: 'lFchQJMC-uw',
+            youtubeId: 'osYPwlBiCRM',
             youtubeTitle: 'Reverse Wrist Curl Extension — Physiotherapy',
             tags: ['wrist extensors', 'forearm', 'tennis elbow']
           },
@@ -1357,7 +1357,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'flexible bar or Therabar',
             position: 'sitting',
-            youtubeId: 'V4RGnMRjTCI',
+            youtubeId: 'dsaOzSfsM24',
             youtubeTitle: 'Tyler Twist Eccentric — Physiotherapy',
             tags: ['tennis elbow', 'eccentric', 'lateral epicondylitis']
           },
@@ -1372,7 +1372,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'stress ball or putty',
             position: 'sitting',
-            youtubeId: 'kfGT0MTRzOc',
+            youtubeId: 'kgqIdCwVivE',
             youtubeTitle: 'Grip Strengthening — Physiotherapy',
             tags: ['grip strength', 'hand', 'forearm']
           },
@@ -1402,7 +1402,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'light dumbbell or resistance band',
             position: 'sitting',
-            youtubeId: 'YbX7Wd8jQ-U',
+            youtubeId: 'YM8iX9BJWjA',
             youtubeTitle: 'Tricep Overhead Extension — Physiotherapy',
             tags: ['triceps', 'elbow extension', 'arm']
           },
@@ -1417,7 +1417,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'eT2YkWy5RkU',
+            youtubeId: 'UnkSHg0L4yM',
             youtubeTitle: 'Median Nerve Glide — Physiotherapy',
             tags: ['nerve glide', 'carpal tunnel', 'median nerve']
           },
@@ -1432,7 +1432,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'AYSCPkGO6U0',
+            youtubeId: 'UY97v4WxrzI',
             youtubeTitle: 'Ulnar Nerve Glide — Physiotherapy',
             tags: ['nerve glide', 'ulnar nerve', 'cubital tunnel']
           }
@@ -1462,7 +1462,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band optional',
             position: 'lying',
-            youtubeId: 'E3OV7VXJNLI',
+            youtubeId: '39vuP5xozsI',
             youtubeTitle: 'Clamshell Exercise — Physiotherapy',
             tags: ['glute med', 'hip stability', 'IT band']
           },
@@ -1477,7 +1477,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band optional',
             position: 'standing',
-            youtubeId: 'XX8zMSiMHTY',
+            youtubeId: 'qBqKuEQl9sI',
             youtubeTitle: 'Standing Hip Abduction — Physiotherapy',
             tags: ['glute med', 'hip strengthening', 'balance']
           },
@@ -1492,7 +1492,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'DK_tARXhJpM',
+            youtubeId: 'KsYwYl13IDc',
             youtubeTitle: 'Bridge March — Physiotherapy',
             tags: ['glutes', 'hip stability', 'core']
           },
@@ -1507,7 +1507,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band optional',
             position: 'lying',
-            youtubeId: 'mUXVYO6a9_Y',
+            youtubeId: 'i6wm67pv4B4',
             youtubeTitle: 'Hip Adduction Exercise — Physiotherapy',
             tags: ['adductors', 'groin', 'hip']
           },
@@ -1522,7 +1522,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'bench or couch',
             position: 'lying',
-            youtubeId: 'xDmFkJxPzeM',
+            youtubeId: '4z_2oHvIvkA',
             youtubeTitle: 'Hip Thrust Exercise — Physiotherapy',
             tags: ['glutes', 'hip extension', 'strengthening']
           },
@@ -1537,7 +1537,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band optional',
             position: 'prone',
-            youtubeId: '34RZMCL4bOk',
+            youtubeId: 'IRkRgk2Gc1E',
             youtubeTitle: 'Fire Hydrant Exercise — Physiotherapy',
             tags: ['glute med', 'hip rotation', 'activation']
           },
@@ -1552,7 +1552,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'SJ1Xuz9D-ZQ',
+            youtubeId: '0eIRm840mBQ',
             youtubeTitle: 'Donkey Kick Exercise — Physiotherapy',
             tags: ['glutes', 'hip extension', 'activation']
           },
@@ -1567,7 +1567,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band',
             position: 'standing',
-            youtubeId: 'F1nFVRMxquo',
+            youtubeId: '6eoK_yxY8Ak',
             youtubeTitle: 'Lateral Band Walk — Physiotherapy',
             tags: ['glute med', 'lateral movement', 'hip stability']
           },
@@ -1582,7 +1582,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'advanced',
             equipment: 'dumbbell optional',
             position: 'standing',
-            youtubeId: 'mHFMNLQtBps',
+            youtubeId: 'FAFYkQCQJYo',
             youtubeTitle: 'Single Leg Deadlift — Physiotherapy',
             tags: ['glutes', 'balance', 'hip stability']
           },
@@ -1597,7 +1597,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'PjNBBbQ_2ak',
+            youtubeId: 'kxmIfSC9aUk',
             youtubeTitle: 'Prone Hip Extension — Physiotherapy',
             tags: ['glutes', 'hip extension', 'prone exercise']
           }
@@ -1618,7 +1618,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'kneeling',
-            youtubeId: 'YqF3PrMhCYY',
+            youtubeId: '34SlL-PPCWQ',
             youtubeTitle: 'Hip Flexor Stretch — Physiotherapy',
             tags: ['hip flexors', 'lower back', 'posture']
           },
@@ -1633,7 +1633,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'PdvlMVBGHbQ',
+            youtubeId: '2VE_NLcNMvQ',
             youtubeTitle: 'Figure 4 Piriformis Stretch — Physiotherapy',
             tags: ['piriformis', 'hip tightness', 'sciatica']
           },
@@ -1648,7 +1648,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'BvvOIqW5NSo',
+            youtubeId: 't4Zz6-aG8Iw',
             youtubeTitle: '90 90 Hip Stretch — Physiotherapy',
             tags: ['hip rotation', 'hip mobility', 'flexibility']
           },
@@ -1663,7 +1663,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'sTy6PBxNXdY',
+            youtubeId: 'ANue9qDFg90',
             youtubeTitle: 'Groin Adductor Stretch — Physiotherapy',
             tags: ['adductors', 'groin stretch', 'hip']
           },
@@ -1678,7 +1678,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall for support',
             position: 'standing',
-            youtubeId: 'Lj6bQPOxrP4',
+            youtubeId: 'IHApHfNA2Ag',
             youtubeTitle: 'Deep Squat Hold — Physiotherapy',
             tags: ['hip mobility', 'squat', 'flexibility']
           },
@@ -1693,7 +1693,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'treatment table or high bed',
             position: 'lying',
-            youtubeId: 'Z1pjZOZxeNY',
+            youtubeId: 'MdDFndPNJWY',
             youtubeTitle: 'Thomas Stretch Hip Flexor — Physiotherapy',
             tags: ['hip flexors', 'iliopsoas', 'tightness']
           },
@@ -1708,7 +1708,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'G0LQ2VbI2bs',
+            youtubeId: 'tz6_kvMBT0E',
             youtubeTitle: 'FABER Stretch Hip — Physiotherapy',
             tags: ['hip external rotation', 'sacroiliac', 'hip pain']
           },
@@ -1723,7 +1723,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'nEbJRRkQb_M',
+            youtubeId: 'CiWQ2IvY34',
             youtubeTitle: 'World\'s Greatest Stretch — Physiotherapy',
             tags: ['full body mobility', 'hip', 'warm up']
           }
@@ -1753,7 +1753,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'OlCMrHPIzUQ',
+            youtubeId: 'vHMJ0zgrsFU',
             youtubeTitle: 'Ankle Alphabet Exercise — Physiotherapy',
             tags: ['ankle stability', 'proprioception', 'sprain rehab']
           },
@@ -1783,7 +1783,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'step',
             position: 'standing',
-            youtubeId: 'q4vIYBZDaV4',
+            youtubeId: '3tc0lN_bW5o',
             youtubeTitle: 'Eccentric Heel Drop — Physiotherapy',
             tags: ['Achilles tendinopathy', 'eccentric', 'calf']
           },
@@ -1798,7 +1798,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band',
             position: 'sitting',
-            youtubeId: 'eEJuRjIKVWA',
+            youtubeId: 'v_zjz5mOvuY',
             youtubeTitle: 'Ankle Inversion Band — Physiotherapy',
             tags: ['ankle inversion', 'tibialis posterior', 'sprain']
           },
@@ -1813,7 +1813,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band',
             position: 'sitting',
-            youtubeId: 'q_2k7pEMTu4',
+            youtubeId: 'QFgPY6oJWcA',
             youtubeTitle: 'Ankle Eversion Band — Physiotherapy',
             tags: ['peroneals', 'ankle eversion', 'lateral ankle']
           },
@@ -1828,7 +1828,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: 'KvxKVJqUP5k',
+            youtubeId: 'SBrHvR0BomM',
             youtubeTitle: 'Ankle Dorsiflexion Stretch — Physiotherapy',
             tags: ['dorsiflexion', 'ankle mobility', 'calf']
           },
@@ -1843,7 +1843,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'PNtmGKBY7rk',
+            youtubeId: 'QVtjZ4Iouy8',
             youtubeTitle: 'Plantar Fascia Stretch — Physiotherapy',
             tags: ['plantar fasciitis', 'heel pain', 'foot arch']
           },
@@ -1858,7 +1858,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'fhVhEzv0lPA',
+            youtubeId: 'Y6OkCamGN5c',
             youtubeTitle: 'Toe Spreads and Curls — Physiotherapy',
             tags: ['intrinsic foot', 'toe strength', 'plantar fasciitis']
           },
@@ -1873,7 +1873,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'balance board or wobble board',
             position: 'standing',
-            youtubeId: 'VWZBJqHWBzo',
+            youtubeId: 'Lx5ykCjizpk',
             youtubeTitle: 'Balance Board Training — Physiotherapy',
             tags: ['proprioception', 'ankle stability', 'rehab']
           },
@@ -1888,7 +1888,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'marbles and cup',
             position: 'sitting',
-            youtubeId: 'HN-C96w2-g8',
+            youtubeId: '4_OFxSHtzUo',
             youtubeTitle: 'Marble Pickup Toe Exercise — Physiotherapy',
             tags: ['toe strength', 'intrinsic muscles', 'foot']
           },
@@ -1903,7 +1903,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'nkjpFkN83ys',
+            youtubeId: 'qPd73snQfUs',
             youtubeTitle: 'Single Leg Calf Raise — Physiotherapy',
             tags: ['calf', 'unilateral', 'Achilles']
           },
@@ -1918,7 +1918,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: 'VXMKqRrWv9g',
+            youtubeId: 'Zmc36LtB7f8',
             youtubeTitle: 'Soleus Stretch — Physiotherapy',
             tags: ['soleus', 'ankle', 'Achilles']
           },
@@ -1933,7 +1933,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'small towel',
             position: 'sitting',
-            youtubeId: 'rjkMiQdS93s',
+            youtubeId: 'XEJYq1HBtHY',
             youtubeTitle: 'Towel Scrunches — Physiotherapy',
             tags: ['foot arch', 'intrinsic muscles', 'plantar fasciitis']
           }
@@ -1963,7 +1963,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'g_7_BGDG_hE',
+            youtubeId: 'o4GKiEoYClI',
             youtubeTitle: 'Dead Bug Exercise — Physiotherapy',
             tags: ['core', 'stability', 'lower back']
           },
@@ -1978,7 +1978,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'B296mZDhrP4',
+            youtubeId: 'pvIjsG5Svck&t=2s',
             youtubeTitle: 'Forearm Plank — Physiotherapy',
             tags: ['core strength', 'stability', 'endurance']
           },
@@ -1993,7 +1993,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'lying',
-            youtubeId: '418H0ep9e10',
+            youtubeId: 'N_s9em1xTqU',
             youtubeTitle: 'Side Plank — Physiotherapy',
             tags: ['obliques', 'lateral stability', 'core']
           },
@@ -2008,7 +2008,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'XCEqtI1WRIY',
+            youtubeId: 'EsnM8eBtazU',
             youtubeTitle: 'Hollow Body Hold — Physiotherapy',
             tags: ['core', 'abdominals', 'stability']
           },
@@ -2023,7 +2023,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'resistance band or cable',
             position: 'standing',
-            youtubeId: '_pVUFlnlTqw',
+            youtubeId: 'HXrLaqNIkTs',
             youtubeTitle: 'Pallof Press Anti-Rotation — Physiotherapy',
             tags: ['core', 'anti-rotation', 'obliques']
           },
@@ -2038,7 +2038,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'OBMlJMYCWmM',
+            youtubeId: 's4K8Kbc219s',
             youtubeTitle: 'Bear Hold Core Exercise — Physiotherapy',
             tags: ['core', 'shoulder stability', 'functional']
           },
@@ -2053,7 +2053,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'Xyd_fa5zoEU',
+            youtubeId: 'NnVhqMQRvmM',
             youtubeTitle: 'Abdominal Crunch — Physiotherapy',
             tags: ['abdominals', 'core', 'rectus abdominis']
           },
@@ -2068,7 +2068,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'nmwgirgXLYM',
+            youtubeId: 'ruQ4ZwncXBg',
             youtubeTitle: 'Mountain Climber — Physiotherapy',
             tags: ['core', 'hip flexors', 'functional']
           },
@@ -2083,7 +2083,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'pWk0QrTVHtA',
+            youtubeId: 'U2vPEZw7S2I',
             youtubeTitle: 'Quadruped Heel Push — Physiotherapy',
             tags: ['core stability', 'transverse abdominis', 'lower back']
           },
@@ -2098,7 +2098,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'pPxYaMK2dNM',
+            youtubeId: 'fybBaPbateY',
             youtubeTitle: 'Double Leg Lowering — Physiotherapy',
             tags: ['lower abdominals', 'hip flexors', 'core']
           },
@@ -2113,7 +2113,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'advanced',
             equipment: 'ab wheel',
             position: 'kneeling',
-            youtubeId: 'Q7d_VIKzGjk',
+            youtubeId: 'zCsW9L2qi-0',
             youtubeTitle: 'Ab Wheel Rollout — Physiotherapy',
             tags: ['advanced core', 'lats', 'shoulder stability']
           }
@@ -2134,7 +2134,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: 'OzBO7_2FmFI',
+            youtubeId: 'cvx06snMQ3A',
             youtubeTitle: 'Wall Angel Exercise — Physiotherapy',
             tags: ['posture', 'upper back', 'shoulder blades']
           },
@@ -2149,7 +2149,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: 'EF_EbVWMsXA',
+            youtubeId: '7rnlAVhAK-8',
             youtubeTitle: 'Standing Chin Tuck — Physiotherapy',
             tags: ['neck posture', 'chin tuck', 'forward head']
           },
@@ -2164,7 +2164,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'YHb80I7EqPo',
+            youtubeId: 'ouRhQE2iOI8',
             youtubeTitle: 'Shoulder Blade Squeeze — Physiotherapy',
             tags: ['posture', 'rhomboids', 'upper back']
           },
@@ -2179,7 +2179,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'k_2MVQAiMKM',
+            youtubeId: 'GnHsNPA2O-o',
             youtubeTitle: 'Brugger Relief Position — Physiotherapy',
             tags: ['desk posture', 'Brugger', 'postural break']
           },
@@ -2194,7 +2194,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'prone',
-            youtubeId: 'ZCNfIEv4fxM',
+            youtubeId: 'keErJXdp2lE',
             youtubeTitle: 'Prone Cobra — Physiotherapy',
             tags: ['posture', 'thoracic extension', 'prone']
           },
@@ -2209,7 +2209,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'wall',
             position: 'standing',
-            youtubeId: 'dkIORWuPMnk',
+            youtubeId: 'QEBqufick-s',
             youtubeTitle: 'Back to Wall Shoulder Flexion — Physiotherapy',
             tags: ['posture', 'scapular control', 'shoulder mobility']
           },
@@ -2224,7 +2224,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'foam roller optional',
             position: 'lying',
-            youtubeId: 'MzNDn8GdCW4',
+            youtubeId: '3-tfNLcg5cQ',
             youtubeTitle: 'Thoracic Extension Hands Behind Head — Physiotherapy',
             tags: ['thoracic extension', 'posture', 'upper back']
           },
@@ -2239,7 +2239,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'BsP-q8Yr4ec',
+            youtubeId: 'bb28E9EJklA',
             youtubeTitle: 'Thoracic Rotation in Squat — Physiotherapy',
             tags: ['thoracic mobility', 'rotation', 'squat']
           },
@@ -2254,7 +2254,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'resistance band',
             position: 'sitting',
-            youtubeId: 'xQNkFl-3H4Y',
+            youtubeId: 'whSXi-EXbqI',
             youtubeTitle: 'Seated Row Band — Physiotherapy',
             tags: ['posture', 'rhomboids', 'row']
           }
@@ -2284,7 +2284,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'KN8HiJs4dXo',
+            youtubeId: 'Dtgh2_LFkBQ',
             youtubeTitle: 'Single Leg Balance — Physiotherapy',
             tags: ['balance', 'proprioception', 'ankle stability']
           },
@@ -2299,7 +2299,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'J3tM7xDiQlY',
+            youtubeId: 'MHFfm03540Q',
             youtubeTitle: 'Tandem Walk Balance Exercise — Physiotherapy',
             tags: ['gait', 'balance', 'neurological rehab']
           },
@@ -2314,7 +2314,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'Mu5F3gxINKY',
+            youtubeId: '-Fhu2bH4hQI',
             youtubeTitle: 'Romberg Stand Eyes Closed — Physiotherapy',
             tags: ['vestibular', 'balance', 'proprioception']
           },
@@ -2329,7 +2329,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'intermediate',
             equipment: 'foam pad',
             position: 'standing',
-            youtubeId: 'hj3oi1T2Wws',
+            youtubeId: '8TOWxxSrhh4',
             youtubeTitle: 'Single Leg Foam Balance — Physiotherapy',
             tags: ['proprioception', 'balance', 'unstable surface']
           },
@@ -2344,7 +2344,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'gT-Oo-1Kqso',
+            youtubeId: 'Ac8M_Osjy6s',
             youtubeTitle: 'Marching in Place — Physiotherapy',
             tags: ['gait', 'neurological', 'hip flexors']
           },
@@ -2359,7 +2359,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'parallel bars or chair for support',
             position: 'standing',
-            youtubeId: 'fQ3FJmLp6Yw',
+            youtubeId: 'rqYZJjVllfQ',
             youtubeTitle: 'Lateral Weight Shift — Physiotherapy',
             tags: ['weight bearing', 'neurological', 'gait']
           },
@@ -2374,7 +2374,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'eoEMxGj7O50',
+            youtubeId: '8gs9XU1Q0sU',
             youtubeTitle: 'Gaze Stabilisation — Physiotherapy',
             tags: ['vestibular', 'dizziness', 'VOR']
           },
@@ -2389,7 +2389,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'gHQN0bTL9Fk',
+            youtubeId: '8gs9XU1Q0sU',
             youtubeTitle: 'Head Movement Habituation — Physiotherapy',
             tags: ['vestibular', 'BPPV', 'dizziness']
           },
@@ -2404,7 +2404,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'pillow',
             position: 'lying',
-            youtubeId: 'TDLVBMCHBbY',
+            youtubeId: '8gs9XU1Q0sU',
             youtubeTitle: 'Epley Manoeuvre BPPV — Physiotherapy',
             tags: ['BPPV', 'vertigo', 'inner ear']
           },
@@ -2419,7 +2419,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'chair',
             position: 'sitting',
-            youtubeId: 'nfDW5jAFmLE',
+            youtubeId: '8gs9XU1Q0sU',
             youtubeTitle: 'Sit to Stand Exercise — Physiotherapy',
             tags: ['functional', 'neurological', 'lower limb']
           },
@@ -2434,7 +2434,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'sitting',
-            youtubeId: 'R2OvBp0zX3Y',
+            youtubeId: '8gs9XU1Q0sU',
             youtubeTitle: 'Finger to Nose Coordination — Physiotherapy',
             tags: ['coordination', 'cerebellum', 'fine motor']
           },
@@ -2449,7 +2449,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'lying',
-            youtubeId: 'k6DnxXSi-5A',
+            youtubeId: '8gs9XU1Q0sU',
             youtubeTitle: 'Heel Shin Coordination — Physiotherapy',
             tags: ['coordination', 'neurological', 'lower limb']
           },
@@ -2464,7 +2464,7 @@ export const EXERCISE_CATEGORIES = [
             difficulty: 'beginner',
             equipment: 'none',
             position: 'standing',
-            youtubeId: 'PZiymT0X8lY',
+            youtubeId: '8gs9XU1Q0sU',
             youtubeTitle: 'Functional Reach Exercise — Physiotherapy',
             tags: ['balance', 'postural control', 'functional']
           }
