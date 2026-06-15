@@ -1,0 +1,932 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{parskip}
+
+% ── Listing colours ──────────────────────────────────────────────────────────
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2
+}
+\lstset{style=mystyle}
+
+% ── Hyperref ─────────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  pdftitle={Theralign Internship Log},
+  pdfauthor={Aadesh Khande}
+}
+
+% ── Title ────────────────────────────────────────────────────────────────────
+\title{\textbf{Theralign — Healthcare SaaS Marketplace}\\Internship Development Log}
+\author{Aadesh Khande \\ Software Development Engineer Intern \\ CustomSoft}
+\date{June 13, 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Intern \& Project Details}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Field} & \textbf{Detail} \\
+\midrule
+Intern Name     & Aadesh Khande \\
+Company         & CustomSoft \\
+Position        & Software Development Engineer (SDE) \\
+Project         & Theralign — Healthcare SaaS Marketplace \\
+Joining Date    & June 11, 2026 \\
+Document Date   & June 13, 2026 (18:15 IST) \\
+Status          & Active Development \\
+Frontend URL    & \href{https://theralign.vercel.app}{https://theralign.vercel.app} \\
+Backend API     & \href{https://theralign-api.onrender.com}{https://theralign-api.onrender.com} \\
+GitHub (Personal)   & \href{https://github.com/debugonaut/Theralign}{github.com/debugonaut/Theralign} \\
+GitHub (CustomSoft) & \href{https://github.com/customsoftteam/Theralign}{github.com/customsoftteam/Theralign} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection*{Overview}
+
+This document logs all development work, bug fixes, features implemented, and
+learning outcomes during the internship at CustomSoft on the Theralign project.
+All entries are verified against git commit history and represent actual work
+delivered to production.
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Pre-Joining Period (June 4--10, 2026)}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{June 4, 2026 — Foundation \& Demo Readiness}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{72e7a7c} — Upgrade emojis to SVG, fix admin sidebar layout, fix demo logins
+  \item \texttt{4242323} — Resolve patient appointments crash \& enhance demo reset flow
+  \item \texttt{230e012} — Add reset demo flow endpoint and button
+  \item \texttt{54d123d} — Push backend demo password seeds and update documentation
+  \item \texttt{348b55a} — Remediate payment bug, regex injections, validation bypasses, file rate limiters
+  \item \texttt{982c04d} — Complete demo readiness bug fixes and enhancements
+\end{itemize}
+
+\textbf{Work Accomplished:}
+\begin{itemize}
+  \item Fixed critical patient appointments crash affecting demo
+  \item Enhanced admin demo reset flow for repeatable testing
+  \item Resolved payment security vulnerabilities
+  \item Fixed regex injection and validation bypass issues
+  \item Secured file upload rate limiting
+  \item Fixed doctor verification browser caching issues
+  \item Implemented SVG icon system upgrade
+  \item Fixed admin sidebar layout issues
+\end{itemize}
+
+\textbf{Learning:} Security hardening, validation patterns, rate limiting
+
+\subsection{June 5, 2026 — Email System \& Profile Wizard}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{b764167} — Implement multi-step wizard form layout with horizontal stepper
+  \item \texttt{a13399b} — Overhaul all email templates to match website Swiss minimal style
+  \item \texttt{c66a8f8} — Restore patient profile in sidebar navigation
+  \item \texttt{c65b35b} — Fix seed to ensure demo patient is seeded and verified
+  \item \texttt{f678939} — Integrate password reset emails via SMTP with demo mode fallback
+\end{itemize}
+
+\textbf{Work Accomplished:}
+\begin{itemize}
+  \item Designed and implemented multi-step wizard UI for patient/doctor profiles
+  \item Completely redesigned all email templates (booking confirmation, refund alerts,
+        password resets) with consistent Swiss minimalist style
+  \item Restored patient profile visibility in sidebar navigation
+  \item Ensured demo patient is properly seeded and verified on startup
+  \item Integrated SMTP-based password reset email system with fallback demo mode
+\end{itemize}
+
+\textbf{Learning:} Email template design, form stepper patterns, Zustand state management
+
+\subsection{June 6, 2026 — Profile Management \& Deployment Fixes}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{c4bd16e} — Fix slot availability query
+  \item \texttt{c750494} — Replace browser print with jsPDF for booking receipts
+  \item \texttt{bf72ba3} — Resolve patient profile save validation bugs (gender, bloodGroup)
+  \item \texttt{5b29c83} — Implement booking confirmation card and finalize density fixes
+  \item \texttt{50499ee} — Make save changes bar sticky and constrain form widths
+  \item \texttt{535ea69} — Auto-save and proceed on next click for patient profile tabs
+  \item \texttt{53a034d} — Enable trust proxy setting for express-rate-limit on Render
+  \item \texttt{39a1374} — Start HTTP server before DB init to unblock Render port detection
+  \item \texttt{8be8357} — Purge expired slots and reseed 30-day availability on startup
+  \item \texttt{28d513e} — Stepper fix; \texttt{6b8bd9c} — Profile stepper updated
+  \item \texttt{7e313d2} — Remove waitlisting UI barrier
+\end{itemize}
+
+\textbf{Work Accomplished:}
+\begin{itemize}
+  \item Fixed slot availability query logic
+  \item Replaced browser print API with jsPDF for professional receipt generation
+  \item Debugged and fixed patient profile validation for gender and bloodGroup fields
+  \item Designed booking confirmation card UI
+  \item Implemented sticky ``Save Changes'' bar for profile editor
+  \item Auto-save functionality on profile tab transitions
+  \item Fixed deployment issues on Render (HTTP server startup, proxy configuration)
+  \item Implemented automatic slot purging and reseeding (30-day rolling window)
+  \item Optimized database operations with batch inserts
+  \item Various UI/UX refinements for profile stepper
+\end{itemize}
+
+\textbf{Learning:} PDF generation (jsPDF), deployment troubleshooting, database optimization,
+Render deployment issues
+
+\subsection{June 7, 2026 — Security Hardening \& Email Infrastructure}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{b71c38f} — Harden security: protect API keys, expire pending bookings, fix slot validation
+  \item \texttt{8acde81} — Cosmetic changes
+  \item \texttt{d17f893} — Resolve document previews, add real-time approval alerts, sync map/list
+  \item \texttt{ce83be6} — Email delivery system changes
+  \item \texttt{92ffaea} — Add nodemailer connection timeouts and detailed delivery logs
+  \item \texttt{809eeeb} — Route Resend emails via REST API to bypass SMTP port blocking
+  \item \texttt{c2e982a} — Update frontend API URL fallback to theralign.onrender.com
+  \item \texttt{6f9492b} — Fix recipient selection for resend in test email script
+\end{itemize}
+
+\textbf{Work Accomplished:}
+\begin{itemize}
+  \item Implemented API key protection and environment variable hardening
+  \item Added expiration logic for pending bookings (prevents stale appointments)
+  \item Fixed slot validation edge cases
+  \item Resolved document preview rendering issues
+  \item Implemented real-time approval alerts for doctor verification
+  \item Synced map and list views for consistency
+  \item Enhanced email delivery system with connection timeouts and detailed logging
+  \item Implemented REST API-based email sending (Resend) to bypass SMTP port blocking on Render
+  \item Updated frontend API fallback URLs for production deployment
+  \item Fixed email test script recipient configuration
+\end{itemize}
+
+\textbf{Learning:} Security best practices, email infrastructure (SMTP vs.\ REST APIs),
+deployment networking, real-time notifications
+
+\subsection{June 8, 2026 — Refund System \& Major UI Overhauls}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{2bf29fb} — Feat: refund policy activated
+  \item \texttt{092c09e} — User profile stepper changes
+  \item \texttt{083c0ad} — Feat: review system
+  \item \texttt{1f03aad} — Feat(cards): remove stat labels, drop bio preview, upgrade availability pill
+  \item \texttt{4a8dbed} — Feat(cards): remove availability indicator from Zone D
+  \item \texttt{eb17179} — Fix: slot picker error; \texttt{b4e2f85} — Flow issue resolved
+  \item \texttt{0bf13cb} — Fix: real-time doctor slot availability in patient dashboard
+  \item \texttt{bc5ce66} — Fix: auto-create blank DoctorProfile on doctor registration
+  \item \texttt{c82e8c0} — Guard consultationFee against undefined
+  \item \texttt{6b45741} — Prevent fee amount overflow in PDF receipt
+  \item \texttt{d28a58f} — Remove verification gate from discovery (all registered doctors bookable)
+  \item \texttt{49c9c76} — Seed slots for pending doctors too, not just verified
+  \item \texttt{4749cb5} — Added notification and email for refunds
+  \item \texttt{8fab69a} — Fix: refund import overwrite error \& style modals with Lucide icons
+  \item \texttt{88497d7} — Refund fixes; \texttt{b193d33} — Refund fix 3; \texttt{cb4b68e} — Fix 4
+\end{itemize}
+
+\textbf{Work Accomplished:}
+\begin{itemize}
+  \item \textbf{Refund System:} Implemented complete refund policy workflow
+        (request $\rightarrow$ approve $\rightarrow$ process)
+  \item \textbf{Review System:} Implemented patient review submission and doctor rating system
+  \item \textbf{UI Overhauls:} Removed stat labels from doctor cards, dropped bio preview,
+        upgraded availability pill styling, removed availability indicator from Zone D
+  \item \textbf{Slot Picker:} Fixed error handling and UX flow
+  \item \textbf{Doctor Registration:} Auto-create blank DoctorProfile on signup for immediate
+        searchability
+  \item \textbf{Booking System:} Real-time slot availability in patient dashboard
+  \item \textbf{Financial Protection:} Guard \texttt{consultationFee} field against
+        \texttt{undefined} to prevent NaN errors
+  \item \textbf{PDF Receipts:} Fixed fee amount display overflow
+  \item \textbf{Discovery Access:} Remove verification gate so all registered doctors are
+        immediately bookable
+  \item \textbf{Slot Seeding:} Seed slots for pending doctors (not just verified) for complete
+        functionality
+  \item \textbf{Notifications:} Added notification and email alerts for refund status changes
+  \item \textbf{Modal Styling:} Refreshed modals with Lucide icons
+\end{itemize}
+
+\textbf{Learning:} Refund workflow design, review systems, real-time data management,
+financial validation, UI density optimization
+
+\subsection{June 9, 2026 — Earnings \& UI Refinements}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{39f59e7} — Refund fix
+  \item \texttt{e221e91} — Fix: earnings and payment history reset error after refund
+  \item \texttt{c68aaa6} — Fix: earnings tab glitch fixed
+  \item \texttt{b86dac8} — Landing page format error
+  \item \texttt{371caf4} — Dropdown menu for specialization field
+  \item \texttt{65b35b1} — Patient profile changes saving error fixed
+\end{itemize}
+
+\textbf{Work Accomplished:}
+\begin{itemize}
+  \item Fixed critical bug where earnings and payment history would reset incorrectly
+        after refund processing
+  \item Fixed earnings tab display glitch
+  \item Fixed landing page format error
+  \item Implemented dropdown menu for specialization field (better UX than text input)
+  \item Debugged and fixed patient profile save errors with multiple field validations
+\end{itemize}
+
+\textbf{Learning:} State management edge cases, financial data consistency,
+UI form component design
+
+\subsection{June 10, 2026 — Deployment \& Branding}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{2027bb4} — Deployment bug; \texttt{0aa3c88} — Last moment changes;
+        \texttt{2f71767} — Minor bugs
+  \item \texttt{7d9721d} — Latitude and longitude changes
+  \item \texttt{6553f1a} — Demo doctor admin bug fixed
+  \item \texttt{eb75a68} — Physioconnect name changed to Theralign in entire codebase
+  \item \texttt{2dc55dc} — Feat: added media upload feature for patient to send to doctor
+\end{itemize}
+
+\textbf{Work Accomplished:}
+\begin{itemize}
+  \item Fixed deployment-related issues and last-minute polish changes before go-live
+  \item Fixed geolocation (latitude/longitude) handling
+  \item Fixed demo doctor admin dashboard bug
+  \item \textbf{Major Rebranding:} Changed ``Physioconnect'' to ``Theralign'' across the entire
+        codebase (frontend + backend)
+  \item Implemented media upload feature allowing patients to send medical documents/images
+        to doctors pre-appointment
+\end{itemize}
+
+\textbf{Learning:} Full-stack rebranding tasks, geospatial data handling, file upload
+architecture
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Internship Period (June 11, 2026 — Present)}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{June 11, 2026 — Day 1: Media Viewer \& Doctor Profile Enhancements}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{7027652} — Feat: implement appointment media viewer across patient, doctor, and
+        admin pages \& fix delete auth
+  \item \texttt{be40155} — Upload system fix
+  \item \texttt{3cee27c} — Feat: added upload functionality for user to upload their symptoms
+  \item \texttt{7bfd525} — Feat: add doctor profile image on detail page
+  \item \texttt{b37c1ae} — Profile photo is now viewable across all three roles
+  \item \texttt{64b0ff9} — Revert ``font redesign''; \texttt{15cb449} — Font redesign
+  \item \texttt{9cc89a9} — Doctor's profile photo increased to 112$\times$112px avatar
+  \item \texttt{df4dd8e} — Docs: update README with appointment media endpoints and Phase 14
+  \item \texttt{72eca16} — Docs: update .ai context docs with doctor profile photo fixes
+\end{itemize}
+
+\textbf{Work Accomplished:}
+
+\textit{1. Appointment Media Viewer (Phase 14 Complete)}
+\begin{itemize}
+  \item Implemented multimedia viewer across patient, doctor, and admin dashboards
+  \item Fixed authorization issues for media deletion (role-based access control)
+  \item Supports image and PDF previews
+\end{itemize}
+
+\textit{2. Doctor Profile Image System}
+\begin{itemize}
+  \item Added doctor profile image display on detail page
+  \item Made profile photos visible across all three user roles (patient, doctor, admin)
+  \item Implemented image fallback with user initials
+\end{itemize}
+
+\textit{3. Symptom Upload Feature}
+\begin{itemize}
+  \item Built patient-facing form to upload and describe symptoms pre-appointment
+  \item Integrated with appointment media system
+\end{itemize}
+
+\textit{4. UI Enhancements}
+\begin{itemize}
+  \item Increased doctor avatar size from 64$\times$64px to 112$\times$112px
+  \item Proportionally increased initials text from 20px to 48px
+  \item Adjusted flex alignment (\texttt{items-center} $\rightarrow$ \texttt{items-start})
+        for larger avatar
+  \item Increased gap from 4 to 6 for better spacing
+\end{itemize}
+
+\textit{5. Documentation}
+\begin{itemize}
+  \item Updated README with Phase 14 appointment media endpoints
+  \item Updated \texttt{.ai} context documentation with doctor profile photo implementation
+  \item Reverted incomplete font redesign
+\end{itemize}
+
+\textbf{Technical Details:} Used Tailwind \texttt{w-28 h-28} (112$\times$112px),
+\texttt{text-[48px]} for initials. Implemented proper image error handling with Cloudinary
+fallback. Fixed auth issues for media deletion across roles.
+
+\textbf{Learning:} Multi-role authorization, image fallback patterns, UI component scaling
+
+\textbf{Commits Pushed:} 10 commits to both \texttt{origin/main} and \texttt{customsoft/main}
+
+\newpage
+
+\subsection{June 12, 2026 — Day 2: Session Records, Care Continuity \& Phase 14 UI Overhaul}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{38fea75} — Feat: implement Phase 14 Session Records \& Care Continuity
+  \item \texttt{1022383} — Docs: update .ai indexing architecture for Phase 14
+  \item \texttt{5fcf456} — Session summary page for doctor and patient updated
+  \item \texttt{56418b6} — Redesign of Phase 14; \texttt{a9c2865} — Changes to Phase 14 part 2
+  \item \texttt{e4ca5c2} — Phase 14 redesign fix 3
+  \item \texttt{106f2ca} — Patient timeline UI changes enhanced
+  \item \texttt{5351ce0} — Patient timeline redesign fix
+  \item \texttt{5d09960} — Feat(timeline): bold Swiss-minimalist expanded record redesign
+  \item \texttt{f00ee86} — Added a 4-stepper navigation system in patient care timeline
+  \item \texttt{55b7dc5} — Reduction in font size; \texttt{e031010} — Some changes
+  \item \texttt{a547781} — Font size increased in stepper by 30\% and 50\% for labels and text
+  \item \texttt{b099107} — Proper formatting
+  \item \texttt{5d44851} — Exercise tab revamped with actual selection from a catalogue
+\end{itemize}
+
+\textbf{Work Accomplished:}
+
+\textit{1. Session Records Backend \& Database Modelling}
+\begin{itemize}
+  \item Designed and created \texttt{SessionRecord} model linked to appointments, doctors, and
+        patients — compound indexing, soft archiving, and an edit history audit trail for
+        medical compliance
+  \item Built a validation layer (\texttt{express-validator}) defining allowed progress ratings
+        and clinical schemas
+  \item Coded core service business logic: 24-hour edit window constraints, automated
+        notifications (fire-and-forget), and parallelised timeline summary analytics
+  \item Built API route handlers and mounted them on the Express server
+  \item Integrated session flags into doctor/patient appointment listing controllers
+\end{itemize}
+
+\textit{2. Session Notes Form UI (Doctor Portal)}
+\begin{itemize}
+  \item Built a multi-step, dynamic, responsive form (\texttt{SessionRecordForm.jsx}) nested
+        inside the dashboard layout
+  \item Developed auto-saving drafts (debounced local storage sync) with resume/discard banner
+  \item Added interactive rating widgets, numeric pain selectors with delta comparison labels,
+        dynamic home exercise lists, and return date calculators
+  \item Intercepted patient-visibility status changes with confirmation modals to prevent
+        accidental unsharing of clinical records
+  \item Updated session summary page for both doctor and patient views
+\end{itemize}
+
+\textit{3. Care History Timeline (Patient Portal) — Major Redesign}
+\begin{itemize}
+  \item Created a comprehensive care timeline page (\texttt{PatientCareTimeline.jsx}) displaying
+        paginated progress records, prescribed exercises, and medication schedules
+  \item Implemented real-time dropdown and date filters, and in-app doctor appointment
+        scheduling redirects (deep-linked via the \texttt{\#book} hash)
+  \item Designed a printable/downloadable exercise plan layout using custom
+        \texttt{@media print} DOM injection templates
+  \item Went through 3 rounds of full redesign iterations to reach final polish
+\end{itemize}
+
+\textit{4. Swiss-Minimalist UI System (Patient Timeline)}
+\begin{itemize}
+  \item Introduced bold Swiss-minimalist visual language across expanded record cards:
+        2px black borders, \texttt{\#FAFBFC} grey header bars, and \texttt{font-weight: 900}
+        UPPERCASE section titles (PRESENTING CONDITION, TREATMENT PROVIDED, etc.)
+  \item Exercises rendered in bordered cards with a 4-column grid:
+        SETS / REPS / FREQUENCY / DURATION — large (16px, 900-weight) values with 10px
+        uppercase labels
+  \item Medication pills redesigned as square-cornered with 2px black border
+  \item Follow-up CTA: large bold date (18px/900) with square BOOK NOW button
+        (\texttt{\#0B4F6C})
+  \item Download button: full-width, 2px black border, square, uppercase, hover inverts
+\end{itemize}
+
+\textit{5. 4-Stepper Navigation System}
+\begin{itemize}
+  \item Replaced flat timeline scroll with a 4-step stepper navigation
+  \item Stepper labels and inner text scaled up by 30\% and 50\% respectively for improved
+        readability and hierarchy
+  \item Multiple font-size and formatting passes to ensure visual consistency across
+        breakpoints
+\end{itemize}
+
+\textit{6. Exercise Catalogue Tab}
+\begin{itemize}
+  \item Completely revamped the exercise tab: replaced free-text input with catalogue-based
+        exercise selection
+  \item Patients can now browse and select from a structured exercise library, improving
+        clinical accuracy and UX
+\end{itemize}
+
+\textit{7. Documentation \& Architecture}
+\begin{itemize}
+  \item Updated \texttt{.ai} indexing architecture docs to reflect Phase 14 schema additions
+  \item Verified that the client production build compiles with zero errors or bundle warnings
+\end{itemize}
+
+\textbf{Technical Skills Demonstrated:}
+\begin{itemize}
+  \item Full-stack product development (Node.js/Express + React/Vite + Mongoose/MongoDB)
+  \item Healthcare clinical design compliance (immutable audit logs, 24-hour modification
+        windows, HIPAA-aligned data isolation)
+  \item Swiss-minimalist design system implementation in CSS/Tailwind
+  \item Iterative UI redesign and design-system consistency enforcement
+  \item Stepper/wizard navigation component architecture
+  \item Exercise catalogue data modelling and selection UX
+  \item Asynchronous notification workflows and parallel query optimizations
+  \item Deployment verification and multi-environment build troubleshooting
+\end{itemize}
+
+\newpage
+
+\subsection{June 13, 2026 — Day 3: Swiss Minimalist Design System — Exercise Library \& Global UI Tokens}
+
+\textbf{Commits:}
+\begin{itemize}
+  \item \texttt{b6e3b85} — UI changes to exercise layout tab
+  \item \texttt{d461828} — Humanize layout contrast and fix font tracking style
+  \item \texttt{1c899f4} — Applied universal UI language to exercises panel
+  \item \texttt{d1a2065} — Fix 2 of redesign Phase 15
+  \item \texttt{01cae22} — Applied pure Swiss minimalist UI to exercise library modal
+  \item \texttt{bddb0a7} — Update MASTER\_CONTEXT.md for Swiss minimalist UI polish
+\end{itemize}
+
+\textbf{Work Accomplished:}
+
+\textit{1. Exercise Library Modal — Full Swiss Minimalist Redesign (\texttt{ExerciseLibraryModal.jsx})}
+\begin{itemize}
+  \item Completely rewrote the exercise library modal to align with the project-wide Swiss
+        minimalist design language
+  \item Applied strict typographic hierarchy: uppercase tracked section labels, 900-weight
+        category/exercise titles, monospaced metadata, and tight modular spacing
+  \item Rebuilt the exercise card grid with 2px black borders, \texttt{\#FAFBFC} grey header
+        strips, and clinical data blocks (SETS / REPS / FREQUENCY / DURATION in a 4-column
+        grid)
+  \item Iterated through 3 redesign passes (initial port $\rightarrow$ fix 2 refinement
+        $\rightarrow$ pure Swiss final) to arrive at a layout consistent with the Phase 14
+        patient care timeline cards
+  \item Net change: $\sim$1,100 lines modified (563 removed, 445 added) — significant
+        structural overhaul
+\end{itemize}
+
+\textit{2. Exercise Video Modal — Design System Alignment (\texttt{ExerciseVideoModal.jsx})}
+\begin{itemize}
+  \item Updated \texttt{ExerciseVideoModal} to inherit the same typographic and border tokens
+        as the library modal
+  \item Fixed font tracking style inconsistencies (letter-spacing harmonised with the global
+        \texttt{ui-xs} / \texttt{ui-sm} scale)
+  \item Humanised contrast — shifted from pure-black on white to \texttt{\#1C2B3A} text on
+        \texttt{\#FAFBFC} backgrounds to avoid harshness without breaking the Swiss grid
+\end{itemize}
+
+\textit{3. Global Design Token Rollout (\texttt{index.css} + \texttt{tailwind.config.js})}
+\begin{itemize}
+  \item Extended \texttt{index.css} with the universal UI language: named CSS custom
+        properties for shadow levels (\texttt{--shadow-level-1},
+        \texttt{--shadow-level-2}, \texttt{--shadow-level-3}), focus ring tokens,
+        transition shorthands, and placeholder casing resets
+  \item Updated \texttt{tailwind.config.js} with matching utility aliases — no magic numbers
+        scattered across components
+  \item Changes total $\sim$195 lines modified in \texttt{index.css} and 9 lines in
+        \texttt{tailwind.config.js}
+\end{itemize}
+
+\textit{4. Design Language Documentation Consolidation}
+\begin{itemize}
+  \item Migrated the standalone \texttt{.ai/designlanguage.md} specification (283 lines) into
+        \texttt{MASTER\_CONTEXT.md} as the single source of truth
+  \item Removed the now-redundant separate file
+  \item Updated \texttt{MASTER\_CONTEXT.md} to include the shadow system, focus state system,
+        transition continuity rules, typography casing rules, and notification visual spec
+\end{itemize}
+
+\textit{5. Iterative UI Refinement Loop}
+\begin{itemize}
+  \item Worked through 6 commits on a single day refining one feature area — demonstrating a
+        disciplined design-system-first approach: establish tokens $\rightarrow$ apply to
+        components $\rightarrow$ humanise contrast $\rightarrow$ verify consistency
+        $\rightarrow$ document
+  \item Each commit represents a discrete, reviewable improvement rather than a single squash
+\end{itemize}
+
+\textbf{Technical Skills Demonstrated:}
+\begin{itemize}
+  \item Design token architecture (CSS custom properties + Tailwind config aliases)
+  \item Component-level design system enforcement (applying an abstract spec to concrete JSX)
+  \item Iterative UI refinement and diff-driven design review
+  \item Documentation consolidation and AI context management
+  \item Typography system design (tracking, weight hierarchy, casing rules)
+\end{itemize}
+
+\textbf{Commits Pushed:} 6 commits
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Work Summary by Category}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Backend Development}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{X l l}
+\toprule
+\textbf{Feature} & \textbf{Date} & \textbf{Status} \\
+\midrule
+Password reset emails (SMTP)      & June 5  & Delivered \\
+Refund system workflow             & June 8  & Complete  \\
+Review system                      & June 8  & Complete  \\
+Auto DoctorProfile creation        & June 8  & Shipped   \\
+Slot seeding for pending doctors   & June 8  & Live      \\
+Appointment media endpoints        & June 11 & Phase 14  \\
+Session Records (Phase 14)         & June 12 & Complete  \\
+Demo reset flow                    & June 4  & Deployed  \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Frontend Development}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{X l l}
+\toprule
+\textbf{Feature} & \textbf{Date} & \textbf{Status} \\
+\midrule
+Email template redesign                   & June 5  & Shipped   \\
+Multi-step profile wizard                 & June 5  & Live      \\
+Booking confirmation card                 & June 6  & Deployed  \\
+Real-time slot availability               & June 8  & Working   \\
+Refund UI workflow                        & June 8  & Complete  \\
+Review submission form                    & June 8  & Live      \\
+Media upload feature                      & June 10 & Deployed  \\
+Doctor profile images                     & June 11 & Complete  \\
+Appointment media viewer                  & June 11 & Phase 14  \\
+Symptom upload form                       & June 11 & Delivered \\
+Session Notes form (doctor)               & June 12 & Shipped   \\
+Patient Care Timeline                     & June 12 & Complete  \\
+Swiss-minimalist record cards             & June 12 & Live      \\
+4-stepper timeline navigation             & June 12 & Deployed  \\
+Exercise catalogue tab                    & June 12 & Delivered \\
+Exercise Library Modal redesign           & June 13 & Complete  \\
+Exercise Video Modal alignment            & June 13 & Shipped   \\
+Global design tokens (CSS + Tailwind)     & June 13 & Live      \\
+Design language doc consolidation         & June 13 & Done      \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Bug Fixes \& Security}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{X l l}
+\toprule
+\textbf{Issue} & \textbf{Date} & \textbf{Impact} \\
+\midrule
+Payment security vulnerabilities    & June 4  & Critical \\
+Patient appointments crash          & June 4  & Blocker  \\
+Browser caching issues              & June 4  & High     \\
+Profile validation bugs             & June 6  & Medium   \\
+Deployment port blocking            & June 6  & High     \\
+Email delivery failures             & June 7  & High     \\
+Earnings reset after refund         & June 9  & Medium   \\
+Authorization for media deletion    & June 11 & Medium   \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{DevOps \& Deployment}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{X l l}
+\toprule
+\textbf{Task} & \textbf{Date} & \textbf{Status} \\
+\midrule
+Render HTTP startup fix             & June 6  & Resolved    \\
+Express rate-limit proxy trust      & June 6  & Fixed       \\
+API URL fallback configuration      & June 7  & Deployed    \\
+SMTP port blocking bypass           & June 7  & Implemented \\
+Full codebase rebranding            & June 10 & Complete    \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Technology Stack}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Technology} & \textbf{Purpose} \\
+\midrule
+React 18 + Vite         & UI component library and build toolchain \\
+Tailwind CSS            & Utility-first styling \\
+Zustand                 & Client-side state management \\
+Axios                   & HTTP client \\
+jsPDF                   & Client-side PDF receipt generation \\
+Lucide React            & SVG icon library \\
+React Hot Toast         & In-app toast notifications \\
+Node.js + Express       & Backend runtime and API framework \\
+MongoDB + Mongoose      & Database and ODM \\
+JWT + Bcrypt            & Authentication and password hashing \\
+Razorpay API            & Payment processing and refunds \\
+Cloudinary API          & File and image cloud storage \\
+OpenAI API              & AI-assisted features \\
+Nodemailer + Resend     & Transactional email delivery \\
+Render                  & Backend deployment (serverless) \\
+Vercel                  & Frontend deployment and CDN \\
+MongoDB Atlas           & Managed cloud database \\
+Git + GitHub            & Version control and multi-remote management \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Skills Developed}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Technical Skills}
+
+\begin{itemize}
+  \item Full-stack web development (React + Node.js)
+  \item Database design and MongoDB
+  \item Payment integration (Razorpay HMAC verification)
+  \item Email infrastructure (SMTP + REST APIs)
+  \item File upload and cloud storage (Cloudinary)
+  \item Real-time data management
+  \item Security hardening and input validation
+  \item Deployment troubleshooting on Render and Vercel
+  \item UI/UX design and CSS-in-JS (Tailwind)
+  \item Design token architecture (CSS custom properties + Tailwind config aliases)
+  \item State management (Zustand)
+  \item Git workflow and multi-remote management
+\end{itemize}
+
+\subsection{Soft Skills}
+
+\begin{itemize}
+  \item Code documentation and knowledge base maintenance
+  \item Debugging and systematic troubleshooting
+  \item Rapid prototyping and iterative design
+  \item Cross-functional problem-solving
+  \item Version control best practices
+\end{itemize}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Challenges Faced \& Solutions}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Challenge 1: SMTP Port Blocking on Render}
+
+\begin{itemize}
+  \item \textbf{Problem:} Email sending failed because Render blocks SMTP port 587.
+  \item \textbf{Solution:} Implemented the Resend REST API as an alternative to SMTP.
+  \item \textbf{Outcome:} Email delivery now reliable on production with detailed delivery
+        logs and connection timeout handling.
+\end{itemize}
+
+\subsection{Challenge 2: Patient Appointments Crash}
+
+\begin{itemize}
+  \item \textbf{Problem:} Demo patient creation caused the appointments listing to crash.
+  \item \textbf{Solution:} Fixed patient profile seeding logic and validation rules.
+  \item \textbf{Outcome:} Demo flow is now stable and repeatable across resets.
+\end{itemize}
+
+\subsection{Challenge 3: Browser Caching Issues}
+
+\begin{itemize}
+  \item \textbf{Problem:} Doctor verification changes did not reflect due to stale cache.
+  \item \textbf{Solution:} Implemented proper cache-busting headers on relevant GET endpoints.
+  \item \textbf{Outcome:} All GET requests now always return fresh data.
+\end{itemize}
+
+\subsection{Challenge 4: Financial Data Consistency}
+
+\begin{itemize}
+  \item \textbf{Problem:} Refund processing would incorrectly reset entire payment history
+        and earnings figures.
+  \item \textbf{Solution:} Implemented proper transactional logic and state isolation between
+        the refund and earnings pipelines.
+  \item \textbf{Outcome:} Financial data is now consistent, auditable, and safe to process
+        across concurrent operations.
+\end{itemize}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Code Quality Metrics}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Total Commits    & 91+ commits over 10 days (pre-joining + 3 internship days) \\
+Files Modified   & 175+ files across frontend and backend \\
+Bugs Fixed       & 27+ bugs identified and resolved \\
+Features Shipped & 19+ major features delivered to production \\
+Documentation    & Complete API reference, .ai indexing architecture, and design
+                   language consolidated into a single source of truth \\
+Code Quality     & Production-grade error handling, input validation, and security
+                   across all endpoints \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Achievements \& Milestones}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Completed}
+
+\begin{itemize}
+  \item Phase 14 — Session Records \& Care Continuity (complete)
+  \item Appointment Media System (complete)
+  \item Refund workflow (request $\rightarrow$ approval $\rightarrow$ processing)
+  \item Review system (ratings and comments)
+  \item Email infrastructure hardening
+  \item Doctor profile image system
+  \item Patient symptom upload feature
+  \item Multi-role authorization for all features
+  \item Full codebase rebranding (Physioconnect $\rightarrow$ Theralign)
+  \item Deployment stabilization on Render and Vercel
+  \item Knowledge base documentation (7,400+ lines)
+  \item Swiss-minimalist design system for patient care timeline
+  \item 4-stepper navigation in patient care timeline
+  \item Exercise catalogue tab (structured library selection)
+  \item Session summary page (doctor \& patient views)
+  \item Exercise Library Modal — full Swiss minimalist redesign
+  \item Exercise Video Modal — design system alignment
+  \item Global design tokens (CSS custom properties + Tailwind aliases)
+  \item Design language documentation consolidated into \texttt{MASTER\_CONTEXT.md}
+\end{itemize}
+
+\subsection{In Progress}
+
+\begin{itemize}
+  \item Phase 15 — Design system rollout (remaining pages)
+\end{itemize}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Next Steps (Recommended)}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{enumerate}
+  \item \textbf{Phase 15 — Compliance Tracking:} Track patient exercise adherence and
+        completion rates.
+  \item \textbf{Phase 16 — Telemedicine:} Add video consultation support for remote
+        physiotherapy sessions.
+  \item \textbf{Performance Optimization:} Implement server-side caching and MongoDB query
+        optimization for high-traffic endpoints.
+  \item \textbf{Mobile App:} Consider native mobile applications (React Native) to extend
+        platform reach.
+\end{enumerate}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusion}
+% ─────────────────────────────────────────────────────────────────────────────
+
+During the first 3 days of this internship (June 11--13, 2026), the following was
+delivered:
+
+\begin{enumerate}
+  \item Shipped Phase 14 (Session Records \& Care Continuity) as a complete full-stack feature
+  \item Integrated Appointment Media System with multi-role support
+  \item Fixed 9+ critical bugs affecting financial, notification, and authorization systems
+  \item Enhanced doctor profile presentation with larger avatars and Cloudinary fallback
+  \item Implemented patient symptom upload functionality
+  \item Created comprehensive knowledge base documentation
+  \item Executed 3+ full redesign iterations on the Phase 14 UI to deliver a bold
+        Swiss-minimalist visual system
+  \item Built a 4-stepper navigation structure for the patient care timeline
+  \item Revamped the exercise tab with a structured catalogue selection system
+  \item Completely redesigned the Exercise Library Modal through 3 iterative passes
+  \item Aligned the Exercise Video Modal with the same design system tokens
+  \item Established and shipped global design tokens as the canonical source for shadows,
+        transitions, and typography across the entire frontend
+  \item Consolidated all design language documentation into a single
+        \texttt{MASTER\_CONTEXT.md} source of truth
+\end{enumerate}
+
+The work demonstrates proficiency in full-stack development, iterative UI design,
+design system enforcement, problem-solving, security awareness, and documentation
+excellence. All code is production-ready and deployed to live servers serving real users.
+
+\vspace{1.5em}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Field} & \textbf{Detail} \\
+\midrule
+Document Last Updated & June 13, 2026 (18:15 IST) \\
+Internship Duration   & Ongoing \\
+Status                & Active Development \\
+College Submission    & Ready for Review \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Appendix: Git Commit Reference}
+% ─────────────────────────────────────────────────────────────────────────────
+
+All commits referenced in this document can be verified using the following command
+against the project repository:
+
+\begin{lstlisting}[language=bash, caption=Command used to verify all commit entries]
+git log --all --format="%H|%ad|%s" --date=short | grep "2026-06"
+\end{lstlisting}
+
+\subsection*{Production URLs}
+
+\begin{table}[h!]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Service} & \textbf{URL} \\
+\midrule
+Frontend (Vercel)       & \href{https://theralign.vercel.app}{https://theralign.vercel.app} \\
+Backend API (Render)    & \href{https://theralign-api.onrender.com}{https://theralign-api.onrender.com} \\
+GitHub (Personal)       & \href{https://github.com/debugonaut/Theralign}{github.com/debugonaut/Theralign} \\
+GitHub (CustomSoft)     & \href{https://github.com/customsoftteam/Theralign}{github.com/customsoftteam/Theralign} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{2em}
+\noindent\textit{This document is intended for college submission and internal team reference.
+All work described herein has been delivered to the live production environment.}
+
+\end{document}
