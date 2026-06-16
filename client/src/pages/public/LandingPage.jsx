@@ -1,4 +1,4 @@
-import React from 'react';
+
 import HeroSliderSection from '../../components/landing/HeroSliderSection';
 import HeroSection from '../../components/landing/HeroSection';
 import TrustBar from '../../components/landing/TrustBar';
@@ -50,7 +50,7 @@ const LandingPage = () => {
       {/* E. Who Can Use Theralign — new, after pricing */}
       <WhoCanUseSection />
 
-      {/* F. Patient Reviews — redesigned circle cards (replaces section 07) */}
+      {/* F. Patient Reviews — redesigned horizontal slider (replaces section 07) */}
       <PatientReviewsSection />
 
       {/* 08. Verification Standards — unchanged */}

@@ -1241,123 +1241,329 @@ table {
   margin: 0;
 }
 
-.reviews-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 48px;
-  padding: 0 80px 80px;
+/* Slider container */
+.testimonial-slider-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  border-top: 2px solid #000000;
+  border-bottom: 4px solid #000000;
+  background: #FFFFFF;
 }
 
-@media (max-width: 768px) {
-  .reviews-grid {
-    gap: 32px;
-    padding: 0 24px 48px;
+/* Inner track */
+.testimonial-track {
+  display: flex;
+  transition: transform 600ms cubic-bezier(0.25, 0, 0, 1);
+  width: 100%;
+}
+
+/* Card */
+.testimonial-card {
+  width: 100%;
+  min-height: 340px;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  align-items: center;
+  padding: 0;
+  background: #FFFFFF;
+  border-radius: 0px;
+  flex-shrink: 0;
+}
+
+/* Left column */
+.testimonial-left-col {
+  width: 340px;
+  height: 340px;
+  flex-shrink: 0;
+  position: relative;
+  background: #F2F2F2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 4px solid #000000;
+}
+
+/* Circular photo */
+.testimonial-photo {
+  width: 220px;
+  height: 220px;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 3px solid #000000;
+  object-fit: cover;
+  filter: grayscale(15%) contrast(108%);
+  position: relative;
+  z-index: 1;
+}
+
+/* Rotating dashed ring */
+.testimonial-dashed-ring {
+  position: absolute;
+  width: 248px;
+  height: 248px;
+  border-radius: 9999px;
+  border: 2px dashed #FF3000;
+  animation: testimonialRing 10s linear infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+@keyframes testimonialRing {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
-/* Individual circle card */
-.review-card {
-  width: 280px;
-  height: 280px;
-  border-radius: 9999px;
-  background: #FFFFFF;
-  border: 3px solid #000000;
+/* Right column */
+.testimonial-right-col {
+  padding: 56px 72px 108px 72px; /* Bottom padding accommodates absolute navigation controls */
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 40px 32px;
-  position: relative;
-  overflow: hidden;
+  gap: 0;
   cursor: default;
-  transition: background-color 150ms linear, border-color 150ms linear;
-  flex-shrink: 0;
+  position: relative;
 }
 
-.review-card:hover {
-  background: #000000;
-  border-color: #FF3000;
-}
-
-/* Opening quote mark */
-.review-quote-mark {
-  position: absolute;
-  top: 20px;
-  left: 28px;
+/* Name */
+.testimonial-name {
   font-family: 'Inter', sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: #FF3000;
-  line-height: 1;
-  pointer-events: none;
-}
-
-.review-quote {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 400;
-  color: #333333;
-  font-style: italic;
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  transition: color 150ms linear;
-}
-
-.review-card:hover .review-quote {
-  color: #FFFFFF;
-}
-
-.review-stars {
-  font-size: 14px;
-  color: #FF3000;
-  letter-spacing: 2px;
-  margin-top: 12px;
-  flex-shrink: 0;
-}
-
-.review-name {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 28px;
   color: #000000;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 12px 0;
+}
+
+/* Name underline */
+.testimonial-name-underline {
+  width: 100%;
+  height: 3px;
+  background: #000000;
+  margin-bottom: 20px;
+  transition: background-color 150ms linear;
+}
+
+/* Star rating row */
+.testimonial-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.testimonial-stars-container {
+  position: relative;
+  display: inline-block;
+  font-size: 22px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 3px;
+  line-height: 1;
+  color: #FF3000;
+  user-select: none;
+}
+
+.testimonial-stars-bg {
+  color: #F2F2F2;
+  white-space: nowrap;
+}
+
+.testimonial-stars-fg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #FF3000;
+}
+
+.testimonial-stars-number {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #FF3000;
+  text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-top: 10px;
+}
+
+/* Review text */
+.testimonial-quote-open {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: 72px;
+  color: #F2F2F2;
+  line-height: 0;
+  display: block;
+  margin-bottom: -16px;
   transition: color 150ms linear;
 }
 
-.review-card:hover .review-name {
-  color: #FFFFFF;
+.testimonial-review-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  color: #333333;
+  line-height: 1.7;
+  max-width: 640px;
+  font-style: italic;
+  margin: 0;
 }
 
-.review-city {
+.testimonial-quote-close {
   font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: 72px;
+  color: #F2F2F2;
+  line-height: 0;
+  display: block;
+  text-align: right;
+  margin-top: -8px;
+  transition: color 150ms linear;
+}
+
+/* Condition label */
+.testimonial-condition {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
   font-size: 11px;
+  color: #FF3000;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 20px;
+}
+
+/* City label */
+.testimonial-city {
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
+  font-size: 11px;
   color: #888888;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-top: 2px;
-  transition: color 150ms linear;
-}
-
-.review-card:hover .review-city {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.review-condition {
-  font-family: 'Inter', sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  color: #FF3000;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   margin-top: 4px;
+}
+
+/* Hover behaviors */
+.testimonial-right-col:hover .testimonial-quote-open,
+.testimonial-right-col:hover .testimonial-quote-close {
+  color: rgba(255, 48, 0, 0.08);
+}
+
+.testimonial-right-col:hover .testimonial-name-underline {
+  background: #FF3000;
+}
+
+/* Navigation controls */
+.testimonial-btn-prev {
+  position: absolute;
+  left: 360px;
+  bottom: 32px;
+  width: 48px;
+  height: 48px;
+  background: #FFFFFF;
+  border: 3px solid #000000;
+  border-radius: 0px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 100ms linear, color 100ms linear;
+  z-index: 10;
+}
+
+.testimonial-btn-prev:hover {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.testimonial-btn-next {
+  position: absolute;
+  left: 416px;
+  bottom: 32px;
+  width: 48px;
+  height: 48px;
+  background: #FFFFFF;
+  border: 3px solid #000000;
+  border-radius: 0px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 100ms linear, color 100ms linear;
+  z-index: 10;
+}
+
+.testimonial-btn-next:hover {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+/* Progress Indicators */
+.testimonial-indicators {
+  position: absolute;
+  right: 72px;
+  bottom: 40px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.testimonial-dot {
+  width: 10px;
+  height: 10px;
+  background: #000000;
+  opacity: 0.15;
+  border-radius: 0px;
+  cursor: pointer;
+  transition: width 300ms linear, background-color 150ms linear, opacity 150ms linear;
+}
+
+.testimonial-dot.active {
+  opacity: 1;
+  background: #FF3000;
+  width: 28px;
+}
+
+/* Slide counter text */
+.testimonial-counter {
+  position: absolute;
+  right: 72px;
+  bottom: 68px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  z-index: 10;
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-track {
+    transition: none !important;
+  }
+  .testimonial-dashed-ring {
+    animation: none !important;
+  }
+  .testimonial-dot {
+    transition: none !important;
+  }
 }
 
 /* ============================================================
