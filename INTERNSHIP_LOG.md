@@ -704,7 +704,47 @@ The work demonstrates proficiency in full-stack development, iterative UI design
 
 ---
 
-**Document Last Updated:** June 15, 2026 (13:40 IST)  
+### June 16, 2026 — Day 6: Swiss Brutalist Landing Page Redesign & Partial somechanges.md Integration
+
+**Commits:**
+- `7e6989b` — patient review page converted to carousel slider
+- `641ec41` — fix: Landing page updated
+
+**Files Created/Modified (Staged & Working):**
+- **New Frontend Components**:
+  - `client/src/components/landing/HeroSliderSection.jsx` [NEW] — 100vh full-screen image slider with Browse Doctors and Join as Physio CTA buttons placed directly on the image. Set main header text to "FIND THE RIGHT THERAPIST NEAR YOU." and taglines as subheadings.
+  - `client/src/components/landing/BenefitsGridSection.jsx` [NEW] — Swiss Brutalist checkerboard benefits grid with invert hover transitions.
+  - `client/src/components/landing/FeaturesZigzagSection.jsx` [NEW] — Alternate 50/50 grayscale-to-color interactive image blocks.
+  - `client/src/components/landing/WhoCanUseSection.jsx` [NEW] — Static patient target category circles (dashed rings removed).
+- **Frontend Enhancements**:
+  - `client/src/components/landing/HeroSection.jsx` [MODIFY] — Redesigned AI Doctor Matching Section: removed BookingConfirmationCard entirely; redesigned to focus on AI doctor search with a professional header and 3 feature summary cards.
+  - `client/src/components/landing/PatientReviewsSection.jsx` [MODIFY] — Redesigned Patient Reviews Section: converted reviews into a dark-themed horizontal carousel with custom sliding transitions, star-ratings progress, and autoplay/pause-on-hover logic.
+  - `client/src/components/landing/PricingTiersSection.jsx` [MODIFY] — Redesigned Pricing Section: rounded cards, elevated dark-themed "Pro Patient" center card, pill-shaped action buttons.
+  - `client/src/components/layout/Footer.jsx` [MODIFY] — Updated footer styling and links structure.
+  - `client/src/components/layout/Navbar.jsx` [MODIFY] — Polished navigation links and header styling.
+  - `client/src/pages/public/LandingPage.jsx` [MODIFY] — Restructured and reordered sections per correct hierarchy spec (AI feature box, specializations, features, benefits, how it works, stats, doctors, reviews, pricing, verification, CTA banner); removed TrustBar.
+  - `client/src/styles/index.css` [MODIFY] — Added layout styling, typography adjustments, spacing rules, and color configurations matching the Swiss Brutalist layout requirements.
+
+**Work Accomplished:**
+1. **Full-Screen Hero Slider (#2 & #3):** Created a full viewport height (100vh) hero slider with physiotherapy photography. Positioned critical calls-to-action (Browse Doctors & Join as a Physiotherapist) directly on top of the hero image overlay. Refactored heading text to "FIND THE RIGHT THERAPIST NEAR YOU." as primary, displaying taglines as subheadings.
+2. **AI Doctor Matching Section Redesign (#4):** Purged `BookingConfirmationCard` from this view. Redesigned section focus on AI capability, adding high-impact typography headers and 3 clean feature-summary detail cards.
+3. **Removed Trust Banner (#5):** Completely removed the `TrustBar` component to clear visual noise.
+4. **Testimonials Slider Overhaul (#13 & #10):** Transformed the testimonials section to a dark background horizontal slider. Restructured layout to place a large circular grayscale patient photo side-by-side with reviews text, rating stars, and customized navigation controls. Removed all dotted rotating circular rings across the application.
+5. **Pricing Section Redesign (#6):** Redesigned the 3-column pricing tier component. Configured two light cards on the side and an elevated dark card in the center ("Pro Patient"), with rounded borders and pill-shaped action buttons.
+6. **Correct Section Reordering (#11):** Set up correct landing page sequence in `LandingPage.jsx`.
+
+**Deferred / Incomplete Requirements from somechanges.md:**
+- **Expand Page Width (#1)**: Section widths not yet expanded to full viewport boundaries.
+- **Full Viewport Sections (#7)**: Main landing sections do not take 100vh height.
+- **Platform Scale Charts (#8)**: Numbers are still static, no charts/graphs implemented.
+- **Coverflow Specializations Carousel (#9)**: Specializations remains as a responsive grid layout.
+- **Footer Links & Refund Policy (#12)**: The `/refund` path is referenced in the footer but returning a 404 since `RefundPolicyPage` has not been created or registered.
+
+**Learning:** Swiss Brutalist layouts, advanced CSS slider transitions, hover-based interactive states, components layout refactoring, section reordering rules.
+
+---
+
+**Document Last Updated:** June 16, 2026 (14:12 IST)  
 **Internship Duration:** Ongoing  
 **Status:** Active Development  
 **College Submission:** Ready for Review

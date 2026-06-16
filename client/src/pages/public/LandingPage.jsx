@@ -1,62 +1,54 @@
 
 import HeroSliderSection from '../../components/landing/HeroSliderSection';
 import HeroSection from '../../components/landing/HeroSection';
-import TrustBar from '../../components/landing/TrustBar';
 import SpecializationsSection from '../../components/landing/SpecializationsSection';
 import FeaturesZigzagSection from '../../components/landing/FeaturesZigzagSection';
 import BenefitsGridSection from '../../components/landing/BenefitsGridSection';
 import HowItWorksSection from '../../components/landing/HowItWorksSection';
-import FeaturedDoctorsSection from '../../components/landing/FeaturedDoctorsSection';
 import StatsBar from '../../components/landing/StatsBar';
-import PricingTiersSection from '../../components/landing/PricingTiersSection';
-import WhoCanUseSection from '../../components/landing/WhoCanUseSection';
+import FeaturedDoctorsSection from '../../components/landing/FeaturedDoctorsSection';
 import PatientReviewsSection from '../../components/landing/PatientReviewsSection';
+import PricingTiersSection from '../../components/landing/PricingTiersSection';
 import VerificationExplanationSection from '../../components/landing/VerificationExplanationSection';
 import CTABannerSection from '../../components/landing/CTABannerSection';
 
 const LandingPage = () => {
   return (
     <main className="flex-1 bg-white">
-      {/* A. Hero Slider — precedes the existing hero section */}
+      {/* Hero Slider — full viewport, with CTA buttons */}
       <HeroSliderSection />
 
-      {/* 01. Hero — unchanged */}
+      {/* 01. AI Feature Box — AI doctor matching section */}
       <HeroSection />
 
-      {/* 02. Trust Ticker — unchanged */}
-      <TrustBar />
-
-      {/* 03. Specializations Grid — unchanged */}
+      {/* 02. Areas of Care — Specializations grid */}
       <SpecializationsSection />
 
-      {/* B. Features Zigzag — new, after specializations */}
+      {/* 03. Features / What Makes It Different */}
       <FeaturesZigzagSection />
 
-      {/* C. Benefits Grid — new, after features */}
+      {/* 04. Why Theralign */}
       <BenefitsGridSection />
 
-      {/* 04. How It Works — unchanged */}
+      {/* 05. How It Works */}
       <HowItWorksSection />
 
-      {/* 05. Featured Doctors — unchanged */}
-      <FeaturedDoctorsSection />
-
-      {/* 06. Platform Scale Metrics — unchanged */}
+      {/* 06. Statistics / Platform Scale */}
       <StatsBar />
 
-      {/* D. Pricing Tiers — new, after stats */}
-      <PricingTiersSection />
+      {/* 07. Our Patients / Featured Doctors */}
+      <FeaturedDoctorsSection />
 
-      {/* E. Who Can Use Theralign — new, after pricing */}
-      <WhoCanUseSection />
-
-      {/* F. Patient Reviews — redesigned horizontal slider (replaces section 07) */}
+      {/* 08. Patient Outcomes / Reviews */}
       <PatientReviewsSection />
 
-      {/* 08. Verification Standards — unchanged */}
+      {/* 09. Pricing */}
+      <PricingTiersSection />
+
+      {/* 10. Clinical Verification */}
       <VerificationExplanationSection />
 
-      {/* 09. CTA Banner — unchanged */}
+      {/* CTA Banner */}
       <CTABannerSection />
     </main>
   );

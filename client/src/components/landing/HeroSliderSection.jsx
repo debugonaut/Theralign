@@ -1,38 +1,39 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 const SLIDES = [
   {
     id: 1,
     imageId: '1571019613454-1cb2f99b2d8b',
-    punchline: 'PRECISION CARE.\nVERIFIED EXPERTISE.',
+    tagline: 'PRECISION CARE. VERIFIED EXPERTISE.',
     description:
       "Connect with India's most rigorously vetted physiotherapists. Evidence-based treatment, booked in minutes.",
   },
   {
     id: 2,
     imageId: '1559757148-5c350d0d3c56',
-    punchline: 'MOVE WITHOUT\nLIMITATION.',
+    tagline: 'MOVE WITHOUT LIMITATION.',
     description:
       'From post-surgical recovery to sports rehabilitation — expert care matched to your exact condition.',
   },
   {
     id: 3,
     imageId: '1576091160399-112ba8d25d1d',
-    punchline: 'YOUR RECOVERY.\nYOUR TIMELINE.',
+    tagline: 'YOUR RECOVERY. YOUR TIMELINE.',
     description:
       'Personalised exercise prescriptions, real-time session records, and clinical continuity across every visit.',
   },
   {
     id: 4,
     imageId: '1506126613408-eca07ce68773',
-    punchline: 'TRUSTED BY THOUSANDS.\nVERIFIED BY DESIGN.',
+    tagline: 'TRUSTED BY THOUSANDS. VERIFIED BY DESIGN.',
     description:
       'Every practitioner on Theralign passes our multi-stage clinical verification. No compromises.',
   },
   {
     id: 5,
     imageId: '1571019614242-c5c5dee9f50b',
-    punchline: 'BOOK. TREAT.\nRECOVER. REPEAT.',
+    tagline: 'BOOK. TREAT. RECOVER. REPEAT.',
     description:
       'A complete physiotherapy management platform — from first consultation to full mobility restored.',
   },
@@ -67,7 +68,7 @@ const HeroSliderSection = () => {
       className="hero-slider-root"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      aria-label="Theralign feature highlights"
+      aria-label="Theralign hero section"
     >
       {/* Slide track */}
       <div
@@ -98,18 +99,27 @@ const HeroSliderSection = () => {
                 THERALIGN — VERIFIED PHYSIOTHERAPY PLATFORM
               </span>
 
-              {/* Punchline */}
-              <h2 className="hero-slider-punchline">
-                {slide.punchline.split('\n').map((line, i) => (
-                  <React.Fragment key={i}>
-                    {line}
-                    {i < slide.punchline.split('\n').length - 1 && <br />}
-                  </React.Fragment>
-                ))}
-              </h2>
+              {/* Primary heading — constant across all slides */}
+              <h1 className="hero-slider-heading">
+                FIND THE RIGHT THERAPIST<br />
+                <span className="hero-slider-heading-accent">NEAR YOU.</span>
+              </h1>
+
+              {/* Tagline — slide-specific subheading */}
+              <p className="hero-slider-tagline">{slide.tagline}</p>
 
               {/* Description */}
               <p className="hero-slider-description">{slide.description}</p>
+
+              {/* CTA Buttons */}
+              <div className="hero-slider-cta-row">
+                <Link to="/doctors" className="hero-slider-cta hero-slider-cta--primary">
+                  BROWSE DOCTORS →
+                </Link>
+                <Link to="/register" className="hero-slider-cta hero-slider-cta--ghost">
+                  JOIN AS A PHYSIOTHERAPIST →
+                </Link>
+              </div>
             </div>
           </div>
         ))}

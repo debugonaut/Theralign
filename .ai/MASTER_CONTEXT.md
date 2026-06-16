@@ -949,7 +949,15 @@ router.post('/book', validate(schema), controller);
 
 # CURRENT STATE & RECENT CHANGES
 
-## Latest Updates (As of 2026-06-15)
+## Latest Updates (As of 2026-06-16)
+
+### Swiss Brutalist Landing Page Redesign (somechanges.md)
+- ✅ Implemented 100vh full-screen image slider (`HeroSliderSection`) with action buttons overlay, text re-hierarchy, and auto-rotation.
+- ✅ Redesigned AI Doctor Matching (`HeroSection`) to remove booking confirmation card and focus on AI doctor search with a professional header and 3 feature cards.
+- ✅ Upgraded Pricing Page (`PricingTiersSection`) with rounded cards, elevated center card ("Pro Patient"), and pill-shaped CTAs.
+- ✅ Overhauled Testimonials (`PatientReviewsSection`) to horizontal slider layout with autoplay and pause-on-hover logic, dark background theme, rating star fill indicators, and large grayscale patient photos.
+- ✅ Removed all dotted rotating circular rings (`who-ring-dashed` animations, etc.) across the application.
+- ✅ Restructured section sequence in `LandingPage.jsx` and removed `TrustBar` to clear visual noise.
 
 ### Phase 16 Completion (Visual Exercise Library & Prescription Duration System)
 - ✅ Replaced static placeholder exercise list with 50+ real, categorized, structured exercises
@@ -981,6 +989,7 @@ router.post('/book', validate(schema), controller);
 - ✅ Doctor profile image added to DoctorDetailPage with w-28 h-28 dimensions and alignment adjustments
 
 ### Recent Bug Fixes
+- ✅ Removed rotating dashed border animation to fix visual clutter
 - ✅ Exercise library card text overlap with add (+) button
 - ✅ Replaced placeholder stickman SVGs with YouTube thumbnails
 - ✅ Fixed broken video links in the exercise library
@@ -994,10 +1003,16 @@ router.post('/book', validate(schema), controller);
 
 1. **Email delivery latency:** Some transactional emails delayed 30–60 seconds. Root cause: email service queue backlog. Monitoring in place.
 2. **Slot locking contention:** High-demand doctors show occasional 409 Conflict (expected behavior). Monitoring slot lock failure rate.
+3. **somechanges.md Deferred Work:** Expand Page Width (#1), Full Viewport Sections (#7), Platform Scale charts/graphs (#8), Coverflow Specializations Carousel (#9), and Refund Policy page creation (#12) are currently deferred.
 
 ## Git Commit History (Recent)
 
 ```
+2026-06-16 — patient review page converted to carousel slider
+2026-06-16 — fix: Landing page updated
+2026-06-15 — fix: added hyperlinks for exercise tab till neurology
+2026-06-15 — feat: phase 16 implementation done
+2026-06-15 — docs: updated project context, summary, and internship logs for visual exercise library & prescription duration
 2026-06-15 — fix: broken links fixed in exercise modals
 2026-06-15 — fix: replaced svg stickman figures in exercise modal with real youtube thumbnails
 2026-06-15 — fix: exercise library plus button overlap with text

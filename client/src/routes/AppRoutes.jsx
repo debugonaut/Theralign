@@ -29,6 +29,7 @@ const HelpCenterPage = lazy(() => import('../pages/public/HelpCenterPage'));
 const PrivacyPolicyPage = lazy(() => import('../pages/public/PrivacyPolicyPage'));
 const TermsOfServicePage = lazy(() => import('../pages/public/TermsOfServicePage'));
 const MedicalDisclaimerPage = lazy(() => import('../pages/public/MedicalDisclaimerPage'));
+const RefundPolicyPage = lazy(() => import('../pages/public/RefundPolicyPage'));
 
 // Patient Pages (Lazy Loaded)
 const PatientDashboard = lazy(() => import('../pages/patient/PatientDashboard'));
@@ -112,6 +113,7 @@ const AppRoutes = () => {
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
           <Route path="/disclaimer" element={<MedicalDisclaimerPage />} />
+          <Route path="/refund" element={<RefundPolicyPage />} />
         </Route>
 
         {/* ─── Patient Routes ─────────────────────────────────────────────── */}

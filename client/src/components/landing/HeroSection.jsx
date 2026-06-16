@@ -1,8 +1,6 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SymptomSearchBox from '../ai/SymptomSearchBox';
-import Button from '../common/Button';
-import BookingConfirmationCard from './BookingConfirmationCard';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -12,51 +10,56 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative w-full bg-white min-h-[70vh] flex items-center pt-8 pb-10 overflow-hidden border-b-2 border-neutral-900">
-      {/* Background Grid Pattern */}
-      <div className="absolute inset-0  opacity-30 pointer-events-none" />
-
-      <div className="max-w-[1440px] mx-auto w-full px-6 sm:px-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-        
-        {/* Left Column - 7/12 width */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left gap-4">
-          <h1 className="text-display-sm md:text-[64px] lg:text-[72px] leading-[1.05] font-black uppercase tracking-[-0.05em] text-neutral-900 font-swiss">
-            FIND THE RIGHT<br />
-            <span className="text-accent">PHYSIOTHERAPIST</span>,<br />
-            NEAR YOU.
-          </h1>
-
-          <p className="text-[15px] lg:text-[16px] text-neutral-700 max-w-[600px] font-medium leading-[1.5]">
-            Connect with verified clinical specialists for orthopedic, neurological, and post-surgical care.
+    <section
+      className="ai-section"
+      id="ai-matching"
+      aria-labelledby="ai-section-title"
+    >
+      <div className="ai-section-inner">
+        {/* Left — Text & AI box */}
+        <div className="ai-section-left">
+          <span className="swiss-section-label">01. AI DOCTOR MATCHING</span>
+          <h2 id="ai-section-title" className="ai-section-heading">
+            DESCRIBE YOUR PAIN.<br />
+            <span className="ai-section-heading-accent">WE FIND YOUR SPECIALIST.</span>
+          </h2>
+          <p className="ai-section-subtext">
+            Our AI analyses your symptoms, condition history, and location to
+            match you with the right verified physiotherapist — in seconds.
+            No referral. No waiting list. Just clinical precision.
           </p>
-
-          <div className="w-full mt-2 max-w-[600px]">
+          <div className="ai-section-search-wrap">
             <SymptomSearchBox onSpecializationFound={handleSpecializationFound} />
           </div>
+        </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
-            <Link to="/doctors" className="w-full sm:w-auto">
-              <Button variant="secondary" size="lg" className="w-full">
-                BROWSE DOCTORS →
-              </Button>
-            </Link>
-            <Link to="/register" className="w-full sm:w-auto">
-              <Button variant="ghost" size="lg" className="w-full">
-                JOIN AS A PHYSIOTHERAPIST →
-              </Button>
-            </Link>
+        {/* Right — Feature callouts */}
+        <div className="ai-section-right">
+          <div className="ai-feature-card">
+            <div className="ai-feature-icon">⚡</div>
+            <div>
+              <p className="ai-feature-title">INSTANT MATCHING</p>
+              <p className="ai-feature-desc">Describe symptoms in plain language — get matched to a specialist in under 10 seconds.</p>
+            </div>
+          </div>
+          <div className="ai-feature-card">
+            <div className="ai-feature-icon">🎯</div>
+            <div>
+              <p className="ai-feature-title">CONDITION-SPECIFIC</p>
+              <p className="ai-feature-desc">Trained on 15+ physiotherapy specializations for accurate, relevant results every time.</p>
+            </div>
+          </div>
+          <div className="ai-feature-card">
+            <div className="ai-feature-icon">✅</div>
+            <div>
+              <p className="ai-feature-title">VERIFIED RESULTS ONLY</p>
+              <p className="ai-feature-desc">Every matched doctor is clinically verified. No unvetted listings. Ever.</p>
+            </div>
           </div>
         </div>
-
-        {/* Right Column - 5/12 width */}
-        <div className="hidden lg:flex lg:col-span-5 items-center justify-center relative pl-8">
-          <BookingConfirmationCard />
-        </div>
-
       </div>
     </section>
   );
 };
 
 export default HeroSection;
-

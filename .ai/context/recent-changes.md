@@ -1,12 +1,51 @@
 # Recent Changes — Last 7 Days
 
-**Generated:** 2026-06-15  
-**Period:** 2026-06-08 to 2026-06-15  
+**Generated:** 2026-06-16  
+**Period:** 2026-06-09 to 2026-06-16  
 **Source:** git log --oneline -n 50
 
 ---
 
 ## High Impact Changes
+
+### 2026-06-16 — Swiss Brutalist Landing Page Redesign & Partial somechanges.md Integration
+**Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
+
+**Summary:** Redesigned and integrated landing page sections in accordance with Swiss Brutalist visual guidelines. Verified to build successfully with zero errors.
+- **Hero Slider Section (#2 & #3)**: Implemented 100vh full-screen image slider with Browse Doctors and Join as Physio CTA buttons placed directly on the image. Set main header text to "FIND THE RIGHT THERAPIST NEAR YOU." and displayed taglines as subheadings.
+- **AI Doctor Matching Section (#4)**: Removed BookingConfirmationCard entirely; redesigned to focus on AI doctor search with a professional header and 3 feature summary cards.
+- **Removed Trust Banner (#5)**: Deleted TrustBar entirely to clean up page noise.
+- **Pricing Redesign (#6)**: Upgraded pricing tiers to match reference (rounded cards, elevated dark-themed "Pro Patient" center card, pill-shaped action buttons).
+- **Patient Image & Dotted Border Changes (#10)**: Removed all rotating red/black dotted circular borders across the codebase.
+- **Section Reordering (#11)**: Re-sequenced the landing page order (Hero Slider → AI Matching → Areas of Care → Features/What Makes It Different → Why Theralign → How It Works → Statistics → Our Patients/Featured Doctors → Reviews → Pricing → Clinical Verification → CTA Banner).
+- **Testimonial Slider Overhaul (#13)**: Converted reviews into a dark-themed horizontal carousel with custom sliding transitions, star-ratings progress, and autoplay/pause-on-hover logic.
+
+**Changed/Created files:**
+- **Modified Files**:
+  - [LandingPage.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/pages/public/LandingPage.jsx)
+  - [HeroSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/HeroSection.jsx)
+  - [HeroSliderSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/HeroSliderSection.jsx)
+  - [PatientReviewsSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/PatientReviewsSection.jsx)
+  - [PricingTiersSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/PricingTiersSection.jsx)
+  - [Navbar.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/layout/Navbar.jsx)
+  - [Footer.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/layout/Footer.jsx)
+  - [index.css](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/styles/index.css)
+
+**Affected subsystems:**
+- discovery-search
+- payment-system
+
+**Regression risk:** Low
+- Production build successfully compiles with zero errors/warnings.
+
+**Deferred / Incomplete Requirements from somechanges.md:**
+- **Expand Page Width (#1)**: Section widths not yet expanded to full viewport boundaries.
+- **Full Viewport Sections (#7)**: Main landing sections do not take 100vh height.
+- **Platform Scale Charts (#8)**: Numbers are still static, no charts/graphs implemented.
+- **Coverflow Specializations Carousel (#9)**: Specializations remains as a responsive grid layout.
+- **Footer Links & Refund Policy (#12)**: The `/refund` path is referenced in the footer but returning a 404 since `RefundPolicyPage` has not been created or registered.
+
+---
 
 ### 2026-06-15 — AI Exercise Creation & Junior Doctor Hierarchy (Phase 16 Completion)
 **Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
