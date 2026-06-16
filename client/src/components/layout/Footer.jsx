@@ -6,18 +6,23 @@ const Footer = () => {
 
   const footerLinks = [
     {
-      title: 'PLATFORM',
+      title: 'NAVIGATE',
       links: [
-        { label: 'FIND DOCTORS', to: '/doctors' },
-        { label: 'HOW IT WORKS', to: '/#how-it-works' },
-        { label: 'SPECIALIZATIONS', to: '/#specializations' },
-        { label: 'PRICING', to: '/pricing' },
+        { label: 'Home', to: '/' },
+        { label: 'Features', to: '/#features' },
+        { label: 'Benefits', to: '/#benefits' },
+        { label: 'Why Theralign', to: '/#how-it-works' },
+        { label: 'Testimonials', to: '/#testimonials' },
+        { label: 'Pricing', to: '/#pricing' },
+        { label: 'Contact', to: '/help' },
       ],
     },
     {
-      title: 'FOR CLINICIANS',
+      title: 'PLATFORM',
       links: [
-        { label: 'JOIN NETWORK', to: '/register' },
+        { label: 'FIND DOCTORS', to: '/doctors' },
+        { label: 'SPECIALIZATIONS', to: '/#specializations' },
+        { label: 'JOIN AS PHYSIO', to: '/register' },
         { label: 'CLINICAL STANDARDS', to: '/standards' },
         { label: 'PRACTICE MANAGEMENT', to: '/management' },
         { label: 'HELP CENTER', to: '/help' },
@@ -26,44 +31,36 @@ const Footer = () => {
     {
       title: 'LEGAL',
       links: [
-        { label: 'PRIVACY POLICY', to: '/privacy' },
-        { label: 'TERMS OF SERVICE', to: '/terms' },
-        { label: 'MEDICAL DISCLAIMER', to: '/disclaimer' },
+        { label: 'Terms & Conditions', to: '/terms' },
+        { label: 'Privacy Policy', to: '/privacy' },
+        { label: 'Refund Policy', to: '/refund' },
+        { label: 'Medical Disclaimer', to: '/disclaimer' },
       ],
     },
   ];
 
-  const SwissNavLink = ({ to, label }) => (
-    <Link to={to} className="swiss-nav-link text-[12px] font-semibold text-neutral-700 normal-case !text-[12px] !font-medium hover:text-primary transition-colors">
-      {label}
-    </Link>
-  );
-
   return (
-    <footer className="w-full bg-neutral-100 border-t-2 border-neutral-900 pt-6 pb-6">
-      <div className="max-w-[1440px] mx-auto px-6 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
-          
+    <footer className="swiss-footer">
+      <div className="swiss-footer-inner">
+        <div className="swiss-footer-top">
           {/* Brand Column */}
-          <div className="col-span-1 flex flex-col items-start gap-4">
-            <span className="font-black text-2xl tracking-tighter uppercase font-swiss text-neutral-900">
-              THERALIGN
-            </span>
-            <p className="text-[12px] text-neutral-700 font-medium">
-              India's premier verified physiotherapy marketplace. Connect with clinical specialists.
+          <div className="swiss-footer-brand">
+            <span className="swiss-footer-logo">THERALIGN</span>
+            <p className="swiss-footer-tagline">
+              India&apos;s premier verified physiotherapy marketplace. Connect with clinical specialists.
             </p>
           </div>
 
           {/* Link Columns */}
           {footerLinks.map((section, index) => (
-            <div key={index} className="col-span-1 flex flex-col gap-4">
-              <h4 className="font-bold text-[12px] text-neutral-900 uppercase tracking-[0.08em] mb-2 font-swiss">
-                {section.title}
-              </h4>
-              <ul className="flex flex-col gap-3">
+            <div key={index} className="swiss-footer-col">
+              <h4 className="swiss-footer-col-title">{section.title}</h4>
+              <ul className="swiss-footer-link-list">
                 {section.links.map((link, idx) => (
                   <li key={idx}>
-                    <SwissNavLink to={link.to} label={link.label} />
+                    <Link to={link.to} className="swiss-footer-link">
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -71,14 +68,12 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Copyright */}
-        <div className="border-t-2 border-neutral-200 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[12px] text-neutral-500 font-medium">
+        {/* Bottom bar */}
+        <div className="swiss-footer-bottom">
+          <p className="swiss-footer-copy">
             &copy; {currentYear} Theralign Inc. All rights reserved.
           </p>
-          <p className="text-[12px] text-neutral-500 font-medium uppercase tracking-[0.08em]">
-            SYSTEM D1.2
-          </p>
+          <p className="swiss-footer-version">SYSTEM D1.2</p>
         </div>
       </div>
     </footer>

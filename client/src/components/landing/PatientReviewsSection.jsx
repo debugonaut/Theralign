@@ -1,69 +1,78 @@
 import React from 'react';
-import { Quote } from 'lucide-react';
+
+const REVIEWS = [
+  {
+    quote: 'Returned to competitive running after 6 weeks of targeted therapy.',
+    name: 'MICHAEL',
+    city: 'Mumbai',
+    condition: 'POST-ACL RECONSTRUCTION',
+  },
+  {
+    quote: 'Achieved full mobility and zero pain symptoms after years of chronic back issues.',
+    name: 'SARAH',
+    city: 'Delhi',
+    condition: 'CHRONIC LOWER BACK PAIN',
+  },
+  {
+    quote: 'Restored full range of overhead motion without surgery.',
+    name: 'DAVID',
+    city: 'Bangalore',
+    condition: 'ROTATOR CUFF INJURY',
+  },
+  {
+    quote: 'The exercise prescriptions I received actually showed me exactly how to recover.',
+    name: 'PRIYA',
+    city: 'Pune',
+    condition: 'POST-SURGICAL KNEE',
+  },
+  {
+    quote: 'Booked my first appointment in under 3 minutes. My physio was exceptional.',
+    name: 'RAHUL',
+    city: 'Chennai',
+    condition: 'SPORTS INJURY',
+  },
+  {
+    quote: 'Finally a platform that treats physiotherapy as serious healthcare, not just a booking app.',
+    name: 'ANITA',
+    city: 'Hyderabad',
+    condition: 'NEUROLOGICAL REHAB',
+  },
+];
 
 const PatientReviewsSection = () => {
-  const reviews = [
-    {
-      name: 'MICHAEL T.',
-      condition: 'POST-ACL RECONSTRUCTION',
-      outcome: 'Returned to competitive running after 6 weeks of targeted therapy.',
-      rating: '5.0',
-    },
-    {
-      name: 'SARAH L.',
-      condition: 'CHRONIC LOWER BACK PAIN',
-      outcome: 'Achieved full mobility and zero pain symptoms after years of chronic issues.',
-      rating: '5.0',
-    },
-    {
-      name: 'DAVID K.',
-      condition: 'ROTATOR CUFF INJURY',
-      outcome: 'Restored full range of overhead motion without requiring surgical intervention.',
-      rating: '5.0',
-    },
-  ];
-
   return (
-    <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
-      <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-16">
-        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
-          05.
-        </span>
-        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-neutral-900 font-swiss">
+    <section className="reviews-section" id="testimonials" aria-labelledby="reviews-title">
+      {/* Section header */}
+      <div className="reviews-header">
+        <span className="swiss-section-label">05. PATIENT OUTCOMES</span>
+        <h2 id="reviews-title" className="reviews-section-title">
           PATIENT OUTCOMES
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {reviews.map((review, index) => (
-          <div
-            key={index}
-            className="bg-white border-2 border-neutral-900 p-8 relative flex flex-col hover:-translate-y-1 transition-transform duration-fast shadow-none"
-          >
-            {/* Left edge 4px red highlight */}
-            <div className="absolute left-0 top-8 bottom-8 w-1 bg-accent"></div>
+      {/* Circular card grid */}
+      <div className="reviews-grid">
+        {REVIEWS.map((review, idx) => (
+          <div key={idx} className="review-card">
+            {/* Opening quote mark */}
+            <span className="review-quote-mark" aria-hidden="true">&ldquo;</span>
 
-            <div className="pl-6 flex flex-col h-full">
-              <Quote className="w-8 h-8 text-neutral-200 mb-6" />
-              
-              <p className="text-[16px] text-neutral-900 font-medium leading-[1.6] mb-8 flex-grow">
-                "{review.outcome}"
-              </p>
-              
-              <div className="flex items-end justify-between border-t-2 border-neutral-200 pt-6">
-                <div>
-                  <h4 className="font-bold text-[14px] text-neutral-900 uppercase tracking-widest">
-                    {review.name}
-                  </h4>
-                  <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-[0.08em] mt-1 block">
-                    {review.condition}
-                  </span>
-                </div>
-                <div className="font-black text-[16px] text-neutral-900 tracking-tight flex items-center gap-1">
-                  {review.rating} <span className="text-accent">★</span>
-                </div>
-              </div>
+            {/* Quote text */}
+            <p className="review-quote">{review.quote}</p>
+
+            {/* Stars */}
+            <div className="review-stars" aria-label="5 stars">
+              ★★★★★
             </div>
+
+            {/* Name */}
+            <p className="review-name">{review.name}</p>
+
+            {/* City */}
+            <p className="review-city">{review.city}</p>
+
+            {/* Condition */}
+            <p className="review-condition">{review.condition}</p>
           </div>
         ))}
       </div>

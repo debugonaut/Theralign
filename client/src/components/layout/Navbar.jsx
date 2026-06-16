@@ -63,15 +63,22 @@ const Navbar = () => {
     return (
       <Link
         to={to}
-        className="text-sm font-medium text-neutral-500 hover:text-primary transition-colors duration-fast select-none"
+        className="swiss-nav-slide-link"
+        aria-label={label}
       >
-        {label}
+        {/* Clipping wrapper */}
+        <span className="swiss-nav-slide-wrap">
+          {/* Default black text — slides up on hover */}
+          <span className="swiss-nav-slide-default">{label}</span>
+          {/* Swiss Red text — slides in from below on hover */}
+          <span className="swiss-nav-slide-hover">{label}</span>
+        </span>
       </Link>
     );
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200 shadow-sm">
+    <nav className="swiss-navbar">
       <div className="max-w-[1440px] mx-auto px-6 sm:px-16">
         <div className="flex justify-between items-center h-16">
           
