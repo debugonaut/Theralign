@@ -1,8 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
 
   const footerLinks = [
     {
@@ -41,7 +43,7 @@ const Footer = () => {
 
   return (
     <footer className="swiss-footer">
-      <div className="swiss-footer-inner">
+      <div className={isLandingPage ? "swiss-footer-inner swiss-footer-inner--landing" : "swiss-footer-inner"}>
         <div className="swiss-footer-top">
           {/* Brand Column */}
           <div className="swiss-footer-brand">

@@ -420,13 +420,13 @@ table {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 0 120px 80px;
+  padding: 0 0 80px;
   max-width: 900px;
 }
 
 @media (max-width: 768px) {
   .hero-slider-content {
-    padding: 0 32px 64px;
+    padding: 0 0 64px;
     max-width: 100%;
   }
 }
@@ -605,12 +605,12 @@ table {
   background: #F2F2F2;
   border-top: 4px solid #000000;
   border-bottom: 4px solid #000000;
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
 }
 
 @media (max-width: 768px) {
   .features-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 
@@ -775,12 +775,12 @@ table {
   background: #FFFFFF;
   border-top: 4px solid #000000;
   border-bottom: 2px solid #000000;
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
 }
 
 @media (max-width: 768px) {
   .benefits-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 
@@ -919,13 +919,13 @@ table {
 .pricing-header {
   border-top: 4px solid #000000;
   border-bottom: 4px solid #000000;
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
   background: transparent;
 }
 
 @media (max-width: 768px) {
   .pricing-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 
@@ -942,19 +942,19 @@ table {
 .pricing-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 0 64px;
+  padding: 0;
   gap: 0;
   background: #FFFFFF;
   border-left: 3px solid #000000;
   border-right: 3px solid #000000;
-  margin: 0 64px;
+  margin: 0;
 }
 
 @media (max-width: 1024px) {
   .pricing-grid {
     grid-template-columns: 1fr;
-    padding: 0 24px;
-    margin: 0 24px;
+    padding: 0;
+    margin: 0;
   }
 }
 
@@ -1129,12 +1129,12 @@ table {
   color: #888888;
   text-align: center;
   margin-top: 40px;
-  padding: 0 64px 80px;
+  padding: 0 0 80px;
 }
 
 @media (max-width: 768px) {
   .pricing-footer-note {
-    padding: 0 32px 48px;
+    padding: 0 0 48px;
   }
 }
 
@@ -1151,12 +1151,12 @@ table {
   background: #FFFFFF;
   border-top: 4px solid #000000;
   border-bottom: 2px solid #000000;
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
 }
 
 @media (max-width: 768px) {
   .who-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 
@@ -1174,13 +1174,13 @@ table {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 32px;
-  padding: 48px 64px 80px;
+  padding: 48px 0 80px;
 }
 
 @media (max-width: 1024px) {
   .who-grid {
     grid-template-columns: repeat(2, 1fr);
-    padding: 48px 32px 64px;
+    padding: 48px 0 64px;
   }
 }
 
@@ -1283,13 +1283,13 @@ table {
 .reviews-header {
   border-top: 4px solid #000000;
   border-bottom: 2px solid #000000;
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
   background: #F2F2F2;
 }
 
 @media (max-width: 768px) {
   .reviews-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 
@@ -1643,8 +1643,17 @@ table {
   padding: 64px 64px 32px;
 }
 
+.swiss-footer-inner--landing {
+  max-width: none;
+  margin: 0;
+  padding: 64px 64px 32px;
+}
+
 @media (max-width: 768px) {
   .swiss-footer-inner {
+    padding: 48px 32px 32px;
+  }
+  .swiss-footer-inner--landing {
     padding: 48px 32px 32px;
   }
 }
@@ -1771,9 +1780,9 @@ table {
 
 .ai-section-inner {
   width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 80px 64px;
+  max-width: none;
+  margin: 0;
+  padding: 80px 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 80px;
@@ -1783,14 +1792,14 @@ table {
 @media (max-width: 1024px) {
   .ai-section-inner {
     grid-template-columns: 1fr;
-    padding: 64px 48px;
+    padding: 64px 0;
     gap: 48px;
   }
 }
 
 @media (max-width: 640px) {
   .ai-section-inner {
-    padding: 48px 24px;
+    padding: 48px 0;
     gap: 40px;
   }
 }
@@ -2147,13 +2156,13 @@ table {
 .pr-header {
   border-top: 4px solid #FF3000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
   background: #111111;
 }
 
 @media (max-width: 768px) {
   .pr-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 
@@ -2448,13 +2457,13 @@ table {
 .spec-header {
   border-top: 4px solid #000000;
   border-bottom: 4px solid #000000;
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
   background: #F2F2F2;
 }
 
 @media (max-width: 768px) {
   .spec-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 
@@ -2692,14 +2701,14 @@ table {
 }
 
 .stats-header {
-  padding: 64px 64px 48px;
+  padding: 64px 0 48px;
   border-bottom: 4px solid #000000;
   background: #F2F2F2;
 }
 
 @media (max-width: 768px) {
   .stats-header {
-    padding: 48px 32px 40px;
+    padding: 48px 0 40px;
   }
 }
 

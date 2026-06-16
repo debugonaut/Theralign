@@ -28,7 +28,7 @@ const FeaturedDoctorsSection = () => {
 
   if (loading) {
     return (
-      <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
+      <section className="py-24 w-full">
         <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-12">
           <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
             03.
@@ -64,7 +64,7 @@ const FeaturedDoctorsSection = () => {
   }
 
   return (
-    <section className="py-24 px-6 max-w-[1440px] mx-auto w-full">
+    <section className="py-24 w-full">
       <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-12">
         <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
           03.

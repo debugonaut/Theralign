@@ -77,9 +77,11 @@ const Navbar = () => {
     );
   };
 
+  const isLandingPage = location.pathname === '/';
+
   return (
     <nav className="swiss-navbar">
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-16">
+      <div className={isLandingPage ? "w-full px-6 sm:px-16" : "max-w-[1440px] mx-auto px-6 sm:px-16"}>
         <div className="flex justify-between items-center h-16">
           
           {/* Logo */}

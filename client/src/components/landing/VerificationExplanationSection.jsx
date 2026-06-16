@@ -21,8 +21,8 @@ const VerificationExplanationSection = () => {
   ];
 
   return (
-    <section className="py-24 px-6 max-w-[1440px] mx-auto w-full bg-neutral-900 text-white">
-      <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-white pb-4 mb-16 mx-0 sm:mx-6">
+    <section className="py-24 w-full bg-neutral-900 text-white">
+      <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-white pb-4 mb-16 mx-0">
         <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
           06.
         </span>
@@ -31,7 +31,7 @@ const VerificationExplanationSection = () => {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 px-0 sm:px-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 px-0">
         
         {/* Left Column (5/12) - Verification Steps */}
         <div className="lg:col-span-5 flex flex-col gap-8">

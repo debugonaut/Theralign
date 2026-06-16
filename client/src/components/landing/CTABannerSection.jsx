@@ -5,7 +5,7 @@ import Button from '../common/Button';
 const CTABannerSection = () => {
   return (
     <section className="w-full bg-neutral-900 py-24 border-y-2 border-neutral-900">
-      <div className="max-w-[1440px] mx-auto px-6 w-full text-center flex flex-col items-center">
+      <div className="w-full text-center flex flex-col items-center">
         
         <h2 className="text-[48px] sm:text-[64px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-white font-swiss mb-6 max-w-[800px]">
           READY TO FEEL BETTER?

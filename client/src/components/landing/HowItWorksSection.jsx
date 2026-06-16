@@ -24,7 +24,7 @@ const HowItWorksSection = () => {
       {/* Background Grid Pattern */}
       <div className="absolute inset-0  pointer-events-none" />
 
-      <div className="max-w-[1440px] mx-auto px-6 w-full relative z-10">
+      <div className="w-full relative z-10">
         <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-neutral-900 pb-4 mb-16">
           <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
             02.
