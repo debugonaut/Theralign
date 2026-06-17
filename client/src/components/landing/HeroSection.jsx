@@ -12,34 +12,28 @@ const HeroSection = () => {
 
   return (
     <>
-      {/* Hero Section Asymmetric */}
+      {/* Hero Section Centered */}
       <section 
-        className="w-full bg-white border-b-4 border-obsidian min-h-[85vh] flex items-center"
+        className="w-full bg-white border-b-4 border-obsidian min-h-[85vh] flex items-center justify-center"
         id="ai-matching"
         aria-labelledby="ai-section-title"
       >
-        <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-16 grid grid-cols-12 items-center py-12 md:py-20">
-          {/* Left Asymmetric Whitespace Column */}
-          <div className="hidden lg:flex col-span-2 h-full items-start border-r-2 border-obsidian/10 min-h-[300px]"></div>
-
-          {/* Right Content Column */}
-          <div className="col-span-12 lg:col-span-10 lg:pl-16">
-            <div className="max-w-4xl">
-              <p className="text-ui-sm text-accent-coral mb-4 uppercase tracking-widest font-bold font-swiss">
-                01. AI DOCTOR MATCHING
-              </p>
-              <h1 id="ai-section-title" className="text-display-sm sm:text-display-md uppercase mb-6 leading-[0.95] font-black font-swiss text-obsidian">
-                DESCRIBE YOUR PAIN.<br />
-                <span className="text-primary-container">WE FIND YOUR SPECIALIST.</span>
-              </h1>
-              <p className="text-ui-md sm:text-ui-lg text-neutral-500 mb-8 max-w-2xl font-regular font-swiss">
-                Our AI analyses your symptoms, condition history, and location to match you with the right verified physiotherapist — in seconds. No referral. No waiting list. Just clinical precision.
-              </p>
-              
-              {/* Diagnostic Input Box */}
-              <div className="w-full max-w-3xl">
-                <SymptomSearchBox onSpecializationFound={handleSpecializationFound} />
-              </div>
+        <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-16 py-12 md:py-20 flex justify-center">
+          <div className="w-full max-w-3xl flex flex-col text-left">
+            <p className="text-ui-sm text-accent-coral mb-4 uppercase tracking-widest font-bold font-swiss">
+              01. AI DOCTOR MATCHING
+            </p>
+            <h1 id="ai-section-title" className="text-display-sm sm:text-display-md uppercase mb-6 leading-[0.95] font-black font-swiss text-obsidian">
+              DESCRIBE YOUR PAIN.<br />
+              <span className="text-primary-container">WE FIND YOUR SPECIALIST.</span>
+            </h1>
+            <p className="text-ui-md sm:text-ui-lg text-neutral-500 mb-8 max-w-2xl font-regular font-swiss">
+              Our AI analyses your symptoms, condition history, and location to match you with the right verified physiotherapist — in seconds. No referral. No waiting list. Just clinical precision.
+            </p>
+            
+            {/* Diagnostic Input Box */}
+            <div className="w-full">
+              <SymptomSearchBox onSpecializationFound={handleSpecializationFound} />
             </div>
           </div>
         </div>
