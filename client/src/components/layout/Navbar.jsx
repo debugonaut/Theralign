@@ -98,7 +98,7 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 bg-white border-b-4 border-obsidian w-full select-none">
       <div className={isLandingPage ? "w-full px-6 sm:px-16" : "max-w-[1440px] mx-auto px-6 sm:px-16"}>
-        <div className="flex justify-between items-center h-20">
+        <div className="relative flex justify-between items-center h-20">
           
           {/* Logo Column */}
           <div className="flex items-center">
@@ -129,8 +129,8 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex md:items-center md:gap-5">
+          {/* Desktop Navigation Links — absolutely centered */}
+          <div className="hidden md:absolute md:left-1/2 md:-translate-x-1/2 md:flex md:items-center">
             <div className="flex items-center gap-4">
               {currentRoleLinks.map((link) => {
                 if (link.isExplore) {
@@ -178,10 +178,10 @@ const Navbar = () => {
               })}
             </div>
 
-            {/* Vertical Divider */}
-            <div className="h-6 w-px bg-neutral-200 mx-2" />
+          </div>
 
-            {/* Authentication actions / Logged-in Menu */}
+          {/* Auth — right side */}
+          <div className="hidden md:flex md:items-center md:gap-4">
             <div className="flex items-center gap-4">
               {user ? (
                 <div className="flex items-center gap-4">
@@ -237,7 +237,7 @@ const Navbar = () => {
                   <Link to="/login" className="text-[11px] font-black text-primary tracking-widest uppercase hover:text-secondary-container transition-colors py-2 px-1 select-none">
                     LOG IN
                   </Link>
-                  <Link to="/register" className="bg-primary hover:bg-primary-dark text-white border-2 border-primary px-5 py-2.5 font-black text-[11px] tracking-widest uppercase rounded-none transition-all duration-fast select-none">
+                  <Link to="/register" className="bg-primary text-white border-2 border-primary px-5 py-2.5 font-black text-[11px] tracking-widest uppercase rounded-none transition-all duration-200 select-none hover:bg-white hover:text-primary">
                     GET STARTED
                   </Link>
                 </div>
