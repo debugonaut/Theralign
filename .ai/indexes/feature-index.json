@@ -748,32 +748,6 @@
       "stale": false
     },
     {
-      "id": "ai-exercise-creation",
-      "name": "AI Exercise Creation",
-      "phase": 16,
-      "description": "Generate structured clinical exercise prescriptions using natural language prompts powered by Llama 3.1 8B. Save custom exercises to local browser storage, merge them with the visual library, and assign them directly to prescriptions.",
-      "userRoles": ["doctor"],
-      "routes": ["/doctor/appointments/:appointmentId/session-record"],
-      "apiEndpoints": [
-        { "method": "POST", "path": "/api/ai/generate-exercise" }
-      ],
-      "components": [
-        "client/src/components/exercises/AIExerciseCreatorModal.jsx",
-        "client/src/components/exercises/ExerciseLibraryModal.jsx"
-      ],
-      "models": [],
-      "controllers": ["server/src/controllers/ai.controller.js"],
-      "services": ["server/src/services/aiService.js"],
-      "relatedFeatures": ["session-notes-creation"],
-      "knownConstraints": [
-        "Rate-limited to 10 requests per minute per doctor",
-        "Persisted in local storage using customExerciseStore",
-        "Custom badge and hover deletion in ExerciseLibraryModal"
-      ],
-      "lastUpdated": "2026-06-15T13:40:00Z",
-      "stale": false
-    },
-    {
       "id": "junior-doctor-hierarchy",
       "name": "Junior Doctor Hierarchy",
       "phase": 16,

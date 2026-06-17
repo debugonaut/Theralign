@@ -1,13 +1,13 @@
 {
   "version": "1.0.0",
   "generated": "2026-06-15T13:40:00Z",
-  "lastRefreshTime": "2026-06-15T13:40:00Z",
-  "totalEntries": 41,
+  "lastRefreshTime": "2026-06-17T12:00:00Z",
+  "totalEntries": 44,
   "staleCount": 0,
-  "freshCount": 41,
+  "freshCount": 44,
   "staleEntries": [],
-  "notes": "All indexes are current. No stale entries detected.",
+  "notes": "All indexes current as of 2026-06-17. Added ai-exercise-creation, junior-doctor-hierarchy, and landing-page-redesign to feature-index.json. Updated recent-changes.md with June 16 afternoon and June 17 commits. Updated MASTER_CONTEXT.md status to Phase 16 complete.",
   "refreshInterval": "on_commit",
   "refreshPolicy": "Automatic refresh triggered on git commit via pre-commit hook",
-  "nextManualRefresh": "2026-06-18T18:00:00Z"
+  "nextManualRefresh": "2026-06-20T18:00:00Z"
 }

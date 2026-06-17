@@ -475,6 +475,132 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ---
 
+### June 16, 2026 — Day 6: Swiss Brutalist Landing Page Redesign & Partial somechanges.md Integration
+
+**Commits:**
+- `7e6989b` — patient review page converted to carousel slider
+- `641ec41` — fix: Landing page updated
+
+**Files Created/Modified (Staged & Working):**
+- **New Frontend Components:**
+  - `client/src/components/landing/HeroSliderSection.jsx` [NEW] — 100vh full-screen image slider with Browse Doctors and Join as Physio CTA buttons placed directly on the image. Set main header text to "FIND THE RIGHT THERAPIST NEAR YOU." and taglines as subheadings.
+  - `client/src/components/landing/BenefitsGridSection.jsx` [NEW] — Swiss Brutalist checkerboard benefits grid with invert hover transitions.
+  - `client/src/components/landing/FeaturesZigzagSection.jsx` [NEW] — Alternate 50/50 grayscale-to-color interactive image blocks.
+  - `client/src/components/landing/WhoCanUseSection.jsx` [NEW] — Static patient target category circles (dashed rings removed).
+- **Frontend Enhancements:**
+  - `client/src/components/landing/HeroSection.jsx` [MODIFY] — Redesigned AI Doctor Matching Section: removed BookingConfirmationCard entirely; redesigned to focus on AI doctor search with a professional header and 3 feature summary cards.
+  - `client/src/components/landing/PatientReviewsSection.jsx` [MODIFY] — Converted reviews into a dark-themed horizontal carousel with custom sliding transitions, star-ratings progress, and autoplay/pause-on-hover logic.
+  - `client/src/components/landing/PricingTiersSection.jsx` [MODIFY] — Rounded cards, elevated dark-themed "Pro Patient" center card, pill-shaped action buttons.
+  - `client/src/components/layout/Footer.jsx` [MODIFY] — Updated footer styling and links structure.
+  - `client/src/components/layout/Navbar.jsx` [MODIFY] — Polished navigation links and header styling.
+  - `client/src/pages/public/LandingPage.jsx` [MODIFY] — Restructured and reordered sections per correct hierarchy spec; removed TrustBar.
+  - `client/src/styles/index.css` [MODIFY] — Added layout styling, typography adjustments, spacing rules, and color configurations.
+
+**Work Accomplished:**
+1. **Full-Screen Hero Slider (#2 & #3):** 100vh hero slider with physiotherapy photography, CTA buttons overlaid directly on the image, heading "FIND THE RIGHT THERAPIST NEAR YOU." as primary with taglines as subheadings.
+2. **AI Doctor Matching Section Redesign (#4):** Removed `BookingConfirmationCard`, replaced with AI capability focus header and 3 clean feature-summary cards.
+3. **Removed Trust Banner (#5):** Completely removed `TrustBar` to reduce visual noise.
+4. **Testimonials Slider Overhaul (#13 & #10):** Dark-background horizontal slider with circular patient photo, rating stars, custom navigation controls, and autoplay/pause-on-hover. Removed all dotted rotating circular rings across the application.
+5. **Pricing Section Redesign (#6):** 3-column tiers with two light side cards and an elevated dark center card ("Pro Patient"), rounded borders, pill-shaped buttons.
+6. **Section Reordering (#11):** Set up correct landing page sequence: Hero Slider → AI Matching → Areas of Care → Features → Why Theralign → How It Works → Statistics → Featured Doctors → Reviews → Pricing → Clinical Verification → CTA Banner.
+
+**Learning:** Swiss Brutalist layouts, advanced CSS slider transitions, hover-based interactive states, component refactoring, section reordering rules.
+
+**Commits Pushed:** 2 commits
+
+---
+
+### June 16, 2026 (Afternoon) — Day 6 Continued: Coverflow Carousel, Animated Stats & RefundPolicyPage
+
+**Commits:**
+- `0a34bce` — feat(landing): implement coverflow carousel, animated stats, and refund policy
+- `97dfacf` — removed side margins from landing page
+
+**Files Created/Modified:**
+- `client/src/components/landing/SpecializationsSection.jsx` [MODIFY — coverflow carousel]
+- `client/src/components/landing/StatsBar.jsx` [MODIFY — animated counters]
+- `client/src/pages/public/RefundPolicyPage.jsx` [NEW]
+- `client/src/routes/AppRoutes.jsx` [MODIFY]
+- `client/src/components/landing/CTABannerSection.jsx` [MODIFY]
+- `client/src/components/landing/FeaturedDoctorsSection.jsx` [MODIFY]
+- `client/src/components/landing/HowItWorksSection.jsx` [MODIFY]
+- `client/src/components/landing/VerificationExplanationSection.jsx` [MODIFY]
+- `client/src/components/layout/Navbar.jsx` [MODIFY]
+- `client/src/components/layout/Footer.jsx` [MODIFY]
+- `client/src/components/layout/PublicLayout.jsx` [MODIFY]
+- `client/src/styles/index.css` [MODIFY — 1,507-line total with layout tokens]
+
+**Work Accomplished:**
+1. **Coverflow Specializations Carousel (#9 resolved):** Replaced the static grid in `SpecializationsSection.jsx` with a CSS 3D perspective coverflow carousel. Each specialization tile rotates and scales on hover using `transform-style: preserve-3d`.
+2. **Animated Stats Counters (#8 partially resolved):** Rewrote `StatsBar.jsx` with IntersectionObserver-triggered count-up animations. Numbers animate to their final values when the section enters the viewport.
+3. **RefundPolicyPage (#12 resolved):** Created `RefundPolicyPage.jsx` (135 lines) detailing refund timelines, eligibility, and contact information. Registered the `/refund` route in `AppRoutes.jsx`.
+4. **Full-Width Layout (#1 partially resolved):** Removed horizontal padding/margin wrappers from six layout components. Updated `PublicLayout.jsx` for edge-to-edge sections.
+
+**Remaining deferred items from somechanges.md:**
+- #7: 100vh height on all main landing sections (other than hero)
+- #1: Not all sections are full viewport width yet
+- #8: Stats are animated counters — not chart/graph visualizations
+
+**Learning:** CSS 3D transforms and perspective, IntersectionObserver API, route registration patterns, full-bleed layout patterns
+
+**Commits Pushed:** 2 commits
+
+---
+
+### June 17, 2026 — Day 7: AI Section Redesign & Component Architecture Refinement
+
+**Commits:**
+- `e880c27` — AI component redesigned
+- `0bef0c4` — centered the ai redesigned part
+- `dab6f1e` — AI component split into two parts
+- `b737f59` — removed comments from all components from landing page
+- `7becb6d` — fix
+
+**Files Created/Modified:**
+- **New Frontend Components:**
+  - `client/src/components/landing/AIProductDemo.jsx` [NEW] — 491-line standalone AI product demo section extracted from `HeroSection.jsx`. Renders the AI symptom-to-doctor matching experience with clean floating card design.
+  - `References/stitch_floating_pill_pricing_design(1)/code.html` [NEW] — Reference design for floating pill pricing pattern.
+  - `References/stitch_floating_pill_pricing_design(1)/screen.png` [NEW] — Reference screenshot.
+  - `References/geriatric.jpg` [NEW] — Reference geriatric patient photo.
+- **Frontend Enhancements:**
+  - `client/src/components/landing/HeroSection.jsx` [MODIFY] — Stripped AI card content out; HeroSection now renders the pure section wrapper only.
+  - `client/src/components/ai/SymptomSearchBox.jsx` [MODIFY] — Simplified and cleaned up for standalone use within `AIProductDemo.jsx`.
+  - `client/src/components/ai/AIRecommendationCard.jsx` [MODIFY] — Reduced from cluttered layout to minimal clean card format.
+  - `client/src/pages/public/LandingPage.jsx` [MODIFY] — Integrated `AIProductDemo` as a discrete section, stripped developer comments, added missing section imports.
+  - `client/src/components/layout/PublicLayout.jsx` [MODIFY] — Minor layout rendering fix.
+  - `client/src/styles/index.css` [MODIFY] — Additional layout tokens and animation keyframes.
+  - `client/tailwind.config.js` [MODIFY] — Extended with new utility aliases for AI section spacing.
+
+**Work Accomplished:**
+
+1. **AI Section Architecture Redesign:**
+   - Identified that the AI doctor-matching feature was embedded awkwardly inside `HeroSection.jsx`, causing layout conflicts and making it impossible to position independently.
+   - Extracted the entire AI product demo experience (symptom input → AI recommendation cards → CTA) into a new dedicated `AIProductDemo.jsx` component (491 lines).
+   - Reduced `HeroSection.jsx` to its structural role (full-screen image overlay + CTAs), separating concerns correctly.
+   - Redesigned `SymptomSearchBox` and `AIRecommendationCard` for a cleaner, more focused single-purpose UI.
+
+2. **Layout Centering & Alignment Pass:**
+   - Applied proper flexbox centering to the AI section across viewport widths.
+   - Fixed overflow and alignment edge cases exposed after the extraction.
+
+3. **Code Hygiene Pass:**
+   - Removed all developer comments from `LandingPage.jsx` for production cleanliness.
+
+4. **Final Landing Page Fix:**
+   - Addressed a `PublicLayout.jsx` rendering regression from the margin-removal commit.
+   - Restored missing section imports in `LandingPage.jsx`.
+
+**Technical Skills Demonstrated:**
+- React component extraction and architectural separation of concerns
+- Standalone component design (self-contained props, no parent state leakage)
+- CSS flexbox centering across breakpoints
+- Production code hygiene (comment removal, dead code cleanup)
+- Iterative UI debugging and layout fix workflow
+
+**Commits Pushed:** 5 commits to `origin/main`
+
+---
+
 ## Work Summary by Category
 
 ### Backend Development
@@ -524,6 +650,19 @@ This document logs all development work, bug fixes, features implemented, and le
 | localStorage custom exercise store | June 15 | ✅ Live |
 | PracticeManagement team roster & invite settings | June 15 | ✅ Complete |
 | JuniorDoctorDashboard & conditional rendering | June 15 | ✅ Deployed |
+| Hero Slider (100vh full-screen) | June 16 | ✅ Live |
+| AI Doctor Matching section redesign | June 16 | ✅ Complete |
+| Dark testimonial carousel | June 16 | ✅ Shipped |
+| Pricing tiers redesign (elevated center card) | June 16 | ✅ Live |
+| TrustBar removed | June 16 | ✅ Done |
+| Landing page section reordering | June 16 | ✅ Applied |
+| Coverflow specializations carousel | June 16 | ✅ Complete |
+| Animated stats counters (IntersectionObserver) | June 16 | ✅ Live |
+| RefundPolicyPage & /refund route | June 16 | ✅ Deployed |
+| Full-width layout (side margins removed) | June 16 | ✅ Applied |
+| AIProductDemo component extraction | June 17 | ✅ Live |
+| SymptomSearchBox & AIRecommendationCard redesign | June 17 | ✅ Shipped |
+| Landing page code hygiene (comment removal) | June 17 | ✅ Done |
 
 ### Bug Fixes & Security
 
@@ -633,10 +772,10 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ## Code Quality Metrics
 
-- **Total Commits:** 96+ commits over 11 days (pre-joining + 4 internship days)
-- **Files Modified:** 180+ files across frontend and backend
-- **Bug Fixes:** 30+ bugs identified and resolved
-- **Features Shipped:** 21+ major features delivered to production
+- **Total Commits:** 110+ commits over 13 days (pre-joining + 7 internship days)
+- **Files Modified:** 210+ files across frontend and backend
+- **Bug Fixes:** 35+ bugs identified and resolved
+- **Features Shipped:** 30+ major features delivered to production
 - **Documentation:** Complete API reference, .ai indexing architecture, and code patterns documented; design language consolidated into single source of truth
 - **Code Coverage:** Production-grade error handling, validation, and security
 
@@ -666,9 +805,16 @@ This document logs all development work, bug fixes, features implemented, and le
 ✅ Exercise Video Modal — design system alignment  
 ✅ Global design tokens (CSS custom properties + Tailwind aliases)  
 ✅ Design language documentation consolidated into MASTER_CONTEXT.md  
+✅ Landing page Swiss Brutalist redesign (hero slider, pricing redesign, testimonial carousel)  
+✅ Coverflow specializations carousel (CSS 3D perspective)  
+✅ Animated statistics counters (IntersectionObserver count-up)  
+✅ RefundPolicyPage — `/refund` 404 resolved  
+✅ AIProductDemo component — AI section architecture decoupled from HeroSection  
+✅ Full-width landing page layout (side margins removed)  
 
 ### In Progress
 🔄 Phase 17 — Telemedicine design and backend scoping  
+🔄 Landing page remaining deferred items: 100vh sections (#7), chart-based stats (#8), full viewport width (#1)
 
 ---
 
@@ -682,69 +828,36 @@ This document logs all development work, bug fixes, features implemented, and le
 
 ## Conclusion
 
-During the first 4 days of this internship (June 11-15, 2026), I've successfully:
+During the first 7 days of this internship (June 11-17, 2026), I've successfully:
 
 1. Shipped Phase 14 (Session Records & Care Continuity) full-stack feature
 2. Shipped Phase 15 (Visual Exercise Library & Prescription Duration System) full-stack features
-3. Integrated Appointment Media System with multi-role support
-4. Fixed 12+ critical bugs affecting financial, notification, layout, and authorization systems
-5. Enhanced doctor profile presentation with larger avatars
-6. Implemented patient symptom upload functionality
-7. Created comprehensive knowledge base documentation
-8. Executed 3+ full redesign iterations on the Phase 14 UI to deliver a bold Swiss-minimalist visual system
-9. Built a 4-stepper navigation structure for the patient care timeline
-10. Revamped the exercise tab with a structured catalogue selection system
-11. Completely redesigned the Exercise Library Modal to match the project-wide Swiss minimalist design language through 3 iterative passes
-12. Aligned the Exercise Video Modal with the same design system tokens
-13. Established and shipped global design tokens (CSS custom properties + Tailwind config aliases) as the canonical source for shadows, transitions, and typography
-14. Consolidated all design language documentation into a single MASTER_CONTEXT.md source of truth
-15. Upgraded exercise cards to utilize dynamic YouTube thumbnails rather than SVGs
+3. Shipped Phase 16 (AI Exercise Creation & Junior Doctor Hierarchy) full-stack features
+4. Integrated Appointment Media System with multi-role support
+5. Fixed 15+ critical bugs affecting financial, notification, layout, and authorization systems
+6. Enhanced doctor profile presentation with larger avatars
+7. Implemented patient symptom upload functionality
+8. Created comprehensive knowledge base documentation
+9. Executed 3+ full redesign iterations on the Phase 14 UI to deliver a bold Swiss-minimalist visual system
+10. Built a 4-stepper navigation structure for the patient care timeline
+11. Revamped the exercise tab with a structured catalogue selection system
+12. Completely redesigned the Exercise Library Modal to match the project-wide Swiss minimalist design language through 3 iterative passes
+13. Aligned the Exercise Video Modal with the same design system tokens
+14. Established and shipped global design tokens (CSS custom properties + Tailwind config aliases) as the canonical source for shadows, transitions, and typography
+15. Consolidated all design language documentation into a single MASTER_CONTEXT.md source of truth
+16. Upgraded exercise cards to utilize dynamic YouTube thumbnails rather than SVGs
+17. Executed a full Swiss Brutalist landing page redesign: 100vh hero slider, dark testimonial carousel, elevated pricing tiers, TrustBar removal, and section reordering
+18. Implemented Coverflow CSS 3D carousel for the specializations section
+19. Built IntersectionObserver-triggered animated statistics counters
+20. Created and registered RefundPolicyPage — resolving the footer `/refund` 404
+21. Extracted AIProductDemo as a standalone, architecturally clean component
+22. Applied full-width layout across all landing sections (side margins removed)
 
-The work demonstrates proficiency in full-stack development, iterative UI design, design system enforcement, problem-solving, security awareness, and documentation excellence. All code is production-ready and deployed to live servers serving real users.
-
----
-
-### June 16, 2026 — Day 6: Swiss Brutalist Landing Page Redesign & Partial somechanges.md Integration
-
-**Commits:**
-- `7e6989b` — patient review page converted to carousel slider
-- `641ec41` — fix: Landing page updated
-
-**Files Created/Modified (Staged & Working):**
-- **New Frontend Components**:
-  - `client/src/components/landing/HeroSliderSection.jsx` [NEW] — 100vh full-screen image slider with Browse Doctors and Join as Physio CTA buttons placed directly on the image. Set main header text to "FIND THE RIGHT THERAPIST NEAR YOU." and taglines as subheadings.
-  - `client/src/components/landing/BenefitsGridSection.jsx` [NEW] — Swiss Brutalist checkerboard benefits grid with invert hover transitions.
-  - `client/src/components/landing/FeaturesZigzagSection.jsx` [NEW] — Alternate 50/50 grayscale-to-color interactive image blocks.
-  - `client/src/components/landing/WhoCanUseSection.jsx` [NEW] — Static patient target category circles (dashed rings removed).
-- **Frontend Enhancements**:
-  - `client/src/components/landing/HeroSection.jsx` [MODIFY] — Redesigned AI Doctor Matching Section: removed BookingConfirmationCard entirely; redesigned to focus on AI doctor search with a professional header and 3 feature summary cards.
-  - `client/src/components/landing/PatientReviewsSection.jsx` [MODIFY] — Redesigned Patient Reviews Section: converted reviews into a dark-themed horizontal carousel with custom sliding transitions, star-ratings progress, and autoplay/pause-on-hover logic.
-  - `client/src/components/landing/PricingTiersSection.jsx` [MODIFY] — Redesigned Pricing Section: rounded cards, elevated dark-themed "Pro Patient" center card, pill-shaped action buttons.
-  - `client/src/components/layout/Footer.jsx` [MODIFY] — Updated footer styling and links structure.
-  - `client/src/components/layout/Navbar.jsx` [MODIFY] — Polished navigation links and header styling.
-  - `client/src/pages/public/LandingPage.jsx` [MODIFY] — Restructured and reordered sections per correct hierarchy spec (AI feature box, specializations, features, benefits, how it works, stats, doctors, reviews, pricing, verification, CTA banner); removed TrustBar.
-  - `client/src/styles/index.css` [MODIFY] — Added layout styling, typography adjustments, spacing rules, and color configurations matching the Swiss Brutalist layout requirements.
-
-**Work Accomplished:**
-1. **Full-Screen Hero Slider (#2 & #3):** Created a full viewport height (100vh) hero slider with physiotherapy photography. Positioned critical calls-to-action (Browse Doctors & Join as a Physiotherapist) directly on top of the hero image overlay. Refactored heading text to "FIND THE RIGHT THERAPIST NEAR YOU." as primary, displaying taglines as subheadings.
-2. **AI Doctor Matching Section Redesign (#4):** Purged `BookingConfirmationCard` from this view. Redesigned section focus on AI capability, adding high-impact typography headers and 3 clean feature-summary detail cards.
-3. **Removed Trust Banner (#5):** Completely removed the `TrustBar` component to clear visual noise.
-4. **Testimonials Slider Overhaul (#13 & #10):** Transformed the testimonials section to a dark background horizontal slider. Restructured layout to place a large circular grayscale patient photo side-by-side with reviews text, rating stars, and customized navigation controls. Removed all dotted rotating circular rings across the application.
-5. **Pricing Section Redesign (#6):** Redesigned the 3-column pricing tier component. Configured two light cards on the side and an elevated dark card in the center ("Pro Patient"), with rounded borders and pill-shaped action buttons.
-6. **Correct Section Reordering (#11):** Set up correct landing page sequence in `LandingPage.jsx`.
-
-**Deferred / Incomplete Requirements from somechanges.md:**
-- **Expand Page Width (#1)**: Section widths not yet expanded to full viewport boundaries.
-- **Full Viewport Sections (#7)**: Main landing sections do not take 100vh height.
-- **Platform Scale Charts (#8)**: Numbers are still static, no charts/graphs implemented.
-- **Coverflow Specializations Carousel (#9)**: Specializations remains as a responsive grid layout.
-- **Footer Links & Refund Policy (#12)**: The `/refund` path is referenced in the footer but returning a 404 since `RefundPolicyPage` has not been created or registered.
-
-**Learning:** Swiss Brutalist layouts, advanced CSS slider transitions, hover-based interactive states, components layout refactoring, section reordering rules.
+The work demonstrates proficiency in full-stack development, iterative UI design, design system enforcement, component architecture, problem-solving, security awareness, and documentation excellence. All code is production-ready and deployed to live servers.
 
 ---
 
-**Document Last Updated:** June 16, 2026 (14:12 IST)  
+**Document Last Updated:** June 17, 2026 (13:00 IST)  
 **Internship Duration:** Ongoing  
 **Status:** Active Development  
 **College Submission:** Ready for Review
