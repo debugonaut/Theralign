@@ -304,7 +304,7 @@ table {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #FF3000;
+  color: #F4845F;
   margin-bottom: 12px;
 }
 
@@ -767,14 +767,14 @@ table {
    ============================================================ */
 .benefits-section {
   width: 100%;
-  background: #FFFFFF;
+  background: #f7f9ff;
   min-height: 100vh;
 }
 
 .benefits-header {
-  background: #FFFFFF;
-  border-top: 4px solid #000000;
-  border-bottom: 2px solid #000000;
+  background: #ffffff;
+  border-top: 4px solid #061d30;
+  border-bottom: 2px solid #061d30;
   padding: 64px 0 48px;
 }
 
@@ -788,7 +788,7 @@ table {
   font-family: 'Inter', sans-serif;
   font-size: clamp(36px, 4vw, 56px);
   font-weight: 900;
-  color: #000000;
+  color: #061d30;
   text-transform: uppercase;
   letter-spacing: -0.02em;
   margin: 0;
@@ -797,7 +797,7 @@ table {
 .benefits-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-bottom: 2px solid #000000;
+  border-bottom: 2px solid #061d30;
 }
 
 @media (max-width: 768px) {
@@ -808,8 +808,8 @@ table {
 
 .benefit-box {
   padding: 56px 64px;
-  border-right: 2px solid #000000;
-  border-bottom: 2px solid #000000;
+  border-right: 2px solid #061d30;
+  border-bottom: 2px solid #061d30;
   position: relative;
   cursor: default;
   transition: background-color 150ms linear, color 150ms linear;
@@ -825,37 +825,37 @@ table {
   }
 }
 
-/* Checkerboard backgrounds */
-.benefit-box--white { background: #FFFFFF; }
+/* Checkerboard backgrounds per DESIGN(1).md */
+.benefit-box--white { background: #ffffff; }
 .benefit-box--gray {
-  background: #F2F2F2;
-  background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background: #edf4ff;
+  background-image: radial-gradient(circle, rgba(11,79,108,0.12) 1px, transparent 1px);
   background-size: 16px 16px;
 }
 .benefit-box--gray-grid {
-  background: #F2F2F2;
+  background: #e3efff;
   background-image:
-    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(11,79,108,0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11,79,108,0.08) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
-/* Hover: entire box snaps to black */
+/* Hover: entire box snaps to obsidian */
 .benefit-box:hover {
-  background: #000000 !important;
+  background: #061d30 !important;
 }
 
 .benefit-box:hover .benefit-icon-wrap {
-  border-color: #FFFFFF;
-  background: #000000;
+  border-color: #ffffff;
+  background: #061d30;
 }
 
 .benefit-box:hover .benefit-icon-wrap svg {
-  color: #FF3000;
+  color: #F4845F;
 }
 
 .benefit-box:hover .benefit-box-title {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .benefit-box:hover .benefit-box-desc {
@@ -866,13 +866,13 @@ table {
 .benefit-icon-wrap {
   width: 56px;
   height: 56px;
-  border: 3px solid #000000;
-  background: #FFFFFF;
+  border: 3px solid #061d30;
+  background: #ffffff;
   border-radius: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FF3000;
+  color: #0b4f6c;
   transition: border-color 150ms linear, background-color 150ms linear;
   flex-shrink: 0;
 }
@@ -881,7 +881,7 @@ table {
   font-family: 'Inter', sans-serif;
   font-size: 22px;
   font-weight: 800;
-  color: #000000;
+  color: #061d30;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   margin-top: 24px;
