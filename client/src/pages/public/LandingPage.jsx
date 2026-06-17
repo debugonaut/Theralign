@@ -1,16 +1,16 @@
 
-// import HeroSliderSection from '../../components/landing/HeroSliderSection';
+import HeroSliderSection from '../../components/landing/HeroSliderSection';
 import HeroSection from '../../components/landing/HeroSection';
-// import SpecializationsSection from '../../components/landing/SpecializationsSection';
-// import FeaturesZigzagSection from '../../components/landing/FeaturesZigzagSection';
-// import BenefitsGridSection from '../../components/landing/BenefitsGridSection';
-// import HowItWorksSection from '../../components/landing/HowItWorksSection';
-// import StatsBar from '../../components/landing/StatsBar';
-// import FeaturedDoctorsSection from '../../components/landing/FeaturedDoctorsSection';
-// import PatientReviewsSection from '../../components/landing/PatientReviewsSection';
-// import PricingTiersSection from '../../components/landing/PricingTiersSection';
-// import VerificationExplanationSection from '../../components/landing/VerificationExplanationSection';
-// import CTABannerSection from '../../components/landing/CTABannerSection';
+import SpecializationsSection from '../../components/landing/SpecializationsSection';
+import FeaturesZigzagSection from '../../components/landing/FeaturesZigzagSection';
+import BenefitsGridSection from '../../components/landing/BenefitsGridSection';
+import HowItWorksSection from '../../components/landing/HowItWorksSection';
+import StatsBar from '../../components/landing/StatsBar';
+import FeaturedDoctorsSection from '../../components/landing/FeaturedDoctorsSection';
+import PatientReviewsSection from '../../components/landing/PatientReviewsSection';
+import PricingTiersSection from '../../components/landing/PricingTiersSection';
+import VerificationExplanationSection from '../../components/landing/VerificationExplanationSection';
+import CTABannerSection from '../../components/landing/CTABannerSection';
 
 const LandingPage = () => {
   return (
