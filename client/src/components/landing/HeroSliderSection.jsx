@@ -71,7 +71,7 @@ const HeroSliderSection = () => {
       onMouseLeave={() => setIsHovered(false)}
       aria-label="Theralign hero section"
     >
-      {/* Slide track */}
+      {/* Slide track — ONLY background images */}
       <div
         className="hero-slider-track"
         style={{ transform: `translateX(-${current * 100}%)` }}
@@ -82,48 +82,49 @@ const HeroSliderSection = () => {
             className="hero-slider-slide"
             aria-hidden={idx !== current}
           >
-            {/* Background image */}
             <img
               src={`https://images.unsplash.com/photo-${slide.imageId}?w=1920&q=90&fit=crop`}
               alt=""
               className="hero-slider-img"
               loading={idx === 0 ? 'eager' : 'lazy'}
             />
-
-            {/* Dark gradient overlay */}
-            <div className="hero-slider-overlay" />
-
-            {/* Content */}
-            <div className="hero-slider-content">
-              {/* Swiss Red label */}
-              <span className="hero-slider-label">
-                THERALIGN — VERIFIED PHYSIOTHERAPY PLATFORM
-              </span>
-
-              {/* Primary heading — constant across all slides */}
-              <h1 className="hero-slider-heading">
-                FIND THE RIGHT THERAPIST<br />
-                <span className="hero-slider-heading-accent">NEAR YOU.</span>
-              </h1>
-
-              {/* Tagline — slide-specific subheading */}
-              <p className="hero-slider-tagline">{slide.tagline}</p>
-
-              {/* Description */}
-              <p className="hero-slider-description">{slide.description}</p>
-
-              {/* CTA Buttons */}
-              <div className="hero-slider-cta-row">
-                <Link to="/doctors" className="hero-slider-cta hero-slider-cta--primary">
-                  BROWSE DOCTORS →
-                </Link>
-                <Link to="/register" className="hero-slider-cta hero-slider-cta--ghost">
-                  JOIN AS A PHYSIOTHERAPIST →
-                </Link>
-              </div>
-            </div>
           </div>
         ))}
+      </div>
+
+      {/* Stationary Dark Overlay */}
+      <div className="hero-slider-overlay" />
+
+      {/* Stationary Content Container (aligned with the grid layout!) */}
+      <div className="absolute inset-0 z-20 flex items-center pointer-events-none">
+        <div className="max-w-6xl mx-auto px-6 w-full relative h-full flex flex-col justify-center pointer-events-auto">
+          <div className="hero-slider-content">
+            <span className="hero-slider-label">
+              THERALIGN — VERIFIED PHYSIOTHERAPY PLATFORM
+            </span>
+
+            <h1 className="hero-slider-heading">
+              FIND THE RIGHT THERAPIST<br />
+              <span className="hero-slider-heading-accent">NEAR YOU.</span>
+            </h1>
+
+            {/* Slide-specific dynamic text with transition key */}
+            <div key={current} className="animate-fade-in flex flex-col">
+              <p className="hero-slider-tagline">{SLIDES[current].tagline}</p>
+              <p className="hero-slider-description">{SLIDES[current].description}</p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="hero-slider-cta-row">
+              <Link to="/doctors" className="hero-slider-cta hero-slider-cta--primary">
+                BROWSE DOCTORS →
+              </Link>
+              <Link to="/register" className="hero-slider-cta hero-slider-cta--ghost">
+                JOIN AS A PHYSIOTHERAPIST →
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Left arrow */}
