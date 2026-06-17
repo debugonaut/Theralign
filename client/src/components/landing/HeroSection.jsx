@@ -1,15 +1,7 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import SymptomSearchBox from '../ai/SymptomSearchBox';
+import AIProductDemo from './AIProductDemo';
 import { Zap, Target, ShieldCheck } from 'lucide-react';
 
 const HeroSection = () => {
-  const navigate = useNavigate();
-
-  const handleSpecializationFound = (specialization) => {
-    navigate(`/doctors?specialization=${encodeURIComponent(specialization)}`);
-  };
-
   return (
     <>
       {/* Hero Section Centered */}
@@ -33,7 +25,7 @@ const HeroSection = () => {
             
             {/* Diagnostic Input Box */}
             <div className="w-full">
-              <SymptomSearchBox onSpecializationFound={handleSpecializationFound} />
+              <AIProductDemo />
             </div>
           </div>
         </div>
