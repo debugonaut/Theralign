@@ -97,8 +97,8 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b-4 border-obsidian w-full select-none">
-      <div className={isLandingPage ? "w-full px-6 sm:px-16" : "max-w-[1440px] mx-auto px-6 sm:px-16"}>
-        <div className="relative flex justify-between items-center h-20">
+      <div className="max-w-6xl mx-auto px-6 w-full">
+        <div className="relative flex justify-between items-center h-16">
           
           {/* Logo Column */}
           <div className="flex items-center">
@@ -148,7 +148,7 @@ const Navbar = () => {
 
                       {/* Explore Dropdown */}
                       {exploreOpen && (
-                        <div className="absolute left-0 mt-2 w-60 bg-white border-2 border-primary shadow-level-2 rounded-none py-1 z-50 animate-swiss-slide-in">
+                        <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-72 bg-white border-2 border-primary shadow-level-2 rounded-none py-1 z-50 animate-swiss-slide-in">
                           {exploreLinks.map((item, idx) => (
                             <button
                               key={item.hash}

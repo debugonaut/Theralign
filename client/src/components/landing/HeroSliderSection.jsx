@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const SLIDES = [
   {
@@ -131,7 +132,7 @@ const HeroSliderSection = () => {
         onClick={goPrev}
         aria-label="Previous slide"
       >
-        ←
+        <ChevronLeft className="w-6 h-6 text-white" />
       </button>
 
       {/* Right arrow */}
@@ -140,7 +141,7 @@ const HeroSliderSection = () => {
         onClick={goNext}
         aria-label="Next slide"
       >
-        →
+        <ChevronRight className="w-6 h-6 text-white" />
       </button>
 
       {/* Dot indicators */}

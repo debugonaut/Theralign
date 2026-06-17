@@ -370,8 +370,8 @@ table {
 .hero-slider-root {
   position: relative;
   width: 100%;
-  height: 100vh;
-  min-height: 600px;
+  height: calc(100vh - 68px);
+  min-height: 500px;
   overflow: hidden;
   border-bottom: 4px solid #000000;
 }
@@ -415,19 +415,19 @@ table {
 
 .hero-slider-content {
   position: absolute;
-  inset: 0;
+  left: 20%;
+  bottom: 22%;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 0 0 80px;
-  max-width: 900px;
+  max-width: 700px;
 }
 
 @media (max-width: 768px) {
   .hero-slider-content {
-    padding: 0 0 64px;
-    max-width: 100%;
+    left: 16px;
+    bottom: 80px;
+    max-width: calc(100% - 32px);
   }
 }
 
@@ -438,7 +438,7 @@ table {
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #FF3000;
+  color: #8ac0e1;
   margin-bottom: 16px;
 }
 
@@ -455,7 +455,7 @@ table {
 }
 
 .hero-slider-heading-accent {
-  color: #FF3000;
+  color: #8ac0e1;
 }
 
 /* Slide-specific tagline — smaller subheading */
@@ -503,14 +503,14 @@ table {
 }
 
 .hero-slider-cta--primary {
-  background: #FF3000;
+  background: #0b4f6c;
   color: #FFFFFF;
-  border: 2px solid #FF3000;
+  border: 2px solid #0b4f6c;
 }
 
 .hero-slider-cta--primary:hover {
-  background: #CC0000;
-  border-color: #CC0000;
+  background: #00374e;
+  border-color: #00374e;
 }
 
 .hero-slider-cta--ghost {
@@ -530,35 +530,37 @@ table {
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
-  width: 52px;
-  height: 52px;
-  background: #FFFFFF;
-  border: 3px solid #000000;
-  border-radius: 0px; /* sharp — Swiss system */
-  color: #000000;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 22px;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 9999px; /* circular */
+  color: #FFFFFF;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 100ms linear, color 100ms linear, border-color 100ms linear;
-  line-height: 1;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
 .hero-slider-arrow:hover {
-  background: #FF3000;
-  color: #FFFFFF;
-  border-color: #FF3000;
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.55);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.hero-slider-arrow:active {
+  transform: translateY(-50%) scale(0.98);
 }
 
 .hero-slider-arrow--left {
-  left: 32px;
+  left: 24px;
 }
 
 .hero-slider-arrow--right {
-  right: 32px;
+  right: 24px;
 }
 
 /* Dot indicators */
@@ -586,7 +588,7 @@ table {
 }
 
 .hero-slider-dot--active {
-  background: #FF3000;
+  background: #8ac0e1;
   width: 28px; /* elongated when active */
 }
 
