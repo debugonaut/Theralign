@@ -3139,3 +3139,33 @@ table {
   letter-spacing: 0.06em;
 }
 
+/* ============================================================
+   ADDITIONAL BRUTALIST & DESIGN SPEC HELPERS
+   ============================================================ */
+.brutalist-border {
+  border: 2px solid #061d30;
+}
+
+.brutalist-border-r {
+  border-right: 2px solid #061d30;
+}
+
+.brutalist-border-b {
+  border-bottom: 2px solid #061d30;
+}
+
+.v-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.hover-invert:hover {
+  background-color: #061d30;
+  color: #ffffff;
+}
+
+.active-red {
+  border-color: #0b4f6c !important;
+}
+
+

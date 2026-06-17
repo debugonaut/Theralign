@@ -13,9 +13,17 @@ export default {
     colors: {
       // Primary — deep teal-navy. The dominant brand color.
       primary: {
-        DEFAULT: '#0B4F6C',
+        DEFAULT: '#00374e',   // Updated per DESIGN(1).md
+        container: '#0b4f6c', // Added per DESIGN(1).md
         light:   '#E8F4F8',
         dark:    '#083A52',
+      },
+
+      // Secondary per DESIGN(1).md
+      secondary: {
+        DEFAULT: '#9d4223',
+        container: '#fe8c66',
+        'on-container': '#742406',
       },
 
       // Accent — warm coral. CTAs, highlights, active states.
@@ -43,6 +51,22 @@ export default {
 
       // Surface
       white: '#FFFFFF',     // Cards, panels, modals sit on this
+
+      // DESIGN(1).md / code.html colors additions
+      'accent-coral': '#F4845F',
+      'surface-bright': '#f7f9ff',
+      'surface-dim': '#c7dcf6',
+      'surface-container-low': '#edf4ff',
+      'surface-container': '#e3efff',
+      'surface-container-high': '#d9eaff',
+      'surface-container-highest': '#cfe5fe',
+      'on-background': '#061d30',
+      'on-surface': '#061d30',
+      'on-surface-variant': '#41484d',
+      'obsidian': '#061d30',
+      'cloud': '#E8F4F8',
+      'background': '#f7f9ff',
+      'radical-red': '#0b4f6c',
 
       // Swiss Colors Addition from Accessibility Spec
       'swiss-surface': '#FFFFFF',

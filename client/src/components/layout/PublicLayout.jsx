@@ -20,7 +20,7 @@ const PublicLayout = () => {
       >
         <Outlet />
       </main>
-      <Footer />
+      {!isLandingPage && <Footer />}
     </div>
   );
 };

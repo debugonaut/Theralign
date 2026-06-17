@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { interpretSymptomsAPI } from '../../api/ai.api';
 import AIRecommendationCard from './AIRecommendationCard';
 import useAuthStore from '../../store/authStore';
-import { Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import { Sparkles, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 
 const SymptomSearchBox = ({ onSpecializationFound }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -79,71 +79,41 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <div
-        className="relative"
-        style={{
-          background: '#FFF8F5',
-          border: '2px solid #000000',
-          boxShadow: '4px 4px 0px 0px #000000',
-          padding: '20px 24px',
-        }}
-      >
+    <div className="w-full max-w-3xl">
+      <div className="brutalist-border p-6 sm:p-8 bg-white max-w-3xl relative shadow-[8px_8px_0px_0px_#cfe5fe] text-left">
         {/* Section label */}
-        <p
-          style={{
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: '#C0392B',
-            marginBottom: '10px',
-            textAlign: 'left',
-          }}
-        >
-          Describe Your Symptoms →
-        </p>
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-ui-xs font-bold uppercase tracking-wider text-primary-container font-swiss">
+            Describe Your Symptoms
+          </span>
+          <ArrowRight className="w-4 h-4 text-primary-container" />
+        </div>
 
-        <form onSubmit={handleSearch} className="space-y-4">
+        <form onSubmit={handleSearch}>
           <div className="relative">
             <textarea
-              rows={3}
+              rows={4}
               value={symptoms}
               onChange={handleInputChange}
               placeholder="e.g. sharp lower back pain when bending, started 3 weeks ago..."
-              style={{
-                width: '100%',
-                height: '80px',
-                resize: 'none',
-                border: '2px solid #000000',
-                borderRadius: 0,
-                padding: '10px 12px',
-                fontSize: '14px',
-                fontFamily: 'inherit',
-                outline: 'none',
-                background: '#FFFFFF',
-                lineHeight: 1.5,
-                color: '#000000',
-              }}
+              className="w-full h-40 brutalist-border bg-cloud p-4 font-swiss text-ui-md focus:border-primary-container focus:ring-0 resize-none mb-6 text-obsidian border-obsidian outline-none placeholder-neutral-500/60"
               disabled={loading}
               onFocus={e => {
-                e.target.style.borderWidth = '3px';
-                e.target.style.padding = '9px 11px';
+                e.target.closest('.brutalist-border')?.classList.add('active-red');
               }}
               onBlur={e => {
-                e.target.style.borderWidth = '2px';
-                e.target.style.padding = '10px 12px';
+                e.target.closest('.brutalist-border')?.classList.remove('active-red');
               }}
             />
             {/* Length counter */}
-            <span className={`absolute bottom-3 right-4 text-[10px] font-bold ${remainingChars < 50 ? 'text-accent' : 'text-neutral-500'}`}>
+            <span className={`absolute bottom-9 right-4 text-[10px] font-bold ${remainingChars < 50 ? 'text-accent' : 'text-neutral-500'}`}>
               {remainingChars}
             </span>
           </div>
 
           {/* Quick tips list / Suggestion chips */}
-          <div className="flex flex-wrap gap-2 py-1 justify-start">
-            {['Back pain', 'Knee injury', 'Shoulder tension', 'Post-surgery rehab'].map((tip) => (
+          <div className="flex flex-wrap gap-2 mb-8">
+            {['Back Pain', 'Knee Injury', 'Shoulder Tension', 'Post-Surgery Rehab'].map((tip) => (
               <button
                 key={tip}
                 type="button"
@@ -153,46 +123,28 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
                     setError(null);
                   }
                 }}
-                className="text-xs transition-all duration-fast select-none cursor-pointer"
-                style={{
-                  fontSize: '12px',
-                  padding: '4px 10px',
-                  border: '1.5px solid #000000',
-                  borderRadius: 0,
-                  background: '#FFFFFF',
-                  color: '#000000',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                }}
-                onMouseEnter={e => {
-                  e.target.style.background = '#000000';
-                  e.target.style.color = '#FFFFFF';
-                }}
-                onMouseLeave={e => {
-                  e.target.style.background = '#FFFFFF';
-                  e.target.style.color = '#000000';
-                }}
+                className="px-4 py-2 brutalist-border text-ui-xs uppercase font-bold hover:bg-obsidian hover:text-white transition-colors duration-fast bg-white text-obsidian select-none cursor-pointer"
               >
                 {tip}
               </button>
             ))}
           </div>
 
-          <div className="flex pt-2">
+          <div className="flex">
             <button
               type="submit"
               disabled={loading || symptoms.trim().length < 5}
-              className="flex-1 bg-neutral-900 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 px-6 rounded-none font-bold uppercase tracking-widest text-[12px] transition-all duration-fast inline-flex items-center justify-center gap-2 select-none cursor-pointer border border-transparent"
+              className="w-full py-5 bg-primary-container text-white font-swiss text-ui-lg font-black uppercase flex items-center justify-center gap-4 hover:bg-primary transition-colors duration-fast group brutalist-border disabled:opacity-40 disabled:cursor-not-allowed select-none cursor-pointer"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <Loader2 className="w-5 h-5 animate-spin text-white" />
                   Analyzing symptoms...
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 text-white" />
-                  Find My Specialization
+                  <Sparkles className="w-5 h-5 text-white group-hover:rotate-12 transition-transform duration-standard" />
+                  FIND MY SPECIALIZATION
                 </>
               )}
             </button>
@@ -200,16 +152,16 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
         </form>
 
         {error && (
-          <div className="mt-4 p-4 bg-accent/5 border border-accent flex gap-3 text-left">
-            <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+          <div className="mt-6 p-4 bg-accent/5 border-2 border-danger flex gap-3 text-left brutalist-border shadow-[4px_4px_0px_0px_#C0392B]">
+            <AlertCircle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
             <div>
-              <h5 className="text-[11px] font-black text-accent uppercase tracking-wider">Triage Query Warning</h5>
-              <p className="text-[12px] text-accent font-medium mt-0.5">{error}</p>
+              <h5 className="text-ui-xs font-black text-danger uppercase tracking-wider">Triage Query Warning</h5>
+              <p className="text-ui-sm text-neutral-900 font-medium mt-0.5">{error}</p>
               {(!isAuthenticated || user?.role !== 'patient') && (
                 <Link
                   to="/login"
                   state={{ from: window.location.pathname }}
-                  className="inline-block mt-2 text-[11px] font-bold text-primary hover:underline uppercase tracking-wider"
+                  className="inline-block mt-2 text-ui-xs font-bold text-primary hover:underline uppercase tracking-wider"
                 >
                   Sign in as a patient →
                 </Link>
@@ -219,7 +171,7 @@ const SymptomSearchBox = ({ onSpecializationFound }) => {
         )}
 
         {/* Small Legal Disclaimer */}
-        <p className="text-[10px] text-neutral-500 mt-4 text-center leading-relaxed font-swiss">
+        <p className="mt-4 text-[10px] text-neutral-500 text-center leading-relaxed font-swiss font-semibold tracking-wider uppercase opacity-60">
           AI triage analysis is provided for educational advice only and is not a formal medical diagnosis.
         </p>
       </div>
