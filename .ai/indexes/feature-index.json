@@ -1,6 +1,7 @@
 {
   "version": "1.0.0",
   "generated": "2026-06-11T18:00:00Z",
+  "lastUpdated": "2026-06-17T12:00:00Z",
   "features": [
     {
       "id": "user-registration",
@@ -804,6 +805,69 @@
         "Supervising credentials displayed in timeline footnotes"
       ],
       "lastUpdated": "2026-06-15T13:40:00Z",
+      "stale": false
+    },
+    {
+      "id": "ai-exercise-creation",
+      "name": "AI Exercise Creation",
+      "phase": 16,
+      "description": "Generate structured clinical exercise prescriptions using natural language prompts powered by Llama 3.1 8B. Save custom exercises to local browser storage, merge them with the visual library, and assign them directly to prescriptions.",
+      "userRoles": ["doctor"],
+      "routes": ["/doctor/appointments/:appointmentId/session-record"],
+      "apiEndpoints": [
+        { "method": "POST", "path": "/api/ai/generate-exercise" }
+      ],
+      "components": [
+        "client/src/components/exercises/AIExerciseCreatorModal.jsx",
+        "client/src/components/exercises/ExerciseLibraryModal.jsx"
+      ],
+      "models": [],
+      "controllers": ["server/src/controllers/ai.controller.js"],
+      "services": ["server/src/services/aiService.js"],
+      "relatedFeatures": ["session-notes-creation"],
+      "knownConstraints": [
+        "Rate-limited to 10 requests per minute per doctor via aiRateLimit middleware",
+        "Persisted in local storage using customExerciseStore under 'theralign_custom_exercises'",
+        "Custom badge and hover deletion in ExerciseLibraryModal",
+        "Powered by Groq Llama 3.1 8B (not OpenAI)"
+      ],
+      "lastUpdated": "2026-06-15T13:40:00Z",
+      "stale": false
+    },
+    {
+      "id": "landing-page-redesign",
+      "name": "Landing Page — Swiss Brutalist Redesign",
+      "phase": 17,
+      "description": "Full Swiss Brutalist / minimalist landing page redesign including full-screen hero slider, coverflow specializations carousel, animated stats counters, dark testimonial carousel, updated pricing tiers, AI product demo section, and RefundPolicyPage.",
+      "userRoles": ["public"],
+      "routes": ["/", "/refund"],
+      "apiEndpoints": [],
+      "components": [
+        "client/src/pages/public/LandingPage.jsx",
+        "client/src/pages/public/RefundPolicyPage.jsx",
+        "client/src/components/landing/HeroSliderSection.jsx",
+        "client/src/components/landing/HeroSection.jsx",
+        "client/src/components/landing/AIProductDemo.jsx",
+        "client/src/components/landing/SpecializationsSection.jsx",
+        "client/src/components/landing/PatientReviewsSection.jsx",
+        "client/src/components/landing/PricingTiersSection.jsx",
+        "client/src/components/landing/StatsBar.jsx",
+        "client/src/components/landing/BenefitsGridSection.jsx",
+        "client/src/components/landing/FeaturesZigzagSection.jsx",
+        "client/src/components/landing/WhoCanUseSection.jsx"
+      ],
+      "models": [],
+      "controllers": [],
+      "services": [],
+      "relatedFeatures": ["doctor-discovery", "ai-symptom-triage"],
+      "knownConstraints": [
+        "Full-screen hero requires 100vh and pointer-events layering for CTA buttons",
+        "Coverflow carousel requires CSS 3D transform perspective on parent container",
+        "Animated stats use IntersectionObserver for viewport-triggered count-up",
+        "RefundPolicyPage registered at /refund resolves footer link 404",
+        "Remaining deferred: 100vh on non-hero sections (#7), chart-based stats (#8), full viewport width on all sections (#1)"
+      ],
+      "lastUpdated": "2026-06-17T12:00:00Z",
       "stale": false
     }
   ]

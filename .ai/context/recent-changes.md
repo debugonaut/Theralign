@@ -1,12 +1,86 @@
 # Recent Changes — Last 7 Days
 
-**Generated:** 2026-06-16  
-**Period:** 2026-06-09 to 2026-06-16  
+**Generated:** 2026-06-17  
+**Period:** 2026-06-09 to 2026-06-17  
 **Source:** git log --oneline -n 50
 
 ---
 
 ## High Impact Changes
+
+### 2026-06-17 — AI Section Redesign & Split, Landing Page Polish
+**Author:** Aadesh Khande
+
+**Summary:** Redesigned the AI doctor-matching section on the landing page and extracted it into a dedicated `AIProductDemo` component. Cleaned up all developer comments from landing page components and applied final layout polish.
+
+- **AI Section Redesign (`e880c27`):** Completely redesigned `HeroSection.jsx` to remove the old AI card layout. Refactored `SymptomSearchBox.jsx` and `AIRecommendationCard.jsx` for a cleaner, more minimal presentation. Updated `LandingPage.jsx` section structure and added new CSS tokens to `index.css` and `tailwind.config.js`.
+- **AI Component Split (`dab6f1e`):** Extracted the AI product demo content from `HeroSection.jsx` into a standalone `AIProductDemo.jsx` (491 lines). Added a stitch-design reference (`References/stitch_floating_pill_pricing_design`) for the floating pill pricing concept.
+- **Centering Fix (`0bef0c4`):** Adjusted flexbox alignment on the AI section for proper centering across viewports.
+- **Comment Cleanup (`b737f59`):** Stripped all developer comments from `LandingPage.jsx`.
+- **Layout Fix (`7becb6d`):** Fixed `PublicLayout.jsx` rendering issue and added missing sections to `LandingPage.jsx`.
+
+**Changed/Created Files:**
+- `client/src/components/landing/AIProductDemo.jsx` [NEW]
+- `client/src/components/landing/HeroSection.jsx` [MODIFY]
+- `client/src/components/ai/SymptomSearchBox.jsx` [MODIFY]
+- `client/src/components/ai/AIRecommendationCard.jsx` [MODIFY]
+- `client/src/pages/public/LandingPage.jsx` [MODIFY]
+- `client/src/components/layout/PublicLayout.jsx` [MODIFY]
+- `client/src/styles/index.css` [MODIFY]
+- `client/tailwind.config.js` [MODIFY]
+- `References/stitch_floating_pill_pricing_design(1)/code.html` [NEW]
+- `References/stitch_floating_pill_pricing_design(1)/screen.png` [NEW]
+- `References/geriatric.jpg` [NEW]
+
+**Affected subsystems:**
+- landing-page
+- ai-integration
+
+**Regression risk:** Low
+- No backend changes. Landing page only.
+
+---
+
+### 2026-06-16 (Afternoon) — Full-Viewport Layout, Coverflow Carousel, Animated Stats & RefundPolicyPage
+**Author:** Aadesh Khande
+
+**Summary:** Addressed multiple deferred requirements from `somechanges.md`. Implemented Coverflow specializations carousel (#9), animated statistics counter (#8 partial), created `RefundPolicyPage` and registered its route (#12), and removed side margins for a full-width layout (#1 partial). Resolved the footer `/refund` 404 issue.
+
+- **Coverflow Carousel (#9):** Replaced the flat grid in `SpecializationsSection.jsx` with a CSS 3D coverflow carousel. 274 lines of new component logic added.
+- **Animated Stats (#8 partial):** Rewrote `StatsBar.jsx` (169 lines) with count-up animation triggered on viewport entry via IntersectionObserver.
+- **Refund Policy Page (#12):** Created `RefundPolicyPage.jsx` (135 lines) and registered `/refund` route in `AppRoutes.jsx` — resolves footer 404.
+- **Side Margins Removed (#1 partial):** Removed horizontal padding/margin wrappers from `CTABannerSection`, `FeaturedDoctorsSection`, `HowItWorksSection`, `VerificationExplanationSection`, `Navbar`, `Footer`, and `PublicLayout`. Updated `index.css` with 71-line diff for full-bleed layout.
+- **Hero & Pricing Polish:** Updated `HeroSliderSection.jsx` and `PricingTiersSection.jsx` for alignment consistency.
+- **Documentation sync:** Updated `.ai/MASTER_CONTEXT.md`, `.ai/context/project-summary.md`, `.ai/context/recent-changes.md`, and `INTERNSHIP_LOG.md` in same commit.
+
+**Remaining deferred items from somechanges.md:**
+- **#7:** Main landing sections do not take 100vh height (other than hero).
+- **#8:** Stats are animated but not chart-based (still counters, not bar/line charts).
+- **#1:** Full viewport boundary width not yet complete on all sections.
+
+**Changed/Created Files:**
+- `client/src/components/landing/SpecializationsSection.jsx` [MODIFY — coverflow]
+- `client/src/components/landing/StatsBar.jsx` [MODIFY — animated counters]
+- `client/src/pages/public/RefundPolicyPage.jsx` [NEW]
+- `client/src/routes/AppRoutes.jsx` [MODIFY]
+- `client/src/components/landing/CTABannerSection.jsx` [MODIFY]
+- `client/src/components/landing/FeaturedDoctorsSection.jsx` [MODIFY]
+- `client/src/components/landing/HowItWorksSection.jsx` [MODIFY]
+- `client/src/components/landing/VerificationExplanationSection.jsx` [MODIFY]
+- `client/src/components/layout/Navbar.jsx` [MODIFY]
+- `client/src/components/layout/Footer.jsx` [MODIFY]
+- `client/src/components/layout/PublicLayout.jsx` [MODIFY]
+- `client/src/styles/index.css` [MODIFY]
+- `References/pricing_tier_redesign..png` [NEW]
+- `References/testimony_redesign.png` [NEW]
+
+**Affected subsystems:**
+- landing-page
+- public-routing
+
+**Regression risk:** Low
+
+---
 
 ### 2026-06-16 — Swiss Brutalist Landing Page Redesign & Partial somechanges.md Integration
 **Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
@@ -38,12 +112,12 @@
 **Regression risk:** Low
 - Production build successfully compiles with zero errors/warnings.
 
-**Deferred / Incomplete Requirements from somechanges.md:**
-- **Expand Page Width (#1)**: Section widths not yet expanded to full viewport boundaries.
-- **Full Viewport Sections (#7)**: Main landing sections do not take 100vh height.
-- **Platform Scale Charts (#8)**: Numbers are still static, no charts/graphs implemented.
-- **Coverflow Specializations Carousel (#9)**: Specializations remains as a responsive grid layout.
-- **Footer Links & Refund Policy (#12)**: The `/refund` path is referenced in the footer but returning a 404 since `RefundPolicyPage` has not been created or registered.
+**Deferred / Incomplete Requirements from somechanges.md (as of June 16 morning):**
+- **Expand Page Width (#1)**: Section widths not yet expanded to full viewport boundaries. *(Partially resolved in afternoon commit — see entry above.)*
+- **Full Viewport Sections (#7)**: Main landing sections do not take 100vh height. *(Still deferred.)*
+- **Platform Scale Charts (#8)**: Numbers are still static, no charts/graphs implemented. *(Partially resolved — animated counters added in afternoon commit.)*
+- **Coverflow Specializations Carousel (#9)**: Specializations remains as a responsive grid layout. *(Resolved in afternoon commit.)*
+- **Footer Links & Refund Policy (#12)**: The `/refund` path is referenced in the footer but returning a 404 since `RefundPolicyPage` has not been created or registered. *(Resolved in afternoon commit.)*
 
 ---
 
@@ -329,19 +403,10 @@
 
 ## Next Phase
 
-**Phase 14 — Care Continuity** (Planned start: 2026-06-15)
+**Phase 17 — Telemedicine & Video Consultations** (Active planning)
 
-- SessionRecord model and API
-- Exercise tracking and prescription management
-- Care plan visualization
-- Patient compliance tracking
-
----
-
-## Recommended Pre-Phase-14 Testing
-
-1. Run full test suite for appointment, payment, and refund flows
-2. Manual end-to-end test: booking → payment → cancellation → refund
-3. Load test slot locking under 100 concurrent patients per doctor
-4. Email delivery: verify all transactional emails within 5 minutes
+- Video consultation infrastructure (WebRTC / third-party SDK)
+- In-app video call scheduling and joining flow
+- Post-call session record integration
+- Doctor availability with telemedicine toggle
 
