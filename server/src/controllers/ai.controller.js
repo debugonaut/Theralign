@@ -1,5 +1,8 @@
-import { interpretSymptoms, batchGenerateSummaries, generateExerciseFromPrompt } from '../services/aiService.js';
+import { interpretSymptoms, batchGenerateSummaries, generateExerciseFromPrompt, handleChatbotMessage } from '../services/aiService.js';
 import DoctorProfile from '../models/DoctorProfile.model.js';
+import User from '../models/User.model.js';
+import jwt from 'jsonwebtoken';
+import config from '../config/env.js';
 import { successResponse } from '../utils/apiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import AppError from '../utils/AppError.js';
@@ -136,4 +139,49 @@ export const generateExercise = asyncHandler(async (req, res) => {
   }
 
   return successResponse(res, 200, 'Exercise generated successfully', exercise);
+});
+
+/**
+ * POST /api/ai/chatbot
+ * Chatbot query resolver. Public endpoint with optional authentication.
+ */
+export const chatbotQueryController = asyncHandler(async (req, res) => {
+  const { message, chatHistory = [] } = req.body;
+
+  if (!message || typeof message !== 'string') {
+    throw new AppError('Message text is required', 400);
+  }
+
+  // Determine user identity and role (dynamic auth)
+  let role = 'guest';
+  let user = null;
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, config.jwtSecret);
+      const foundUser = await User.findById(decoded.id);
+      if (foundUser && foundUser.isActive) {
+        role = foundUser.role;
+        user = {
+          id: foundUser._id,
+          role: foundUser.role,
+          name: foundUser.name,
+          email: foundUser.email,
+        };
+      }
+    } catch (err) {
+      // Ignored: expired or invalid token defaults to 'guest' role gracefully
+    }
+  }
+
+  const result = await handleChatbotMessage({
+    message,
+    role,
+    chatHistory,
+    user,
+  });
+
+  return successResponse(res, 200, 'Chatbot query processed', result);
 });

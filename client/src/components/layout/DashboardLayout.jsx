@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import useAuthStore from '../../store/authStore';
 import { getDoctorProfileAPI } from '../../api/doctor.api';
 import { getDoctorAppointments } from '../../api/appointment.api';
+import ChatbotWidget from '../common/ChatbotWidget';
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -327,6 +328,7 @@ const DashboardLayout = () => {
           </div>
         </div>
       )}
+      <ChatbotWidget />
     </div>
   );
 };

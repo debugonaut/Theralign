@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import ChatbotWidget from '../common/ChatbotWidget';
 
 const PublicLayout = () => {
   const location = useLocation();
@@ -21,6 +22,7 @@ const PublicLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <ChatbotWidget />
     </div>
   );
 };

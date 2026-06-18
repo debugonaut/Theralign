@@ -10,6 +10,7 @@ import useAuthStore from '../../store/authStore';
 import { getPendingDoctorsAPI } from '../../api/admin.api';
 import NotificationBell from './NotificationBell';
 import { getPendingRefundsAPI } from '../../api/refund.api';
+import ChatbotWidget from '../common/ChatbotWidget';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -250,6 +251,7 @@ const AdminLayout = () => {
           </div>
         </main>
       </div>
+      <ChatbotWidget />
     </div>
   );
 };

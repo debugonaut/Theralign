@@ -8,6 +8,7 @@ import {
   getDoctorAISummary,
   batchGenerateDoctorSummaries,
   generateExercise,
+  chatbotQueryController,
 } from '../controllers/ai.controller.js';
 import {
   interpretSymptomsValidation,
@@ -47,6 +48,12 @@ router.post(
   generateExerciseValidation,
   validate,
   generateExercise
+);
+
+// Public chatbot route (with optional dynamic auth inside controller)
+router.post(
+  '/chatbot',
+  chatbotQueryController
 );
 
 export default router;

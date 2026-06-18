@@ -36,3 +36,14 @@ export const triggerBatchSummariesAPI = async () => {
  */
 export const generateExerciseAPI = (data) =>
   axiosInstance.post('/ai/generate-exercise', data);
+
+/**
+ * Sends a message to the AI chatbot, with optional chat history.
+ *
+ * @param {string} message
+ * @param {Array} chatHistory
+ */
+export const queryChatbotAPI = async (message, chatHistory = []) => {
+  const response = await axiosInstance.post('/ai/chatbot', { message, chatHistory });
+  return response.data;
+};
