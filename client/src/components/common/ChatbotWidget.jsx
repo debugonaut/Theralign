@@ -148,7 +148,7 @@ const ChatbotWidget = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 bg-primary text-white border-2 border-primary hover:bg-primary-dark px-4 py-3 rounded-full shadow-level-2 transition-all duration-fast ease-swiss hover:-translate-y-1 active:scale-98"
+          className="font-swiss flex items-center gap-2 bg-primary text-white border-2 border-primary hover:bg-primary-dark px-4 py-3 rounded-full shadow-level-2 transition-all duration-fast ease-swiss hover:-translate-y-1 active:scale-98"
           title="Ask Theralign AI Assistant"
         >
           <MessageSquare className="w-5 h-5 text-white" />
@@ -172,7 +172,7 @@ const ChatbotWidget = () => {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-white hover:text-accent transition-colors duration-fast p-1 cursor-pointer"
+              className="font-swiss text-white hover:text-accent transition-colors duration-fast p-1 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -200,7 +200,7 @@ const ChatbotWidget = () => {
                   {msg.route && (
                     <button
                       onClick={() => handleNavigation(msg.route)}
-                      className="mt-3 w-full text-center bg-primary text-white hover:bg-primary-dark font-semibold text-ui-xs py-2 px-3 rounded-md transition-all duration-fast ease-swiss"
+                      className="font-swiss mt-3 w-full text-center bg-primary text-white hover:bg-primary-dark font-semibold text-ui-xs py-2 px-3 rounded-md transition-all duration-fast ease-swiss"
                     >
                       Go to Dashboard page →
                     </button>
@@ -234,7 +234,7 @@ const ChatbotWidget = () => {
                   key={index}
                   onClick={() => handleSubmit(reply.query)}
                   disabled={isLoading}
-                  className="bg-neutral-100 hover:bg-primary hover:text-white text-neutral-900 border border-neutral-200 font-semibold text-[11px] px-2 py-1 rounded-lg uppercase tracking-wider transition-all duration-fast ease-swiss disabled:opacity-50"
+                  className="font-swiss bg-neutral-100 hover:bg-primary hover:text-white text-neutral-900 border border-neutral-200 font-semibold text-[11px] px-2 py-1 rounded-lg uppercase tracking-wider transition-all duration-fast ease-swiss disabled:opacity-50"
                 >
                   {reply.label}
                 </button>
@@ -251,12 +251,12 @@ const ChatbotWidget = () => {
               onKeyDown={handleKeyPress}
               disabled={isLoading}
               placeholder="Type your question..."
-              className="flex-1 border border-neutral-200 rounded-md px-3 py-2 text-ui-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white text-neutral-900 placeholder-neutral-300"
+              className="font-swiss flex-1 border border-neutral-200 rounded-md px-3 py-2 text-ui-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white text-neutral-900 placeholder-neutral-300"
             />
             <button
               onClick={() => handleSubmit(query)}
               disabled={isLoading || !query.trim()}
-              className="p-2 bg-primary text-white rounded-md hover:bg-primary-dark flex items-center justify-center disabled:opacity-50 transition-colors duration-fast ease-swiss"
+              className="font-swiss p-2 bg-primary text-white rounded-md hover:bg-primary-dark flex items-center justify-center disabled:opacity-50 transition-colors duration-fast ease-swiss"
             >
               <Send className="w-4 h-4" />
             </button>
