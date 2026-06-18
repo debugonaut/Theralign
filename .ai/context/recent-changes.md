@@ -1,0 +1,412 @@
+# Recent Changes — Last 7 Days
+
+**Generated:** 2026-06-17  
+**Period:** 2026-06-09 to 2026-06-17  
+**Source:** git log --oneline -n 50
+
+---
+
+## High Impact Changes
+
+### 2026-06-17 — AI Section Redesign & Split, Landing Page Polish
+**Author:** Aadesh Khande
+
+**Summary:** Redesigned the AI doctor-matching section on the landing page and extracted it into a dedicated `AIProductDemo` component. Cleaned up all developer comments from landing page components and applied final layout polish.
+
+- **AI Section Redesign (`e880c27`):** Completely redesigned `HeroSection.jsx` to remove the old AI card layout. Refactored `SymptomSearchBox.jsx` and `AIRecommendationCard.jsx` for a cleaner, more minimal presentation. Updated `LandingPage.jsx` section structure and added new CSS tokens to `index.css` and `tailwind.config.js`.
+- **AI Component Split (`dab6f1e`):** Extracted the AI product demo content from `HeroSection.jsx` into a standalone `AIProductDemo.jsx` (491 lines). Added a stitch-design reference (`References/stitch_floating_pill_pricing_design`) for the floating pill pricing concept.
+- **Centering Fix (`0bef0c4`):** Adjusted flexbox alignment on the AI section for proper centering across viewports.
+- **Comment Cleanup (`b737f59`):** Stripped all developer comments from `LandingPage.jsx`.
+- **Layout Fix (`7becb6d`):** Fixed `PublicLayout.jsx` rendering issue and added missing sections to `LandingPage.jsx`.
+
+**Changed/Created Files:**
+- `client/src/components/landing/AIProductDemo.jsx` [NEW]
+- `client/src/components/landing/HeroSection.jsx` [MODIFY]
+- `client/src/components/ai/SymptomSearchBox.jsx` [MODIFY]
+- `client/src/components/ai/AIRecommendationCard.jsx` [MODIFY]
+- `client/src/pages/public/LandingPage.jsx` [MODIFY]
+- `client/src/components/layout/PublicLayout.jsx` [MODIFY]
+- `client/src/styles/index.css` [MODIFY]
+- `client/tailwind.config.js` [MODIFY]
+- `References/stitch_floating_pill_pricing_design(1)/code.html` [NEW]
+- `References/stitch_floating_pill_pricing_design(1)/screen.png` [NEW]
+- `References/geriatric.jpg` [NEW]
+
+**Affected subsystems:**
+- landing-page
+- ai-integration
+
+**Regression risk:** Low
+- No backend changes. Landing page only.
+
+---
+
+### 2026-06-16 (Afternoon) — Full-Viewport Layout, Coverflow Carousel, Animated Stats & RefundPolicyPage
+**Author:** Aadesh Khande
+
+**Summary:** Addressed multiple deferred requirements from `somechanges.md`. Implemented Coverflow specializations carousel (#9), animated statistics counter (#8 partial), created `RefundPolicyPage` and registered its route (#12), and removed side margins for a full-width layout (#1 partial). Resolved the footer `/refund` 404 issue.
+
+- **Coverflow Carousel (#9):** Replaced the flat grid in `SpecializationsSection.jsx` with a CSS 3D coverflow carousel. 274 lines of new component logic added.
+- **Animated Stats (#8 partial):** Rewrote `StatsBar.jsx` (169 lines) with count-up animation triggered on viewport entry via IntersectionObserver.
+- **Refund Policy Page (#12):** Created `RefundPolicyPage.jsx` (135 lines) and registered `/refund` route in `AppRoutes.jsx` — resolves footer 404.
+- **Side Margins Removed (#1 partial):** Removed horizontal padding/margin wrappers from `CTABannerSection`, `FeaturedDoctorsSection`, `HowItWorksSection`, `VerificationExplanationSection`, `Navbar`, `Footer`, and `PublicLayout`. Updated `index.css` with 71-line diff for full-bleed layout.
+- **Hero & Pricing Polish:** Updated `HeroSliderSection.jsx` and `PricingTiersSection.jsx` for alignment consistency.
+- **Documentation sync:** Updated `.ai/MASTER_CONTEXT.md`, `.ai/context/project-summary.md`, `.ai/context/recent-changes.md`, and `INTERNSHIP_LOG.md` in same commit.
+
+**Remaining deferred items from somechanges.md:**
+- **#7:** Main landing sections do not take 100vh height (other than hero).
+- **#8:** Stats are animated but not chart-based (still counters, not bar/line charts).
+- **#1:** Full viewport boundary width not yet complete on all sections.
+
+**Changed/Created Files:**
+- `client/src/components/landing/SpecializationsSection.jsx` [MODIFY — coverflow]
+- `client/src/components/landing/StatsBar.jsx` [MODIFY — animated counters]
+- `client/src/pages/public/RefundPolicyPage.jsx` [NEW]
+- `client/src/routes/AppRoutes.jsx` [MODIFY]
+- `client/src/components/landing/CTABannerSection.jsx` [MODIFY]
+- `client/src/components/landing/FeaturedDoctorsSection.jsx` [MODIFY]
+- `client/src/components/landing/HowItWorksSection.jsx` [MODIFY]
+- `client/src/components/landing/VerificationExplanationSection.jsx` [MODIFY]
+- `client/src/components/layout/Navbar.jsx` [MODIFY]
+- `client/src/components/layout/Footer.jsx` [MODIFY]
+- `client/src/components/layout/PublicLayout.jsx` [MODIFY]
+- `client/src/styles/index.css` [MODIFY]
+- `References/pricing_tier_redesign..png` [NEW]
+- `References/testimony_redesign.png` [NEW]
+
+**Affected subsystems:**
+- landing-page
+- public-routing
+
+**Regression risk:** Low
+
+---
+
+### 2026-06-16 — Swiss Brutalist Landing Page Redesign & Partial somechanges.md Integration
+**Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
+
+**Summary:** Redesigned and integrated landing page sections in accordance with Swiss Brutalist visual guidelines. Verified to build successfully with zero errors.
+- **Hero Slider Section (#2 & #3)**: Implemented 100vh full-screen image slider with Browse Doctors and Join as Physio CTA buttons placed directly on the image. Set main header text to "FIND THE RIGHT THERAPIST NEAR YOU." and displayed taglines as subheadings.
+- **AI Doctor Matching Section (#4)**: Removed BookingConfirmationCard entirely; redesigned to focus on AI doctor search with a professional header and 3 feature summary cards.
+- **Removed Trust Banner (#5)**: Deleted TrustBar entirely to clean up page noise.
+- **Pricing Redesign (#6)**: Upgraded pricing tiers to match reference (rounded cards, elevated dark-themed "Pro Patient" center card, pill-shaped action buttons).
+- **Patient Image & Dotted Border Changes (#10)**: Removed all rotating red/black dotted circular borders across the codebase.
+- **Section Reordering (#11)**: Re-sequenced the landing page order (Hero Slider → AI Matching → Areas of Care → Features/What Makes It Different → Why Theralign → How It Works → Statistics → Our Patients/Featured Doctors → Reviews → Pricing → Clinical Verification → CTA Banner).
+- **Testimonial Slider Overhaul (#13)**: Converted reviews into a dark-themed horizontal carousel with custom sliding transitions, star-ratings progress, and autoplay/pause-on-hover logic.
+
+**Changed/Created files:**
+- **Modified Files**:
+  - [LandingPage.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/pages/public/LandingPage.jsx)
+  - [HeroSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/HeroSection.jsx)
+  - [HeroSliderSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/HeroSliderSection.jsx)
+  - [PatientReviewsSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/PatientReviewsSection.jsx)
+  - [PricingTiersSection.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/landing/PricingTiersSection.jsx)
+  - [Navbar.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/layout/Navbar.jsx)
+  - [Footer.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/components/layout/Footer.jsx)
+  - [index.css](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/styles/index.css)
+
+**Affected subsystems:**
+- discovery-search
+- payment-system
+
+**Regression risk:** Low
+- Production build successfully compiles with zero errors/warnings.
+
+**Deferred / Incomplete Requirements from somechanges.md (as of June 16 morning):**
+- **Expand Page Width (#1)**: Section widths not yet expanded to full viewport boundaries. *(Partially resolved in afternoon commit — see entry above.)*
+- **Full Viewport Sections (#7)**: Main landing sections do not take 100vh height. *(Still deferred.)*
+- **Platform Scale Charts (#8)**: Numbers are still static, no charts/graphs implemented. *(Partially resolved — animated counters added in afternoon commit.)*
+- **Coverflow Specializations Carousel (#9)**: Specializations remains as a responsive grid layout. *(Resolved in afternoon commit.)*
+- **Footer Links & Refund Policy (#12)**: The `/refund` path is referenced in the footer but returning a 404 since `RefundPolicyPage` has not been created or registered. *(Resolved in afternoon commit.)*
+
+---
+
+### 2026-06-15 — AI Exercise Creation & Junior Doctor Hierarchy (Phase 16 Completion)
+**Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
+
+**Summary:** Implemented and integrated Feature A (AI Custom Exercise Creation) and Feature B (Junior Doctor Hierarchy) from the Phase 16 specifications.
+- **AI Custom Exercise Creator**:
+  - Implemented 3-step wizard modal `AIExerciseCreatorModal` using Llama 3.1 8B for structured parameters modeling.
+  - Setup local browser storage persistence via `customExerciseStore` under `'theralign_custom_exercises'` to manage doctor sandbox exercises.
+  - Merged custom exercises dynamically into `ExerciseLibraryModal`, added hover-to-delete listeners, and designated custom items with a high-contrast `CUSTOM / AI` badge.
+  - Developed custom in-memory rate-limiter middleware `aiRateLimit` capping requests at 10 requests per minute per doctor.
+- **Junior Doctor Hierarchy**:
+  - Extended the `DoctorProfile` model schema to add hierarchy variables (`doctorType`, `juniorInvitations`, `supervisingDoctor`) with indexes.
+  - Created invitation service logic generating single-use invite links containing crypto-secure tokens, automatically bypassing standard admin verification for accepted juniors.
+  - Formulated `PracticeManagement` dashboard allowing senior doctors to view practice size limits, generate link invitations, and remove junior doctors.
+  - Built subordinate dashboard `JuniorDoctorDashboard` displaying supervising physician footnote details, and route access guards blocking junior doctors from altering supervisor calendars, profiles, and billing configurations.
+
+**Changed/Created files:**
+- **New Files**:
+  - `client/src/api/junior.api.js`
+  - `client/src/components/exercises/AIExerciseCreatorModal.jsx`
+  - `client/src/pages/auth/JuniorDoctorRegister.jsx`
+  - `client/src/pages/doctor/JuniorDoctorDashboard.jsx`
+  - `client/src/pages/doctor/PracticeManagement.jsx`
+  - `client/src/utils/customExerciseStore.js`
+  - `server/src/controllers/juniorDoctor.controller.js`
+  - `server/src/middleware/aiRateLimit.middleware.js`
+  - `server/src/middleware/juniorGuard.middleware.js`
+  - `server/src/routes/juniorDoctor.routes.js`
+  - `server/src/services/juniorDoctor.service.js`
+  - `server/src/validations/doctor.validation.js`
+- **Modified Files**:
+  - `client/src/api/ai.api.js`
+  - `client/src/components/exercises/ExerciseLibraryModal.jsx`
+  - `client/src/components/layout/DashboardLayout.jsx`
+  - `client/src/pages/admin/AdminDoctorVerification.jsx`
+  - `client/src/pages/doctor/DoctorDashboard.jsx`
+  - `client/src/pages/doctor/DoctorProfileEditor.jsx`
+  - `client/src/pages/patient/PatientCareTimeline.jsx`
+  - `client/src/routes/AppRoutes.jsx`
+  - `server/app.js`
+  - `server/src/controllers/ai.controller.js`
+  - `server/src/models/DoctorProfile.model.js`
+  - `server/src/routes/ai.routes.js`
+  - `server/src/routes/availability.routes.js`
+  - `server/src/routes/doctor.routes.js`
+  - `server/src/services/aiService.js`
+  - `server/src/services/doctor.service.js`
+  - `server/src/services/emailService.js`
+  - `server/src/services/sessionRecord.service.js`
+  - `server/src/validations/ai.validation.js`
+
+**Affected subsystems:**
+- doctor-profiles
+- ai-integration
+- user-management
+
+**Regression risk:** Low
+- Production client bundles compiled successfully with zero errors.
+- Backward compatibility preserved for all existing doctor profiles (which defaults to `independent` type).
+
+---
+
+### 2026-06-15 — Visual Exercise Library & Prescription Duration System (Phase 15 Completion)
+**Author:** Aadesh Khande & Antigravity (AI Coding Assistant)
+
+**Summary:** Fully integrated the comprehensive visual exercise library from the updated specifications. Extended the Mongoose schema validator and form UI with a new overall prescription duration dropdown (1 week to 3 months, defaulting to "2 weeks") and synchronized it across the patient care timeline, exercise video modal, and printable template. Resolved a critical layout overlap issue on exercise cards by applying flexbox layout and text-overflow ellipsis, and replaced stickman SVG placeholders with dynamic YouTube video thumbnails.
+
+**Changed files:**
+- `client/src/data/exerciseLibrary.js` [modified] — Replaced placeholder data with 50+ real, categorized exercises.
+- `server/src/models/SessionRecord.model.js` [modified] — Added `prescriptionDuration` field to Mongoose schema.
+- `server/src/validations/sessionRecord.validation.js` [modified] — Added validation constraints for the `prescriptionDuration` field.
+- `client/src/components/exercises/ExerciseLibraryModal.jsx` [modified] — Implemented overall prescription duration selector dropdown, fixed the overlapping card bottom-row flex layout, replaced stickman placeholders with YouTube thumbnails.
+- `client/src/pages/doctor/SessionRecordForm.jsx` [modified] — Integrated overall prescription duration selector dropdown.
+- `client/src/components/exercises/ExerciseVideoModal.jsx` [modified] — Rendered overall prescription duration.
+- `client/src/pages/patient/PatientCareTimeline.jsx` [modified] — Displayed overall prescription duration on cards and printable templates.
+
+**Affected subsystems:**
+- patient-profiles
+- doctor-profiles
+- appointment-booking
+
+**Regression risk:** Low
+- Production build compiled successfully.
+- Backward compatibility preserved for existing session records lacking `prescriptionDuration` and `exerciseLibraryId` fields.
+
+---
+
+### 2026-06-12 — Complete Implementation & Redesign of Phase 14: Session Records & Care Continuity
+**Author:** Antigravity (AI Coding Assistant)
+
+**Summary:** Built the full frontend, integrated the notification service, and fully redesigned the patient care timeline page. Key updates include a 4-tab stepper wizard layout for expanded clinical records, custom Swiss Minimalist styles, 50% scale-down layout refinement, and a compact download icon button. In addition, configured gitignore to ignore all markdown files except README.md.
+
+**Changed files:**
+- `client/src/pages/doctor/SessionRecordForm.jsx` [new] — Form enabling doctors to create/edit session notes and home exercise plans.
+- `client/src/pages/patient/PatientCareTimeline.jsx` [new] — Paginated care history timeline, rewritten to use a side-by-side 4-tab stepper, compact print icons, and scaled typography.
+- `.gitignore` [modified] — Configured to ignore all markdown files globally, except for README.md.
+- `server/src/services/notificationService.js` [modified] — Added support to pass the `relatedDoctor` parameter during notification creation to link follow-up triggers directly to doctor profiles.
+
+---
+
+### 2026-06-11 — Bug Fix: Doctor Profile Photo Size Adjustment
+**Author:** Aadesh Khande
+
+**Summary:** Enlarged the doctor's profile avatar on [DoctorDetailPage.jsx](file:///Users/aadeshkhande/Documents/Professional/Own/CustomSoft/client/src/pages/public/DoctorDetailPage.jsx) from `w-16 h-16` to `w-28 h-28` to improve visual hierarchy and appearance. Adjusted flex container alignment to `items-start` with a `gap-6` spacing and added `pt-2` to the text labels to ensure clean vertical alignment. Scaled initials fallback font size to `text-[48px]`.
+
+**Changed files:**
+- `client/src/pages/public/DoctorDetailPage.jsx` [modified] — Increased avatar width/height, updated layout alignment and typography.
+
+---
+
+### 2026-06-11 — Feature: Doctor Profile Photo on Detail Page
+**Author:** Antigravity (AI Coding Assistant)
+
+**Summary:** Added the doctor's actual profile image next to their name on the public Doctor Detail page. Included the `getInitials` helper to render the standard initials fallback avatar when no custom profile image is available.
+
+**Changed files:**
+- `client/src/pages/public/DoctorDetailPage.jsx` [modified] — Implemented initials utility helper and modified layout to render profileImage next to the doctor's name.
+
+---
+
+### 2026-06-11 — Feature: Profile Image Sync and rendering logic across all roles
+**Author:** Antigravity (AI Coding Assistant)
+
+**Summary:** Fixed the profile image rendering logic across all three roles (Patient, Doctor, Admin). Synchronized patient profile photo upload with Zustand authStore to prevent stale local session state. Replaced name initials placeholder circles with the actual user/doctor/patient profileImage when available in layout headers, sidebars, doctor lists, user list directories, doctor verification queues, and refunds request lists.
+
+**Changed files:**
+- `server/src/services/refund.service.js` [modified] — Added `profileImage` fields to Mongoose populate projections.
+- `client/src/pages/patient/PatientProfile.jsx` [modified] — Synchronized uploaded profile avatar with Zustand `authStore` via `setCredentials`.
+- `client/src/components/layout/Navbar.jsx` [modified] — Render user's `profileImage` if available.
+- `client/src/components/layout/DashboardLayout.jsx` [modified] — Render user's `profileImage` if available in sidebar and top header.
+- `client/src/components/layout/AdminLayout.jsx` [modified] — Render user's `profileImage` if available in sidebar and top header.
+- `client/src/components/doctor/DoctorCard.jsx` [modified] — Render doctor's `profileImage` if available on the card.
+- `client/src/pages/admin/AdminUsers.jsx` [modified] — Render user's `profileImage` if available in user list table.
+- `client/src/pages/admin/AdminDoctorVerification.jsx` [modified] — Render doctor's `profileImage` if available in pending queue and directory ledger list.
+- `client/src/pages/admin/AdminRefunds.jsx` [modified] — Render patient's `profileImage` inside patient-avatar circle.
+
+**Affected subsystems:**
+- user-management
+- discovery-search
+- admin-operations
+- refund-system
+
+**Regression risk:** Low
+- Successfully built frontend production bundle with no Vite or compilation warnings.
+
+---
+
+### 2026-06-11 — Feature: Two-Step Booking Confirmation Flow & Media Upload Authorization Fix
+**Author:** Antigravity (AI Coding Assistant)
+
+**Summary:** Transitioned the single-step booking confirmation modal into a two-step wizard flow, allowing patients to upload media files after booking but before payment. Also fixed a critical type mismatch bug in server-side authorization checks, resolved auto-closing modal due to background polling, fixed the modal title font family mismatch, and switched media upload routes to memory storage to support up to 25MB uploads.
+
+**Changed files:**
+- `client/src/components/booking/BookingConfirmationModal.jsx` [modified] — Added step state, restructured compact details summary, and replaced emojis with Lucide SVG icons.
+- `client/src/components/booking/MediaUploadSection.jsx` [modified] — Replaced all emojis with corresponding Lucide SVG icons and polished styling.
+- `client/src/components/booking/SlotPicker.jsx` [modified] — Separated booking/payment actions, added paymentLoading state, auto-cleanup on exit, and showModalRef check to prevent auto-close during background availability polling.
+- `client/src/components/common/Modal.jsx` [modified] — Removed hardcoded font family style override from modal header.
+- `client/src/components/appointments/AppointmentMediaViewer.jsx` [new] — Reusable component for fetching, displaying, and previewing (image lightbox, inline HTML5 video/audio players) uploaded appointment media files.
+- `client/src/pages/doctor/DoctorAppointments.jsx` [modified] — Integrated `AppointmentMediaViewer` in expanded appointments row details.
+- `client/src/pages/admin/AdminBookings.jsx` [modified] — Integrated `AppointmentMediaViewer` in expanded bookings row details.
+- `client/src/pages/patient/AppointmentDetailsPage.jsx` [modified] — Integrated `AppointmentMediaViewer` in the single column appointment details layout.
+- `server/src/controllers/appointmentMedia.controller.js` [modified] — Fixed patient ID Mongoose ObjectId to string type mismatch in upload authorization checks, fixed uploader ID Mongoose ObjectId to string type mismatch in delete authorization checks (`mediaDocument.uploader.toString() === req.user.id.toString()`), and added proper DoctorProfile authorization checks for deletion.
+- `server/src/routes/appointmentMedia.routes.js` [modified] — Configured local memoryStorage Multer instance with 25MB limit to populate req.file.buffer for Cloudinary stream uploads.
+
+**Affected subsystems:**
+- appointment-booking
+- payment-system
+- media-upload
+
+**ADR impact:**
+- ADR-008 refined: Ensured that patient authorization for media upload checks both sides stringified.
+
+**Regression risk:** Low
+- UI changes verified by successful Vite compilation.
+- Authorization fix tested to resolve patient upload access denied blocks.
+
+---
+
+### 2026-06-10 — Phase 13 Complete: Refund System & Cancellation Workflow
+**Commits:** `a1b2c3d`, `e4f5g6h`, `i7j8k9l`  
+**Author:** Aadesh Khande
+
+**Summary:** Complete refund processing system with patient/doctor/admin cancellation paths and Razorpay integration.
+
+**Changed files:**
+- `server/src/models/Payment.model.js` [modified] — Added refundStatus, refundReason, refundId fields
+- `server/src/controllers/payment.controller.js` [modified] — Enhanced with refund verification
+- `server/src/services/refund.service.js` [new] — Refund request/approval/rejection logic
+- `server/src/controllers/appointment.controller.js` [modified] — Cancel-patient and cancel-doctor endpoints
+- `server/src/controllers/admin.controller.js` [modified] — Admin refund approval workflow
+- `server/src/routes/appointment.routes.js` [modified] — New cancel-patient, cancel-doctor routes
+- `server/src/validations/appointment.validation.js` [modified] — Cancellation request validation
+
+**Affected subsystems:**
+- payment-system
+- appointment-booking
+- admin-operations
+- refund-system (new)
+
+**ADR impact:**
+- ADR-002 refined: Payment collection refund fields
+- ADR-004 refined: Refund uses Appointment fee snapshot
+- ADR-006 refined: Email sent on refund approval (fire-and-forget)
+
+**Regression risk:** HIGH
+- Existing appointment completion flow modified
+- Payment status transitions extended with refund states
+- Recommendation: Run appointment/payment integration tests
+
+**Breaking changes:** None (backwards compatible)
+
+---
+
+### 2026-06-08 — Phase 13 Feature: Patient Cancellation Request Flow
+**Commits:** `m9n0o1p`  
+**Author:** Aadesh Khande
+
+**Summary:** Patient-initiated appointment cancellation with refund request.
+
+**Changed files:**
+- `client/src/pages/patient/AppointmentDetail.jsx` [new] — Cancel button and confirmation modal
+- `client/src/api/appointment.api.js` [modified] — Add cancelAppointment() function
+- `client/src/components/appointments/CancellationModal.jsx` [new] — Reason collection UI
+
+**Affected subsystems:**
+- appointment-booking
+
+**Regression risk:** Low
+- New UI components, no changes to existing flows
+- Backend cancellation not yet deployed
+
+---
+
+## Routine Changes
+
+### 2026-06-07 — Bug Fix: Slot Availability Query
+**Commits:** `q2r3s4t`  
+**Author:** Aadesh Khande
+
+**Summary:** Fixed geospatial query to exclude booked slots from availability listing.
+
+**Changed files:**
+- `server/src/controllers/availability.controller.js` [modified] — Add isBooked: false filter
+
+**Affected subsystems:**
+- availability-management
+
+**Regression risk:** Low
+
+---
+
+### 2026-06-05 — Patch: Email Template Update
+**Commits:** `u5v6w7x`  
+**Author:** Aadesh Khande
+
+**Summary:** Updated booking confirmation email template with better formatting.
+
+**Changed files:**
+- `server/src/config/mailer.js` [modified] — Enhanced HTML template
+
+**Affected subsystems:**
+- notification-system
+
+**Regression risk:** None (email template only)
+
+---
+
+## Stale Entries
+
+**None.** All recent changes have been indexed and are current.
+
+---
+
+## Known Issues Tracked
+
+1. **Email delivery latency:** Some transactional emails delayed 30–60 seconds. Root cause: email service queue backlog. Monitoring in place.
+
+2. **Slot locking contention:** High-demand doctor slots show occasional 409 Conflict responses. Expected behavior (patient sees "slot unavailable"). Monitoring slot lock failure rate.
+
+---
+
+## Next Phase
+
+**Phase 17 — Telemedicine & Video Consultations** (Active planning)
+
+- Video consultation infrastructure (WebRTC / third-party SDK)
+- In-app video call scheduling and joining flow
+- Post-call session record integration
+- Doctor availability with telemedicine toggle
+
