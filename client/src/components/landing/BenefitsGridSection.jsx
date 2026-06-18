@@ -65,12 +65,20 @@ const BENEFITS = [
 const BenefitsGridSection = () => {
   return (
     <section className="benefits-section" id="benefits" aria-labelledby="benefits-title">
-      {/* Section header */}
-      <div className="benefits-header">
-        <span className="swiss-section-label">04. WHY IT WORKS</span>
-        <h2 id="benefits-title" className="benefits-title">
-          THE THERALIGN ADVANTAGE.
-        </h2>
+      {/* Header Title with horizontal line behind */}
+      <div className="relative w-full mb-16 flex flex-col items-center">
+        {/* Horizontal Line behind */}
+        <div className="absolute left-0 right-0 top-[60%] h-px bg-obsidian/20 z-0" />
+        
+        {/* Text Overlay */}
+        <div className="relative z-10 bg-white px-8 text-center">
+          <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-primary font-swiss uppercase mb-2">
+            — WHY IT WORKS
+          </span>
+          <h2 id="benefits-title" className="text-display-sm sm:text-display-md font-serif text-obsidian tracking-wide leading-none uppercase font-normal">
+            THE THERALIGN ADVANTAGE
+          </h2>
+        </div>
       </div>
 
       {/* 2×2 grid */}

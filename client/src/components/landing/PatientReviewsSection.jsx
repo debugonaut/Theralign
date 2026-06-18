@@ -86,12 +86,20 @@ const PatientReviewsSection = () => {
       id="testimonials"
       aria-labelledby="pr-title"
     >
-      {/* Section header */}
-      <div className="pr-header">
-        <span className="swiss-section-label">08. PATIENT OUTCOMES</span>
-        <h2 id="pr-title" className="pr-section-title">
-          PATIENT OUTCOMES
-        </h2>
+      {/* Header Title with horizontal line behind */}
+      <div className="relative w-full py-16 flex flex-col items-center bg-[#111111]">
+        {/* Horizontal Line behind */}
+        <div className="absolute left-0 right-0 top-[60%] h-px bg-white/10 z-0" />
+        
+        {/* Text Overlay */}
+        <div className="relative z-10 bg-[#111111] px-8 text-center">
+          <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-accent font-swiss uppercase mb-2">
+            — PATIENT OUTCOMES
+          </span>
+          <h2 id="pr-title" className="text-display-sm sm:text-display-md font-serif text-white tracking-wide leading-none uppercase font-normal">
+            PATIENT OUTCOMES
+          </h2>
+        </div>
       </div>
 
       {/* Slider */}

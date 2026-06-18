@@ -46,12 +46,20 @@ const PATIENT_TYPES = [
 const WhoCanUseSection = () => {
   return (
     <section className="who-section" id="patients" aria-labelledby="who-title">
-      {/* Section header */}
-      <div className="who-header">
-        <span className="swiss-section-label">06. OUR PATIENTS</span>
-        <h2 id="who-title" className="who-title">
-          BUILT FOR EVERY BODY. EVERY CONDITION.
-        </h2>
+      {/* Header Title with horizontal line behind */}
+      <div className="relative w-full mb-16 flex flex-col items-center">
+        {/* Horizontal Line behind */}
+        <div className="absolute left-0 right-0 top-[60%] h-px bg-obsidian/20 z-0" />
+        
+        {/* Text Overlay */}
+        <div className="relative z-10 bg-white px-8 text-center">
+          <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-primary font-swiss uppercase mb-2">
+            — OUR PATIENTS
+          </span>
+          <h2 id="who-title" className="text-display-sm sm:text-display-md font-serif text-obsidian tracking-wide leading-none uppercase font-normal">
+            BUILT FOR EVERY BODY. EVERY CONDITION.
+          </h2>
+        </div>
       </div>
 
       {/* 4×2 grid */}

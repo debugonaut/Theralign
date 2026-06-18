@@ -19,19 +19,26 @@ const VerificationExplanationSection = () => {
       description: 'Physical inspection and facility standards verification.',
     },
   ];
-
   return (
     <section className="py-24 w-full bg-neutral-900 text-white">
-      <div className="swiss-section-header flex items-baseline gap-4 border-b-4 border-white pb-4 mb-16 mx-0">
-        <span className="font-bold text-[12px] tracking-[0.06em] uppercase text-accent font-swiss">
-          06.
-        </span>
-        <h2 className="text-[32px] sm:text-[48px] leading-[1.05] font-black uppercase tracking-[-0.04em] text-white font-swiss">
-          CLINICAL VERIFICATION
-        </h2>
-      </div>
+      <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-16 relative z-10">
+        {/* Header Title with horizontal line behind */}
+        <div className="relative w-full mb-16 flex flex-col items-center">
+          {/* Horizontal Line behind */}
+          <div className="absolute left-0 right-0 top-[60%] h-px bg-white/10 z-0" />
+          
+          {/* Text Overlay */}
+          <div className="relative z-10 bg-neutral-900 px-8 text-center">
+            <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-accent font-swiss uppercase mb-2">
+              — CLINICAL VERIFICATION
+            </span>
+            <h2 className="text-display-sm sm:text-display-md font-serif text-white tracking-wide leading-none uppercase font-normal">
+              CLINICAL VERIFICATION
+            </h2>
+          </div>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 px-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 px-0">
         
         {/* Left Column (5/12) - Verification Steps */}
         <div className="lg:col-span-5 flex flex-col gap-8">
@@ -69,7 +76,8 @@ const VerificationExplanationSection = () => {
         </div>
 
       </div>
-    </section>
+    </div>
+  </section>
   );
 };
 

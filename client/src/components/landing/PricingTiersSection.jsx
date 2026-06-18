@@ -45,16 +45,24 @@ const FeatureList = ({ features, dark }) => (
 const PricingTiersSection = () => {
   return (
     <section className="pt-section" id="pricing" aria-labelledby="pt-title">
-      {/* Header */}
-      <div className="pt-header">
-        <span className="swiss-section-label">09. TRANSPARENT PRICING</span>
-        <h2 id="pt-title" className="pt-title">
-          CHOOSE YOUR PLAN
-        </h2>
-        <p className="pt-subtitle">
-          Simple, transparent pricing for patients and practitioners alike.
-          Empower your healthcare journey with professional tools.
-        </p>
+      {/* Header Title with horizontal line behind */}
+      <div className="relative w-full mb-16 flex flex-col items-center">
+        {/* Horizontal Line behind */}
+        <div className="absolute left-0 right-0 top-[60%] h-px bg-obsidian/20 z-0" />
+        
+        {/* Text Overlay */}
+        <div className="relative z-10 bg-white px-8 text-center">
+          <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-primary font-swiss uppercase mb-2">
+            — TRANSPARENT PRICING
+          </span>
+          <h2 id="pt-title" className="text-display-sm sm:text-display-md font-serif text-obsidian tracking-wide leading-none uppercase font-normal">
+            CHOOSE YOUR PLAN
+          </h2>
+          <p className="text-ui-md text-neutral-500 font-medium leading-relaxed max-w-xl mx-auto mt-4 font-swiss text-center">
+            Simple, transparent pricing for patients and practitioners alike.
+            Empower your healthcare journey with professional tools.
+          </p>
+        </div>
       </div>
 
       {/* Cards grid */}

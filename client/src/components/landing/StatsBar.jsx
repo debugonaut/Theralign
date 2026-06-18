@@ -65,17 +65,23 @@ const StatsBar = () => {
         {/* Content shifted right to align with the grid layout */}
         <div className="md:pl-16 relative z-10">
           
-          {/* Header Section */}
-          <div className="mb-14 text-left">
-            <span className="inline-block bg-accent-light text-accent-dark px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase mb-4 font-swiss">
-              PLATFORM ECOSYSTEM
-            </span>
-            <h2 id="stats-title" className="text-display-xs sm:text-display-md font-black text-obsidian tracking-wide leading-[1.05] uppercase font-swiss mb-4">
-              THE NUMBERS SPEAK FOR THEMSELVES
-            </h2>
-            <p className="text-ui-md text-on-surface-variant font-medium leading-relaxed max-w-2xl font-swiss">
-              Quantitative proof of clinical excellence and patient-first scalability across the Theralign network.
-            </p>
+          {/* Header Title with horizontal line behind */}
+          <div className="relative w-full mb-16 flex flex-col items-center">
+            {/* Horizontal Line behind */}
+            <div className="absolute left-0 right-0 top-[60%] h-px bg-obsidian/10 z-0" />
+            
+            {/* Text Overlay */}
+            <div className="relative z-10 bg-[#F8F8F6] px-8 text-center">
+              <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-primary font-swiss uppercase mb-2">
+                — PLATFORM ECOSYSTEM
+              </span>
+              <h2 id="stats-title" className="text-display-sm sm:text-display-md font-serif text-obsidian tracking-wide leading-none uppercase font-normal">
+                THE NUMBERS SPEAK FOR THEMSELVES
+              </h2>
+              <p className="text-ui-md text-on-surface-variant font-medium leading-relaxed max-w-2xl mx-auto mt-4 font-swiss text-center">
+                Quantitative proof of clinical excellence and patient-first scalability across the Theralign network.
+              </p>
+            </div>
           </div>
 
           {/* Grid Layout (5-columns on desktop) */}

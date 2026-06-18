@@ -10,21 +10,30 @@ const HeroSection = () => {
         id="ai-matching"
         aria-labelledby="ai-section-title"
       >
-        <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-16 py-12 md:py-20 flex justify-center">
-          <div className="w-full max-w-3xl flex flex-col text-left">
-            <p className="text-ui-sm text-accent-coral mb-4 uppercase tracking-widest font-bold font-swiss">
-              01. AI DOCTOR MATCHING
-            </p>
-            <h1 id="ai-section-title" className="text-display-sm sm:text-display-md uppercase mb-6 leading-[0.95] font-black font-swiss text-obsidian">
-              DESCRIBE YOUR PAIN.<br />
-              <span className="text-primary-container">WE FIND YOUR SPECIALIST.</span>
-            </h1>
-            <p className="text-ui-md sm:text-ui-lg text-neutral-500 mb-8 max-w-2xl font-regular font-swiss">
+        <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-16 py-12 md:py-20 flex flex-col items-center">
+          {/* Header Title with horizontal line behind */}
+          <div className="relative w-full mb-16 flex flex-col items-center">
+            {/* Horizontal Line behind */}
+            <div className="absolute left-0 right-0 top-[60%] h-px bg-obsidian/20 z-0" />
+            
+            {/* Text Overlay */}
+            <div className="relative z-10 bg-white px-8 text-center">
+              <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-primary font-swiss uppercase mb-2">
+                — AI DOCTOR MATCHING
+              </span>
+              <h2 id="ai-section-title" className="text-display-sm sm:text-display-md font-serif text-obsidian tracking-wide leading-none uppercase font-normal">
+                DESCRIBE YOUR PAIN, WE FIND YOUR SPECIALIST
+              </h2>
+            </div>
+          </div>
+
+          <div className="w-full max-w-3xl flex flex-col text-center">
+            <p className="text-ui-md sm:text-ui-lg text-neutral-500 mb-8 max-w-2xl mx-auto font-regular font-swiss">
               Our AI analyses your symptoms, condition history, and location to match you with the right verified physiotherapist — in seconds. No referral. No waiting list. Just clinical precision.
             </p>
             
             {/* Diagnostic Input Box */}
-            <div className="w-full">
+            <div className="w-full text-left">
               <AIProductDemo />
             </div>
           </div>

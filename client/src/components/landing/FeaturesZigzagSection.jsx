@@ -38,12 +38,20 @@ const FEATURES = [
 const FeaturesZigzagSection = () => {
   return (
     <section className="features-section" id="features" aria-labelledby="features-title">
-      {/* Section header */}
-      <div className="features-header">
-        <span className="swiss-section-label">03. PLATFORM CAPABILITIES</span>
-        <h2 id="features-title" className="features-title">
-          WHAT THERALIGN DOES DIFFERENTLY.
-        </h2>
+      {/* Header Title with horizontal line behind */}
+      <div className="relative w-full mb-16 flex flex-col items-center">
+        {/* Horizontal Line behind */}
+        <div className="absolute left-0 right-0 top-[60%] h-px bg-obsidian/20 z-0" />
+        
+        {/* Text Overlay */}
+        <div className="relative z-10 bg-white px-8 text-center">
+          <span className="inline-flex items-center gap-2 text-ui-xs tracking-[0.2em] font-bold text-primary font-swiss uppercase mb-2">
+            — PLATFORM CAPABILITIES
+          </span>
+          <h2 id="features-title" className="text-display-sm sm:text-display-md font-serif text-obsidian tracking-wide leading-none uppercase font-normal">
+            WHAT THERALIGN DOES DIFFERENTLY
+          </h2>
+        </div>
       </div>
 
       {/* Feature blocks */}
