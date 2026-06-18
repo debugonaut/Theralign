@@ -157,10 +157,20 @@ const passwordResetLimiter = rateLimit({
   message: { message: 'Too many password reset attempts. Please try again in an hour.' },
 });
 
+// Chatbot rate limiter (15 requests per minute per IP)
+const chatbotLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many chatbot queries. Please wait a minute before asking more questions.' },
+});
+
 // AI endpoints — strict limit (Groq API key protection; auth required on routes)
 const aiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 5,
+  skip: (req) => req.originalUrl && req.originalUrl.includes('/chatbot'),
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many AI requests. Please try again later.' },
@@ -191,6 +201,7 @@ app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 app.use('/api/auth/forgot-password', passwordResetLimiter);
 app.use('/api/auth/reset-password', passwordResetLimiter);
+app.use('/api/ai/chatbot', chatbotLimiter);
 app.use('/api/ai', aiLimiter);
 app.use('/api/payments/create-order', paymentOrderLimiter);
 app.use('/api/doctors/profile/onboard', uploadLimiter);
