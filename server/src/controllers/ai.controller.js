@@ -152,6 +152,10 @@ export const chatbotQueryController = asyncHandler(async (req, res) => {
     throw new AppError('Message text is required', 400);
   }
 
+  if (message.trim().length > 500) {
+    throw new AppError('Message exceeds maximum limit of 500 characters', 400);
+  }
+
   // Determine user identity and role (dynamic auth)
   let role = 'guest';
   let user = null;

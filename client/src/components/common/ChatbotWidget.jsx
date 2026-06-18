@@ -125,6 +125,15 @@ const ChatbotWidget = () => {
     }
   };
 
+  const handleNavigation = (route) => {
+    if (!route || typeof route !== 'string') return;
+    // Safety check: ensure route starts with a single '/' and does not contain protocol headers (e.g. 'http:') or domains
+    if (route.startsWith('/') && !route.startsWith('//') && !route.includes(':')) {
+      navigate(route);
+      setIsOpen(false);
+    }
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSubmit(query);
@@ -190,10 +199,7 @@ const ChatbotWidget = () => {
                   
                   {msg.route && (
                     <button
-                      onClick={() => {
-                        navigate(msg.route);
-                        setIsOpen(false);
-                      }}
+                      onClick={() => handleNavigation(msg.route)}
                       className="mt-3 w-full text-center bg-primary text-white hover:bg-primary-dark font-semibold text-ui-xs py-2 px-3 rounded-md transition-all duration-fast ease-swiss"
                     >
                       Go to Dashboard page →
