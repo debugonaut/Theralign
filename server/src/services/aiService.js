@@ -395,7 +395,8 @@ ${roleQuestions.map((q, idx) => `${idx + 1}. Q: ${q.question}\n   A: ${q.answer}
 Rules:
 1. Answer the user's question clearly, warmly, and helpfully using the information from the pre-approved list whenever possible.
 2. If the question is NOT in the list, answer to the best of your knowledge based on Theralign's business (connecting patients with verified physiotherapists, bookings via Razorpay, flat 10% platform commission, 24h sign-off lock on clinical notes, junior doctor hierarchy, etc.).
-3. You MUST respond with a JSON object. No explanation outside JSON. No markdown backticks.
+3. Do NOT output generic dashboard routes (e.g. '/patient/dashboard', '/doctor/dashboard', '/admin/dashboard') in the "route" field. Always point the user to the specific page/action (e.g. '/patient/appointments' for appointments/bookings, '/patient/care-timeline' for home exercises/prescriptions, '/patient/payments' for payments/receipts, '/patient/profile' for settings, '/doctor/availability' for slots, '/doctor/practice' for junior doctors, '/admin/doctors' for verification reviews, '/admin/refunds' for refunds, etc.).
+4. You MUST respond with a JSON object. No explanation outside JSON. No markdown backticks.
 Format:
 {
   "answer": "Your detailed friendly response here",
